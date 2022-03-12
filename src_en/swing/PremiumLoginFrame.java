@@ -18,7 +18,7 @@ import javax.swing.border.LineBorder;
 import src_en.info.ONION_Info;
 import src_en.info.OnionMember;
 import src_en.info.Program_Info;
-import src_en.main.Moon;
+import src_en.main.MoonInspector;
 import src_en.swing.TableFilterFrame.MyKeyListener;
 import src_en.util.Util;
 
@@ -295,7 +295,7 @@ public class PremiumLoginFrame extends JFrame {
 		RX_Analysis_Panel.activationExpression(); // RX_Analysis 조건식 기능 활성화
 		Multi_Analysis_Panel.activationExcpression(); // Multi_Analysis 조건식 기능 활성화
 		RealTime_Panel.activationScaleFunction(); // RealTime_Panel 조건식 기능 활성화
-		if(Moon.isMoon()) MainFrame.activeMoon(); // Moon 히든 메뉴 활성화
+		if(MoonInspector.isMoon()) MainFrame.activeMoon(); // Moon 히든 메뉴 활성화
 	}
 
 	// 사용자 정의 키 이벤트 리스너

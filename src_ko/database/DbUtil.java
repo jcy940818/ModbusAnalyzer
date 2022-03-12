@@ -19,7 +19,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import src_ko.info.ONION_Info;
-import src_ko.main.Moon;
+import src_ko.main.MoonInspector;
 import src_ko.swing.MK119_Login_Panel;
 import src_ko.swing.MessageFrame;
 import src_ko.swing.SqlResultFrame;
@@ -369,7 +369,7 @@ public class DbUtil {
 	
 	public static boolean checkQuery(String query) {		
 		
-		if(Moon.isMoon()) return true;
+		if(MoonInspector.isMoon()) return true;
 		
 		query = query.toUpperCase();
 		

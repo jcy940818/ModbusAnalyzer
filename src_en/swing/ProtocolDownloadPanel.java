@@ -16,7 +16,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import src_en.info.ONION_Info;
-import src_en.main.Moon;
+import src_en.main.MoonInspector;
 import src_en.util.FileUtil;
 import src_en.util.Util;
 
