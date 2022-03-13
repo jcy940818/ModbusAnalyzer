@@ -700,4 +700,8 @@ public class MainFrame extends JFrame {
 		menuBar.doLayout();
 	}
 	
+	public static JPanel getActualPanel() {
+		return contentPane;
+	}
+	
 }
