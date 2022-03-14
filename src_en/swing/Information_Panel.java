@@ -11,10 +11,13 @@ import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
+import common.LanguagePanel;
+import moon.Moon;
 import src_en.info.ONION_Info;
 import src_en.info.Program_Info;
 import src_en.util.Util;
@@ -28,12 +31,15 @@ public class Information_Panel extends JPanel {
 	
 	private static JLabel versionLabel;
 	private PremiumLoginFrame loginFrame;
+	public static LanguagePanel LanguagePanel;
 	
 	private static JLabel user;
 	private static JLabel userName;
 	
 	private int itemIndex = 0;
 	float direction = -0.05f;	
+	
+	private static JPanel actualPanel; 
 	
 	public Information_Panel() {
 		setBorder(new EmptyBorder(12, 12, 12, 12));
@@ -42,7 +48,7 @@ public class Information_Panel extends JPanel {
 		setBackground(new Color(255, 140, 0));
 
 		setLayout(new BorderLayout(0, 0));
-		JPanel actualPanel = new JPanel();
+		actualPanel = new JPanel();
 		actualPanel.setSize(1050, 610);
 		actualPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
 		actualPanel.setBackground(Color.WHITE);
@@ -58,18 +64,38 @@ public class Information_Panel extends JPanel {
 		programInfo.setBounds(12, 10, 493, 55);
 		actualPanel.add(programInfo);
 		
+		JLabel progreamName = new JLabel("ModbusAnalyzer");
+		progreamName.setForeground(Color.BLACK);
+		progreamName.setHorizontalAlignment(SwingConstants.LEFT);
+		progreamName.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
+		progreamName.setBounds(23, 90, 255, 55);
+		actualPanel.add(progreamName);		
+		
 		versionLabel = new JLabel(String.format("<html>Version <font color='blue'>%s</font></html>", Version));
 		versionLabel.setForeground(Color.BLACK);
 		versionLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		versionLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
-		versionLabel.setBounds(211, 108, 570, 55);
+		versionLabel.setBounds(211, 90, 570, 55);
 		actualPanel.add(versionLabel);
+		
+		JLabel LanguageLabel = new JLabel("Language : ");
+		LanguageLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		LanguageLabel.setForeground(Color.BLACK);
+		LanguageLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
+		LanguageLabel.setBounds(23, 150, 126, 55);
+		actualPanel.add(LanguageLabel);
+		
+		
+		LanguagePanel = new LanguagePanel();
+		LanguagePanel.setBounds(153, 152, 255, 55);
+		actualPanel.add(LanguagePanel);
+		
 		
 		JLabel copyright = new JLabel("Copyright : ");
 		copyright.setForeground(Color.BLACK);
 		copyright.setHorizontalAlignment(SwingConstants.LEFT);
 		copyright.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
-		copyright.setBounds(23, 185, 126, 55);
+		copyright.setBounds(23, 215, 126, 55);
 		actualPanel.add(copyright);
 		
 		JLabel companyName = new JLabel("ONION Software");
@@ -77,7 +103,7 @@ public class Information_Panel extends JPanel {
 		companyName.setForeground(new Color(255, 140, 0));
 		companyName.setHorizontalAlignment(SwingConstants.LEFT);
 		companyName.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
-		companyName.setBounds(151, 185, 255, 55);
+		companyName.setBounds(151, 215, 255, 55);
 		companyName.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				 if (e.getButton() == 1) {  } // ¿ÞÂÊ Å¬¸¯				 
@@ -96,7 +122,7 @@ public class Information_Panel extends JPanel {
 		user.setForeground(Color.BLACK);
 		user.setHorizontalAlignment(SwingConstants.LEFT);
 		user.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
-		user.setBounds(23, 261, 482, 55);
+		user.setBounds(23, 285, 482, 55);
 		user.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				 if (e.getButton() == 1) {  } // ¿ÞÂÊ Å¬¸¯				 
@@ -111,15 +137,8 @@ public class Information_Panel extends JPanel {
 		userName.setIcon(new Util().getMoonResource());
 		userName.setHorizontalAlignment(SwingConstants.LEFT);
 		userName.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
-		userName.setBounds(151, 261, 354, 55);
+		userName.setBounds(151, 285, 354, 55);
 		actualPanel.add(userName);
-		
-		JLabel progreamName = new JLabel("ModbusAnalyzer");
-		progreamName.setForeground(Color.BLACK);
-		progreamName.setHorizontalAlignment(SwingConstants.LEFT);
-		progreamName.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
-		progreamName.setBounds(23, 108, 255, 55);
-		actualPanel.add(progreamName);		
 		
 		
 		FadeLabel onionItem = new FadeLabel();		

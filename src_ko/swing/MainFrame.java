@@ -580,8 +580,6 @@ public class MainFrame extends JFrame {
 				showInformation();				
 			}
 		});
-				
-		
 
 		OnionMember.init();
 		DataType.initTypeMap();

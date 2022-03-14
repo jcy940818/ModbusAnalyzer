@@ -588,6 +588,7 @@ public class MainFrame extends JFrame {
 			// 현재 실행 경로를 찾지못함
 		}
 		
+		showInformation();
 		mainFrame = this;
 		setLocationRelativeTo(null); // 프레임 생성자의 마지막에 넣어줘야 프레임이 화면 가운데에서 실행된다.
 	}
