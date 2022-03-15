@@ -1,35 +1,29 @@
 package src_en.swing;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Collection;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.border.EmptyBorder;
-import java.awt.Color;
-import javax.swing.border.LineBorder;
-
-import src_en.info.ONION_Info;
-import src_en.info.OnionMember;
-import src_en.info.Program_Info;
-import src_en.main.MoonInspector;
-import src_en.swing.TableFilterFrame.MyKeyListener;
-import src_en.util.Util;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
+
+import common.Program_Info;
+import src_en.info.ONION_Info;
+import src_en.info.OnionMember;
+import src_en.main.MoonInspector;
+import src_en.util.Util;
 
 public class PremiumLoginFrame extends JFrame {
 

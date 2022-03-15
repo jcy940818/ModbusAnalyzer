@@ -1,34 +1,28 @@
 package src_ko.swing;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Collection;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.border.EmptyBorder;
-import java.awt.Color;
-import javax.swing.border.LineBorder;
-
-import src_ko.info.ONION_Info;
-import src_ko.info.Program_Info;
-import src_ko.main.MoonInspector;
-import src_ko.swing.TableFilterFrame.MyKeyListener;
-import src_ko.util.Util;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
+
+import common.Program_Info;
+import src_ko.info.ONION_Info;
+import src_ko.main.MoonInspector;
+import src_ko.util.Util;
 
 public class PremiumLoginFrame extends JFrame {
 

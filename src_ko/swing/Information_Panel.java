@@ -11,15 +11,13 @@ import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import common.LanguagePanel;
-import moon.Moon;
+import common.Program_Info;
 import src_ko.info.ONION_Info;
-import src_ko.info.Program_Info;
 import src_ko.util.Util;
 
 public class Information_Panel extends JPanel {
