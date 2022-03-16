@@ -743,8 +743,8 @@ public class DatabaseAccess_Panel extends JPanel {
 		});
 		formSendQueryPanel.add(form_AddOrder_button);
 		
-		JButton form_queryExcuteButton = new JButton("\uC804 \uC1A1");
-		form_queryExcuteButton.setForeground(Color.BLACK);
+		JButton form_queryExcuteButton = new JButton("\uC2E4 \uD589");
+		form_queryExcuteButton.setForeground(Color.BLUE);
 		form_queryExcuteButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 13));
 		form_queryExcuteButton.setBackground(Color.WHITE);
 		form_queryExcuteButton.setBounds(760, 27, 77, 31);
