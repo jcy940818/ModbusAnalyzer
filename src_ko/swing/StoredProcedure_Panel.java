@@ -566,7 +566,7 @@ public class StoredProcedure_Panel extends JPanel {
 							msg.append("프로시저 이름 : " + Util.colorBlue(selectedProcedure.getName()));
 							msg.append(String.format("%s%s", Util.separator, Util.separator));
 							msg.append("\n\n");
-							msg.append("파일 경로 : " + Util.colorBlue(procedureFile.getParent()));
+							msg.append("파일 경로 : " + Util.colorBlue(procedureFile.getParent()).replace("\\", Util.colorRed("\\")));
 							msg.append(String.format("%s%s", Util.separator, Util.separator));
 							msg.append("\n");
 							msg.append("파일 이름 : " + Util.colorBlue(procedureFile.getName()));
