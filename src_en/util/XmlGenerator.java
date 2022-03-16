@@ -13,6 +13,7 @@ import src_en.agent.Perf;
 import src_en.database.QueryParameter;
 import src_en.database.StoredProcedure;
 import src_en.swing.StoredProcedure_Panel;
+import src_ko.util.Util;
 
 public class XmlGenerator {
 	
@@ -205,7 +206,7 @@ public class XmlGenerator {
 			sb.append("<font color='Green'>StoredProcedure Generate is Complete</font>\n");
 			sb.append(String.format("Successfully created a Procedure%s%s\n\n",Util.separator, Util.separator));
 			sb.append(String.format("%s : %s%s%s\n",Util.colorBlue("Procedure"),sp.getName(), Util.separator, Util.separator));
-			sb.append(String.format("%s : %s%s%s\n",Util.colorBlue("Saved path"),savePath ,Util.separator, Util.separator));
+			sb.append(String.format("%s : %s%s%s\n",Util.colorBlue("Saved path"),savePath.replace("\\", Util.colorRed("\\")) ,Util.separator, Util.separator));
 			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
             }
         

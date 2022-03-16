@@ -201,9 +201,9 @@ public class XmlGenerator {
             
             StringBuilder sb = new StringBuilder();
 			sb.append("<font color='Green'>StoredProcedure Generate is Complete</font>\n");
-			sb.append(String.format("정상적으로 프로시저를 생성하였습니다%s%s\n\n",Util.separator, Util.separator));
+			sb.append(String.format("성공적으로 프로시저를 생성하였습니다%s%s\n\n",Util.separator, Util.separator));
 			sb.append(String.format("%s : %s%s%s\n",Util.colorBlue("프로시저"),sp.getName(), Util.separator, Util.separator));
-			sb.append(String.format("%s : %s%s%s\n",Util.colorBlue("저장경로"),savePath ,Util.separator, Util.separator));
+			sb.append(String.format("%s : %s%s%s\n",Util.colorBlue("저장경로"),savePath.replace("\\", Util.colorRed("\\")) ,Util.separator, Util.separator));
 			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
             }
         
