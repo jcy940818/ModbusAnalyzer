@@ -295,7 +295,7 @@ public class ProcedureGeneratorFrame extends JFrame {
 					return;
 				}
 				
-				procedureSavePath = MainFrame.getCurrentPath() + "\\storedProcedure\\" + category + "\\" + sp.getName() + ".xml";
+				procedureSavePath = MainFrame.getCurrentPath() + "\\" + StoredProcedure.STORED_PROCEDURE + "\\" + category + "\\" + sp.getName() + ".xml";
 				
 				if(userSavePath != null)
 					procedureSavePath = userSavePath; 

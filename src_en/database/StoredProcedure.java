@@ -2,24 +2,18 @@ package src_en.database;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
+import moon.Moon;
 import src_en.swing.MainFrame;
-import src_en.swing.MessageFrame;
 import src_en.util.Util;
 import src_en.util.XmlUtil;
 
@@ -28,7 +22,7 @@ public class StoredProcedure implements Comparable{
 	// "Common","Facility", "RCU", "Performance", "Event", "Event History", "Statistics Data"
 		
 	// 프로시저 카테고리 상수
-	public static final String STORED_PROCEDURE = "storedProcedure"; // 저장 프로시저
+	public static final String STORED_PROCEDURE = "storedProcedure" + "\\" + Moon.EN; // 저장 프로시저
 	public static final String COMMON = "COMMON"; // 공통
 	public static final String SERVERINFO_FACILITY = "SERVERINFO_FACILITY"; // 시설물 관련
 	public static final String SERVERINFO_RTU = "SERVERINFO_RTU"; // RCU 관련
@@ -166,7 +160,7 @@ public class StoredProcedure implements Comparable{
 	
 	public static ArrayList<StoredProcedure> loadStoredProcedure(String path, String category){
 		ArrayList<StoredProcedure> list = new ArrayList<StoredProcedure>();
-		String autoPath = MainFrame.getCurrentPath() + "\\storedProcedure\\" + category;
+		String autoPath = MainFrame.getCurrentPath() + "\\" + StoredProcedure.STORED_PROCEDURE + "\\" + category;
 		
 		if(path != null) {
 			autoPath =  path; 

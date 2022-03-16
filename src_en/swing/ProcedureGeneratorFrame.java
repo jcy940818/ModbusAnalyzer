@@ -36,6 +36,7 @@ import src_en.database.StoredProcedure;
 import src_en.util.ExcelAdapter;
 import src_en.util.Util;
 import src_en.util.XmlGenerator;
+import src_ko.swing.MainFrame;
 
 public class ProcedureGeneratorFrame extends JFrame {
 
@@ -295,7 +296,7 @@ public class ProcedureGeneratorFrame extends JFrame {
 					return;
 				}
 				
-				procedureSavePath = MainFrame.getCurrentPath() + "\\storedProcedure\\" + category + "\\" + sp.getName() + ".xml";
+				procedureSavePath = MainFrame.getCurrentPath() + "\\" + StoredProcedure.STORED_PROCEDURE + "\\" + category + "\\" + sp.getName() + ".xml";
 				
 				if(userSavePath != null)
 					procedureSavePath = userSavePath; 
