@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 
 import common.LanguagePanel;
 import common.Program_Info;
+import moon.Moon;
 import src_ko.info.ONION_Info;
 import src_ko.util.Util;
 
@@ -84,9 +85,9 @@ public class Information_Panel extends JPanel {
 		actualPanel.add(LanguageLabel);
 		
 		
-		LanguagePanel = new LanguagePanel();
+		LanguagePanel = new LanguagePanel(Moon.KO);
 		LanguagePanel.setBounds(153, 152, 255, 55);
-		actualPanel.add(LanguagePanel);		
+		actualPanel.add(LanguagePanel);
 		
 		
 		JLabel copyright = new JLabel("Copyright : ");

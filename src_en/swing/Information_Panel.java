@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 
 import common.LanguagePanel;
 import common.Program_Info;
+import moon.Moon;
 import src_en.info.ONION_Info;
 import src_en.util.Util;
 
@@ -84,7 +85,7 @@ public class Information_Panel extends JPanel {
 		actualPanel.add(LanguageLabel);
 		
 		
-		LanguagePanel = new LanguagePanel();
+		LanguagePanel = new LanguagePanel(Moon.EN);
 		LanguagePanel.setBounds(153, 152, 255, 55);
 		actualPanel.add(LanguagePanel);
 		

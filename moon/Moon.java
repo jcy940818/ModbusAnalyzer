@@ -17,8 +17,8 @@ public class Moon {
 	private static JFrame mainFrame;
 	private static CardLayout cardLayout;
 	
-	public static String KO = "korean";
-	public static String EN = "english";
+	public static final String KO = "korean";
+	public static final String EN = "english";
 	
 	private static src_ko.swing.MainFrame ko = new src_ko.swing.MainFrame();
 	private static src_en.swing.MainFrame en = new src_en.swing.MainFrame();
