@@ -54,9 +54,9 @@ public class RealTime_Panel extends JPanel {
 	private static boolean monitoringRunning = false;
 	
 	// 클라이언트 소켓
-	private Socket socket = ModbusAgent.clientSocket;
-	private static String IP;
-	private static int PORT;	
+	public static Socket socket_en = ModbusAgent.clientSocket;
+	public static String IP;
+	public static int PORT;	
 	
 	// information Component
 	JPanel infoPanel; // 클라이언트 소켓이 서버와 연결 된 상태일때만 인포메이션 컴포넌트들을 활성화 시킨다.  
@@ -239,26 +239,34 @@ public class RealTime_Panel extends JPanel {
 		connectButton.setBackground(Color.WHITE);
 		connectButton.setBounds(468, 11, 110, 36);
 		connectButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {												
 				
 				// 클라이언트 소켓의 마지막 커넥션 정보
 				String lastConnectionInfo = ClientSocket.getSimpleConnectedInfo();
 				
 				try {
-					socket = ModbusAgent.clientSocket;
+					socket_en = ModbusAgent.clientSocket;
+					src_ko.swing.RealTime_Panel.socket_ko = socket_en;
 					
-					if( (socket == null || socket.isClosed()) && ClientSocket.getIsFirst()) {						
+					if( (socket_en == null || socket_en.isClosed()) && ClientSocket.getIsFirst()) {						
 						String[] connectionInfo = ClientSocket.getConnectionInfo();
 						IP = connectionInfo[0];
 						PORT = Integer.parseInt(connectionInfo[1]);
-					}else if(socket == null) {
+						
+						src_ko.swing.RealTime_Panel.IP = IP;
+						src_ko.swing.RealTime_Panel.PORT = PORT;
+						
+					}else if(socket_en == null) {
 						String[] connectionInfo = ClientSocket.getConnectionInfo();
 						IP = connectionInfo[0];
 						PORT = Integer.parseInt(connectionInfo[1]);
+						
+						src_ko.swing.RealTime_Panel.IP = IP;
+						src_ko.swing.RealTime_Panel.PORT = PORT;
 					}else {
 						// 기존 연결되어있는 소켓일 경우 연결을 끊고 재접속을 시도한다.						
 						// 클라이언트 소켓 : 접속 끊김
-						socket.close();
+						socket_en.close();
 						ClientSocket.setState(ClientSocket.NODE_CONDITION_DISCONNECTED);
 					}
 				}catch(IOException exception) {
@@ -266,7 +274,9 @@ public class RealTime_Panel extends JPanel {
 				}
 				
 				try {
-					socket = ClientSocket.getClientSocket(IP, PORT);
+					socket_en = ClientSocket.getClientSocket(IP, PORT);
+					src_ko.swing.RealTime_Panel.socket_ko = socket_en;
+					
 				}catch(Exception exception) {
 					StringBuilder msg = new StringBuilder();
 					msg.append("<font color='red'>Failed to connect</font>\n");
@@ -274,22 +284,24 @@ public class RealTime_Panel extends JPanel {
 					Util.showMessage(msg.toString(), JOptionPane.ERROR_MESSAGE);
 				}				
 				
-				if(socket != null || ClientSocket.isCurrentConnected(socket)) {
-					// 접속 성공 : 컴포넌트 내용들을 모두 Reset한다	
-					ModbusAgent.clientSocket = socket;
+				if(socket_en != null || ClientSocket.isCurrentConnected(socket_en)) {
+					// 접속 성공 : 컴포넌트 내용들을 모두 초기화한다	
+					ModbusAgent.clientSocket = socket_en;
+					src_ko.agent.ModbusAgent.clientSocket = socket_en;
+					
 					panel_ON();
 					
-					// 마지막 커넥션 정보와 다른 정보로 세션을  생성시 컴포넌트 Reset
+					// 마지막 커넥션 정보와 다른 정보로 세션을  생성시 컴포넌트 초기화
 					if(!ClientSocket.getSimpleConnectedInfo().equalsIgnoreCase(lastConnectionInfo)) {
 						componentAllClear();
+						src_ko.swing.RealTime_Panel.componentAllClear();
 					}
 					
 					// 사용자가 입력한 IP, port를 클라이언트 소켓의 마지막 연결 성공 정보에 저장					
 					ClientSocket.setHasLastConnectionInfo(true);
 				}
 			}
-		});
-		
+		});		
 		infoPanel.add(connectButton);
 		
 		dataTypePanel.setVisible(false); // functionCode 3, 4 일때만 데이터 타입 콤보박스 표현 (functionCdoe 1, 2 : ON/OFF 상태이기 때문에)		
@@ -711,7 +723,7 @@ public class RealTime_Panel extends JPanel {
 										tx.setAgentType("RealTime");
 									}
 									
-									rx = ModbusAgent.communicate(socket, tx, isRTU, timeout);
+									rx = ModbusAgent.communicate(socket_en, tx, isRTU, timeout);
 									
 									// 유효하지 않은 응답은 패스한다
 									if(rx == null) continue;
@@ -1150,7 +1162,7 @@ public class RealTime_Panel extends JPanel {
 						}
 						
 						// ModbusAgent <=> ExceptionScan : Socket 동기화
-						socket = ModbusAgent.clientSocket;
+						socket_en = ModbusAgent.clientSocket;
 						
 					} catch (InterruptedException e) {
 						return;
