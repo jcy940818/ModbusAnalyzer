@@ -175,8 +175,7 @@ public class ONION_Info {
 		src_ko.info.ONION_Info.userFullName = ONION_Info.userFullName;
 		
 		if(!member.getTeam().contains("½Ì°¡Æú")) {
-			ONION_Info.userFullName += "´Ô";
-			src_ko.info.ONION_Info.userFullName += "´Ô";
+			ONION_Info.userFullName += "´Ô";			
 		}
 		
 		return ONION_Info.userName;
