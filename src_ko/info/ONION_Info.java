@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import common.OnionMember;
 import src_ko.util.Util;
  
 public class ONION_Info {
@@ -163,11 +164,15 @@ public class ONION_Info {
 		
 		if(member.getFullName().contains("Moon") && member.getName().equals("정창용")) {
 			ONION_Info.userName = Util.colorBlue(member.getName()) + " 개발자";
+			src_en.info.ONION_Info.userName = ONION_Info.userName; 
+			
 		}else {
 			ONION_Info.userName = member.getName();	
+			src_en.info.ONION_Info.userName = ONION_Info.userName; 
 		}
 		
 		ONION_Info.userFullName = member.getFullName();
+		src_en.info.ONION_Info.userFullName = ONION_Info.userFullName; 
 		
 		return ONION_Info.userName;
 	}

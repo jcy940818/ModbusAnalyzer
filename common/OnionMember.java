@@ -1,4 +1,4 @@
-package src_en.info;
+package common;
 
 import java.util.HashMap;
 
@@ -94,6 +94,7 @@ public class OnionMember {
 		new OnionMember("PSÆÀ", "ÀÌÀç¼º", "Woody");
 		new OnionMember("PSÆÀ", "ÀÌÇüÂù", "Rick");
 		new OnionMember("PSÆÀ", "±è¿ø±â", "Dustin");
+		new OnionMember("PSÆÀ", "¼ÕÁØ¸¸", "Joon");
 		
 		new OnionMember("½Ì°¡ÆúÆÀ", "Kelvin", "Kelvin");
 		new OnionMember("½Ì°¡ÆúÆÀ", "Jia Hui", "Jia");

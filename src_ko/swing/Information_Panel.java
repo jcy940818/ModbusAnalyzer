@@ -32,8 +32,8 @@ public class Information_Panel extends JPanel {
 	private PremiumLoginFrame loginFrame;
 	public static LanguagePanel LanguagePanel;
 	
-	private static JLabel user;
-	private static JLabel userName;
+	public static JLabel user;
+	public static JLabel userName;
 	
 	private int itemIndex = 0;
 	float direction = -0.05f;	
@@ -212,11 +212,19 @@ public class Information_Panel extends JPanel {
 		if(member.equalsIgnoreCase("Moon")) {
 			user.setText("<html><font color='blue'>Developer</font> : </html>");
 			userName.setIcon(new Util().getMoonResource());
-			userName.setText(ONION_Info.userFullName);
+			userName.setText(ONION_Info.userFullName);						
+			
+			src_en.swing.Information_Panel.user.setText("<html><font color='blue'>Developer</font> : </html>");
+			src_en.swing.Information_Panel.userName.setIcon(new Util().getMoonResource());
+			src_en.swing.Information_Panel.userName.setText(ONION_Info.userFullName);
 		}else {
 			user.setText(String.format("<html><font color='orange'>ONION Member</font> : %s´Ô</html>", ONION_Info.userFullName));
 			userName.setIcon(null);
 			userName.setText(null);
+			
+			src_en.swing.Information_Panel.user.setText(String.format("<html><font color='orange'>ONION Member</font> : %s´Ô</html>", ONION_Info.userFullName));
+			src_en.swing.Information_Panel.userName.setIcon(null);
+			src_en.swing.Information_Panel.userName.setText(null);
 		}
 	}
 		

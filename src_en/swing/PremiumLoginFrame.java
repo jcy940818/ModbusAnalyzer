@@ -19,9 +19,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
+import common.OnionMember;
 import common.Program_Info;
 import src_en.info.ONION_Info;
-import src_en.info.OnionMember;
 import src_en.main.MoonInspector;
 import src_en.util.Util;
 
@@ -235,9 +235,11 @@ public class PremiumLoginFrame extends JFrame {
 	
 	
 	public void loginSuccess(boolean isOnionMember) {
-		Information_Panel.setVersion(Program_Info.PROGRAM_VERSION + " Premium");						
+		Information_Panel.setVersion(Program_Info.PROGRAM_VERSION + " Premium");
+		src_ko.swing.Information_Panel.setVersion(Program_Info.PROGRAM_VERSION + " Premium");
 		
 		ONION_Info.onionLogin = true;
+		src_ko.info.ONION_Info.onionLogin = true;
 		
 		Font font = new Font("맑은 고딕", Font.BOLD, 22);
 		Font font2 = new Font("맑은 고딕", Font.BOLD, 18);
@@ -257,7 +259,7 @@ public class PremiumLoginFrame extends JFrame {
 				member += "님";
 			}
 			
-			JLabel msg2 = new JLabel(String.format("<html>%s&nbsp;<font color='orange'>Welcome! ONION Member</font> %s%s<br><br></html>",longSeparator ,Util.colorBlue(member) ,longSeparator));
+			JLabel msg2 = new JLabel(String.format("<html>%s&nbsp;<font color='orange'>Welcome! ONION Member</font> %s%s<br><br></html>",longSeparator ,member ,longSeparator));
 			
 			msg2.setFont(font2);
 			Object[] message = { msg, msg2 };
@@ -265,6 +267,7 @@ public class PremiumLoginFrame extends JFrame {
 			JOptionPane.showMessageDialog(null, message, "ModbusAnalyer", JOptionPane.PLAIN_MESSAGE);
 		}else {
 			ONION_Info.userName = "ONION";
+			src_ko.info.ONION_Info.userName = "ONION";
 			
 			JLabel msg = new JLabel(String.format("<html>&nbsp;<font color='orange'><span text-align=center>Modbus Analyzer User authentication completed%s</span></font><br></html>", Util.separator));
 			ImageIcon i = new Util().getIconResource2();
@@ -275,11 +278,13 @@ public class PremiumLoginFrame extends JFrame {
 			JOptionPane.showMessageDialog(null, message, "ModbusAnalyer", JOptionPane.PLAIN_MESSAGE);
 		}
 						
-		activeHiddenMenu();		
+		activeHiddenMenu();
 		super.dispose();
+		
+		src_ko.swing.PremiumLoginFrame.activeHiddenMenu();
 	}
 	
-	public void activeHiddenMenu() {
+	public static void activeHiddenMenu() {
 		MainFrame.activeDatabase(); // 데이터베이스 메뉴 활성화
 		MainFrame.activeUtil(); // 유틸 메뉴 활성화 ( 현재 유틸 기능 미사용 )
 		MainFrame.activeConnection(); // Connection 프리미엄 기능 활성화 (조건식 스캔, 예외 스캔)

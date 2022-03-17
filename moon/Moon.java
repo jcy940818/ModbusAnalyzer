@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 
+import common.OnionMember;
 import src_ko.util.Util;
 
 public class Moon {
@@ -33,6 +34,8 @@ public class Moon {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					OnionMember.init();
+					
 					mainFrame = new JFrame();
 					JPanel actualPanel = new JPanel();
 					

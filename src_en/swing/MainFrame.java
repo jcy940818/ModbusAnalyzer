@@ -10,8 +10,6 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.sql.SQLException;
 
 import javax.swing.JFrame;
@@ -25,13 +23,10 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import src_en.agent.ClientSocket;
 import src_en.analyzer.RX.DataType;
 import src_en.database.StoredProcedure;
 import src_en.info.ONION_Info;
-import src_en.info.OnionMember;
 import src_en.util.Util;
-import src_en.util.XmlGenerator;
 
 public class MainFrame extends JFrame {
 	
@@ -577,7 +572,6 @@ public class MainFrame extends JFrame {
 				
 		
 
-		OnionMember.init();
 		DataType.initTypeMap();
 		DataType.initCustomTypeMap();
 		
