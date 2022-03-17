@@ -12,7 +12,7 @@ import src_ko.util.Util;
 
 public class Moon {
 	
-	public static String currentLanguage = "ko";
+	public static String currentLanguage = "Moon";
 	
 	private static JFrame mainFrame;
 	private static CardLayout cardLayout;
@@ -42,7 +42,7 @@ public class Moon {
 					actualPanel.add(en_panel, Moon.EN);
 					mainFrame.setContentPane(actualPanel);
 					initFrame(mainFrame);
-					
+										
 					showFrame(Moon.KO);
 					
 					// **************** 프레임 제목 업데이트 스레드 *************************************************
@@ -97,13 +97,15 @@ public class Moon {
 		cardLayout.show(mainFrame.getContentPane(), language);
 		
 		if(language.equals(KO)) {			
+			if(currentLanguage.equals(Moon.KO)) return;			
 			currentLanguage = Moon.KO;
-			mainFrame.setJMenuBar(ko_menuBar);		
+			mainFrame.setJMenuBar(ko_menuBar);
 		}else {			
+			if(currentLanguage.equals(Moon.EN)) return;			
 			currentLanguage = Moon.EN;
 			mainFrame.setJMenuBar(en_menuBar);
 		}
-
+		
 		mainFrame.pack();
 	}
 	

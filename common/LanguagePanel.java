@@ -35,6 +35,7 @@ public class LanguagePanel extends JPanel {
 		koreanButton.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if(Moon.currentLanguage.equals(Moon.KO)) return;
 				Moon.showFrame(Moon.KO);
 				koreanButton.setSelected(false);
 				englihButton.setSelected(true);
@@ -52,6 +53,7 @@ public class LanguagePanel extends JPanel {
 		englihButton.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if(Moon.currentLanguage.equals(Moon.EN)) return;
 				Moon.showFrame(Moon.EN);	
 				koreanButton.setSelected(true);
 				englihButton.setSelected(false);
