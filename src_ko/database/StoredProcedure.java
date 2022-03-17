@@ -122,6 +122,8 @@ public class StoredProcedure implements Comparable{
 	}
 	
 	public static void init() {
+		makeDir(MainFrame.getCurrentPath(), "storedProcedure");
+		
 		String storedProcedurePath = makeDir(MainFrame.getCurrentPath(), StoredProcedure.STORED_PROCEDURE);		
 		makeDir(storedProcedurePath, StoredProcedure.COMMON);
 		makeDir(storedProcedurePath, StoredProcedure.SERVERINFO_FACILITY);
