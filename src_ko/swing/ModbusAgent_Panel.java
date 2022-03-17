@@ -56,9 +56,9 @@ public class ModbusAgent_Panel extends JPanel {
 	private static JRadioButton writeCommand_radioButton;
 	
 	// 클라이언트 소켓
-	private Socket socket = ModbusAgent.clientSocket;
-	private static String IP;
-	private static int PORT;	
+	public static Socket socket_ko = ModbusAgent.clientSocket;		
+	public static String IP;
+	public static int PORT;	
 	
 	// information Component
 	JPanel infoPanel; // 클라이언트 소켓이 서버와 연결 된 상태일때만 인포메이션 컴포넌트들을 활성화 시킨다.  
@@ -270,20 +270,28 @@ public class ModbusAgent_Panel extends JPanel {
 				String lastConnectionInfo = ClientSocket.getSimpleConnectedInfo();
 				
 				try {
-					socket = ModbusAgent.clientSocket;
+					socket_ko = ModbusAgent.clientSocket;
+					src_en.swing.ModbusAgent_Panel.socket_en = socket_ko;
 					
-					if( (socket == null || socket.isClosed()) && ClientSocket.getIsFirst()) {						
+					if( (socket_ko == null || socket_ko.isClosed()) && ClientSocket.getIsFirst()) {						
 						String[] connectionInfo = ClientSocket.getConnectionInfo();
 						IP = connectionInfo[0];
 						PORT = Integer.parseInt(connectionInfo[1]);
-					}else if(socket == null) {
+						
+						src_en.swing.ModbusAgent_Panel.IP = IP;
+						src_en.swing.ModbusAgent_Panel.PORT = PORT;
+						
+					}else if(socket_ko == null) {
 						String[] connectionInfo = ClientSocket.getConnectionInfo();
 						IP = connectionInfo[0];
 						PORT = Integer.parseInt(connectionInfo[1]);
+						
+						src_en.swing.ModbusAgent_Panel.IP = IP;
+						src_en.swing.ModbusAgent_Panel.PORT = PORT;
 					}else {
 						// 기존 연결되어있는 소켓일 경우 연결을 끊고 재접속을 시도한다.						
 						// 클라이언트 소켓 : 접속 끊김
-						socket.close();
+						socket_ko.close();						
 						ClientSocket.setState(ClientSocket.NODE_CONDITION_DISCONNECTED);
 					}
 				}catch(IOException exception) {
@@ -291,7 +299,9 @@ public class ModbusAgent_Panel extends JPanel {
 				}
 				
 				try {
-					socket = ClientSocket.getClientSocket(IP, PORT);
+					socket_ko = ClientSocket.getClientSocket(IP, PORT);
+					src_en.swing.ModbusAgent_Panel.socket_en = socket_ko;
+					
 				}catch(Exception exception) {
 					StringBuilder msg = new StringBuilder();
 					msg.append("<font color='red'>접속 실패</font>\n");
@@ -299,14 +309,17 @@ public class ModbusAgent_Panel extends JPanel {
 					Util.showMessage(msg.toString(), JOptionPane.ERROR_MESSAGE);
 				}				
 				
-				if(socket != null || ClientSocket.isCurrentConnected(socket)) {
+				if(socket_ko != null || ClientSocket.isCurrentConnected(socket_ko)) {
 					// 접속 성공 : 컴포넌트 내용들을 모두 초기화한다	
-					ModbusAgent.clientSocket = socket;
+					ModbusAgent.clientSocket = socket_ko;
+					src_en.agent.ModbusAgent.clientSocket = socket_ko;
+					
 					panel_ON();
 					
 					// 마지막 커넥션 정보와 다른 정보로 세션을  생성시 컴포넌트 초기화
 					if(!ClientSocket.getSimpleConnectedInfo().equalsIgnoreCase(lastConnectionInfo)) {
 						componentAllClear();
+						src_en.swing.ModbusAgent_Panel.componentAllClear();
 					}
 					
 					// 사용자가 입력한 IP, port를 클라이언트 소켓의 마지막 연결 성공 정보에 저장					
@@ -444,7 +457,7 @@ public class ModbusAgent_Panel extends JPanel {
 							return;
 						}
 						
-						rx = ModbusAgent.communicate(socket, tx, isRTU, ClientSocket.RESPONSE_TIMEOUT);												
+						rx = ModbusAgent.communicate(socket_ko, tx, isRTU, ClientSocket.RESPONSE_TIMEOUT);												
 						
 						if(rx.isCRCError()) {
 							StringBuilder msg = new StringBuilder();
@@ -508,7 +521,7 @@ public class ModbusAgent_Panel extends JPanel {
 							return;
 						}
 						
-						rx = ModbusAgent.communicate(socket, tx, isRTU, ClientSocket.RESPONSE_TIMEOUT);
+						rx = ModbusAgent.communicate(socket_ko, tx, isRTU, ClientSocket.RESPONSE_TIMEOUT);
 												
 						// TX와 RX 정보 비교 (트랜잭션ID, 장비번호, 기능코드)
 						StringBuilder sb = ExceptionProvider.CompareTxRx(tx, rx);
@@ -919,7 +932,7 @@ public class ModbusAgent_Panel extends JPanel {
 						tx = initReadTX(isRTU);
 						tx.setAgentType("ModbusAgent");
 						
-						rx = ModbusAgent.communicate(socket, tx, isRTU, ClientSocket.RESPONSE_TIMEOUT);
+						rx = ModbusAgent.communicate(socket_ko, tx, isRTU, ClientSocket.RESPONSE_TIMEOUT);
 						
 						if(rx.isRTU() && rx.isCRCError()) {
 							StringBuilder msg = new StringBuilder();
@@ -983,7 +996,7 @@ public class ModbusAgent_Panel extends JPanel {
 						tx = initWriteTX(isRTU);			
 						tx.setAgentType("ModbusAgent");
 						
-						rx = ModbusAgent.communicate(socket, tx, isRTU, ClientSocket.RESPONSE_TIMEOUT);
+						rx = ModbusAgent.communicate(socket_ko, tx, isRTU, ClientSocket.RESPONSE_TIMEOUT);
 						
 						// TX와 RX 정보 비교 (트랜잭션ID, 장비번호, 기능코드)
 						StringBuilder sb = ExceptionProvider.CompareTxRx(tx, rx);
@@ -1361,7 +1374,7 @@ public class ModbusAgent_Panel extends JPanel {
 						}
 						
 						// ModbusAgent <=> ExceptionScan : Socket 동기화
-						socket = ModbusAgent.clientSocket;
+						socket_ko = ModbusAgent.clientSocket;
 						
 					} catch (InterruptedException e) {
 						return;

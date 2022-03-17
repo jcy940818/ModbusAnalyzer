@@ -3,12 +3,10 @@ package src_ko.agent;
 import java.awt.Font;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import src_ko.swing.ModbusAgent_Panel;
 import src_ko.util.Util;
@@ -20,12 +18,12 @@ public class ClientSocket extends Socket {
 	private static Socket clientSocket = null; 
 	
 	// 클라이언트 소켓 : 연결 정보
-	private static boolean isFirst = true;
-	private static String ip = "0.0.0.0";
-	private static int port = 0;
+	public static boolean isFirst = true;
+	public static String ip = "0.0.0.0";
+	public static int port = 0;
 		
 	// 클라이언트 소켓 : 마지막 연결 정보	
-	private static boolean hasLastConnectionInfo = false;
+	public static boolean hasLastConnectionInfo = false;
 	
 	// 클라이언트 소켓 : 응답 타임아웃 관련
 	private static int CURRENT_TIMEOUT_COUNT = 0; // 현재 타임아웃 카운트
@@ -134,11 +132,14 @@ public class ClientSocket extends Socket {
 			
 			// 클라이언트 소켓 : 최소 한번 이상의 통신 연결이 이루어짐
 			ClientSocket.isFirst = false;
+			src_en.agent.ClientSocket.isFirst = false;
 			
 			// 마지막으로 접속한 연결 정보를 ClientSocket의 static 필드에 저장한다.
 			ClientSocket.ip = clientSocket.getInetAddress().toString().split("/")[1];
 			ClientSocket.port = clientSocket.getPort();
-							
+			src_en.agent.ClientSocket.ip = ClientSocket.ip;		
+			src_en.agent.ClientSocket.port = ClientSocket.port;
+			
 			// 통신 접속 성공 메시지
 			StringBuilder msg = new StringBuilder();
 			msg.append(Util.colorGreen("접속 성공") + "\n");
@@ -179,6 +180,7 @@ public class ClientSocket extends Socket {
 	// 클라이언트 소켓 : 상태 저장
 	public static void setState(int state) {
 		ClientSocket.state = state;
+		src_en.agent.ClientSocket.state = state;
 	}
 	
 	// 클라이언트 소켓 : 현재 상태 반환
@@ -276,10 +278,11 @@ public class ClientSocket extends Socket {
 		} else {
 			return null;
 		}
-	}	
+	}
 	
 	public static void setHasLastConnectionInfo(boolean has) {
 		ClientSocket.hasLastConnectionInfo = has;
+		src_en.agent.ClientSocket.hasLastConnectionInfo = has;
 	}
 	
 }// ClientSocket
