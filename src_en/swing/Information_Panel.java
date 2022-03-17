@@ -191,7 +191,7 @@ public class Information_Panel extends JPanel {
 				if(ONION_Info.userFullName.contains("정창용")) {
 					
 					// 관리자 로그인 인증 완료후 수행되는 로직					
-					Util.showMessage(String.format("<font color='blue'>관리자 인증 완료</font>\n %s님 관리자 인증 완료되었습니다%s\n", ONION_Info.userFullName, Util.separator), JOptionPane.INFORMATION_MESSAGE);
+					Util.showMessage(String.format("<font color='blue'>관리자 인증 완료</font>\n %s 관리자 인증 완료되었습니다%s\n", ONION_Info.userFullName, Util.separator), JOptionPane.INFORMATION_MESSAGE);
 										
 				}else {
 					Util.showMessage(String.format("<font color='blue'>User authentication completed%s</font>\nUser Name : %s%s\n", Util.separator, ONION_Info.userFullName, Util.separator), JOptionPane.INFORMATION_MESSAGE);
