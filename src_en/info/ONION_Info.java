@@ -174,6 +174,11 @@ public class ONION_Info {
 		ONION_Info.userFullName = member.getFullName();
 		src_ko.info.ONION_Info.userFullName = ONION_Info.userFullName;
 		
+		if(!member.getTeam().contains("½Ì°¡Æú")) {
+			ONION_Info.userFullName += "´Ô";
+			src_ko.info.ONION_Info.userFullName += "´Ô";
+		}
+		
 		return ONION_Info.userName;
 	}
 	

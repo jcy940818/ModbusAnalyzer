@@ -54,7 +54,7 @@ public class Information_Panel extends JPanel {
 		add(actualPanel, BorderLayout.CENTER);
 		actualPanel.setLayout(null);
 		
-		JLabel programInfo = new JLabel("Program Information (ko)");
+		JLabel programInfo = new JLabel("Program Information");
 		programInfo.setForeground(Color.BLACK);
 		programInfo.setIcon(new Util().getSubLogoResource());
 		programInfo.setHorizontalAlignment(SwingConstants.LEFT);
