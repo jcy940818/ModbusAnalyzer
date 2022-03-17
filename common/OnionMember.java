@@ -52,7 +52,7 @@ public class OnionMember {
 		new OnionMember("개발팀", "안병헌", "Jackson");
 		new OnionMember("개발팀", "전성민", "Stephen");
 		new OnionMember("개발팀", "김강연", "Timothy");
-		new OnionMember("개발팀", "정창용", "Moon");
+		new OnionMember("개발팀", "정창용", "Moon"); // Moon
 		new OnionMember("개발팀", "이강호", "Evan");
 		new OnionMember("개발팀", "신용한", "Hans");
 		new OnionMember("개발팀", "최형준", "Elon");
