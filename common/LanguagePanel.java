@@ -30,7 +30,7 @@ public class LanguagePanel extends JPanel {
 		koreanButton.setFocusPainted(false);
 		koreanButton.setBackground(Color.WHITE);
 		koreanButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
-		koreanButton.setForeground(Color.DARK_GRAY);
+		koreanButton.setForeground(Color.LIGHT_GRAY);
 		koreanButton.setBounds(0, 0, 100, 55);		
 		koreanButton.addActionListener(new ActionListener() {			
 			@Override
@@ -48,7 +48,7 @@ public class LanguagePanel extends JPanel {
 		englihButton.setFocusPainted(false);
 		englihButton.setBackground(Color.WHITE);
 		englihButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
-		englihButton.setForeground(Color.DARK_GRAY);
+		englihButton.setForeground(Color.LIGHT_GRAY);
 		englihButton.setBounds(105, 0, 110, 55);
 		englihButton.addActionListener(new ActionListener() {			
 			@Override
