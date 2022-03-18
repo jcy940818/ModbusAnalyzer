@@ -434,11 +434,11 @@ public class XmlGenerator {
         
         
         s.append("\t\t<query><![CDATA[");
-        s.append("\r\n-- ******************** Query Start ********************\r\n");
+        s.append("\r\n-- **************************************** Query Start ****************************************\r\n");
         s.append("\r\n");
         s.append(sp.getQuery());
         s.append("\r\n");
-        s.append("\r\n-- ******************** Query End ********************\r\n");
+        s.append("\r\n-- **************************************** Query End ****************************************\r\n");
         s.append("\t\t]]></query>\r\n");
         
         
