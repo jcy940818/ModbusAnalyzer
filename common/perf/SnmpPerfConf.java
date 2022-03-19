@@ -1,6 +1,7 @@
 package common.perf;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -24,9 +25,9 @@ public class SnmpPerfConf {
     // 파일을 읽은 시각
     private long loadTime = System.currentTimeMillis();
 
-    public SnmpPerfConf(String filename) throws ConfigurationException {
+    public SnmpPerfConf(String filename, String encoding) throws ConfigurationException, FileNotFoundException {
         init(filename);
-        XMLConfiguration config = XmlUtils.createXMLConfiguration(filename);
+        XMLConfiguration config = XmlUtils.createXMLConfiguration(filename, encoding);
         
         mibDir = doc.getElementsByTagName("mibdir").item(0).getFirstChild().getNodeValue();
         NodeList perfNodes = doc.getElementsByTagName("perfitem");
@@ -184,7 +185,7 @@ public class SnmpPerfConf {
 	
 	public static void main(String[] args) {
         try {
-            SnmpPerfConf conf = new SnmpPerfConf("C:\\OnionSoftware\\midknight\\conf\\ko\\fms\\ups_rfc1628.xml");
+            SnmpPerfConf conf = new SnmpPerfConf("C:\\OnionSoftware\\midknight\\conf\\ko\\fms\\ups_rfc1628.xml", "EUC-KR");
             SnmpPerfItem perfItems[] = conf.getPerfItems();
             for (int i = 0; i < perfItems.length; i++) {
                 System.out.println("["+(i+1)+"] "+perfItems[i].toString());

@@ -1,5 +1,6 @@
 package common.perf;
 
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -14,8 +15,8 @@ public class FmsPerfConf extends XmlPerfConfiguration {
     /** 파일을 읽은 시각 */
     private long loadTime = System.currentTimeMillis();
 
-    public FmsPerfConf(String filename) throws ConfigurationException {
-        config = XmlUtils.createXMLConfiguration(filename);
+    public FmsPerfConf(String filename, String encoding) throws ConfigurationException, FileNotFoundException {
+        config = XmlUtils.createXMLConfiguration(filename, encoding);
         
         doc = config.getDocument();
         NodeList perfNodes = doc.getElementsByTagName("perfitem");
@@ -136,7 +137,7 @@ public class FmsPerfConf extends XmlPerfConfiguration {
 
     public static void main(String[] args) {
         try {
-            FmsPerfConf conf = new FmsPerfConf("C:\\OnionSoftware\\midknight\\conf\\ko\\fms\\DY_FDL_V4.xml");
+            FmsPerfConf conf = new FmsPerfConf("C:\\OnionSoftware\\midknight\\conf\\ko\\fms\\AR56_PA.xml", "EUC-KR");
             FmsPerfItem perfItems[] = conf.getPerfItems();
             for (int i = 0; i < perfItems.length; i++) {
                 System.out.println("["+(i+1)+"] "+perfItems[i].toString());
