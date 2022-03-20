@@ -6,9 +6,11 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -19,11 +21,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import src_en.info.ONION_Info;
-import src_en.main.MoonInspector;
+import src_en.info.Protocol;
 import src_en.util.FileUtil;
 import src_en.util.Util;
 
-import javax.swing.JCheckBox;
 
 public class OnionDirCheck_Panel extends JPanel {	
 	
@@ -204,8 +205,12 @@ public class OnionDirCheck_Panel extends JPanel {
 		xmlEditButton.setIcon(new Util().getXMLImage());
 		xmlEditButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				FileUtil.download(isProject);
 				
+				ArrayList<Protocol> list =  FileUtil.getProtocolList(isProject);
+				
+				for(Protocol p : list) {
+					System.out.println(p);
+				}
 				
 			}
 		});

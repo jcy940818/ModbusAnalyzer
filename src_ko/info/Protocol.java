@@ -509,6 +509,7 @@ public class Protocol implements Comparable {
 	}
 	
 	
+	
 	// versionInfo 버전의 fmsProtocol, fmsMib 프로토콜 리스트 다운로드
 	public static void download_FmsProtocol(File versionInfoJava, File fmsProtocolJava, File fmsMibJava, File enumKoProperty, File enumEnProperty, String path) {
 		try {			
@@ -538,6 +539,49 @@ public class Protocol implements Comparable {
 			
 		}catch(Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	
+	// MK119 4.2 이하 프로토콜 리스트 리턴
+	public static ArrayList<Protocol> getProtocolList_42(File systemConfigJava) {
+		try {			
+			// SystemConfig 파싱
+			ArrayList<Protocol> protocolList = getProtocolList(parseSystemConfig(FileUtil.getFileContent(systemConfigJava, "euc-kr")));
+			Collections.sort(protocolList);
+			return protocolList;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+		
+	
+	// MK119 4.5 이상 프로토콜 리스트 리턴
+	public static ArrayList<Protocol> getProtocolList_45(File fmsProtocolJava, File fmsMibJava, File enumKoProperty, File enumEnProperty) {
+		try {						
+			String fmsProtocol = FileUtil.getFileContent(fmsProtocolJava, "euc-kr");
+			String fmsMib = FileUtil.getFileContent(fmsMibJava, "euc-kr");
+			String enumKo = FileUtil.convertString(FileUtil.getFileContent(enumKoProperty, "euc-kr"));
+			String enumEn = FileUtil.convertString(FileUtil.getFileContent(enumEnProperty, "euc-kr"));
+
+			// FmsProtocol 파싱
+			ArrayList<Protocol> fmsProtocolList = getFmsProtocolList(fmsProtocol, enumKo, enumEn);
+			
+			// FmsMib 파싱
+			ArrayList<Protocol> fmsMibList = getFmsMibList(fmsMib, enumKo, enumEn);
+
+			Collections.sort(fmsProtocolList);
+			Collections.sort(fmsMibList);
+			
+			for(int i = 0; i < fmsMibList.size(); i++) {
+				fmsProtocolList.add(fmsMibList.get(i));
+			}
+			
+			return fmsProtocolList;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 	

@@ -46,6 +46,31 @@ public class FileUtil {
 	static File fmsProtocolClone = null;
 	static File fmsMibClone = null;
 	
+	public static ArrayList<Protocol> getProtocolList(boolean isProject) {			
+		ArrayList<Protocol> protocolList = null;
+		
+		try {
+			init(isProject);
+			
+			if(getMK119Version(versionInfoClone) <= 4.2) {
+				decompileClass(decompiler, systemConfigClone);
+				protocolList = Protocol.getProtocolList_42(systemConfigJava);
+				deleteFiles(versionInfoJava, systemConfigJava);
+			}else {
+				decompileClass(decompiler, fmsProtocolClone);
+				decompileClass(decompiler, fmsMibClone);
+				protocolList = Protocol.getProtocolList_45(fmsProtocolJava, fmsMibJava, enumKo, enumEn);
+				deleteFiles(versionInfoJava, fmsProtocolJava, fmsMibJava);
+			}
+
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			deleteCloneFile();
+			return protocolList;
+		}
+	}
+	
 	public static void download(boolean isProject) {		
 		
 		try {
