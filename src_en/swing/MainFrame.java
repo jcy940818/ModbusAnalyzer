@@ -52,24 +52,24 @@ public class MainFrame extends JFrame {
 	/**
 	 * Launch the application. 
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MainFrame frame = new MainFrame();
-					contentPane.setPreferredSize(new Dimension(1074,628));
-					frame.pack();
-					frame.setVisible(true);
-					
-					// 테스트 코드 : 사용자 인증 패스
-//					 new PremiumLoginFrame(true).loginSuccess(true);
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					MainFrame frame = new MainFrame();
+//					contentPane.setPreferredSize(new Dimension(1074,628));
+//					frame.pack();
+//					frame.setVisible(true);
+//					
+//					// 테스트 코드 : 사용자 인증 패스
+////					 new PremiumLoginFrame(true).loginSuccess(true);
+//					
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 	
 	/**
 	 * Create the frame.
@@ -219,7 +219,7 @@ public class MainFrame extends JFrame {
 		
 		
 		// Util 메뉴 : 프로토콜 리스트 다운로드
-		JMenuItem protocolListDownload = new JMenuItem("Protocol : MK119 Protocol List Download");
+		JMenuItem protocolListDownload = new JMenuItem("Protocol Download : MK119 Protocol List Download");
 		protocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
 		protocolListDownload.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
 		utilMenu.add(protocolListDownload);

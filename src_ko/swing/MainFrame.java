@@ -52,24 +52,24 @@ public class MainFrame extends JFrame {
 	/**
 	 * Launch the application. 
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MainFrame frame = new MainFrame();
-					contentPane.setPreferredSize(new Dimension(1074,628));
-					frame.pack();
-					frame.setVisible(true);
-					
-					// 테스트 코드 : 사용자 인증 패스
-//					 new PremiumLoginFrame(true).loginSuccess(true);
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					MainFrame frame = new MainFrame();
+//					contentPane.setPreferredSize(new Dimension(1074,628));
+//					frame.pack();
+//					frame.setVisible(true);
+//					
+//					// 테스트 코드 : 사용자 인증 패스
+////					 new PremiumLoginFrame(true).loginSuccess(true);
+//					
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 	
 	/**
 	 * Create the frame.
@@ -219,11 +219,20 @@ public class MainFrame extends JFrame {
 		
 		
 		// Util 메뉴 : 프로토콜 리스트 다운로드
-		JMenuItem protocolListDownload = new JMenuItem("Protocol : MK119 프로토콜 리스트 다운로드");
+		JMenuItem protocolListDownload = new JMenuItem("Protocol Download : MK119 프로토콜 리스트 다운로드");
 		protocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
 		protocolListDownload.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
 		utilMenu.add(protocolListDownload);
 		utilMenu.add(new JSeparator());
+		
+		
+		// Util 메뉴 : 프로토콜 리스트 다운로드
+		JMenuItem xmlEditor = new JMenuItem("Protocol XML Editor : 성능 XML 편집기");
+		xmlEditor.setHorizontalAlignment(SwingConstants.LEFT);
+		xmlEditor.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
+		utilMenu.add(xmlEditor);
+		utilMenu.add(new JSeparator());
+		
 		
 		
 		// Util 메뉴 : XML Generator 메뉴
@@ -557,6 +566,17 @@ public class MainFrame extends JFrame {
 			}
 		});
 		
+		/** OnionDirCheck Panel ***********************************/
+		OnionDirCheck_Panel onionDirCheck_Panel = new OnionDirCheck_Panel();
+		actualPanel.add(onionDirCheck_Panel, "onionDirCheck_Panel");
+		xmlEditor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// OnionSoftware 디렉토리 경로 프로토콜 다운로드				
+				showOnionDirCheck(false);				
+			}
+		});
+		
+		
 		
 		/** ProtocolDownload Panel : Moon *******************************/				
 		moonProtocolListDownload.addActionListener(new ActionListener() {
@@ -623,6 +643,15 @@ public class MainFrame extends JFrame {
 		ProtocolDownloadPanel.changeSatate();
 		cardLayout.show(actualPanel, "protocolDownloadPanel");
 	}
+	
+	public static void showOnionDirCheck(boolean isProject) {
+		// isProject : MK119 프로젝트의 XML 편집
+		OnionDirCheck_Panel.isProject = isProject;
+		OnionDirCheck_Panel.isProject_checkBox.setVisible(isProject);
+		OnionDirCheck_Panel.changeSatate();
+		cardLayout.show(actualPanel, "onionDirCheck_Panel");
+	}
+	
 	
 	public static void showMK119Login(String agentType) {
 		try {

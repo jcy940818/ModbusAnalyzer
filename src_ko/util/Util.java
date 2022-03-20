@@ -165,6 +165,13 @@ public class Util {
 		return icon;
 	}
 	
+	public ImageIcon getXMLImage() {
+		String xmlImage = "xml.png";
+		String ImageFile = xmlImage;
+		ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource(ImageFile));
+		return icon;
+	}
+	
 	public static String getCurrentPath(Class aclass) throws Exception {				
 		CodeSource codeSource = aclass.getProtectionDomain().getCodeSource();
 
