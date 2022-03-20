@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -223,6 +221,13 @@ public class MainFrame extends JFrame {
 		protocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
 		protocolListDownload.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
 		utilMenu.add(protocolListDownload);
+		utilMenu.add(new JSeparator());
+		
+		// Util 메뉴 : XML 편집기
+		JMenuItem xmlEditor = new JMenuItem("Protocol XML Editor : Edit Watch Point XML");
+		xmlEditor.setHorizontalAlignment(SwingConstants.LEFT);
+		xmlEditor.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
+		utilMenu.add(xmlEditor);
 		utilMenu.add(new JSeparator());
 		
 		
@@ -551,6 +556,16 @@ public class MainFrame extends JFrame {
 			}
 		});
 		
+		/** OnionDirCheck Panel ***********************************/
+		OnionDirCheck_Panel onionDirCheck_Panel = new OnionDirCheck_Panel();
+		actualPanel.add(onionDirCheck_Panel, "onionDirCheck_Panel");
+		xmlEditor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// OnionSoftware 디렉토리 경로 프로토콜 다운로드				
+				showOnionDirCheck(false);				
+			}
+		});
+		
 		
 		/** ProtocolDownload Panel : Moon *******************************/				
 		moonProtocolListDownload.addActionListener(new ActionListener() {
@@ -617,6 +632,14 @@ public class MainFrame extends JFrame {
 		ProtocolDownloadPanel.isProject_checkBox.setVisible(isProject);
 		ProtocolDownloadPanel.changeSatate();
 		cardLayout.show(actualPanel, "protocolDownloadPanel");
+	}
+	
+	public static void showOnionDirCheck(boolean isProject) {
+		// isProject : MK119 프로젝트의 XML 편집
+		OnionDirCheck_Panel.isProject = isProject;
+		OnionDirCheck_Panel.isProject_checkBox.setVisible(isProject);
+		OnionDirCheck_Panel.changeSatate();
+		cardLayout.show(actualPanel, "onionDirCheck_Panel");
 	}
 	
 	public static void showMK119Login(String agentType) {

@@ -165,9 +165,9 @@ public class Util {
 		return icon;
 	}
 	
-	public ImageIcon getSingaporeImage() {
-		String singapore = "singapore.png";
-		String ImageFile = singapore;
+	public ImageIcon getXMLImage() {
+		String xmlImage = "xml.png";
+		String ImageFile = xmlImage;
 		ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource(ImageFile));
 		return icon;
 	}

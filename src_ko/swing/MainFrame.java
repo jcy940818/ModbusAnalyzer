@@ -224,9 +224,8 @@ public class MainFrame extends JFrame {
 		protocolListDownload.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
 		utilMenu.add(protocolListDownload);
 		utilMenu.add(new JSeparator());
-		
-		
-		// Util 메뉴 : 프로토콜 리스트 다운로드
+				
+		// Util 메뉴 : XML 편집기
 		JMenuItem xmlEditor = new JMenuItem("Protocol XML Editor : 성능 XML 편집기");
 		xmlEditor.setHorizontalAlignment(SwingConstants.LEFT);
 		xmlEditor.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		

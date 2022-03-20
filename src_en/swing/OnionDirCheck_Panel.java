@@ -1,4 +1,4 @@
-package src_ko.swing;
+package src_en.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -12,18 +12,18 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import src_ko.info.ONION_Info;
-import src_ko.main.MoonInspector;
-import src_ko.util.FileUtil;
-import src_ko.util.Util;
+import src_en.info.ONION_Info;
+import src_en.main.MoonInspector;
+import src_en.util.FileUtil;
+import src_en.util.Util;
 
 import javax.swing.JCheckBox;
-import javax.swing.JRadioButton;
 
 public class OnionDirCheck_Panel extends JPanel {	
 	
@@ -91,7 +91,7 @@ public class OnionDirCheck_Panel extends JPanel {
 		});
 		actualPanel.add(onionDirPath_TextField);
 		
-		checkDirPathButton = new JButton("확 인");
+		checkDirPathButton = new JButton("Check");
 		checkDirPathButton.setForeground(Color.BLACK);
 		checkDirPathButton.setBackground(Color.WHITE);
 		checkDirPathButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
@@ -135,14 +135,14 @@ public class OnionDirCheck_Panel extends JPanel {
 		});
 		actualPanel.add(checkDirPathButton);
 		
-		JButton searchButton = new JButton("탐 색");
+		JButton searchButton = new JButton("Path");
 		searchButton.setForeground(Color.BLACK);
 		searchButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		searchButton.setFocusPainted(false);
 		searchButton.setBackground(Color.WHITE);
 		searchButton.setBounds(953, 140, 85, 41);
 		searchButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {				
 				String path = Util.getFilePath();
 				if(path != null) {
 					onionDirPath_TextField.setText(path);					
@@ -194,13 +194,13 @@ public class OnionDirCheck_Panel extends JPanel {
 		mk119BuildVersion.setBounds(437, 321, 601, 41);
 		actualPanel.add(mk119BuildVersion);
 		
-		xmlEditButton = new JButton(" 성능 XML 보기 및 편집");
+		xmlEditButton = new JButton(" Viewing and Editing XML");
 		xmlEditButton.setForeground(Color.BLACK);
 		xmlEditButton.setFocusPainted(false);
 		xmlEditButton.setBackground(Color.WHITE);
 		xmlEditButton.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		xmlEditButton.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlEditButton.setBounds(437, 419, 337, 69);
+		xmlEditButton.setBounds(437, 419, 360, 69);
 		xmlEditButton.setIcon(new Util().getXMLImage());
 		xmlEditButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -211,13 +211,13 @@ public class OnionDirCheck_Panel extends JPanel {
 		});
 		actualPanel.add(xmlEditButton);
 		
-		goDirButton = new JButton(" 성능 XML 경로 열기");
+		goDirButton = new JButton(" Watch Point XML path");
 		goDirButton.setForeground(Color.BLACK);
 		goDirButton.setFocusPainted(false);
 		goDirButton.setBackground(Color.WHITE);
 		goDirButton.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		goDirButton.setHorizontalAlignment(SwingConstants.LEFT);
-		goDirButton.setBounds(437, 505, 337, 69);
+		goDirButton.setBounds(437, 505, 360, 69);
 		goDirButton.setIcon(new Util().getFolder2Image());
 		goDirButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -230,7 +230,7 @@ public class OnionDirCheck_Panel extends JPanel {
 				if(!xmlDir.exists()) {
 					StringBuilder sb = new StringBuilder();
 					sb.append(String.format("%s\n", Util.colorRed("Can not found XML Directory Path")));
-					sb.append(String.format("아래의 경로에서 XML 디렉토리를 찾을 수 없습니다%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("XML directory not found in the following path%s%s\n\n", Util.separator, Util.separator));
 					sb.append(String.format("Path : %s%s%s\n", 
 							(path + "\\midknight\\conf\\" + Util.colorBlue(language) + "\\fms").replace("\\", Util.colorRed("\\")),
 							Util.separator,
@@ -251,7 +251,6 @@ public class OnionDirCheck_Panel extends JPanel {
 		actualPanel.add(onionLogo);
 		
 		isProject_checkBox = new JCheckBox(" MK119 Project");
-		isProject_checkBox.setForeground(Color.BLACK);
 		isProject_checkBox.setSelected(true);
 		isProject_checkBox.setFocusPainted(false);
 		isProject_checkBox.setBackground(Color.WHITE);
@@ -280,9 +279,8 @@ public class OnionDirCheck_Panel extends JPanel {
 		ko_button.setFocusPainted(false);
 		ko_button.setBackground(Color.WHITE);
 		ko_button.setFont(new Font("맑은 고딕", Font.BOLD, 20));
-		ko_button.setForeground(new Color(0, 128, 0));
-		ko_button.setBounds(437, 375, 60, 30);
-		ko_button.setSelected(true);
+		ko_button.setForeground(Color.LIGHT_GRAY);
+		ko_button.setBounds(437, 375, 60, 30);		
 		ko_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JRadioButton button = (JRadioButton)e.getSource();				
@@ -306,10 +304,11 @@ public class OnionDirCheck_Panel extends JPanel {
 		
 		en_button = new JRadioButton("en");
 		en_button.setFocusPainted(false);
-		en_button.setForeground(Color.LIGHT_GRAY);
+		en_button.setForeground(new Color(0, 128, 0));
 		en_button.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		en_button.setBackground(Color.WHITE);
 		en_button.setBounds(501, 375, 60, 30);
+		en_button.setSelected(true);
 		en_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JRadioButton button = (JRadioButton)e.getSource();				
@@ -354,7 +353,7 @@ public class OnionDirCheck_Panel extends JPanel {
 			mk119Icon2.setVisible(true);
 			onionDirPathLabel.setText("MK119 Project Path");
 			setPath();
-			msgLabel.setText(" MK119 프로젝트 디렉토리 경로상에 공백(\" \") 문자가 포함되면 안됩니다");
+			msgLabel.setText(" The MK119 project directory path should not contain spaces (\" \" characters)");
 			showComponent(false);
 		}else {
 			// OnionSoftware 디렉토리 프로토콜 다운로드
@@ -362,7 +361,7 @@ public class OnionDirCheck_Panel extends JPanel {
 			mk119Icon2.setVisible(false);
 			onionDirPathLabel.setText("OnionSoftware Path");			
 			setPath();
-			msgLabel.setText(" OnionSoftware 디렉토리 경로상에 공백(\" \") 문자가 포함되면 안됩니다");
+			msgLabel.setText(" The OnionSoftware directory path should not contain spaces (\" \" characters)");
 			showComponent(false);
 		}
 	}
@@ -409,6 +408,7 @@ public class OnionDirCheck_Panel extends JPanel {
 		mk119BuildVersion.setVisible(show);
 		xmlEditButton.setVisible(show);
 		goDirButton.setVisible(show);
+		
 		ko_button.setVisible(show);
 		en_button.setVisible(show);
 		xmlDirPath.setVisible(show);
