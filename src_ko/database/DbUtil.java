@@ -822,7 +822,7 @@ public class DbUtil {
 		public static String getFacilityType(int facilityType) {
 			switch(facilityType) {
 				case 1 : return "UPS";
-				case 2 : return "CRAC ( 항온항습기 )";
+				case 2 : return "CRAC";
 				case 3 : return "하론소화기";
 				case 4 : return "정류기";
 				case 5 : return "인버터";
@@ -898,7 +898,7 @@ public class DbUtil {
 				case "FacilityType.GENERATOR" : return "발전기";
 				case "FacilityType.HARON" : return "하론소화기";
 				case "FacilityType.HUMIDIFIER" : return "가습기";
-				case "FacilityType.HVAC" : return "CRAC ( 항온항습기 )";
+				case "FacilityType.HVAC" : return "CRAC";
 				case "FacilityType.IBS_EQUIPMENT" : return "IBS 설비";
 				case "FacilityType.INVERTER" : return "인버터";
 				case "FacilityType.LEAKDETECTION" : return "누수감지기";
