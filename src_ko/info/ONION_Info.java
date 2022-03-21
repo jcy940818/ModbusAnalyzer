@@ -45,6 +45,7 @@ public class ONION_Info {
 	// OnionSoftware Directory
 	private static String onionDirPath = null; 	
 	private static String projectDirPath = null;	
+	private static double MK119Version = 0;
 	
 	public static boolean onionLogin = false;
 	 
@@ -176,5 +177,14 @@ public class ONION_Info {
 		
 		return ONION_Info.userName;
 	}
+
+	public static double getMK119Version() {
+		return MK119Version;
+	}
+
+	public static void setMK119Version(double mK119Version) {
+		MK119Version = mK119Version;
+	}
+
 	
 }

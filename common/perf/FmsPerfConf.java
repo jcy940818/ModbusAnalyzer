@@ -137,7 +137,7 @@ public class FmsPerfConf extends XmlPerfConfiguration {
 
     public static void main(String[] args) {
         try {
-            FmsPerfConf conf = new FmsPerfConf("C:\\OnionSoftware\\midknight\\conf\\ko\\fms\\AR56_PA.xml", "EUC-KR");
+            FmsPerfConf conf = new FmsPerfConf("C:\\4.2\\midknight\\conf\\ko\\fms\\DY_FDL_V4.xml", "EUC-KR");
             FmsPerfItem perfItems[] = conf.getPerfItems();
             for (int i = 0; i < perfItems.length; i++) {
                 System.out.println("["+(i+1)+"] "+perfItems[i].toString());

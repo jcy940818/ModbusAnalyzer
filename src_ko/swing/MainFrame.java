@@ -4,13 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -26,6 +25,7 @@ import javax.swing.border.LineBorder;
 import src_ko.analyzer.RX.DataType;
 import src_ko.database.StoredProcedure;
 import src_ko.info.ONION_Info;
+import src_ko.info.Protocol;
 import src_ko.util.Util;
 
 public class MainFrame extends JFrame {
@@ -575,6 +575,10 @@ public class MainFrame extends JFrame {
 			}
 		});
 		
+		/** OnionDirCheck Panel ***********************************/
+		XmlEditor_Panel xmlEditor_Panel = new XmlEditor_Panel();
+		actualPanel.add(xmlEditor_Panel, "xmlEditor_Panel");
+		
 		
 		
 		/** ProtocolDownload Panel : Moon *******************************/				
@@ -651,6 +655,11 @@ public class MainFrame extends JFrame {
 		cardLayout.show(actualPanel, "onionDirCheck_Panel");
 	}
 	
+	public static void showXmlEditor(ArrayList<Protocol> protocols) {
+		XmlEditor_Panel.protocols = protocols;
+		XmlEditor_Panel.setFacilityComboBox("COMMON", "Àü Ã¼", protocols, true);
+		cardLayout.show(actualPanel, "xmlEditor_Panel");
+	}
 	
 	public static void showMK119Login(String agentType) {
 		try {

@@ -123,6 +123,7 @@ public class OnionDirCheck_Panel extends JPanel {
 						}
 						
 						mk119BuildVersion.setText(version);
+						ONION_Info.setMK119Version(Double.parseDouble(version.split(" ")[1]));
 						showComponent(true);
 					}else {
 						showComponent(false);
@@ -205,11 +206,7 @@ public class OnionDirCheck_Panel extends JPanel {
 		xmlEditButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				ArrayList<Protocol> list =  FileUtil.getProtocolList(isProject);
-				
-				for(Protocol p : list) {
-					System.out.println(p);
-				}
+				MainFrame.showXmlEditor(FileUtil.getProtocolList(isProject));
 				
 			}
 		});
@@ -344,7 +341,7 @@ public class OnionDirCheck_Panel extends JPanel {
 		xmlDirPath.setForeground(Color.BLACK);
 		xmlDirPath.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
 		xmlDirPath.setBounds(437, 578, 601, 22);
-		actualPanel.add(xmlDirPath);
+//		actualPanel.add(xmlDirPath);
 		
 		// 컴포넌트는 기본 설정으로 안보임
 		showComponent(false);
