@@ -578,6 +578,12 @@ public class Protocol implements Comparable {
 				fmsProtocolList.add(fmsMibList.get(i));
 			}
 			
+			for(int i =0; i < fmsProtocolList.size(); i++) {
+				Protocol p = fmsProtocolList.get(i);
+				String facType = DbUtil.getFacilityType(p.getFacType());
+				p.setFacType(facType);		
+			}
+			
 			return fmsProtocolList;
 		}catch(Exception e) {
 			e.printStackTrace();
