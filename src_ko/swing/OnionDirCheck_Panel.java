@@ -206,7 +206,25 @@ public class OnionDirCheck_Panel extends JPanel {
 		xmlEditButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				MainFrame.showXmlEditor(FileUtil.getProtocolList(isProject));
+				String path = ONION_Info.getOnionDirPath();
+				String language = (ko_button.isSelected()) ? "ko" : "en";				
+				String xmlpath = path + "\\midknight\\conf\\" + language + "\\fms";
+				
+				File xmlDir = new File(xmlpath);
+				
+				if(!xmlDir.exists()) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(String.format("%s\n", Util.colorRed("Can not found XML Directory Path")));
+					sb.append(String.format("아래의 경로에서 XML 디렉토리를 찾을 수 없습니다%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("Path : %s%s%s\n", 
+							(path + "\\midknight\\conf\\" + Util.colorBlue(language) + "\\fms").replace("\\", Util.colorRed("\\")),
+							Util.separator,
+							Util.separator));
+					
+					Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+				}else {
+					MainFrame.showXmlEditor(xmlDir, FileUtil.getProtocolList(isProject));	
+				}
 				
 			}
 		});

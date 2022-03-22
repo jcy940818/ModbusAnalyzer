@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -655,9 +656,11 @@ public class MainFrame extends JFrame {
 		cardLayout.show(actualPanel, "onionDirCheck_Panel");
 	}
 	
-	public static void showXmlEditor(ArrayList<Protocol> protocols) {
+	public static void showXmlEditor(File xmlDir, ArrayList<Protocol> protocols) {
+		XmlEditor_Panel.xmlDir = xmlDir;
 		XmlEditor_Panel.protocols = protocols;
-		XmlEditor_Panel.setFacilityComboBox("COMMON", "전 체", protocols, true);
+		XmlEditor_Panel.setFacilityComboBox(protocols, true);
+		XmlEditor_Panel.setTableContent("COMMON", "전 체", protocols, true);
 		cardLayout.show(actualPanel, "xmlEditor_Panel");
 	}
 	
