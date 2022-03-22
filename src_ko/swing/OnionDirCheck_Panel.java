@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -21,7 +20,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import src_ko.info.ONION_Info;
-import src_ko.info.Protocol;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
 
@@ -46,8 +44,7 @@ public class OnionDirCheck_Panel extends JPanel {
 	private static JLabel onionDirPathLabel;
 	
 	private static JRadioButton ko_button;
-	private static JRadioButton en_button;
-	private static JLabel xmlDirPath;
+	private static JRadioButton en_button;	
 	
 	public OnionDirCheck_Panel() {
 		// size : 1074, 628
@@ -205,9 +202,9 @@ public class OnionDirCheck_Panel extends JPanel {
 		xmlEditButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				String path = ONION_Info.getOnionDirPath();
+				String path = (isProject) ? ONION_Info.getProjectDirPath() : ONION_Info.getOnionDirPath();
 				String language = (ko_button.isSelected()) ? "ko" : "en";				
-				String xmlpath = path + "\\midknight\\conf\\" + language + "\\fms";
+				String xmlpath = (isProject) ? (path + "\\conf\\" + language + "\\fms") : (path + "\\midknight\\conf\\" + language + "\\fms");
 				
 				File xmlDir = new File(xmlpath);
 				
@@ -216,7 +213,7 @@ public class OnionDirCheck_Panel extends JPanel {
 					sb.append(String.format("%s\n", Util.colorRed("Can not found XML Directory Path")));
 					sb.append(String.format("아래의 경로에서 XML 디렉토리를 찾을 수 없습니다%s%s\n\n", Util.separator, Util.separator));
 					sb.append(String.format("Path : %s%s%s\n", 
-							(path + "\\midknight\\conf\\" + Util.colorBlue(language) + "\\fms").replace("\\", Util.colorRed("\\")),
+							xmlpath.replace("\\", Util.colorRed("\\")),
 							Util.separator,
 							Util.separator));
 					
@@ -240,17 +237,18 @@ public class OnionDirCheck_Panel extends JPanel {
 		goDirButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				String path = ONION_Info.getOnionDirPath();
+				String path = (isProject) ? ONION_Info.getProjectDirPath() : ONION_Info.getOnionDirPath();
 				String language = (ko_button.isSelected()) ? "ko" : "en";
+				String xmlpath = (isProject) ? (path + "\\conf\\" + language + "\\fms") : (path + "\\midknight\\conf\\" + language + "\\fms");
 				
-				File xmlDir = new File(path + "\\midknight\\conf\\" + language + "\\fms");
+				File xmlDir = new File(xmlpath);
 				
 				if(!xmlDir.exists()) {
 					StringBuilder sb = new StringBuilder();
 					sb.append(String.format("%s\n", Util.colorRed("Can not found XML Directory Path")));
 					sb.append(String.format("아래의 경로에서 XML 디렉토리를 찾을 수 없습니다%s%s\n\n", Util.separator, Util.separator));
 					sb.append(String.format("Path : %s%s%s\n", 
-							(path + "\\midknight\\conf\\" + Util.colorBlue(language) + "\\fms").replace("\\", Util.colorRed("\\")),
+							xmlpath.replace("\\", Util.colorRed("\\")),
 							Util.separator,
 							Util.separator));
 					
@@ -314,10 +312,6 @@ public class OnionDirCheck_Panel extends JPanel {
 					en_button.setForeground(new Color(0, 128, 0));
 				}
 				
-				String path = ONION_Info.getOnionDirPath();
-				String language = (ko_button.isSelected()) ? "ko" : "en";				
-				String xmlpath = "<html>Path : " + path + "\\midknight\\conf\\" + Util.colorBlue(language) + "\\fms</html>";
-				xmlDirPath.setText(xmlpath);
 			}
 		});
 		actualPanel.add(ko_button);
@@ -341,10 +335,6 @@ public class OnionDirCheck_Panel extends JPanel {
 					en_button.setForeground(new Color(0, 128, 0));
 				}
 				
-				String path = ONION_Info.getOnionDirPath();
-				String language = (ko_button.isSelected()) ? "ko" : "en";				
-				String xmlpath = "<html>Path : " + path + "\\midknight\\conf\\" + Util.colorBlue(language) + "\\fms</html>";
-				xmlDirPath.setText(xmlpath);
 			}
 		});
 		actualPanel.add(en_button);
@@ -352,13 +342,6 @@ public class OnionDirCheck_Panel extends JPanel {
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(ko_button);
 		buttonGroup.add(en_button);
-		
-		xmlDirPath = new JLabel();
-		xmlDirPath.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlDirPath.setForeground(Color.BLACK);
-		xmlDirPath.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
-		xmlDirPath.setBounds(437, 578, 601, 22);
-//		actualPanel.add(xmlDirPath);
 		
 		// 컴포넌트는 기본 설정으로 안보임
 		showComponent(false);
@@ -428,12 +411,6 @@ public class OnionDirCheck_Panel extends JPanel {
 		xmlEditButton.setVisible(show);
 		goDirButton.setVisible(show);
 		ko_button.setVisible(show);
-		en_button.setVisible(show);
-		xmlDirPath.setVisible(show);
-		
-		String path = ONION_Info.getOnionDirPath();
-		String language = (ko_button.isSelected()) ? "ko" : "en";				
-		String xmlpath = "<html>Path : " + path + "\\midknight\\conf\\" + Util.colorBlue(language) + "\\fms</html>";
-		xmlDirPath.setText(xmlpath);
+		en_button.setVisible(show);	
 	}
 }

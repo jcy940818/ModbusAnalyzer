@@ -228,7 +228,7 @@ public class MainFrame extends JFrame {
 		utilMenu.add(new JSeparator());
 				
 		// Util 메뉴 : XML 편집기
-		JMenuItem xmlEditor = new JMenuItem("Protocol XML Editor : 성능 XML 편집기");
+		JMenuItem xmlEditor = new JMenuItem("Protocol XML Editor : 성능 XML 편집");
 		xmlEditor.setHorizontalAlignment(SwingConstants.LEFT);
 		xmlEditor.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
 		utilMenu.add(xmlEditor);
@@ -400,8 +400,13 @@ public class MainFrame extends JFrame {
 		moonProtocolListDownload.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
 		moonProtocolListDownload.setForeground(Color.BLUE);
 		moonMenu.add(moonProtocolListDownload);
-//		moonMenu.add(new JSeparator());
+		moonMenu.add(new JSeparator());
 		
+		JMenuItem moonXmlEditor = new JMenuItem("Protocol XML Editor : 성능 XML 편집");
+		moonXmlEditor.setHorizontalAlignment(SwingConstants.LEFT);
+		moonXmlEditor.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
+		moonXmlEditor.setForeground(Color.BLUE);
+		moonMenu.add(moonXmlEditor);
 		
 		
 		
@@ -588,6 +593,14 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// MK119 프로젝트 디렉토리 경로 프로토콜 다운로드 : 라디오 버튼 옵션으로 수정 가능				
 				showProtocolDownload(true);
+			}
+		});
+		
+		/** XmlEditor Panel : Moon ***********************************/
+		moonXmlEditor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// MK119 XML 편집 : 라디오 버튼 옵션으로 수정 가능				
+				showOnionDirCheck(true);
 			}
 		});
 		
