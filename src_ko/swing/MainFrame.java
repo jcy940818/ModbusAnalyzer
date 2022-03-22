@@ -395,7 +395,7 @@ public class MainFrame extends JFrame {
 		moonMenu.setFont(new Font("맑은 고딕", Font.BOLD, 14));				
 		
 		// Moon 메뉴 : 프로토콜 리스트 다운로드
-		JMenuItem moonProtocolListDownload = new JMenuItem("Protocol : MK119 프로토콜 리스트 다운로드");
+		JMenuItem moonProtocolListDownload = new JMenuItem("Protocol Download : MK119 프로토콜 리스트 다운로드");
 		moonProtocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
 		moonProtocolListDownload.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
 		moonProtocolListDownload.setForeground(Color.BLUE);
