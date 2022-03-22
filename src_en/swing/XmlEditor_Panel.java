@@ -226,9 +226,7 @@ public class XmlEditor_Panel extends JPanel {
 					int row = table.getSelectedRow();
 					int number = Integer.parseInt(table.getValueAt(row, 0).toString());
 					String facType = table.getValueAt(row, 1).toString();
-					String name = table.getValueAt(row, 2).toString();
-					String xml = table.getValueAt(row, 3).toString();
-					getSelectedProtocol(number, facType, name, xml);
+					getSelectedProtocol(number, facType);
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -239,9 +237,7 @@ public class XmlEditor_Panel extends JPanel {
 					int row = table.getSelectedRow();
 					int number = Integer.parseInt(table.getValueAt(row, 0).toString());
 					String facType = table.getValueAt(row, 1).toString();
-					String name = table.getValueAt(row, 2).toString();
-					String xml = table.getValueAt(row, 3).toString();
-					getSelectedProtocol(number, facType, name, xml);
+					getSelectedProtocol(number, facType);
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -253,9 +249,7 @@ public class XmlEditor_Panel extends JPanel {
 					int row = table.getSelectedRow();
 					int number = Integer.parseInt(table.getValueAt(row, 0).toString());
 					String facType = table.getValueAt(row, 1).toString();
-					String name = table.getValueAt(row, 2).toString();
-					String xml = table.getValueAt(row, 3).toString();
-					getSelectedProtocol(number, facType, name, xml);
+					getSelectedProtocol(number, facType);
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -266,9 +260,7 @@ public class XmlEditor_Panel extends JPanel {
 					int row = table.getSelectedRow();
 					int number = Integer.parseInt(table.getValueAt(row, 0).toString());
 					String facType = table.getValueAt(row, 1).toString();
-					String name = table.getValueAt(row, 2).toString();
-					String xml = table.getValueAt(row, 3).toString();
-					getSelectedProtocol(number, facType, name, xml);
+					getSelectedProtocol(number, facType);
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -282,18 +274,14 @@ public class XmlEditor_Panel extends JPanel {
 					int row = table.getSelectedRow();
 					int number = Integer.parseInt(table.getValueAt(row, 0).toString());
 					String facType = table.getValueAt(row, 1).toString();
-					String name = table.getValueAt(row, 2).toString();
-					String xml = table.getValueAt(row, 3).toString();
-					showFunction(getSelectedProtocol(number, facType, name, xml));
+					showFunction(getSelectedProtocol(number, facType));
 				}
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
 					int row = table.getSelectedRow();
 					int number = Integer.parseInt(table.getValueAt(row, 0).toString());
 					String facType = table.getValueAt(row, 1).toString();
-					String name = table.getValueAt(row, 2).toString();
-					String xml = table.getValueAt(row, 3).toString();
-					showFunction(getSelectedProtocol(number, facType, name, xml));					
+					showFunction(getSelectedProtocol(number, facType));			
 				}
 			}
 		});
@@ -346,9 +334,7 @@ public class XmlEditor_Panel extends JPanel {
 					int row = table.getSelectedRow();
 					int number = Integer.parseInt(table.getValueAt(row, 0).toString());
 					String facType = table.getValueAt(row, 1).toString();
-					String name = table.getValueAt(row, 2).toString();
-					String xml = table.getValueAt(row, 3).toString();
-					Protocol p = getSelectedProtocol(number, facType, name, xml);
+					Protocol p = getSelectedProtocol(number, facType);
 				
 					String xmlPath = xmlDir.getPath() + "\\" + p.getXml();
 					File xmlFile = new File(xmlPath);
@@ -569,12 +555,12 @@ public class XmlEditor_Panel extends JPanel {
 		facilityType_comboBox.setModel(new DefaultComboBoxModel(facTypeList.toArray()));
 	}
 	
-	public static Protocol getSelectedProtocol(int number, String facType, String name, String xml) {
+	public static Protocol getSelectedProtocol(int number, String facType) {
 		boolean isSelected = false;
 		
 		for(int i = 0; i < selectedProtocols.size(); i++) {
 			Protocol p = selectedProtocols.get(i);
-			isSelected = (number == p.getNumber()) && (facType.equalsIgnoreCase(p.getFacType())) && (name.equalsIgnoreCase(p.getName())) && (xml.equalsIgnoreCase(p.getXml()));
+			isSelected = (number == p.getNumber()) && (facType.equalsIgnoreCase(p.getFacType()));
 			
 			if(isSelected) {
 				selctedProtocol = p;
@@ -596,13 +582,18 @@ public class XmlEditor_Panel extends JPanel {
 		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("Facility Type"), p.getFacType(), separator, separator));
 		msg.append(String.format("%s : %d%s%s\n\n", Util.colorBlue("Protocol Number"), p.getNumber(), separator, separator));
 		
-		String pName = isKorean ? p.getName() : p.getEnName();
+		String pName = isKorean ? p.getName() : p.getEnName();		
+		
+		if(!isKorean && pName == null && p.getName() != null) {			
+			pName = p.getName() + Util.colorRed( " ( Protocol has no English name )");
+		}else if(isKorean && pName == null && p.getEnName() != null) {
+			pName = p.getEnName() + Util.colorRed( " ( Protocol has no Korean name )");
+		}
+			
 		if(pName == null) {
-			pName = p.getName();
-			if(pName == null) {
-				pName = "Unknown";
-			}
-		}		
+			pName = Util.colorRed("Unknown");
+		}
+		
 		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("Protocol Name"),pName , separator, separator));
 		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("Watch Point XML"), p.getXml(), separator, separator));
 		

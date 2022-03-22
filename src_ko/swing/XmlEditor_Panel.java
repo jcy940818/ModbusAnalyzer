@@ -119,14 +119,14 @@ public class XmlEditor_Panel extends JPanel {
 		facilityType_Label.setForeground(Color.BLACK);
 		facilityType_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		facilityType_Label.setBackground(Color.WHITE);
-		facilityType_Label.setBounds(553, 0, 106, 55);
+		facilityType_Label.setBounds(550, 0, 100, 55);
 		infoPanel.add(facilityType_Label);
 		
 		facilityType_comboBox = new JComboBox();		
 		facilityType_comboBox.setForeground(Color.BLACK);
 		facilityType_comboBox.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		facilityType_comboBox.setBackground(Color.WHITE);
-		facilityType_comboBox.setBounds(787, 12, 251, 35);
+		facilityType_comboBox.setBounds(780, 12, 258, 35);
 		facilityType_comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				searchProtocol_textField.setText(null);
@@ -140,7 +140,7 @@ public class XmlEditor_Panel extends JPanel {
 		seartFacility_textField.setHorizontalAlignment(SwingConstants.LEFT);
 		seartFacility_textField.setForeground(Color.BLACK);
 		seartFacility_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
-		seartFacility_textField.setBounds(665, 12, 116, 35);
+		seartFacility_textField.setBounds(654, 12, 120, 35);
 		seartFacility_textField.setColumns(10);
 		seartFacility_textField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -183,7 +183,7 @@ public class XmlEditor_Panel extends JPanel {
 		searchProtocol_textField.setForeground(Color.BLACK);
 		searchProtocol_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchProtocol_textField.setColumns(10);
-		searchProtocol_textField.setBounds(138, 92, 521, 35);
+		searchProtocol_textField.setBounds(138, 92, 454, 35);
 		searchProtocol_textField.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -225,10 +225,8 @@ public class XmlEditor_Panel extends JPanel {
 				try {
 					int row = table.getSelectedRow();
 					int number = Integer.parseInt(table.getValueAt(row, 0).toString());
-					String facType = table.getValueAt(row, 1).toString();
-					String name = table.getValueAt(row, 2).toString();
-					String xml = table.getValueAt(row, 3).toString();
-					getSelectedProtocol(number, facType, name, xml);
+					String facType = table.getValueAt(row, 1).toString();					
+					getSelectedProtocol(number, facType);
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -238,10 +236,8 @@ public class XmlEditor_Panel extends JPanel {
 				try {
 					int row = table.getSelectedRow();
 					int number = Integer.parseInt(table.getValueAt(row, 0).toString());
-					String facType = table.getValueAt(row, 1).toString();
-					String name = table.getValueAt(row, 2).toString();
-					String xml = table.getValueAt(row, 3).toString();
-					getSelectedProtocol(number, facType, name, xml);
+					String facType = table.getValueAt(row, 1).toString();					
+					getSelectedProtocol(number, facType);
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -252,10 +248,8 @@ public class XmlEditor_Panel extends JPanel {
 				try {
 					int row = table.getSelectedRow();
 					int number = Integer.parseInt(table.getValueAt(row, 0).toString());
-					String facType = table.getValueAt(row, 1).toString();
-					String name = table.getValueAt(row, 2).toString();
-					String xml = table.getValueAt(row, 3).toString();
-					getSelectedProtocol(number, facType, name, xml);
+					String facType = table.getValueAt(row, 1).toString();					
+					getSelectedProtocol(number, facType);
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -266,9 +260,7 @@ public class XmlEditor_Panel extends JPanel {
 					int row = table.getSelectedRow();
 					int number = Integer.parseInt(table.getValueAt(row, 0).toString());
 					String facType = table.getValueAt(row, 1).toString();
-					String name = table.getValueAt(row, 2).toString();
-					String xml = table.getValueAt(row, 3).toString();
-					getSelectedProtocol(number, facType, name, xml);
+					getSelectedProtocol(number, facType);
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -282,25 +274,21 @@ public class XmlEditor_Panel extends JPanel {
 					int row = table.getSelectedRow();
 					int number = Integer.parseInt(table.getValueAt(row, 0).toString());
 					String facType = table.getValueAt(row, 1).toString();
-					String name = table.getValueAt(row, 2).toString();
-					String xml = table.getValueAt(row, 3).toString();
-					showFunction(getSelectedProtocol(number, facType, name, xml));
+					showFunction(getSelectedProtocol(number, facType));
 				}
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
 					int row = table.getSelectedRow();
 					int number = Integer.parseInt(table.getValueAt(row, 0).toString());
 					String facType = table.getValueAt(row, 1).toString();
-					String name = table.getValueAt(row, 2).toString();
-					String xml = table.getValueAt(row, 3).toString();
-					showFunction(getSelectedProtocol(number, facType, name, xml));					
+					showFunction(getSelectedProtocol(number, facType));		
 				}
 			}
 		});
 		scrollPane.setViewportView(table);
 		
 		languageButton = new JButton("한글명");		
-		languageButton.setBounds(665, 92, 97, 35);		
+		languageButton.setBounds(599, 91, 97, 35);		
 		languageButton.setForeground(Color.BLACK);
 		languageButton.setBackground(Color.WHITE);
 		languageButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
@@ -325,30 +313,32 @@ public class XmlEditor_Panel extends JPanel {
 		});
 		infoPanel.add(languageButton);
 		
-		goXmlEditor = new JButton("XML Editor");
+		goXmlEditor = new JButton("XML Editor 열기");
+		goXmlEditor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		goXmlEditor.setForeground(Color.BLUE);
 		goXmlEditor.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		goXmlEditor.setFocusPainted(false);
 		goXmlEditor.setBackground(Color.WHITE);
-		goXmlEditor.setBounds(792, 92, 120, 35);
+		goXmlEditor.setBounds(728, 91, 157, 35);
 		infoPanel.add(goXmlEditor);
 		
-		openXmlFile = new JButton("XML 열기");
+		openXmlFile = new JButton("XML \uD30C\uC77C \uC5F4\uAE30");
 		openXmlFile.setForeground(new Color(0, 128, 0));
 		openXmlFile.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		openXmlFile.setFocusPainted(false);
 		openXmlFile.setBackground(Color.WHITE);
-		openXmlFile.setBounds(919, 92, 119, 35);
+		openXmlFile.setBounds(891, 91, 147, 35);
 		openXmlFile.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
 					int row = table.getSelectedRow();
 					int number = Integer.parseInt(table.getValueAt(row, 0).toString());
-					String facType = table.getValueAt(row, 1).toString();
-					String name = table.getValueAt(row, 2).toString();
-					String xml = table.getValueAt(row, 3).toString();
-					Protocol p = getSelectedProtocol(number, facType, name, xml);
+					String facType = table.getValueAt(row, 1).toString();					
+					Protocol p = getSelectedProtocol(number, facType);
 				
 					String xmlPath = xmlDir.getPath() + "\\" + p.getXml();
 					File xmlFile = new File(xmlPath);
@@ -569,12 +559,12 @@ public class XmlEditor_Panel extends JPanel {
 		facilityType_comboBox.setModel(new DefaultComboBoxModel(facTypeList.toArray()));
 	}
 	
-	public static Protocol getSelectedProtocol(int number, String facType, String name, String xml) {
+	public static Protocol getSelectedProtocol(int number, String facType) {
 		boolean isSelected = false;
 		
 		for(int i = 0; i < selectedProtocols.size(); i++) {
 			Protocol p = selectedProtocols.get(i);
-			isSelected = (number == p.getNumber()) && (facType.equalsIgnoreCase(p.getFacType())) && (name.equalsIgnoreCase(p.getName())) && (xml.equalsIgnoreCase(p.getXml()));
+			isSelected = (number == p.getNumber()) && (facType.equalsIgnoreCase(p.getFacType()));
 			
 			if(isSelected) {
 				selctedProtocol = p;
@@ -597,16 +587,21 @@ public class XmlEditor_Panel extends JPanel {
 		msg.append(String.format("%s : %d%s%s\n\n", Util.colorBlue("프로토콜 번호"), p.getNumber(), separator, separator));
 		
 		String pName = isKorean ? p.getName() : p.getEnName();
+		
+		if(!isKorean && pName == null && p.getName() != null) {			
+			pName = p.getName() + Util.colorRed( " ( 영문명 없음 )");
+		}else if(isKorean && pName == null && p.getEnName() != null) {
+			pName = p.getEnName() + Util.colorRed( " ( 한글명 없음 )");
+		}
+			
 		if(pName == null) {
-			pName = p.getName();
-			if(pName == null) {
-				pName = "Unknown";
-			}
-		}		
+			pName = Util.colorRed("Unknown");
+		}
+		
 		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("프로토콜 이름"),pName , separator, separator));
 		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("성능 XML"), p.getXml(), separator, separator));
 		
-		int menu = Util.showOption(msg.toString(), new String[] { "XML Editor 열기", "XML 파일 바로 열기"}, JOptionPane.QUESTION_MESSAGE);
+		int menu = Util.showOption(msg.toString(), new String[] { "XML Editor 열기", "XML 파일 열기"}, JOptionPane.QUESTION_MESSAGE);
 
 		switch (menu) {
 			case -1: // 사용자가 메뉴를 선택하지 않고 대화상자를 나갔을 때				
