@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
 import src_en.database.DbUtil;
 import src_en.util.FileUtil;
 import src_en.util.ProtocolDownloader;
+import src_en.info.Protocol;
 
 
 public class Protocol implements Comparable {
@@ -576,6 +577,12 @@ public class Protocol implements Comparable {
 			
 			for(int i = 0; i < fmsMibList.size(); i++) {
 				fmsProtocolList.add(fmsMibList.get(i));
+			}
+			
+			for(int i =0; i < fmsProtocolList.size(); i++) {
+				Protocol p = fmsProtocolList.get(i);
+				String facType = DbUtil.getFacilityType(p.getFacType());
+				p.setFacType(facType);		
 			}
 			
 			return fmsProtocolList;

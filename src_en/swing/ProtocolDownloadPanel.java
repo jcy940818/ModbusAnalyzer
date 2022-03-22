@@ -223,6 +223,7 @@ public class ProtocolDownloadPanel extends JPanel {
 		actualPanel.add(onionLogo);
 		
 		isProject_checkBox = new JCheckBox(" MK119 Project");
+		isProject_checkBox.setForeground(Color.BLACK);
 		isProject_checkBox.setSelected(true);
 		isProject_checkBox.setFocusPainted(false);
 		isProject_checkBox.setBackground(Color.WHITE);
