@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -21,7 +20,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import src_en.info.ONION_Info;
-import src_en.info.Protocol;
 import src_en.util.FileUtil;
 import src_en.util.Util;
 
@@ -123,7 +121,7 @@ public class OnionDirCheck_Panel extends JPanel {
 							return;
 						}
 						
-						mk119BuildVersion.setText(version);
+						mk119BuildVersion.setText(version);						
 						showComponent(true);
 					}else {
 						showComponent(false);
@@ -206,10 +204,24 @@ public class OnionDirCheck_Panel extends JPanel {
 		xmlEditButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				ArrayList<Protocol> list =  FileUtil.getProtocolList(isProject);
+				String path = ONION_Info.getOnionDirPath();
+				String language = (ko_button.isSelected()) ? "ko" : "en";				
+				String xmlpath = path + "\\midknight\\conf\\" + language + "\\fms";
 				
-				for(Protocol p : list) {
-					System.out.println(p);
+				File xmlDir = new File(xmlpath);
+				
+				if(!xmlDir.exists()) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(String.format("%s\n", Util.colorRed("Can not found XML Directory Path")));
+					sb.append(String.format("XML directory not found in the following path%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("Path : %s%s%s\n", 
+							(path + "\\midknight\\conf\\" + Util.colorBlue(language) + "\\fms").replace("\\", Util.colorRed("\\")),
+							Util.separator,
+							Util.separator));
+					
+					Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+				}else {
+					MainFrame.showXmlEditor(xmlDir, FileUtil.getProtocolList(isProject));	
 				}
 				
 			}

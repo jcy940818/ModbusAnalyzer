@@ -1,4 +1,4 @@
-package src_ko.swing;
+package src_en.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -33,9 +33,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-import src_ko.info.Protocol;
-import src_ko.util.FileUtil;
-import src_ko.util.Util;
+import src_en.info.Protocol;
+import src_en.util.FileUtil;
+import src_en.util.Util;
 
 public class XmlEditor_Panel extends JPanel {
 	
@@ -51,7 +51,7 @@ public class XmlEditor_Panel extends JPanel {
 	public static Protocol selctedProtocol = null;
 	
 	public static JButton languageButton;
-	public static boolean isKorean = true;
+	public static boolean isKorean = false;
 	private JTextField seartFacility_textField;
 	private JLabel searchProtocol_Label;
 	private JTextField searchProtocol_textField;
@@ -91,7 +91,7 @@ public class XmlEditor_Panel extends JPanel {
 		currentFunction.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		infoPanel.add(currentFunction);
 		
-		JLabel protocolType_Label = new JLabel("프로토콜 타입");
+		JLabel protocolType_Label = new JLabel("Protocol Type");
 		protocolType_Label.setHorizontalAlignment(SwingConstants.LEFT);
 		protocolType_Label.setForeground(Color.BLACK);
 		protocolType_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
@@ -103,7 +103,7 @@ public class XmlEditor_Panel extends JPanel {
 		protocolType_comboBox.setForeground(Color.BLACK);
 		protocolType_comboBox.setBackground(Color.WHITE);
 		protocolType_comboBox.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		protocolType_comboBox.setBounds(358, 12, 157, 35);
+		protocolType_comboBox.setBounds(358, 12, 116, 35);
 		protocolType_comboBox.setModel(new DefaultComboBoxModel(new String[] {"COMMON", "SNMP"}));
 		protocolType_comboBox.setSelectedIndex(0);		
 		protocolType_comboBox.addActionListener(new ActionListener() {
@@ -114,19 +114,19 @@ public class XmlEditor_Panel extends JPanel {
 		});
 		infoPanel.add(protocolType_comboBox);
 		
-		JLabel facilityType_Label = new JLabel("시설물 종류");
+		JLabel facilityType_Label = new JLabel("Facility Type");
 		facilityType_Label.setHorizontalAlignment(SwingConstants.LEFT);
 		facilityType_Label.setForeground(Color.BLACK);
 		facilityType_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		facilityType_Label.setBackground(Color.WHITE);
-		facilityType_Label.setBounds(553, 0, 106, 55);
+		facilityType_Label.setBounds(502, 0, 116, 55);
 		infoPanel.add(facilityType_Label);
 		
 		facilityType_comboBox = new JComboBox();		
 		facilityType_comboBox.setForeground(Color.BLACK);
-		facilityType_comboBox.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		facilityType_comboBox.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		facilityType_comboBox.setBackground(Color.WHITE);
-		facilityType_comboBox.setBounds(787, 12, 251, 35);
+		facilityType_comboBox.setBounds(746, 12, 292, 35);
 		facilityType_comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				searchProtocol_textField.setText(null);
@@ -140,7 +140,7 @@ public class XmlEditor_Panel extends JPanel {
 		seartFacility_textField.setHorizontalAlignment(SwingConstants.LEFT);
 		seartFacility_textField.setForeground(Color.BLACK);
 		seartFacility_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
-		seartFacility_textField.setBounds(665, 12, 116, 35);
+		seartFacility_textField.setBounds(624, 12, 116, 35);
 		seartFacility_textField.setColumns(10);
 		seartFacility_textField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -169,12 +169,12 @@ public class XmlEditor_Panel extends JPanel {
 		});
 		infoPanel.add(seartFacility_textField);
 		
-		searchProtocol_Label = new JLabel("프로토콜 검색");
+		searchProtocol_Label = new JLabel("Search");
 		searchProtocol_Label.setHorizontalAlignment(SwingConstants.LEFT);
 		searchProtocol_Label.setForeground(Color.BLACK);
 		searchProtocol_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		searchProtocol_Label.setBackground(Color.WHITE);
-		searchProtocol_Label.setBounds(15, 87, 120, 41);
+		searchProtocol_Label.setBounds(16, 87, 70, 41);
 		infoPanel.add(searchProtocol_Label);
 		
 		searchProtocol_textField = new JTextField("");
@@ -183,7 +183,7 @@ public class XmlEditor_Panel extends JPanel {
 		searchProtocol_textField.setForeground(Color.BLACK);
 		searchProtocol_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchProtocol_textField.setColumns(10);
-		searchProtocol_textField.setBounds(138, 92, 521, 35);
+		searchProtocol_textField.setBounds(85, 92, 521, 35);
 		searchProtocol_textField.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -299,8 +299,8 @@ public class XmlEditor_Panel extends JPanel {
 		});
 		scrollPane.setViewportView(table);
 		
-		languageButton = new JButton("한글명");		
-		languageButton.setBounds(665, 92, 97, 35);		
+		languageButton = new JButton("English");		
+		languageButton.setBounds(618, 91, 97, 35);		
 		languageButton.setForeground(Color.BLACK);
 		languageButton.setBackground(Color.WHITE);
 		languageButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
@@ -311,12 +311,12 @@ public class XmlEditor_Panel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				String language = languageButton.getText();
 				
-				if(language.contains("한글")) {
-					languageButton.setText("영문명");
+				if(language.contains("Korean")) {
+					languageButton.setText("English");
 					isKorean = false;
 					tableReload(isKorean);
 				}else {
-					languageButton.setText("한글명");
+					languageButton.setText("Korean");
 					isKorean = true;
 					tableReload(isKorean);
 				}
@@ -325,20 +325,20 @@ public class XmlEditor_Panel extends JPanel {
 		});
 		infoPanel.add(languageButton);
 		
-		goXmlEditor = new JButton("XML Editor");
+		goXmlEditor = new JButton("Oepn XML Editor");
 		goXmlEditor.setForeground(Color.BLUE);
 		goXmlEditor.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		goXmlEditor.setFocusPainted(false);
 		goXmlEditor.setBackground(Color.WHITE);
-		goXmlEditor.setBounds(792, 92, 120, 35);
+		goXmlEditor.setBounds(735, 91, 160, 35);
 		infoPanel.add(goXmlEditor);
 		
-		openXmlFile = new JButton("XML 열기");
+		openXmlFile = new JButton("Open XML File");
 		openXmlFile.setForeground(new Color(0, 128, 0));
 		openXmlFile.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		openXmlFile.setFocusPainted(false);
 		openXmlFile.setBackground(Color.WHITE);
-		openXmlFile.setBounds(919, 92, 119, 35);
+		openXmlFile.setBounds(900, 91, 138, 35);
 		openXmlFile.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -354,18 +354,18 @@ public class XmlEditor_Panel extends JPanel {
 					File xmlFile = new File(xmlPath);
 					if(!xmlFile.exists()) {
 						StringBuilder msg = new StringBuilder();
-						msg.append(Util.colorRed("XML file not found"));
+						msg.append(Util.colorRed("XML File not found"));
 						msg.append(String.format("%s%s", Util.separator, Util.separator));
 						msg.append("\n");
 						
-						msg.append("아래의 경로에서 XML 파일을 찾을 수 없습니다");
+						msg.append("XML File not found in the following path");
 						msg.append(String.format("%s%s", Util.separator, Util.separator));
 						msg.append("\n\n");
 						
-						msg.append("XML 파일 경로 : " + xmlFile.getParent().replace("\\", Util.colorRed("\\")));
+						msg.append("XML File Path : " + xmlFile.getParent().replace("\\", Util.colorRed("\\")));
 						msg.append(String.format("%s%s", Util.separator, Util.separator));
 						msg.append("\n\n");
-						msg.append("XML 파일 이름 : " + Util.colorRed(xmlFile.getName()));
+						msg.append("XML File Name : " + Util.colorRed(xmlFile.getName()));
 						msg.append(String.format("%s%s", Util.separator, Util.separator));
 						msg.append("\n");
 						
@@ -417,7 +417,7 @@ public class XmlEditor_Panel extends JPanel {
 
 		table.setModel(new DefaultTableModel(
 			content, 			
-			new String[] { "번 호", "시설물 종류", "프로토콜", "성능 XML" }) {
+			new String[] { "Number", "Facility Type", "Protocol", "Watch Point XML" }) {
 			// 테이블 셀 내용 수정 금지
 			public boolean isCellEditable(int i, int c) {
 				return false;
@@ -431,7 +431,7 @@ public class XmlEditor_Panel extends JPanel {
 		String protocolType = protocolType_comboBox.getSelectedItem().toString();				
 		String facType = facilityType_comboBox.getSelectedItem().toString();
 		
-		if(!facType.equalsIgnoreCase("전 체")) {
+		if(!facType.equalsIgnoreCase("All Types")) {		
 			String[] tokens = facType.split(" ");
 			facType = "";
 			
@@ -441,7 +441,7 @@ public class XmlEditor_Panel extends JPanel {
 			
 			facType = facType.trim();
 		}
-		
+				
 		setTableContent(protocolType, facType, XmlEditor_Panel.protocols, isKorean);
 	}
 	
@@ -455,17 +455,17 @@ public class XmlEditor_Panel extends JPanel {
 			Protocol p = protocols.get(i);			
 			
 			if(protocolType == null) { // 프로토콜 타입 검사
-				if(facType.equalsIgnoreCase("전 체") || facType.equalsIgnoreCase(p.getFacType())) { // 시설물 종류 검사
+				if(facType.equalsIgnoreCase("All Types") || facType.equalsIgnoreCase(p.getFacType())) { // 시설물 종류 검사
 					selectedProtocols.add(p);
 				}
 				
 			}else if(protocolType.equalsIgnoreCase("COMMON") && p.getProtocolType() == Protocol.COMMON_PROTOCOL) {
-				if(facType.equalsIgnoreCase("전 체") || facType.equalsIgnoreCase(p.getFacType())) {
+				if(facType.equalsIgnoreCase("All Types") || facType.equalsIgnoreCase(p.getFacType())) {
 					selectedProtocols.add(p);
 				}
 				
 			}else if(protocolType.equalsIgnoreCase("SNMP") && p.getProtocolType() == Protocol.SNMP_PROTOCOL) {
-				if(facType.equalsIgnoreCase("전 체") || facType.equalsIgnoreCase(p.getFacType())) {
+				if(facType.equalsIgnoreCase("All Types") || facType.equalsIgnoreCase(p.getFacType())) {
 					selectedProtocols.add(p);
 				}
 			}
@@ -493,7 +493,7 @@ public class XmlEditor_Panel extends JPanel {
 
 		table.setModel(new DefaultTableModel(
 			content, 			
-			new String[] { "번 호", "시설물 종류", "프로토콜", "성능 XML" }) {
+			new String[] { "Number", "Facility Type", "Protocol", "Watch Point XML" }) {
 			// 테이블 셀 내용 수정 금지
 			public boolean isCellEditable(int i, int c) {
 				return false;
@@ -525,7 +525,7 @@ public class XmlEditor_Panel extends JPanel {
 		
 		// 테이블 셀 크기 설정
 		table.getColumnModel().getColumn(0).setPreferredWidth(1); // 프로토콜 번호
-		table.getColumnModel().getColumn(1).setPreferredWidth(80); // 시설물 종류
+		table.getColumnModel().getColumn(1).setPreferredWidth(120); // 시설물 종류
 		table.getColumnModel().getColumn(2).setPreferredWidth(320); // 프로토콜
 		table.getColumnModel().getColumn(3).setPreferredWidth(320); // 프로토콜
 		
@@ -560,7 +560,7 @@ public class XmlEditor_Panel extends JPanel {
 		}
 		Collections.sort(facCodeList);
 		
-		facTypeList.add("전 체");
+		facTypeList.add("All Types");
 		for(int i = 0; i < facCodeList.size(); i++) {
 			facTypeList.add(sortMap.get(facCodeList.get(i)));
 		}
@@ -591,10 +591,10 @@ public class XmlEditor_Panel extends JPanel {
 		String separator = Util.separator + Util.separator; 
 		StringBuilder msg = new StringBuilder();
 		msg.append("<font color='Green'>XML Execution Task Menu</font>\n");
-		msg.append("어떤 작업을 수행 하시겠습니까?" + Util.longSeparator + Util.separator +"\n\n");
+		msg.append("What menu do you want to perform?" + Util.longSeparator + Util.separator +"\n\n");
 		
-		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("시설물 종류"), p.getFacType(), separator, separator));
-		msg.append(String.format("%s : %d%s%s\n\n", Util.colorBlue("프로토콜 번호"), p.getNumber(), separator, separator));
+		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("Facility Type"), p.getFacType(), separator, separator));
+		msg.append(String.format("%s : %d%s%s\n\n", Util.colorBlue("Protocol Number"), p.getNumber(), separator, separator));
 		
 		String pName = isKorean ? p.getName() : p.getEnName();
 		if(pName == null) {
@@ -603,10 +603,10 @@ public class XmlEditor_Panel extends JPanel {
 				pName = "Unknown";
 			}
 		}		
-		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("프로토콜 이름"),pName , separator, separator));
-		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("성능 XML"), p.getXml(), separator, separator));
+		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("Protocol Name"),pName , separator, separator));
+		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("Watch Point XML"), p.getXml(), separator, separator));
 		
-		int menu = Util.showOption(msg.toString(), new String[] { "XML Editor 열기", "XML 파일 바로 열기"}, JOptionPane.QUESTION_MESSAGE);
+		int menu = Util.showOption(msg.toString(), new String[] { "Open XML Editor", "Open XML File"}, JOptionPane.QUESTION_MESSAGE);
 
 		switch (menu) {
 			case -1: // 사용자가 메뉴를 선택하지 않고 대화상자를 나갔을 때				
@@ -621,18 +621,18 @@ public class XmlEditor_Panel extends JPanel {
 				File xmlFile = new File(xmlPath);
 				if(!xmlFile.exists()) {
 					msg = new StringBuilder();
-					msg.append(Util.colorRed("XML file not found"));
+					msg.append(Util.colorRed("XML File not found"));
 					msg.append(String.format("%s%s", Util.separator, Util.separator));
 					msg.append("\n");
 					
-					msg.append("아래의 경로에서 XML 파일을 찾을 수 없습니다");
+					msg.append("XML File not found in the following path");
 					msg.append(String.format("%s%s", Util.separator, Util.separator));
 					msg.append("\n\n");
 					
-					msg.append("XML 파일 경로 : " + xmlFile.getParent().replace("\\", Util.colorRed("\\")));
+					msg.append("XML File Path : " + xmlFile.getParent().replace("\\", Util.colorRed("\\")));
 					msg.append(String.format("%s%s", Util.separator, Util.separator));
 					msg.append("\n\n");
-					msg.append("XML 파일 이름 : " + Util.colorRed(xmlFile.getName()));
+					msg.append("XML File Name : " + Util.colorRed(xmlFile.getName()));
 					msg.append(String.format("%s%s", Util.separator, Util.separator));
 					msg.append("\n");
 					

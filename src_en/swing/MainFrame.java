@@ -8,7 +8,9 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -25,6 +27,8 @@ import src_en.analyzer.RX.DataType;
 import src_en.database.StoredProcedure;
 import src_en.info.ONION_Info;
 import src_en.util.Util;
+import src_en.info.Protocol;
+import src_en.swing.XmlEditor_Panel;
 
 public class MainFrame extends JFrame {
 	
@@ -566,6 +570,10 @@ public class MainFrame extends JFrame {
 			}
 		});
 		
+		/** XmlEditor Panel ***********************************/
+		XmlEditor_Panel xmlEditor_Panel = new XmlEditor_Panel();
+		actualPanel.add(xmlEditor_Panel, "xmlEditor_Panel");
+		
 		
 		/** ProtocolDownload Panel : Moon *******************************/				
 		moonProtocolListDownload.addActionListener(new ActionListener() {
@@ -640,6 +648,16 @@ public class MainFrame extends JFrame {
 		OnionDirCheck_Panel.isProject_checkBox.setVisible(isProject);
 		OnionDirCheck_Panel.changeSatate();
 		cardLayout.show(actualPanel, "onionDirCheck_Panel");
+	}
+	
+	public static void showXmlEditor(File xmlDir, ArrayList<Protocol> protocols) {
+		XmlEditor_Panel.isKorean = false;
+		if(XmlEditor_Panel.languageButton != null) XmlEditor_Panel.languageButton.setText("English");
+		XmlEditor_Panel.xmlDir = xmlDir;
+		XmlEditor_Panel.protocols = protocols;
+		XmlEditor_Panel.setFacilityComboBox(protocols, true);
+		XmlEditor_Panel.setTableContent("COMMON", "All Types", protocols, XmlEditor_Panel.isKorean);
+		cardLayout.show(actualPanel, "xmlEditor_Panel");
 	}
 	
 	public static void showMK119Login(String agentType) {

@@ -23,6 +23,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import src_ko.swing.XmlEditor_Panel;
 import src_ko.analyzer.RX.DataType;
 import src_ko.database.StoredProcedure;
 import src_ko.info.ONION_Info;
@@ -576,7 +577,7 @@ public class MainFrame extends JFrame {
 			}
 		});
 		
-		/** OnionDirCheck Panel ***********************************/
+		/** XmlEditor Panel ***********************************/
 		XmlEditor_Panel xmlEditor_Panel = new XmlEditor_Panel();
 		actualPanel.add(xmlEditor_Panel, "xmlEditor_Panel");
 		
@@ -657,10 +658,12 @@ public class MainFrame extends JFrame {
 	}
 	
 	public static void showXmlEditor(File xmlDir, ArrayList<Protocol> protocols) {
+		XmlEditor_Panel.isKorean = true;
+		if(XmlEditor_Panel.languageButton != null) XmlEditor_Panel.languageButton.setText("한글명");
 		XmlEditor_Panel.xmlDir = xmlDir;
 		XmlEditor_Panel.protocols = protocols;
 		XmlEditor_Panel.setFacilityComboBox(protocols, true);
-		XmlEditor_Panel.setTableContent("COMMON", "전 체", protocols, true);
+		XmlEditor_Panel.setTableContent("COMMON", "전 체", protocols, XmlEditor_Panel.isKorean);
 		cardLayout.show(actualPanel, "xmlEditor_Panel");
 	}
 	
