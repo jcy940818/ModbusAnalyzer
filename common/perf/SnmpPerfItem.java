@@ -48,36 +48,34 @@ public class SnmpPerfItem {
     }
 
     public String toString() {
-        StringBuffer str = new StringBuffer();
-        str.append("displayName=").append(displayName).append(", ");
-        str.append("oid=").append(oid).append(", ");
-        str.append("interval=").append(interval).append(", ");
-        str.append("units=").append(units).append(", ");
-        str.append("expression=").append(expression).append(", ");
-        str.append("data format=").append(dataFormat).append(", ");
-        if (dataFormat == PerfConf.DATA_FORMAT_DIGITAL) {
-            str.append("label0=").append(binLabel[0]).append(", ");
-            str.append("label1=").append(binLabel[1]).append(", ");
-        }
-        str.append("auto reg=").append(autoReg).append(", ");
-        for (int i = 0; evt != null && i < evt.length; i++) {
-            str.append("event [name=").append(evt[i].name).append(", ");
-            str.append("severity=").append(evt[i].severity).append(", ");
-            str.append("threshold=").append(evt[i].threshold).append(", ");
-            str.append("op=").append(evt[i].op).append(", ");
-            str.append("mode=").append(evt[i].mode).append(", ");
-            str.append("duration=").append(evt[i].duration).append(", ");
-            str.append("count=").append(evt[i].count).append(", ");
-            str.append("auto close=").append(evt[i].autoClose).append("]");
-            str.append("enable=").append(evt[i].enable).append(", ");
-        }
-        return str.toString();       
-
-//        return str.append("displayName=").append(displayName).append(", ").append("oid=").append(oid).append(", ")
-//                .append("interval=").append(interval).append(", ").append("units=").append(units).append(", ").append(
-//                        "expression=").append(expression).append(", ").append("description=").append(description)
-//                .toString();
+//        StringBuffer str = new StringBuffer();
+//        str.append("displayName=").append(displayName).append(", ");
+//        str.append("oid=").append(oid).append(", ");
+//        str.append("interval=").append(interval).append(", ");
+//        str.append("units=").append(units).append(", ");
+//        str.append("expression=").append(expression).append(", ");
+//        str.append("data format=").append(dataFormat).append(", ");
+//        if (dataFormat == PerfConf.DATA_FORMAT_DIGITAL) {
+//            str.append("label0=").append(binLabel[0]).append(", ");
+//            str.append("label1=").append(binLabel[1]).append(", ");
+//        }
+//        str.append("auto reg=").append(autoReg).append(", ");
+//        for (int i = 0; evt != null && i < evt.length; i++) {
+//            str.append("event [name=").append(evt[i].name).append(", ");
+//            str.append("severity=").append(evt[i].severity).append(", ");
+//            str.append("threshold=").append(evt[i].threshold).append(", ");
+//            str.append("op=").append(evt[i].op).append(", ");
+//            str.append("mode=").append(evt[i].mode).append(", ");
+//            str.append("duration=").append(evt[i].duration).append(", ");
+//            str.append("count=").append(evt[i].count).append(", ");
+//            str.append("auto close=").append(evt[i].autoClose).append("]");
+//            str.append("enable=").append(evt[i].enable).append(", ");
+//        }
+//        return str.toString();       
+    	return displayName;
     }
+    
+    
     public static class EventInfo {
         /** 이벤트 이름 */
         public String name;

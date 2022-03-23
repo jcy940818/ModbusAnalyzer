@@ -84,33 +84,35 @@ public class FmsPerfItem {
     	return this.counter.equals(target.counter) && this.scaleFunc.equals(target.scaleFunc);
     }
     
-    public String toString() {
-        StringBuffer str = new StringBuffer();
-        str.append("displayName=").append(displayName).append(", ");
-        str.append("enable=").append(enable).append(", ");
-        str.append("counter=").append(counter).append(", ");
-        str.append("interval=").append(interval).append(", ");
-        str.append("measure=").append(measure).append(", ");
-        str.append("scale function=").append(scaleFunc).append(", ");
-        str.append("data format=").append(dataFormat).append(", ");
-        if (dataFormat == PerfConf.DATA_FORMAT_DIGITAL) {
-            str.append("label0=").append(binLabel[0]).append(", ");
-            str.append("label1=").append(binLabel[1]).append(", ");
-        }
-        str.append("auto reg=").append(autoReg).append(", ");
-        for (int i = 0; evt != null && i < evt.length; i++) {
-            str.append("event [name=").append(evt[i].name).append(", ");
-            str.append("severity=").append(evt[i].severity).append(", ");
-            str.append("threshold=").append(evt[i].threshold).append(", ");
-            str.append("op=").append(evt[i].op).append(", ");
-            str.append("mode=").append(evt[i].mode).append(", ");
-            str.append("duration=").append(evt[i].duration).append(", ");
-            str.append("count=").append(evt[i].count).append(", ");
-            str.append("auto close=").append(evt[i].autoClose).append("]");
-            str.append("enable=").append(evt[i].enable).append(", ");
-            str.append("threshold2=").append(evt[i].threshold2).append(", ");
-        }
-        return str.toString();
+    public String toString() {    	    	
+//        StringBuffer str = new StringBuffer();
+//        str.append("displayName=").append(displayName).append(", ");
+//        str.append("enable=").append(enable).append(", ");
+//        str.append("counter=").append(counter).append(", ");
+//        str.append("interval=").append(interval).append(", ");
+//        str.append("measure=").append(measure).append(", ");
+//        str.append("scale function=").append(scaleFunc).append(", ");
+//        str.append("data format=").append(dataFormat).append(", ");
+//        if (dataFormat == PerfConf.DATA_FORMAT_DIGITAL) {
+//            str.append("label0=").append(binLabel[0]).append(", ");
+//            str.append("label1=").append(binLabel[1]).append(", ");
+//        }
+//        str.append("auto reg=").append(autoReg).append(", ");
+//        for (int i = 0; evt != null && i < evt.length; i++) {
+//            str.append("event [name=").append(evt[i].name).append(", ");
+//            str.append("severity=").append(evt[i].severity).append(", ");
+//            str.append("threshold=").append(evt[i].threshold).append(", ");
+//            str.append("op=").append(evt[i].op).append(", ");
+//            str.append("mode=").append(evt[i].mode).append(", ");
+//            str.append("duration=").append(evt[i].duration).append(", ");
+//            str.append("count=").append(evt[i].count).append(", ");
+//            str.append("auto close=").append(evt[i].autoClose).append("]");
+//            str.append("enable=").append(evt[i].enable).append(", ");
+//            str.append("threshold2=").append(evt[i].threshold2).append(", ");
+//        }
+//        return str.toString();
+    	
+    	return displayName;
     }
     
     public String toJSONString() throws JSONException{
