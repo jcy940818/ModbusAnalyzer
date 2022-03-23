@@ -250,14 +250,14 @@ public class XmlEditorFrame extends JFrame {
 				},
 				new String[] { "값", "매핑 내용"}) {
 				boolean[] columnEditables = new boolean[] {
-						false, // 필 드 : 수정 불가
-						true, // 내 용 : 수정 가능						
+						true, // 값 : 수정 가능
+						true, // 매핑 내용 : 수정 가능						
 				};
 				public boolean isCellEditable(int row, int column) {
 					return columnEditables[column];
 				}
 		});
-		setPerfInfoTableStyle(perfLabelMappingTable);
+		setPerfLabelMappingTable(perfLabelMappingTable);
 		perfLabelInfoPanel.setViewportView(perfLabelMappingTable);
 		
 		JLabel searchPerf_label = new JLabel("성능 검색");
@@ -591,7 +591,7 @@ public class XmlEditorFrame extends JFrame {
 					content,
 					new String[] { "값", "매핑 내용"}) {
 					boolean[] columnEditables = new boolean[] {
-							false, // 필 드 : 수정 불가
+							true, // 필 드 : 수정 불가
 							true, // 내 용 : 수정 가능						
 					};
 					public boolean isCellEditable(int row, int column) {
@@ -623,7 +623,7 @@ public class XmlEditorFrame extends JFrame {
 			
 			
 			// 테이블 셀 크기 설정
-			table.getColumnModel().getColumn(0).setPreferredWidth(3); // 값	
+			table.getColumnModel().getColumn(0).setPreferredWidth(4); // 값	
 			table.getColumnModel().getColumn(1).setPreferredWidth(350); // 매핑 내용		
 			
 			// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
