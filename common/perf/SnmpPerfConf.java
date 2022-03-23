@@ -3,6 +3,7 @@ package common.perf;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,8 +23,6 @@ public class SnmpPerfConf {
     private String strFile;
     private String mibDir = null;
     private SnmpPerfItem[] snmpPerfItems;
-    // 파일을 읽은 시각
-    private long loadTime = System.currentTimeMillis();
 
     public SnmpPerfConf(String filename, String encoding) throws ConfigurationException, FileNotFoundException {
         init(filename);
@@ -58,18 +57,7 @@ public class SnmpPerfConf {
             } catch (ConversionException e) { // 변환 오류 발생 시 false로 지정
                 snmpPerfItems[i].autoReg = false;
             }
-//            if(filename.contains("Waton")){
-//	            System.out.println("\t<perfitem>");
-//	            System.out.println("\t\t<displayname>" + snmpPerfItems[i].displayName + "</displayname>");
-//	            System.out.println("\t\t<oid>" + snmpPerfItems[i].oid + "</oid>");
-//	            System.out.println("\t\t<interval>" + snmpPerfItems[i].interval + "</interval>");
-//	            System.out.println("\t\t<units>" + snmpPerfItems[i].units + "</units>");
-//	            System.out.println("\t\t<expression>" + snmpPerfItems[i].expression + "</expression>");
-//	            System.out.println("\t\t<data format=\"3\"/>");
-//	            System.out.println("\t\t<event severity = \"40\" threshold=\"120\" op=\"&gt;=\" mode=\"5\" duration=\"10\" count=\"3\" notify=\"3\" autoreg=\"TRUE\" name = \"" + snmpPerfItems[i].displayName + " 상한\" msg=\"{value|label}\"/>");
-//	            System.out.println("\t\t<event severity = \"40\" threshold=\"80\" op=\"&lt;=\" mode=\"5\" duration=\"10\" count=\"3\" notify=\"3\" autoreg=\"TRUE\" name = \"" + snmpPerfItems[i].displayName + " 하한\" msg=\"{value|label}\"/>");
-//	            System.out.println("\t</perfitem>");
-//            }
+
             snmpPerfItems[i].evt = new SnmpPerfItem.EventInfo[getEventSize(perfNodes.item(i))];
             for (int j = 0; j < snmpPerfItems[i].evt.length; j++) {
                 snmpPerfItems[i].evt[j] = new SnmpPerfItem.EventInfo();
@@ -174,24 +162,23 @@ public class SnmpPerfConf {
         }
         return nodeNames;
     }
-
-	public long getLoadTime() {
-		return loadTime;
-	}
-
-	public void setLoadTime(long loadTime) {
-		this.loadTime = loadTime;
-	}
 	
-	public static void main(String[] args) {
-        try {
-            SnmpPerfConf conf = new SnmpPerfConf("C:\\OnionSoftware\\midknight\\conf\\ko\\fms\\ups_rfc1628.xml", "EUC-KR");
-            SnmpPerfItem perfItems[] = conf.getPerfItems();
-            for (int i = 0; i < perfItems.length; i++) {
-                System.out.println("["+(i+1)+"] "+perfItems[i].toString());
-            }
-        } catch (Exception e) {
-            System.exit(0);
-        }
-    }
+	 public static ArrayList<Perf> getSnmpPerfList(File xmlFile, String encoding) {        	
+    	ArrayList<Perf> perfList = new ArrayList<Perf>();
+    	
+    	try {    		
+    		SnmpPerfConf conf = new SnmpPerfConf(xmlFile.getAbsolutePath(), encoding);
+    		SnmpPerfItem perfItems[] = conf.getPerfItems();
+    		
+    		for(int i = 0; i < perfItems.length; i++) {
+    			perfList.add(perfItems[i]);
+    		}
+    		
+    		return perfList;
+    	}catch(Exception e) {    		
+    		e.printStackTrace();
+    		return null;
+    	}
+    }	 
+	 
 }

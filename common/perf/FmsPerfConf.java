@@ -1,7 +1,9 @@
 package common.perf;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.ConversionException;
@@ -11,10 +13,7 @@ import org.w3c.dom.NodeList;
 public class FmsPerfConf extends XmlPerfConfiguration {
 	
     private FmsPerfItem[] perfItems;
-    
-    /** 파일을 읽은 시각 */
-    private long loadTime = System.currentTimeMillis();
-
+   
     public FmsPerfConf(String filename, String encoding) throws ConfigurationException, FileNotFoundException {
         config = XmlUtils.createXMLConfiguration(filename, encoding);
         
@@ -134,24 +133,23 @@ public class FmsPerfConf extends XmlPerfConfiguration {
     public void save() throws ConfigurationException {
         config.save();
     }
-
-    public static void main(String[] args) {
-        try {
-            FmsPerfConf conf = new FmsPerfConf("C:\\4.2\\midknight\\conf\\ko\\fms\\DY_FDL_V4.xml", "EUC-KR");
-            FmsPerfItem perfItems[] = conf.getPerfItems();
-            for (int i = 0; i < perfItems.length; i++) {
-                System.out.println("["+(i+1)+"] "+perfItems[i].toString());
-            }
-        } catch (Exception e) {
-            System.exit(0);
-        }
+    
+    public static ArrayList<Perf> getFmsPerfList(File xmlFile, String encoding) {        	
+    	ArrayList<Perf> perfList = new ArrayList<Perf>();
+    	
+    	try {    		
+    		FmsPerfConf conf = new FmsPerfConf(xmlFile.getAbsolutePath(), encoding);
+    		FmsPerfItem perfItems[] = conf.getPerfItems();
+    		
+    		for(int i = 0; i < perfItems.length; i++) {
+    			perfList.add(perfItems[i]);
+    		}
+    		
+    		return perfList;
+    	}catch(Exception e) {    		
+    		e.printStackTrace();
+    		return null;
+    	}
     }
-
-	public long getLoadTime() {
-		return loadTime;
-	}
-
-	public void setLoadTime(long loadTime) {
-		this.loadTime = loadTime;
-	}
+   
 }
