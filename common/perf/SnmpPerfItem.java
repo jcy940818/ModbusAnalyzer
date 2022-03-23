@@ -1,133 +1,158 @@
 package common.perf;
 
-public class SnmpPerfItem {
+import common.perf.FmsPerfItem.EventInfo;
 
-    /** 표시 이름 */
-    public String displayName;
+public class SnmpPerfItem extends Perf {
 
-    /** OID */
-    public String oid;
+	/** 표시 이름 */
+	public String displayName;
 
-    /** 검사 간격 (초) */
-    public int interval;
+	/** OID */
+	public String oid;
 
-    /** 수집 단위 */
-    public String units;
+	/** 검사 간격 (초) */
+	public int interval;
 
-    /** 변환식 */
-    public String expression;
+	/** 수집 단위 */
+	public String units;
 
-    /** 항목 설명 */
-    public String description;
+	/** 변환식 */
+	public String expression;
 
-    /** 데이터 형식 */
-    public int dataFormat = PerfConf.DATA_FORMAT_MEASURE; // 데이터 형식 (1:이진 데이터, 2:상태 데이터, 3:성능 데이터)
+	/** 항목 설명 */
+	public String description;
 
-    /** 이진 데이터 상태를 저장할 스트링 배열 */
-    public String binLabel[] = new String[] { "", "" };
+	/** 데이터 형식 */
+	public int dataFormat = PerfConf.DATA_FORMAT_MEASURE; // 데이터 형식 (1:이진 데이터, 2:상태 데이터, 3:성능 데이터)
 
-    /** 다중 상태 레이블 */
-    public PerfLabelStatusBean labels[];
+	/** 이진 데이터 상태를 저장할 스트링 배열 */
+	public String binLabel[] = new String[] { "", "" };
 
-    /** 성능 항목 자동 등록 여부 */
-    public boolean autoReg = false;
-    
-    /** 자동 등록할 이벤트 목록 */
-    public EventInfo evt[];
+	/** 다중 상태 레이블 */
+	public PerfLabelStatusBean labels[];
 
-    public SnmpPerfItem() {
-    }
+	/** 성능 항목 자동 등록 여부 */
+	public boolean autoReg = false;
 
-    public SnmpPerfItem(String _name, String _oid, int _interval, String _units, String _exp, String _desc) {
-        displayName = _name;
-        oid = _oid;
-        interval = _interval;
-        units = _units;
-        expression = _exp;
-        description = _desc;
-    }
+	/** 자동 등록할 이벤트 목록 */
+	public EventInfo evt[];
+	
+	/** 사용 중지 */
+	public int enable;
+	
+	
+	public SnmpPerfItem() {
+	}
 
-    public String toString() {
-//        StringBuffer str = new StringBuffer();
-//        str.append("displayName=").append(displayName).append(", ");
-//        str.append("oid=").append(oid).append(", ");
-//        str.append("interval=").append(interval).append(", ");
-//        str.append("units=").append(units).append(", ");
-//        str.append("expression=").append(expression).append(", ");
-//        str.append("data format=").append(dataFormat).append(", ");
-//        if (dataFormat == PerfConf.DATA_FORMAT_DIGITAL) {
-//            str.append("label0=").append(binLabel[0]).append(", ");
-//            str.append("label1=").append(binLabel[1]).append(", ");
-//        }
-//        str.append("auto reg=").append(autoReg).append(", ");
-//        for (int i = 0; evt != null && i < evt.length; i++) {
-//            str.append("event [name=").append(evt[i].name).append(", ");
-//            str.append("severity=").append(evt[i].severity).append(", ");
-//            str.append("threshold=").append(evt[i].threshold).append(", ");
-//            str.append("op=").append(evt[i].op).append(", ");
-//            str.append("mode=").append(evt[i].mode).append(", ");
-//            str.append("duration=").append(evt[i].duration).append(", ");
-//            str.append("count=").append(evt[i].count).append(", ");
-//            str.append("auto close=").append(evt[i].autoClose).append("]");
-//            str.append("enable=").append(evt[i].enable).append(", ");
-//        }
-//        return str.toString();       
-    	return displayName;
-    }
-    
-    
-    public static class EventInfo {
-        /** 이벤트 이름 */
-        public String name;
+	public SnmpPerfItem(String _name, String _oid, int _interval, String _units, String _exp, String _desc) {
+		displayName = _name;
+		oid = _oid;
+		interval = _interval;
+		units = _units;
+		expression = _exp;
+		description = _desc;
+	}
 
-        /** 이벤트 중요도 */
-        public int severity;
+	public String toString() {    
+		return displayName;
+	}
 
-        /** 임계값 */
-        public double threshold;
+	public static class EventInfo {
+		/** 이벤트 이름 */
+		public String name;
 
-        /** 비교 연산자 */
-        public String op;
+		/** 이벤트 중요도 */
+		public int severity;
 
-        /** 발생 모드 */
-        public int mode;
+		/** 임계값 */
+		public double threshold;
 
-        /** 지속 시간 (초) */
-        public int duration;
+		/** 비교 연산자 */
+		public String op;
 
-        /** 발생 횟수 */
-        public int count;
+		/** 발생 모드 */
+		public int mode;
 
-        /** 통보 횟수 */
-        public int seqCount;
+		/** 지속 시간 (초) */
+		public int duration;
 
-        /** 자동 종료 여부 */
-        public boolean autoClose;
+		/** 발생 횟수 */
+		public int count;
 
-        /** 통보 메시지*/
-        public String msg;
+		/** 통보 횟수 */
+		public int seqCount;
 
-        /** 자동 등록 여부*/
-        public boolean autoReg=false;
-    	
-    	/**이벤트 자동등록시 사용여부*/
-    	public int enable;
+		/** 자동 종료 여부 */
+		public boolean autoClose;
 
-        public EventInfo() {}
+		/** 통보 메시지 */
+		public String msg;
 
-        public EventInfo(String n, int s, double t, String o, int m, int d, int c, boolean a, int seqCount, int e) {
-            name = n;
-            severity = s;
-            threshold = t;
-            op = o;
-            mode = m;
-            duration = d;
-            count = c;
-            autoClose = a;
-            this.seqCount = seqCount;
-            msg = "";
-        	enable = e;
+		/** 자동 등록 여부 */
+		public boolean autoReg = false;
 
-        }
-    }
+		/** 이벤트 자동등록시 사용여부 */
+		public int enable;
+
+		public EventInfo() {
+		}
+
+		public EventInfo(String n, int s, double t, String o, int m, int d, int c, boolean a, int seqCount, int e) {
+			name = n;
+			severity = s;
+			threshold = t;
+			op = o;
+			mode = m;
+			duration = d;
+			count = c;
+			autoClose = a;
+			this.seqCount = seqCount;
+			msg = "";
+			enable = e;
+		}
+	}
+
+	public String getDisplayName() {
+		return this.displayName;
+	};
+
+	public String getCounter() {
+		return this.oid;
+	}
+
+	public int getInterval() {
+		return this.interval;
+	}
+
+	public String getMeasure() {
+		return this.units;
+	}
+
+	public String getScaleFunction() {
+		return this.expression;
+	}
+
+	public int getDataFormat() {
+		return this.dataFormat;
+	}
+
+	public String[] getBinLabel() {
+		return this.binLabel;
+	}
+
+	public PerfLabelStatusBean[] getStatusLabels() {
+		return this.labels;
+	}
+	
+	public common.perf.FmsPerfItem.EventInfo[] getFmsEventInfo() {
+		return null;
+	}
+	
+	public EventInfo[] getSnmpEventInfo() {
+		return this.evt;
+	}
+
+	public int getEnable() {
+		return this.enable;
+	}	
 }
