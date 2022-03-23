@@ -52,9 +52,9 @@ public class XmlEditor_Panel extends JPanel {
 	
 	public static JButton languageButton;
 	public static boolean isKorean = false;
-	private JTextField seartFacility_textField;
+	private static JTextField seartFacility_textField;
 	private JLabel searchProtocol_Label;
-	private JTextField searchProtocol_textField;
+	private static JTextField searchProtocol_textField;
 	
 	private static JTable table;		
 	private JButton goXmlEditor;
@@ -633,6 +633,13 @@ public class XmlEditor_Panel extends JPanel {
 				}
 				break;
 		}
+	}
+	
+	public static void resetForm() {
+		if(protocolType_comboBox != null) protocolType_comboBox.setSelectedIndex(0);
+		if(facilityType_comboBox != null) facilityType_comboBox.setSelectedIndex(0);
+		if(seartFacility_textField != null) seartFacility_textField.setText(null);
+		if(searchProtocol_textField != null) searchProtocol_textField.setText(null);
 	}
 	
 }

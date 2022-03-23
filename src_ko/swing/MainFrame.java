@@ -677,6 +677,7 @@ public class MainFrame extends JFrame {
 		XmlEditor_Panel.protocols = protocols;
 		XmlEditor_Panel.setFacilityComboBox(protocols, true);
 		XmlEditor_Panel.setTableContent("COMMON", "Àü Ã¼", protocols, XmlEditor_Panel.isKorean);
+		XmlEditor_Panel.resetForm();
 		cardLayout.show(actualPanel, "xmlEditor_Panel");
 	}
 	
