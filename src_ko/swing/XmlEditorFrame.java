@@ -44,6 +44,10 @@ import javax.swing.ScrollPaneConstants;
 
 public class XmlEditorFrame extends JFrame {
 
+	public static final int PERF_LIST_TABLE = 0;
+	public static final int PERF_INFO_TABLE = 1;
+	public static final int PERF_LABEL_TABLE = 2;
+	
 	public static boolean isExist = false;
 	private JPanel contentPane;
 	private JButton mk119Button;
@@ -62,7 +66,7 @@ public class XmlEditorFrame extends JFrame {
 	private JTable perfInfoTable;
 	private JLabel mappingLabel;
 	private JScrollPane perfLabelInfoPanel;
-	private JTable perfLabelMappingTable;
+	private JTable perfLabelTable;
 	
 	
 	/**
@@ -221,7 +225,7 @@ public class XmlEditorFrame extends JFrame {
 					return columnEditables[column];
 				}
 		});
-		setPerfInfoTableStyle(perfInfoTable);
+		setTableStyle(perfInfoTable, PERF_INFO_TABLE);
 		perfInfoPanel.setViewportView(perfInfoTable);
 		
 		mappingLabel = new JLabel("");
@@ -237,8 +241,8 @@ public class XmlEditorFrame extends JFrame {
 		perfLabelInfoPanel.setBorder(new LineBorder(Color.BLACK, 2));
 		view_Panel.add(perfLabelInfoPanel);
 		
-		perfLabelMappingTable = new JTable();
-		perfLabelMappingTable.setModel(new DefaultTableModel(
+		perfLabelTable = new JTable();
+		perfLabelTable.setModel(new DefaultTableModel(
 				new Object[][] {
 					{null, null},
 					{null, null},
@@ -257,8 +261,8 @@ public class XmlEditorFrame extends JFrame {
 					return columnEditables[column];
 				}
 		});
-		setPerfLabelMappingTable(perfLabelMappingTable);
-		perfLabelInfoPanel.setViewportView(perfLabelMappingTable);
+		setTableStyle(perfLabelTable, PERF_LABEL_TABLE);
+		perfLabelInfoPanel.setViewportView(perfLabelTable);
 		
 		JLabel searchPerf_label = new JLabel("성능 검색");
 		searchPerf_label.setHorizontalAlignment(SwingConstants.LEFT);
@@ -280,7 +284,7 @@ public class XmlEditorFrame extends JFrame {
 				try {
 					String text = searchPerf_textField.getText();				
 					if(text == null || text.length() == 0 || text.equals("")) {
-						tableReload(perfListTable);
+						updatePerfListTable(perfListTable);
 					}else {					
 						doTableFilter(text);
 					}
@@ -293,7 +297,7 @@ public class XmlEditorFrame extends JFrame {
 				try {
 					String text = searchPerf_textField.getText();				
 					if(text == null || text.length() == 0 || text.equals("")) {
-						tableReload(perfListTable);
+						updatePerfListTable(perfListTable);
 					}else {					
 						doTableFilter(text);
 					}
@@ -305,9 +309,8 @@ public class XmlEditorFrame extends JFrame {
 		actualPanel.add(searchPerf_textField);				
 		
 		// 테이블 로드
-		tableReload(perfListTable);
+		updatePerfListTable(perfListTable);
 				
-		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -334,11 +337,7 @@ public class XmlEditorFrame extends JFrame {
 	
 	
 	
-	//*************** 테이블 관련 기능 *********************************************************************************
-	public void tableReload(JTable table) {
-		updatePerfListTable(table);
-	}
-
+	//*************** 성능 리스트 테이블  *********************************************************************************
 	public void updatePerfListTable(JTable table) {		
 
 		if (table == null || perfs == null) return;
@@ -361,47 +360,10 @@ public class XmlEditorFrame extends JFrame {
 			public boolean isCellEditable(int i, int c) {
 				return false;
 			}
-		});		
+		});
 
-		setPerfListTableStyle(table);
+		setTableStyle(table, PERF_LIST_TABLE);
 	}
-	
-	
-	public void setPerfListTableStyle(JTable table) {
-		
-		// 테이블 헤더 설정
-		table.getTableHeader().setForeground(Color.BLACK);
-		table.getTableHeader().setBackground(new Color(255, 255, 153));
-		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 17));
-		
-		// 이동 불가, 셀 크기 조절 불가
-		table.getTableHeader().setReorderingAllowed(false);
-		table.getTableHeader().setResizingAllowed(false);
-		table.setRowSelectionAllowed(false);
-		table.setCellSelectionEnabled(true);
-		
-		// 테이블 셀 설정
-		table.setBorder(new EmptyBorder(0, 3, 0, 0));
-		table.setRowMargin(3);
-		table.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
-		table.setRowHeight(25);
-		
-		// 테이블 셀 크기 설정
-		table.getColumnModel().getColumn(0).setPreferredWidth(5); // 순 서
-		table.getColumnModel().getColumn(1).setPreferredWidth(400); // 성 능		
-		
-		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
-		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
-
-		// DefaultTableCellHeaderRenderer의 정렬을 가운데 정렬로 지정
-		tScheduleCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-
-		// 정렬할 테이블의 ColumnModel을 가져옴
-		TableColumnModel tcmSchedule = table.getColumnModel();
-		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
-//		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 성 능
-	}
-	
 	
 	public void doTableFilter(String text) {
 		text = text.toUpperCase();
@@ -439,7 +401,7 @@ public class XmlEditorFrame extends JFrame {
 			Perf perf = filterPerfs.get(i);
 			content[i] = new Object[2];
 			content[i][0] = perf.getIndex();
-			content[i][1] = perf;			
+			content[i][1] = perf;
 		}
 
 		perfListTable.setModel(new DefaultTableModel(
@@ -451,7 +413,7 @@ public class XmlEditorFrame extends JFrame {
 				}
 		});
 
-		setPerfListTableStyle(perfListTable);
+		setTableStyle(perfListTable, PERF_LIST_TABLE);
 	}
 	
 	//******************** 성능 정보 테이블 관련 *********************************************************************
@@ -466,7 +428,7 @@ public class XmlEditorFrame extends JFrame {
 		content[0][1] = perf.getDisplayName();
 		
 		content[1] = new Object[2];
-		content[1][0] = "성능 카운터";
+		content[1][0] = (this.isCommon) ? "성능 카운터" : "OID";
 		content[1][1] = perf.getCounter();
 		
 		content[2] = new Object[2];
@@ -488,21 +450,23 @@ public class XmlEditorFrame extends JFrame {
 		content[6] = new Object[2];
 		content[6][0] = "데이터 형식(상세)";
 		String type = null;
+		
 		int format = perf.getDataFormat();
+		
 		if(format == 1) {
 			type = "이진 상태 ( DI )";
 			mappingLabel.setText("이진 상태 매핑 정보");
-			perfLabelMappingTable.setVisible(true);
-			updatePerfLabelMappingTable(perfLabelMappingTable, perf);
+			perfLabelTable.setVisible(true);
+			updatePerfLabelMappingTable(perfLabelTable, perf);
 		}else if(format == 2) {
 			type = "다중 상태 성능";
 			mappingLabel.setText("다중 상태 매핑 정보");
-			perfLabelMappingTable.setVisible(true);
-			updatePerfLabelMappingTable(perfLabelMappingTable, perf);
+			perfLabelTable.setVisible(true);
+			updatePerfLabelMappingTable(perfLabelTable, perf);
 		}else {
 			type = "성능 데이터 ( Analog )";
 			mappingLabel.setText("상태 매핑 정보 없음");
-			perfLabelMappingTable.setVisible(false);
+			perfLabelTable.setVisible(false);
 		}
 		content[6][1] = type;
 
@@ -518,43 +482,7 @@ public class XmlEditorFrame extends JFrame {
 				}
 		});
 		
-		setPerfInfoTableStyle(table);
-	}
-	
-	
-	public void setPerfInfoTableStyle(JTable table) {
-		
-		// 테이블 헤더 설정
-		table.getTableHeader().setForeground(Color.BLACK);
-		table.getTableHeader().setBackground(new Color(255, 255, 153));
-		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 17));
-		
-		// 이동 불가, 셀 크기 조절 불가
-		table.getTableHeader().setReorderingAllowed(false);
-		table.getTableHeader().setResizingAllowed(false);
-		table.setRowSelectionAllowed(false);
-		table.setCellSelectionEnabled(true);
-		
-		// 테이블 셀 설정
-		table.setBorder(new EmptyBorder(0, 3, 0, 0));
-		table.setRowMargin(3);
-		table.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
-		table.setRowHeight(30);
-		
-		// 테이블 셀 크기 설정
-		table.getColumnModel().getColumn(0).setPreferredWidth(3); // 필 드		
-		table.getColumnModel().getColumn(1).setPreferredWidth(180); // 내 용		
-		
-		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
-		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
-
-		// DefaultTableCellHeaderRenderer의 정렬을 가운데 정렬로 지정
-		tScheduleCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-
-		// 정렬할 테이블의 ColumnModel을 가져옴
-		TableColumnModel tcmSchedule = table.getColumnModel();
-		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 필 드
-//		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 내 용
+		setTableStyle(table, PERF_INFO_TABLE);
 	}
 	
 	//******************** 성능 레이블 매핑 정보 테이블 관련 *********************************************************************
@@ -599,11 +527,11 @@ public class XmlEditorFrame extends JFrame {
 					}
 			});
 			
-			setPerfLabelMappingTable(table);
+			setTableStyle(table, PERF_LABEL_TABLE);
 		}
 		
-		public void setPerfLabelMappingTable(JTable table) {
-			
+		//******************** 테이블 스타일 관련 *********************************************************************
+		public void setTableStyle(JTable table, int tableType) {
 			// 테이블 헤더 설정
 			table.getTableHeader().setForeground(Color.BLACK);
 			table.getTableHeader().setBackground(new Color(255, 255, 153));
@@ -618,13 +546,28 @@ public class XmlEditorFrame extends JFrame {
 			// 테이블 셀 설정
 			table.setBorder(new EmptyBorder(0, 3, 0, 0));
 			table.setRowMargin(3);
-			table.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
-			table.setRowHeight(30);
-			
+			if(tableType == PERF_LIST_TABLE) {
+				table.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
+				table.setRowHeight(25); 
+			}else {
+				table.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
+				table.setRowHeight(30); 
+			}
 			
 			// 테이블 셀 크기 설정
-			table.getColumnModel().getColumn(0).setPreferredWidth(4); // 값	
-			table.getColumnModel().getColumn(1).setPreferredWidth(350); // 매핑 내용		
+			if(tableType == PERF_LIST_TABLE) {
+				// 성능 리스트 테이블
+				table.getColumnModel().getColumn(0).setPreferredWidth(5); // 순 서
+				table.getColumnModel().getColumn(1).setPreferredWidth(400); // 성 능		
+			}else if(tableType == PERF_INFO_TABLE) {
+				// 성능 정보 테이블
+				table.getColumnModel().getColumn(0).setPreferredWidth(3); // 필 드		
+				table.getColumnModel().getColumn(1).setPreferredWidth(180); // 내 용		
+			}else if(tableType == PERF_LABEL_TABLE) {
+				// 성능 레이블 테이블
+				table.getColumnModel().getColumn(0).setPreferredWidth(4); // 값	
+				table.getColumnModel().getColumn(1).setPreferredWidth(350); // 매핑 내용		
+			}
 			
 			// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
 			DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
@@ -634,8 +577,13 @@ public class XmlEditorFrame extends JFrame {
 
 			// 정렬할 테이블의 ColumnModel을 가져옴
 			TableColumnModel tcmSchedule = table.getColumnModel();
-			tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 값 
-			tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 매핑 내용
+			tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
+			
+			if(tableType == PERF_LABEL_TABLE) {
+				tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 성능 레이블 테이블만 가운데 정렬
+			}else {
+//				tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
+			}
 		}
 	
 }
