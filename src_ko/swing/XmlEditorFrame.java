@@ -1,11 +1,8 @@
 package src_ko.swing;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -21,7 +18,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
@@ -39,8 +38,6 @@ import common.perf.SnmpPerfItem;
 import src_ko.info.Protocol;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
-import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
 
 public class XmlEditorFrame extends JFrame {
 
@@ -48,26 +45,26 @@ public class XmlEditorFrame extends JFrame {
 	public static final int PERF_INFO_TABLE = 1;
 	public static final int PERF_LABEL_TABLE = 2;
 	
+	private JTable perfListTable;
+	private JTable perfInfoTable;
+	private JTable perfLabelTable;
+	
 	public static boolean isExist = false;
-	private JPanel contentPane;
 	private JButton mk119Button;
-	private JTable perfListTable; // frame마다 XML 인스턴스를 가져야 하므로 table 필드는 static 속성을 가질 수 없다
- 
+	 
 	private File xmlFile;
 	private Protocol protocol;
-	private boolean isCommon;	
-	private ArrayList<Perf> perfs;	
+	private boolean isCommon;
+	private ArrayList<Perf> perfs;
 	private Perf selectedPerf;
 	private String encoding = "euc-kr";
 	
+	private JPanel contentPane;
 	private JPanel view_Panel;
-	private JTextField searchPerf_textField;
-	private JScrollPane perfInfoPanel;
-	private JTable perfInfoTable;
 	private JLabel mappingLabel;
+	private JScrollPane perfInfoPanel;
 	private JScrollPane perfLabelInfoPanel;
-	private JTable perfLabelTable;
-	
+	private JTextField searchPerf_textField;
 	
 	/**
 	 * Launch the application.
