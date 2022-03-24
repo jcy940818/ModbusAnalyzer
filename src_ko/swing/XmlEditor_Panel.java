@@ -82,11 +82,11 @@ public class XmlEditor_Panel extends JPanel {
 		infoPanel.setBackground(Color.WHITE);
 		infoPanel.setLayout(null);
 
-		JLabel currentFunction = new JLabel("XML Editor");
+		JLabel currentFunction = new JLabel("Protocol List");
 		currentFunction.setForeground(Color.BLACK);
 		currentFunction.setBackground(Color.WHITE);
 		currentFunction.setIcon(new Util().getSubLogoResource());
-		currentFunction.setBounds(0, 0, 187, 55);
+		currentFunction.setBounds(0, 0, 220, 55);
 		currentFunction.setHorizontalAlignment(SwingConstants.LEFT);
 		currentFunction.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		infoPanel.add(currentFunction);
@@ -589,8 +589,7 @@ public class XmlEditor_Panel extends JPanel {
 		
 		String separator = Util.separator + Util.separator; 
 		StringBuilder msg = new StringBuilder();
-		msg.append("<font color='Green'>XML Execution Task Menu</font>\n");
-		msg.append("어떤 작업을 수행 하시겠습니까?" + Util.longSeparator + Util.separator +"\n\n");
+		msg.append("<font color='Green'>Protocol Information</font>\n");		
 		
 		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("시설물 종류"), p.getFacType(), separator, separator));
 		msg.append(String.format("%s : %d%s%s\n\n", Util.colorBlue("프로토콜 번호"), p.getNumber(), separator, separator));

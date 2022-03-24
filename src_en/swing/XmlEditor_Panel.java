@@ -82,11 +82,11 @@ public class XmlEditor_Panel extends JPanel {
 		infoPanel.setBackground(Color.WHITE);
 		infoPanel.setLayout(null);
 
-		JLabel currentFunction = new JLabel("XML Editor");
+		JLabel currentFunction = new JLabel("Protocol List");
 		currentFunction.setForeground(Color.BLACK);
 		currentFunction.setBackground(Color.WHITE);
 		currentFunction.setIcon(new Util().getSubLogoResource());
-		currentFunction.setBounds(0, 0, 187, 55);
+		currentFunction.setBounds(0, 0, 220, 55);
 		currentFunction.setHorizontalAlignment(SwingConstants.LEFT);
 		currentFunction.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
 		infoPanel.add(currentFunction);
@@ -96,14 +96,14 @@ public class XmlEditor_Panel extends JPanel {
 		protocolType_Label.setForeground(Color.BLACK);
 		protocolType_Label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
 		protocolType_Label.setBackground(Color.WHITE);
-		protocolType_Label.setBounds(232, 0, 120, 55);
+		protocolType_Label.setBounds(239, 0, 120, 55);
 		infoPanel.add(protocolType_Label);
 		
 		protocolType_comboBox = new JComboBox();
 		protocolType_comboBox.setForeground(Color.BLACK);
 		protocolType_comboBox.setBackground(Color.WHITE);
 		protocolType_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
-		protocolType_comboBox.setBounds(358, 12, 116, 35);
+		protocolType_comboBox.setBounds(365, 12, 116, 35);
 		protocolType_comboBox.setModel(new DefaultComboBoxModel(new String[] {"COMMON", "SNMP"}));
 		protocolType_comboBox.setSelectedIndex(0);		
 		protocolType_comboBox.addActionListener(new ActionListener() {
@@ -119,7 +119,7 @@ public class XmlEditor_Panel extends JPanel {
 		facilityType_Label.setForeground(Color.BLACK);
 		facilityType_Label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
 		facilityType_Label.setBackground(Color.WHITE);
-		facilityType_Label.setBounds(502, 0, 116, 55);
+		facilityType_Label.setBounds(510, 0, 110, 55);
 		infoPanel.add(facilityType_Label);
 		
 		facilityType_comboBox = new JComboBox();		
@@ -584,8 +584,7 @@ public class XmlEditor_Panel extends JPanel {
 		
 		String separator = Util.separator + Util.separator; 
 		StringBuilder msg = new StringBuilder();
-		msg.append("<font color='Green'>XML Execution Task Menu</font>\n");
-		msg.append("What menu do you want to perform?" + Util.longSeparator + Util.separator +"\n\n");
+		msg.append("<font color='Green'>Protocol Information</font>\n");		
 		
 		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("Facility Type"), p.getFacType(), separator, separator));
 		msg.append(String.format("%s : %d%s%s\n\n", Util.colorBlue("Protocol Number"), p.getNumber(), separator, separator));
