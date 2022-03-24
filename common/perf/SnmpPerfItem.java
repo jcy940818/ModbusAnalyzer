@@ -1,5 +1,7 @@
 package common.perf;
 
+import java.util.Arrays;
+
 import common.perf.FmsPerfItem.EventInfo;
 
 public class SnmpPerfItem extends Perf {
@@ -141,6 +143,7 @@ public class SnmpPerfItem extends Perf {
 	}
 
 	public PerfLabelStatusBean[] getStatusLabels() {
+		Arrays.sort(this.labels);
 		return this.labels;
 	}
 	

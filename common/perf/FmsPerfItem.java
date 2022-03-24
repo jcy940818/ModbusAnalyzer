@@ -1,5 +1,7 @@
 package common.perf;
 
+import java.util.Arrays;
+
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -221,6 +223,7 @@ public class FmsPerfItem extends Perf {
 	}
 
 	public PerfLabelStatusBean[] getStatusLabels() {
+		Arrays.sort(this.labels);
 		return this.labels;
 	}
 	
