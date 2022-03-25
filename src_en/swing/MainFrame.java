@@ -401,11 +401,11 @@ public class MainFrame extends JFrame {
 		moonMenu.add(moonProtocolListDownload);
 		moonMenu.add(new JSeparator());
 		
-		JMenuItem moonXmlEditor = new JMenuItem("Protocol XML Editor : Edit Watch Point XML");
-		moonXmlEditor.setHorizontalAlignment(SwingConstants.LEFT);
-		moonXmlEditor.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
-		moonXmlEditor.setForeground(Color.BLUE);
-		moonMenu.add(moonXmlEditor);
+		JMenuItem moonXmlViewer = new JMenuItem("Protocol XML Viewer : View Watch Point XML");
+		moonXmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
+		moonXmlViewer.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
+		moonXmlViewer.setForeground(Color.BLUE);
+		moonMenu.add(moonXmlViewer);
 		
 		
 		
@@ -589,7 +589,7 @@ public class MainFrame extends JFrame {
 		});
 		
 		/** XmlEditor Panel : Moon ***********************************/
-		moonXmlEditor.addActionListener(new ActionListener() {
+		moonXmlViewer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// MK119 XML 편집 : 라디오 버튼 옵션으로 수정 가능				
 				showOnionDirCheck(true);
