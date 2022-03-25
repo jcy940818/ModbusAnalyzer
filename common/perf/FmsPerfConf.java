@@ -5,10 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.ConversionException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import src_ko.util.Util;
 
 public class FmsPerfConf extends XmlPerfConfiguration {
 	
@@ -148,6 +152,10 @@ public class FmsPerfConf extends XmlPerfConfiguration {
     		return perfList;
     	}catch(Exception e) {    		
     		e.printStackTrace();
+    		StringBuilder sb = new StringBuilder();
+    		sb.append(String.format("%s%s%s\n", Util.colorRed("XML Load Fail"), Util.separator , Util.separator));    		
+    		sb.append(String.format("Message : %s%s%s\n", e.getMessage(), Util.separator, Util.separator));
+    		Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
     		return null;
     	}
     }

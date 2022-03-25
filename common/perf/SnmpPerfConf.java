@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -17,6 +18,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import src_ko.util.Util;
 
 public class SnmpPerfConf {
     private Document doc;
@@ -176,7 +179,11 @@ public class SnmpPerfConf {
     		
     		return perfList;
     	}catch(Exception e) {    		
-    		e.printStackTrace();
+    		e.printStackTrace();    		
+    		StringBuilder sb = new StringBuilder();
+    		sb.append(String.format("%s%s%s\n", Util.colorRed("XML Load Fail"), Util.separator , Util.separator));    		
+    		sb.append(String.format("Message : %s%s%s\n", e.getMessage(), Util.separator, Util.separator));
+    		Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
     		return null;
     	}
     }	 
