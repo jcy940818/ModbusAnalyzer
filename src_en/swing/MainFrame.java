@@ -28,7 +28,7 @@ import src_en.database.StoredProcedure;
 import src_en.info.ONION_Info;
 import src_en.util.Util;
 import src_en.info.Protocol;
-import src_en.swing.XmlEditor_Panel;
+import src_en.swing.ProtocolList_Panel;
 
 public class MainFrame extends JFrame {
 	
@@ -227,11 +227,11 @@ public class MainFrame extends JFrame {
 		utilMenu.add(protocolListDownload);
 		utilMenu.add(new JSeparator());
 		
-		// Util 메뉴 : XML 편집기
-		JMenuItem xmlEditor = new JMenuItem("Protocol XML Editor : Edit Watch Point XML");
-		xmlEditor.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlEditor.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
-		utilMenu.add(xmlEditor);
+		// Util 메뉴 : XML 뷰어
+		JMenuItem xmlViewer = new JMenuItem("Protocol XML Viewer : View Watch Point XML");
+		xmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
+		xmlViewer.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
+		utilMenu.add(xmlViewer);
 		utilMenu.add(new JSeparator());
 		
 		
@@ -568,7 +568,7 @@ public class MainFrame extends JFrame {
 		/** OnionDirCheck Panel ***********************************/
 		OnionDirCheck_Panel onionDirCheck_Panel = new OnionDirCheck_Panel();
 		actualPanel.add(onionDirCheck_Panel, "onionDirCheck_Panel");
-		xmlEditor.addActionListener(new ActionListener() {
+		xmlViewer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// OnionSoftware 디렉토리 경로 프로토콜 다운로드				
 				showOnionDirCheck(false);				
@@ -576,7 +576,7 @@ public class MainFrame extends JFrame {
 		});
 		
 		/** XmlEditor Panel ***********************************/
-		XmlEditor_Panel xmlEditor_Panel = new XmlEditor_Panel();
+		ProtocolList_Panel xmlEditor_Panel = new ProtocolList_Panel();
 		actualPanel.add(xmlEditor_Panel, "xmlEditor_Panel");
 		
 		
@@ -664,13 +664,13 @@ public class MainFrame extends JFrame {
 	}
 	
 	public static void showXmlEditor(File xmlDir, ArrayList<Protocol> protocols) {
-		XmlEditor_Panel.isKorean = false;
-		if(XmlEditor_Panel.languageButton != null) XmlEditor_Panel.languageButton.setText("English");
-		XmlEditor_Panel.xmlDir = xmlDir;
-		XmlEditor_Panel.protocols = protocols;
-		XmlEditor_Panel.setFacilityComboBox(protocols, true);
-		XmlEditor_Panel.setTableContent("COMMON", "All Types", protocols, XmlEditor_Panel.isKorean);
-		XmlEditor_Panel.resetForm();
+		ProtocolList_Panel.isKorean = false;
+		if(ProtocolList_Panel.languageButton != null) ProtocolList_Panel.languageButton.setText("English");
+		ProtocolList_Panel.xmlDir = xmlDir;
+		ProtocolList_Panel.protocols = protocols;
+		ProtocolList_Panel.setFacilityComboBox(protocols, true);
+		ProtocolList_Panel.setTableContent("COMMON", "All Types", protocols, ProtocolList_Panel.isKorean);
+		ProtocolList_Panel.resetForm();
 		cardLayout.show(actualPanel, "xmlEditor_Panel");
 	}
 	

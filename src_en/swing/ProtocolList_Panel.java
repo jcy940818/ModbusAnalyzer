@@ -37,7 +37,7 @@ import src_en.info.Protocol;
 import src_en.util.FileUtil;
 import src_en.util.Util;
 
-public class XmlEditor_Panel extends JPanel {
+public class ProtocolList_Panel extends JPanel {
 	
 	public static File xmlDir;
 	
@@ -57,13 +57,13 @@ public class XmlEditor_Panel extends JPanel {
 	private static JTextField searchProtocol_textField;
 	
 	private static JTable table;		
-	private JButton goXmlEditor;
+	private JButton goXmlViewer;
 	private JButton openXmlFile;
 	
 	/**
 	 * Create the panel.
 	 */
-	public XmlEditor_Panel() {
+	public ProtocolList_Panel() {
 		setBorder(new EmptyBorder(0, 0, 0, 0));
 
 		// size : 1074, 628
@@ -174,7 +174,7 @@ public class XmlEditor_Panel extends JPanel {
 		searchProtocol_Label.setForeground(Color.BLACK);
 		searchProtocol_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		searchProtocol_Label.setBackground(Color.WHITE);
-		searchProtocol_Label.setBounds(16, 87, 70, 41);
+		searchProtocol_Label.setBounds(16, 92, 70, 41);
 		infoPanel.add(searchProtocol_Label);
 		
 		searchProtocol_textField = new JTextField("");
@@ -183,7 +183,7 @@ public class XmlEditor_Panel extends JPanel {
 		searchProtocol_textField.setForeground(Color.BLACK);
 		searchProtocol_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchProtocol_textField.setColumns(10);
-		searchProtocol_textField.setBounds(85, 92, 521, 35);
+		searchProtocol_textField.setBounds(85, 97, 521, 35);
 		searchProtocol_textField.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -288,7 +288,7 @@ public class XmlEditor_Panel extends JPanel {
 		scrollPane.setViewportView(table);
 		
 		languageButton = new JButton("English");		
-		languageButton.setBounds(618, 91, 97, 35);		
+		languageButton.setBounds(612, 96, 97, 35);		
 		languageButton.setForeground(Color.BLACK);
 		languageButton.setBackground(Color.WHITE);
 		languageButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
@@ -313,20 +313,20 @@ public class XmlEditor_Panel extends JPanel {
 		});
 		infoPanel.add(languageButton);
 		
-		goXmlEditor = new JButton("Oepn XML Editor");
-		goXmlEditor.setForeground(Color.BLUE);
-		goXmlEditor.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		goXmlEditor.setFocusPainted(false);
-		goXmlEditor.setBackground(Color.WHITE);
-		goXmlEditor.setBounds(735, 91, 160, 35);
-		infoPanel.add(goXmlEditor);
+		goXmlViewer = new JButton("Oepn XML Viewer");
+		goXmlViewer.setForeground(Color.BLUE);
+		goXmlViewer.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		goXmlViewer.setFocusPainted(false);
+		goXmlViewer.setBackground(Color.WHITE);
+		goXmlViewer.setBounds(728, 96, 167, 35);
+		infoPanel.add(goXmlViewer);
 		
 		openXmlFile = new JButton("Open XML File");
 		openXmlFile.setForeground(new Color(0, 128, 0));
 		openXmlFile.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		openXmlFile.setFocusPainted(false);
 		openXmlFile.setBackground(Color.WHITE);
-		openXmlFile.setBounds(900, 91, 138, 35);
+		openXmlFile.setBounds(900, 96, 138, 35);
 		openXmlFile.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -436,7 +436,7 @@ public class XmlEditor_Panel extends JPanel {
 			facType = facType.trim();
 		}
 				
-		setTableContent(protocolType, facType, XmlEditor_Panel.protocols, isKorean);
+		setTableContent(protocolType, facType, ProtocolList_Panel.protocols, isKorean);
 	}
 	
 	
@@ -559,7 +559,7 @@ public class XmlEditor_Panel extends JPanel {
 			facTypeList.add(sortMap.get(facCodeList.get(i)));
 		}
 		
-		XmlEditor_Panel.facTypeList = facTypeList; // 시설물 종류 검색 용도
+		ProtocolList_Panel.facTypeList = facTypeList; // 시설물 종류 검색 용도
 		facilityType_comboBox.setModel(new DefaultComboBoxModel(facTypeList.toArray()));
 	}
 	
@@ -604,13 +604,13 @@ public class XmlEditor_Panel extends JPanel {
 		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("Protocol Name"),pName , separator, separator));
 		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("Watch Point XML"), p.getXml(), separator, separator));
 		
-		int menu = Util.showOption(msg.toString(), new String[] { "Open XML Editor", "Open XML File"}, JOptionPane.QUESTION_MESSAGE);
+		int menu = Util.showOption(msg.toString(), new String[] { "Open XML Viewer", "Open XML File"}, JOptionPane.QUESTION_MESSAGE);
 
 		switch (menu) {
 			case -1: // 사용자가 메뉴를 선택하지 않고 대화상자를 나갔을 때				
 				return;
 				
-			case 0: // XML Editor 열기
+			case 0: // XML Viewer 열기
 				// 에디터 열기 작업
 				break;
 				

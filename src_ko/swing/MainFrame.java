@@ -23,7 +23,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import src_ko.swing.XmlEditor_Panel;
+import src_ko.swing.ProtocolList_Panel;
 import src_ko.analyzer.RX.DataType;
 import src_ko.database.StoredProcedure;
 import src_ko.info.ONION_Info;
@@ -227,11 +227,11 @@ public class MainFrame extends JFrame {
 		utilMenu.add(protocolListDownload);
 		utilMenu.add(new JSeparator());
 				
-		// Util 메뉴 : XML 편집기
-		JMenuItem xmlEditor = new JMenuItem("Protocol XML Editor : 성능 XML 편집");
-		xmlEditor.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlEditor.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
-		utilMenu.add(xmlEditor);
+		// Util 메뉴 : XML 뷰어
+		JMenuItem xmlViewer = new JMenuItem("Protocol XML Viewer : 성능 XML 뷰어");
+		xmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
+		xmlViewer.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
+		utilMenu.add(xmlViewer);
 		utilMenu.add(new JSeparator());
 		
 		
@@ -402,7 +402,7 @@ public class MainFrame extends JFrame {
 		moonMenu.add(moonProtocolListDownload);
 		moonMenu.add(new JSeparator());
 		
-		JMenuItem moonXmlEditor = new JMenuItem("Protocol XML Editor : 성능 XML 편집");
+		JMenuItem moonXmlEditor = new JMenuItem("Protocol XML Viewer : 성능 XML 뷰어");
 		moonXmlEditor.setHorizontalAlignment(SwingConstants.LEFT);
 		moonXmlEditor.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
 		moonXmlEditor.setForeground(Color.BLUE);
@@ -575,7 +575,7 @@ public class MainFrame extends JFrame {
 		/** OnionDirCheck Panel ***********************************/
 		OnionDirCheck_Panel onionDirCheck_Panel = new OnionDirCheck_Panel();
 		actualPanel.add(onionDirCheck_Panel, "onionDirCheck_Panel");
-		xmlEditor.addActionListener(new ActionListener() {
+		xmlViewer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// OnionSoftware 디렉토리 경로 프로토콜 다운로드				
 				showOnionDirCheck(false);				
@@ -583,7 +583,7 @@ public class MainFrame extends JFrame {
 		});
 		
 		/** XmlEditor Panel ***********************************/
-		XmlEditor_Panel xmlEditor_Panel = new XmlEditor_Panel();
+		ProtocolList_Panel xmlEditor_Panel = new ProtocolList_Panel();
 		actualPanel.add(xmlEditor_Panel, "xmlEditor_Panel");
 		
 		
@@ -671,13 +671,13 @@ public class MainFrame extends JFrame {
 	}
 	
 	public static void showXmlEditor(File xmlDir, ArrayList<Protocol> protocols) {
-		XmlEditor_Panel.isKorean = true;
-		if(XmlEditor_Panel.languageButton != null) XmlEditor_Panel.languageButton.setText("한글명");
-		XmlEditor_Panel.xmlDir = xmlDir;
-		XmlEditor_Panel.protocols = protocols;
-		XmlEditor_Panel.setFacilityComboBox(protocols, true);
-		XmlEditor_Panel.setTableContent("COMMON", "전 체", protocols, XmlEditor_Panel.isKorean);
-		XmlEditor_Panel.resetForm();
+		ProtocolList_Panel.isKorean = true;
+		if(ProtocolList_Panel.languageButton != null) ProtocolList_Panel.languageButton.setText("한글명");
+		ProtocolList_Panel.xmlDir = xmlDir;
+		ProtocolList_Panel.protocols = protocols;
+		ProtocolList_Panel.setFacilityComboBox(protocols, true);
+		ProtocolList_Panel.setTableContent("COMMON", "전 체", protocols, ProtocolList_Panel.isKorean);
+		ProtocolList_Panel.resetForm();
 		cardLayout.show(actualPanel, "xmlEditor_Panel");
 	}
 	
