@@ -57,6 +57,7 @@ public class XmlEditorFrame extends JFrame {
 	private boolean isCommon;
 	private ArrayList<Perf> perfs;
 	private Perf selectedPerf;
+	private Perf editPerf;
 	private String encoding = "euc-kr";
 	
 	private JPanel contentPane;
@@ -65,6 +66,8 @@ public class XmlEditorFrame extends JFrame {
 	private JScrollPane perfInfoPanel;
 	private JScrollPane perfLabelInfoPanel;
 	private JTextField searchPerf_textField;
+	private JLabel protocolNameLabel;
+	private JButton button;
 	
 	/**
 	 * Launch the application.
@@ -101,7 +104,7 @@ public class XmlEditorFrame extends JFrame {
 		}
 		
 		XmlEditorFrame.isExist = true;
-		setTitle(String.format("XML Editor : [ %s ] %s", protocol.getFacType(), protocolName));
+		setTitle(String.format("XML Editor : [ %s ] %s ( %s )", protocol.getFacType(), protocolName, xmlFile.getName()));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
@@ -125,7 +128,7 @@ public class XmlEditorFrame extends JFrame {
 		currentFunction.setHorizontalAlignment(SwingConstants.LEFT);
 		currentFunction.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		currentFunction.setBackground(Color.WHITE);
-		currentFunction.setBounds(0, 0, 267, 55);
+		currentFunction.setBounds(0, 0, 181, 55);
 		actualPanel.add(currentFunction);
 		
 				
@@ -261,12 +264,12 @@ public class XmlEditorFrame extends JFrame {
 		setTableStyle(perfLabelTable, PERF_LABEL_TABLE);
 		perfLabelInfoPanel.setViewportView(perfLabelTable);
 		
-		JLabel searchPerf_label = new JLabel("성능 검색");
+		JLabel searchPerf_label = new JLabel("검 색");
 		searchPerf_label.setHorizontalAlignment(SwingConstants.LEFT);
 		searchPerf_label.setForeground(Color.BLACK);
 		searchPerf_label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		searchPerf_label.setBackground(Color.WHITE);
-		searchPerf_label.setBounds(15, 82, 90, 36);
+		searchPerf_label.setBounds(23, 84, 55, 36);
 		actualPanel.add(searchPerf_label);
 		
 		searchPerf_textField = new JTextField();
@@ -275,7 +278,7 @@ public class XmlEditorFrame extends JFrame {
 		searchPerf_textField.setForeground(Color.BLACK);
 		searchPerf_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchPerf_textField.setColumns(10);
-		searchPerf_textField.setBounds(100, 85, 447, 35);
+		searchPerf_textField.setBounds(77, 87, 352, 35);
 		searchPerf_textField.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -307,6 +310,24 @@ public class XmlEditorFrame extends JFrame {
 		
 		// 테이블 로드
 		updatePerfListTable(perfListTable);
+		
+		protocolNameLabel = new JLabel(protocolName);
+		protocolNameLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		protocolNameLabel.setForeground(Color.BLUE);
+		protocolNameLabel.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		protocolNameLabel.setBackground(Color.WHITE);
+		protocolNameLabel.setBounds(193, 9, 650, 35);
+		actualPanel.add(protocolNameLabel);
+		
+		button = new JButton("성능 추가");
+		button.setForeground(Color.BLACK);
+		button.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		button.setFocusPainted(false);
+		button.setContentAreaFilled(false);
+		button.setBorder(UIManager.getBorder("Button.border"));
+		button.setBackground(Color.WHITE);
+		button.setBounds(434, 87, 113, 35);
+		actualPanel.add(button);
 				
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
@@ -418,6 +439,9 @@ public class XmlEditorFrame extends JFrame {
 
 		if (table == null || perf == null) return;
 
+		// 현재 수정중인 성능
+		this.editPerf = perf;
+		
 		Object[][] content = new Object[7][];
 
 		content[0] = new Object[2];
@@ -559,7 +583,7 @@ public class XmlEditorFrame extends JFrame {
 			}else if(tableType == PERF_INFO_TABLE) {
 				// 성능 정보 테이블
 				table.getColumnModel().getColumn(0).setPreferredWidth(3); // 필 드		
-				table.getColumnModel().getColumn(1).setPreferredWidth(180); // 내 용		
+				table.getColumnModel().getColumn(1).setPreferredWidth(180); // 내 용
 			}else if(tableType == PERF_LABEL_TABLE) {
 				// 성능 레이블 테이블
 				table.getColumnModel().getColumn(0).setPreferredWidth(4); // 값	
