@@ -191,7 +191,7 @@ public class OnionDirCheck_Panel extends JPanel {
 		mk119BuildVersion.setBounds(437, 321, 601, 41);
 		actualPanel.add(mk119BuildVersion);
 		
-		xmlEditButton = new JButton(" 성능 XML 보기 및 편집");
+		xmlEditButton = new JButton(" 성능 XML 뷰어 열기");
 		xmlEditButton.setForeground(Color.BLACK);
 		xmlEditButton.setFocusPainted(false);
 		xmlEditButton.setBackground(Color.WHITE);
