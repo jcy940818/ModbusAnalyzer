@@ -672,7 +672,7 @@ public class XmlEditor_Panel extends JPanel {
 			}
 						
 			// XML Editor Frame »ý¼º
-			new XmlEditorFrame(pName, xmlFile, protocol);
+			new XmlViewerFrame(pName, xmlFile, protocol);
 			
 		}catch(Exception e) {			
 			e.printStackTrace();
