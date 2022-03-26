@@ -14,7 +14,9 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -44,10 +46,19 @@ import src_en.util.FileUtil;
 import src_en.util.Util;
 
 public class XmlViewerFrame extends JFrame {
-
+	
+	private static final String PERF_NAME = "Perf Name";
+	private static final String PERF_COUNTER =  "Perf Counter";
+	private static final String INTERVAL = "Check Interval";
+	private static final String UNIT = "Unit";
+	private static final String SCALE = "Scale Function";
+	private static final String DATA_FORMAT = "Data Format";
+	
 	public static final int PERF_LIST_TABLE = 0;
 	public static final int PERF_INFO_TABLE = 1;
 	public static final int PERF_LABEL_TABLE = 2;
+	
+	private String searchElement = PERF_NAME;
 	
 	private JTable perfListTable;
 	private JTable perfInfoTable;
@@ -68,6 +79,7 @@ public class XmlViewerFrame extends JFrame {
 	private JLabel mappingLabel;
 	private JScrollPane perfInfoPanel;
 	private JScrollPane perfLabelInfoPanel;
+	private JComboBox searchPerf_ComboBox;
 	private JTextField searchPerf_textField;
 	private JLabel protocolNameLabel;
 	private JButton xmlReloadButton;
@@ -297,6 +309,28 @@ public class XmlViewerFrame extends JFrame {
 		});
 		setTableStyle(perfLabelTable, PERF_LABEL_TABLE);
 		perfLabelInfoPanel.setViewportView(perfLabelTable);
+		
+		searchPerf_ComboBox = new JComboBox();
+		searchPerf_ComboBox.setForeground(Color.BLACK);
+		searchPerf_ComboBox.setBackground(Color.WHITE);		
+		searchPerf_ComboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+		searchPerf_ComboBox.setBounds(88, 52, 200, 30);
+		searchPerf_ComboBox.setModel(new DefaultComboBoxModel(new String[] {PERF_NAME, PERF_COUNTER, INTERVAL, UNIT, SCALE, DATA_FORMAT}));
+		searchPerf_ComboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String text = searchPerf_textField.getText();				
+					if(text == null || text.length() == 0 || text.equals("")) {
+						updatePerfListTable(perfListTable);
+					}else {					
+						doTableFilter(text);
+					}
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		actualPanel.add(searchPerf_ComboBox);
 		
 		JLabel searchPerf_label = new JLabel("Search");
 		searchPerf_label.setHorizontalAlignment(SwingConstants.LEFT);
@@ -560,24 +594,47 @@ public class XmlViewerFrame extends JFrame {
 		for(int i = 0; i < perfs.size(); i++) {
 			Perf p = perfs.get(i);
 
-			String perfName = p.getDisplayName();
-			String perfIndex = String.valueOf(p.getIndex());
+			String searchElement = null;
 			
-			if(perfName != null) {
-				perfName = perfName.toUpperCase();
+			switch(searchPerf_ComboBox.getSelectedItem().toString()) {
+				case PERF_NAME :
+					searchElement = p.getDisplayName();
+					break;
+				case PERF_COUNTER :
+					searchElement = p.getCounter();
+					break;
+				case INTERVAL :
+					searchElement = String.valueOf(p.getInterval());
+					break;
+				case UNIT :
+					searchElement = p.getMeasure();
+					break;
+				case SCALE :
+					searchElement = p.getScaleFunction();
+					break;
+				case DATA_FORMAT :
+					searchElement = String.valueOf(p.getDataFormat());
+					break;
+				default : 
+					searchElement = p.getDisplayName();
+					break;
+			}
+			
+			if(searchElement != null) {
+				searchElement = searchElement.toUpperCase();
 			}else {
-				perfName = "";
+				searchElement = "";
 			}
 
 			if(text.contains(",")) {
 				String[] textToken = text.split(",");
 				for(int i2 = 0; i2 < textToken.length; i2++) {
 					String token = textToken[i2];
-					if(perfName.contains(token) || perfIndex.contains(token)) {
+					if(searchElement.contains(token)) {
 						filterPerfs.add(p);
 					}
 				}
-			}else if(perfName.contains(text) || perfIndex.contains(text)) {
+			}else if(searchElement.contains(text)) {
 				filterPerfs.add(p);
 			}
 			
