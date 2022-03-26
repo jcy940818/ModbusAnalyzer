@@ -38,6 +38,7 @@ import common.perf.Perf;
 import common.perf.PerfLabelStatusBean;
 import common.perf.SnmpPerfConf;
 import common.perf.SnmpPerfItem;
+import src_ko.info.ONION_Info;
 import src_ko.info.Protocol;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
@@ -96,6 +97,7 @@ public class XmlViewerFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public XmlViewerFrame(String protocolName, File xmlFile, Protocol protocol) {
+		this.encoding = (ONION_Info.getMK119Version() >= 4.5) ? "UTF-8" : "EUC-KR";
 		this.xmlFile = xmlFile;
 		this.protocol = protocol;
 		this.isCommon = (protocol.getProtocolType() == Protocol.COMMON_PROTOCOL) ? true : false;
@@ -409,7 +411,7 @@ public class XmlViewerFrame extends JFrame {
 		});
 		actualPanel.add(xmlReloadButton);
 		
-		encodingButton = new JButton("EUC-KR");
+		encodingButton = new JButton(this.encoding);
 		encodingButton.setForeground(new Color(0, 128, 0));
 		encodingButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		encodingButton.setFocusPainted(false);
