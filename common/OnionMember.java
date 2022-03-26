@@ -82,8 +82,7 @@ public class OnionMember {
 		new OnionMember("PS∆¿", "π⁄±Êºˆ", "Gray");
 		new OnionMember("PS∆¿", "√§∫¥øÎ", "Ryan");
 		new OnionMember("PS∆¿", "¿Ã√¢»∆", "Jake");
-		new OnionMember("PS∆¿", "¡§±‚¡ÿ", "Jay");
-		new OnionMember("PS∆¿", "¿Ã»£øµ", "Yoon");
+		new OnionMember("PS∆¿", "¡§±‚¡ÿ", "Jay");		
 		new OnionMember("PS∆¿", "Ω…≈¬∏≤", "Rusil");
 		new OnionMember("PS∆¿", "¡§∞«", "Kun");
 		new OnionMember("PS∆¿", "¿Ã±‘»£", "Metthew");
