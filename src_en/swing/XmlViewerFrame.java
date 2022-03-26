@@ -49,6 +49,7 @@ public class XmlViewerFrame extends JFrame {
 	
 	private static final String PERF_NAME = "Perf Name";
 	private static final String PERF_COUNTER =  "Perf Counter";
+	private static final String OID = "OID";
 	private static final String INTERVAL = "Check Interval";
 	private static final String UNIT = "Unit";
 	private static final String SCALE = "Scale Function";
@@ -315,7 +316,7 @@ public class XmlViewerFrame extends JFrame {
 		searchPerf_ComboBox.setBackground(Color.WHITE);		
 		searchPerf_ComboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		searchPerf_ComboBox.setBounds(88, 52, 200, 30);
-		searchPerf_ComboBox.setModel(new DefaultComboBoxModel(new String[] {PERF_NAME, PERF_COUNTER, INTERVAL, UNIT, SCALE, DATA_FORMAT}));
+		searchPerf_ComboBox.setModel(new DefaultComboBoxModel(new String[] {PERF_NAME,(this.isCommon) ? PERF_COUNTER : OID, INTERVAL, UNIT, SCALE, DATA_FORMAT}));
 		searchPerf_ComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -601,6 +602,7 @@ public class XmlViewerFrame extends JFrame {
 					searchElement = p.getDisplayName();
 					break;
 				case PERF_COUNTER :
+				case OID :
 					searchElement = p.getCounter();
 					break;
 				case INTERVAL :
