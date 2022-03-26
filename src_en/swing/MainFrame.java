@@ -188,28 +188,28 @@ public class MainFrame extends JFrame {
 		storedProcedure.setHorizontalAlignment(SwingConstants.LEFT);
 		storedProcedure.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
 		DatabaseMenu.add(storedProcedure);
-		DatabaseMenu.add(new JSeparator());
-		
-		// Database 메뉴 - Procedure Generator : 저장 프로시저 생성
-		JMenuItem procedureGenerator = new JMenuItem("Procedure Generator : Create a new procedure");
-		procedureGenerator.setHorizontalAlignment(SwingConstants.LEFT);
-		procedureGenerator.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
-		procedureGenerator.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				if(!ProcedureGeneratorFrame.isExist) {
-					new ProcedureGeneratorFrame();							
-				 }else {
-					 StringBuilder sb = new StringBuilder();
-					 sb.append(Util.colorRed("Procedure Generator Frame Already Exists") + Util.separator + "\n");
-					 sb.append("The Procedure Generator Frame is already open" + Util.separator + "\n");
-					 Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-					 return;
-				 }
-			}
-		});
-		DatabaseMenu.add(procedureGenerator);
+//		DatabaseMenu.add(new JSeparator());
+//		
+//		// Database 메뉴 - Procedure Generator : 저장 프로시저 생성
+//		JMenuItem procedureGenerator = new JMenuItem("Procedure Generator : Create a new procedure");
+//		procedureGenerator.setHorizontalAlignment(SwingConstants.LEFT);
+//		procedureGenerator.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
+//		procedureGenerator.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				
+//				if(!ProcedureGeneratorFrame.isExist) {
+//					new ProcedureGeneratorFrame();							
+//				 }else {
+//					 StringBuilder sb = new StringBuilder();
+//					 sb.append(Util.colorRed("Procedure Generator Frame Already Exists") + Util.separator + "\n");
+//					 sb.append("The Procedure Generator Frame is already open" + Util.separator + "\n");
+//					 Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+//					 return;
+//				 }
+//			}
+//		});
+//		DatabaseMenu.add(procedureGenerator);
 		
 		
 		// Util 메뉴
