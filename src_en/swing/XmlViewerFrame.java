@@ -1,4 +1,4 @@
-package src_ko.swing;
+package src_en.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -38,10 +38,10 @@ import common.perf.Perf;
 import common.perf.PerfLabelStatusBean;
 import common.perf.SnmpPerfConf;
 import common.perf.SnmpPerfItem;
-import src_ko.info.ONION_Info;
-import src_ko.info.Protocol;
-import src_ko.util.FileUtil;
-import src_ko.util.Util;
+import src_en.info.ONION_Info;
+import src_en.info.Protocol;
+import src_en.util.FileUtil;
+import src_en.util.Util;
 
 public class XmlViewerFrame extends JFrame {
 
@@ -138,14 +138,14 @@ public class XmlViewerFrame extends JFrame {
 		
 				
 		xmlPathOpenButton = new JButton(new Util().getMK2Resource());
-		xmlPathOpenButton.setText(" XML 경로 열기");
+		xmlPathOpenButton.setText(" Open XML Path");
 		xmlPathOpenButton.setForeground(Color.BLACK);
 		xmlPathOpenButton.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		xmlPathOpenButton.setFocusPainted(false);
 		xmlPathOpenButton.setContentAreaFilled(false);
 		xmlPathOpenButton.setBorder(UIManager.getBorder("Button.border"));
 		xmlPathOpenButton.setBackground(Color.WHITE);
-		xmlPathOpenButton.setBounds(797, 9, 245, 36);		
+		xmlPathOpenButton.setBounds(793, 9, 249, 36);		
 		xmlPathOpenButton.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -158,7 +158,7 @@ public class XmlViewerFrame extends JFrame {
 						msg.append(String.format("%s%s", Util.separator, Util.separator));
 						msg.append("\n");
 	
-						msg.append("아래의 경로에서 XML 디렉토리를 찾을 수 없습니다");
+						msg.append(String.format("XML directory not found in the following path"));
 						msg.append(String.format("%s%s", Util.separator, Util.separator));
 						msg.append("\n\n");
 	
@@ -250,7 +250,7 @@ public class XmlViewerFrame extends JFrame {
 					{null, null},
 					{null, null},
 				},
-				new String[] { "필 드", "내 용"}) {
+				new String[] { "Element", "Content"}) {
 				boolean[] columnEditables = new boolean[] {
 						false, // 필 드 : 수정 불가
 						false, // 내 용 : 수정 불가						
@@ -286,7 +286,7 @@ public class XmlViewerFrame extends JFrame {
 					{null, null},
 					{null, null},
 				},
-				new String[] { "값", "매핑 내용"}) {
+				new String[] { "Value", "Mapping Label"}) {
 				boolean[] columnEditables = new boolean[] {
 						false, // 값 : 수정 불가
 						false, // 매핑 내용 : 수정 불가						
@@ -298,12 +298,12 @@ public class XmlViewerFrame extends JFrame {
 		setTableStyle(perfLabelTable, PERF_LABEL_TABLE);
 		perfLabelInfoPanel.setViewportView(perfLabelTable);
 		
-		JLabel searchPerf_label = new JLabel("검 색");
+		JLabel searchPerf_label = new JLabel("Search");
 		searchPerf_label.setHorizontalAlignment(SwingConstants.LEFT);
 		searchPerf_label.setForeground(Color.BLACK);
 		searchPerf_label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		searchPerf_label.setBackground(Color.WHITE);
-		searchPerf_label.setBounds(23, 84, 55, 36);
+		searchPerf_label.setBounds(23, 84, 72, 36);
 		actualPanel.add(searchPerf_label);
 		
 		searchPerf_textField = new JTextField();
@@ -312,7 +312,7 @@ public class XmlViewerFrame extends JFrame {
 		searchPerf_textField.setForeground(Color.BLACK);
 		searchPerf_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchPerf_textField.setColumns(10);
-		searchPerf_textField.setBounds(77, 87, 470, 35);
+		searchPerf_textField.setBounds(88, 87, 459, 35);
 		searchPerf_textField.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -350,10 +350,10 @@ public class XmlViewerFrame extends JFrame {
 		protocolNameLabel.setForeground(Color.BLUE);
 		protocolNameLabel.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		protocolNameLabel.setBackground(Color.WHITE);
-		protocolNameLabel.setBounds(193, 10, 592, 35);
+		protocolNameLabel.setBounds(193, 10, 596, 35);
 		actualPanel.add(protocolNameLabel);
 		
-		JButton xmlOpenButton = new JButton("XML 파일 열기");
+		JButton xmlOpenButton = new JButton("Open XML File");
 		xmlOpenButton.setForeground(Color.BLACK);
 		xmlOpenButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		xmlOpenButton.setFocusPainted(false);
@@ -370,14 +370,14 @@ public class XmlViewerFrame extends JFrame {
 						msg.append(String.format("%s%s", Util.separator, Util.separator));
 						msg.append("\n");
 	
-						msg.append("아래의 경로에서 XML 파일을 찾을 수 없습니다");
+						msg.append("XML File not found in the following path");
 						msg.append(String.format("%s%s", Util.separator, Util.separator));
 						msg.append("\n\n");
 	
-						msg.append("XML 파일 경로 : " + xmlFile.getParent().replace("\\", Util.colorRed("\\")));
+						msg.append("XML File Path : " + xmlFile.getParent().replace("\\", Util.colorRed("\\")));
 						msg.append(String.format("%s%s", Util.separator, Util.separator));
 						msg.append("\n\n");
-						msg.append("XML 파일 이름 : " + Util.colorRed(xmlFile.getName()));
+						msg.append("XML File Name : " + Util.colorRed(xmlFile.getName()));
 						msg.append(String.format("%s%s", Util.separator, Util.separator));
 						msg.append("\n");
 	
@@ -392,7 +392,7 @@ public class XmlViewerFrame extends JFrame {
 		});
 		actualPanel.add(xmlOpenButton);
 		
-		xmlReloadButton = new JButton("XML 새로 고침");
+		xmlReloadButton = new JButton("XML Reload");
 		xmlReloadButton.setForeground(Color.BLACK);
 		xmlReloadButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		xmlReloadButton.setFocusPainted(false);
@@ -403,7 +403,7 @@ public class XmlViewerFrame extends JFrame {
 		xmlReloadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					refreshXML();
+					refreshXML();					
 				}catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -485,7 +485,7 @@ public class XmlViewerFrame extends JFrame {
 					{null, null},
 					{null, null},
 				},
-				new String[] { "필 드", "내 용"}) {
+				new String[] { "Element", "Content"}) {
 				boolean[] columnEditables = new boolean[] {
 						false, // 필 드 : 수정 불가
 						false, // 내 용 : 수정 불가						
@@ -505,7 +505,7 @@ public class XmlViewerFrame extends JFrame {
 					{null, null},
 					{null, null},
 				},
-				new String[] { "값", "매핑 내용"}) {
+				new String[] { "Value", "Mapping Label"}) {
 				boolean[] columnEditables = new boolean[] {
 						false, // 값 : 수정 불가
 						false, // 매핑 내용 : 수정 불가						
@@ -543,7 +543,7 @@ public class XmlViewerFrame extends JFrame {
 
 		table.setModel(new DefaultTableModel(
 			content,
-			new String[] { "순 서", "성 능"}) {
+			new String[] { "Index", "Watch Point ( Performance )"}) {
 			// 테이블 셀 내용 수정 금지
 			public boolean isCellEditable(int i, int c) {
 				return false;
@@ -594,7 +594,7 @@ public class XmlViewerFrame extends JFrame {
 
 		perfListTable.setModel(new DefaultTableModel(
 				content,
-				new String[] { "순 서", "성 능"}) {
+				new String[] { "Index", "Watch Point ( Performance )"}) {
 				// 테이블 셀 내용 수정 금지
 				public boolean isCellEditable(int i, int c) {
 					return false;
@@ -612,55 +612,55 @@ public class XmlViewerFrame extends JFrame {
 		Object[][] content = new Object[7][];
 
 		content[0] = new Object[2];
-		content[0][0] = "성능명";
+		content[0][0] = "Perf Name";
 		content[0][1] = perf.getDisplayName();
 		
 		content[1] = new Object[2];
-		content[1][0] = (this.isCommon) ? "성능 카운터" : "OID";
+		content[1][0] = (this.isCommon) ? "Perf Counter" : "OID";
 		content[1][1] = perf.getCounter();
 		
 		content[2] = new Object[2];
-		content[2][0] = "수집 주기";
+		content[2][0] = "Check Interval";
 		content[2][1] = perf.getInterval();
 		
 		content[3] = new Object[2];
-		content[3][0] = "단 위";
+		content[3][0] = "Unit";
 		content[3][1] = perf.getMeasure();
 		
 		content[4] = new Object[2];
-		content[4][0] = "보정식";
+		content[4][0] = "Scale Function";
 		content[4][1] = perf.getScaleFunction();
 		
 		content[5] = new Object[2];
-		content[5][0] = "데이터 형식";
+		content[5][0] = "Data Format";
 		content[5][1] = perf.getDataFormat();
 		
 		content[6] = new Object[2];
-		content[6][0] = "데이터 형식 내용";
+		content[6][0] = "Perf Type";
 		String type = null;
 		
 		int format = perf.getDataFormat();
 		
 		if(format == 1) {
-			type = "이진 상태 ( DI )";
-			mappingLabel.setText("이진 상태 매핑 정보");
+			type = "Binary State ( DI )";
+			mappingLabel.setText("Binary State Mapping Content");
 			perfLabelTable.setVisible(true);
 			updatePerfLabelMappingTable(perfLabelTable, perf);
 		}else if(format == 2) {
-			type = "다중 상태 성능";
-			mappingLabel.setText("다중 상태 매핑 정보");
+			type = "Multiple State";
+			mappingLabel.setText("Multiple State Mapping Content");
 			perfLabelTable.setVisible(true);
 			updatePerfLabelMappingTable(perfLabelTable, perf);
 		}else {
-			type = "성능 데이터 ( Analog )";
-			mappingLabel.setText("상태 매핑 정보 없음");
+			type = "Value ( Analog )";
+			mappingLabel.setText("No State Mapping");
 			perfLabelTable.setVisible(false);
 		}
 		content[6][1] = type;
 
 		table.setModel(new DefaultTableModel(
 				content,
-				new String[] { "필 드", "내 용"}) {
+				new String[] { "Element", "Content"}) {
 				boolean[] columnEditables = new boolean[] {
 						false, // 필 드 : 수정 불가
 						false, // 내 용 : 수정 가능						
@@ -705,7 +705,7 @@ public class XmlViewerFrame extends JFrame {
 
 			table.setModel(new DefaultTableModel(
 					content,
-					new String[] { "값", "매핑 내용"}) {
+					new String[] { "Value", "Mapping Label"}) {
 					boolean[] columnEditables = new boolean[] {
 							false, // 필 드 : 수정 불가
 							false, // 내 용 : 수정 가능						
@@ -723,7 +723,7 @@ public class XmlViewerFrame extends JFrame {
 			// 테이블 헤더 설정
 			table.getTableHeader().setForeground(Color.BLACK);
 			table.getTableHeader().setBackground(new Color(255, 255, 153));
-			table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 17));
+			table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 16));
 			
 			// 이동 불가, 셀 크기 조절 불가
 			table.getTableHeader().setReorderingAllowed(false);

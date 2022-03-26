@@ -36,6 +36,7 @@ import javax.swing.table.TableColumnModel;
 import src_en.info.Protocol;
 import src_en.util.FileUtil;
 import src_en.util.Util;
+import src_en.swing.XmlViewerFrame;
 
 public class ProtocolList_Panel extends JPanel {
 	
@@ -314,6 +315,11 @@ public class ProtocolList_Panel extends JPanel {
 		infoPanel.add(languageButton);
 		
 		goXmlViewer = new JButton("Oepn XML Viewer");
+		goXmlViewer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				showXmlViewer();
+			}
+		});
 		goXmlViewer.setForeground(Color.BLUE);
 		goXmlViewer.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		goXmlViewer.setFocusPainted(false);
@@ -612,6 +618,7 @@ public class ProtocolList_Panel extends JPanel {
 				
 			case 0: // XML Viewer 열기
 				// 에디터 열기 작업
+				showXmlViewer();
 				break;
 				
 			case 1: // XML 파일 바로 열기
@@ -639,6 +646,37 @@ public class ProtocolList_Panel extends JPanel {
 					FileUtil.editFile(xmlFile);
 				}
 				break;
+		}
+	}
+	
+	public static void showXmlViewer() {
+		try {			
+			int row = table.getSelectedRow();
+			int number = Integer.parseInt(table.getValueAt(row, 0).toString());
+			String facType = table.getValueAt(row, 1).toString();					
+			Protocol protocol = getSelectedProtocol(number, facType);
+			
+			String xmlPath = xmlDir.getPath() + "\\" + protocol.getXml();
+			File xmlFile = new File(xmlPath);
+			
+			String pName = isKorean ? protocol.getName() : protocol.getEnName();
+			
+			if(!isKorean && pName == null && protocol.getName() != null) {
+				pName = protocol.getName();
+			}else if(isKorean && pName == null && protocol.getEnName() != null) {
+				pName = protocol.getEnName();
+			}
+			
+			// 아래의 조건을 만족한다면 아무것도 수행하지 않는다
+			if(pName == null) {
+				return;
+			}
+						
+			// XML Viewer Frame 생성
+			new XmlViewerFrame(pName, xmlFile, protocol);
+			
+		}catch(Exception e) {			
+			e.printStackTrace();
 		}
 	}
 	
