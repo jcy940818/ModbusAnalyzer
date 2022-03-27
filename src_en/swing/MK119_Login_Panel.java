@@ -23,6 +23,8 @@ import javax.swing.border.EmptyBorder;
 import src_en.database.DbUtil;
 import src_en.info.ONION_Info;
 import src_en.util.Util;
+import src_ko.swing.MainFrame;
+import src_ko.swing.ServerList_Panel;
 
 public class MK119_Login_Panel extends JPanel {
 	
@@ -220,8 +222,9 @@ public class MK119_Login_Panel extends JPanel {
 	public static void agent_ServerViewer() {
 		// 연동에 성공한 데이터베이스 정보 출력
 		mk119ConnSuccess();			
-		// 메인 프레임 화면을 DB 로그인 성공 화면으로 변경			
-		MainFrame.showServerList();		
+		// 메인 프레임 화면을 DB 로그인 성공 화면으로 변경
+		ServerList_Panel.updateTable();
+		MainFrame.showServerList();
 	}
 	
 	public static void mk119ConnSuccess() {
