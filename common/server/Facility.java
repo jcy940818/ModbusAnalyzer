@@ -3,9 +3,14 @@ package common.server;
 import java.util.ArrayList;
 
 import common.perf.Perf;
+import common.util.AlphanumComparator;
 
-public class Facility implements Comparable {	
-	private String group; // 그룹
+public class Facility implements Comparable{
+	
+	public static boolean sorting;
+	
+	private String groupInfo = null; // 그룹 정보
+	private String group;
 	
 	private int index; // 장비 인덱스	
 	private String name; // 장비명
@@ -24,19 +29,22 @@ public class Facility implements Comparable {
 	private String state;
 	
 	private ArrayList<Perf> perfs;
-
+	
 	@Override
-	public int compareTo(Object obj) {
-		Facility fac =  (Facility)obj;
+	public int compareTo(Object obj) {		
+		Facility fac = (Facility)obj;
 		
-		if(this.group.compareTo(fac.getGroup()) < 0) {
+		int compareGroup = AlphanumComparator.comparator.compare(this.groupInfo, fac.groupInfo);
+		
+		if(compareGroup < 0) {
 			return -1;
+		}else if(compareGroup == 0){			
 			
-		}else if(this.group.compareTo(fac.getGroup()) == 0) { // 그룹명이 동일하다면 장비 인덱스 기준으로 정렬
+			int compareName = AlphanumComparator.comparator.compare(this.name, fac.name);
 			
-			if(this.index < fac.getIndex()) {
+			if(compareName < 0) {
 				return -1;
-			}else if(this.index == fac.getIndex()) {
+			}else if(compareName == 0) {
 				return 0;
 			}else {
 				return 1;
@@ -45,15 +53,24 @@ public class Facility implements Comparable {
 		}else {
 			return 1;
 		}
+	}
+
+	public String getGroupInfo() {
+		return groupInfo;
+	}
+	
+	public void setGroupInfo(String groupInfo) {
+		if(!groupInfo.contains(">")) {
+			this.groupInfo = groupInfo;
+		}else {
+			this.groupInfo = groupInfo.substring(groupInfo.indexOf(" > ") + 3);	
+		}
 		
+//		this.group = this.groupInfo.substring(0, this.groupInfo.indexOf(" > "));
 	}
 
 	public String getGroup() {
 		return group;
-	}
-	
-	public void setGroup(String group) {
-		this.group = group;
 	}
 
 	public int getIndex() {

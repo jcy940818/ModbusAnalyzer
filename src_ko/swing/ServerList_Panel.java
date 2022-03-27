@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -224,7 +225,7 @@ public class ServerList_Panel extends JPanel {
 		for (int i = 0; i < facList.size(); i++) {
 			Facility fac = facList.get(i);
 			content[i] = new Object[4];
-			content[i][0] = fac.getGroup();
+			content[i][0] = fac.getGroupInfo();
 			content[i][1] = fac.getFacTypeString();
 			content[i][2] = fac;
 			content[i][3] = fac.getState();
@@ -232,7 +233,7 @@ public class ServerList_Panel extends JPanel {
 
 		table.setModel(new DefaultTableModel(
 			content, 			
-			new String[] { "그 룹", "시설물 종류", "장비명", "상 태" }) {
+			new String[] { "그룹 정보", "시설물 종류", "장비명", "상 태" }) {
 			// 테이블 셀 내용 수정 금지
 			public boolean isCellEditable(int i, int c) {
 				return false;
@@ -262,9 +263,9 @@ public class ServerList_Panel extends JPanel {
 		table.setRowHeight(25);
 		
 		// 테이블 셀 크기 설정
-		table.getColumnModel().getColumn(0).setPreferredWidth(120); // 그룹 정보
-		table.getColumnModel().getColumn(1).setPreferredWidth(120); // 시설물 종류
-		table.getColumnModel().getColumn(2).setPreferredWidth(300); // 장비명
+		table.getColumnModel().getColumn(0).setPreferredWidth(300); // 그룹 정보
+		table.getColumnModel().getColumn(1).setPreferredWidth(100); // 시설물 종류
+		table.getColumnModel().getColumn(2).setPreferredWidth(150); // 장비명
 		table.getColumnModel().getColumn(3).setPreferredWidth(60); // 상 태	
 		
 		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
@@ -275,7 +276,7 @@ public class ServerList_Panel extends JPanel {
 
 		// 정렬할 테이블의 ColumnModel을 가져옴
 		TableColumnModel tcmSchedule = table.getColumnModel();
-		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 그룹 정보
+//		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 그룹 정보
 		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 시설물 종류
 		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 장비명
 		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 상 태
@@ -343,7 +344,7 @@ public class ServerList_Panel extends JPanel {
 			while(rs.next()) {
 				Facility fac = new Facility();
 				
-				fac.setGroup(rs.getString("group"));
+				fac.setGroupInfo(rs.getString("groupInfo"));				
 				
 				fac.setIndex(rs.getInt("index"));
 				fac.setName(rs.getString("name"));
@@ -364,25 +365,38 @@ public class ServerList_Panel extends JPanel {
 				facList.add(fac);
 			}
 			
+			Collections.sort(facList);
+			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	private static String serverQuery = 
-			"SELECT\r\n" + 
-			"	grp.nGroupIndex as 'groupIndex',\r\n" + 
-			"	grp.strGroupName as 'group',	\r\n" + 
-			"	si.nServerIndex as 'index',\r\n" + 
-			"	si.strServerName as 'name',\r\n" + 
-			"	si.SERVER_CONDITION as 'condition',\r\n" + 
-			"	fac.FACILITY_TYPE as 'facType',\r\n" + 
-			"	fac.CONN_METHOD as 'connMethod',\r\n" + 
-			"	fac.COMM_PROTOCOL as 'commProtocol',\r\n" + 
-			"	fac.SNMP_MIB as 'snmpProtocol'\r\n" + 
-			" FROM \r\n" + 
-			"	SERVERINFO si INNER JOIN SERVERINFO_FACILITY fac ON si.nServerIndex = fac.NODE_INDEX\r\n" + 
-			"	INNER JOIN SERVERGROUPMAP map ON si.nServerIndex = map.nServerIndex\r\n" + 
-			"	INNER JOIN SERVERGROUP grp ON map.nGroupIndex = grp.nGroupIndex";
+			"WITH tree_query AS \r\n" + 
+			"( SELECT nGroupIndex , nParentIndex , strGroupName \r\n" + 
+			", convert(varchar(255), nGroupIndex) sort \r\n" + 
+			", convert(varchar(255), strGroupName) depth_fullname \r\n" + 
+			"FROM SERVERGROUP WHERE nParentIndex = -1\r\n" + 
+			"UNION ALL SELECT B.nGroupIndex , B.nParentIndex , B.strGroupName \r\n" + 
+			", convert(varchar(255), convert(nvarchar,C.sort) + ' > ' + convert(varchar(255), B.nGroupIndex)) sort\r\n" + 
+			", convert(varchar(255), convert(nvarchar,C.depth_fullname) + ' > ' + convert(varchar(255), B.strGroupName)) depth_fullname \r\n" + 
+			"FROM SERVERGROUP B, tree_query C \r\n" + 
+			"WHERE B.nParentIndex = C.nGroupIndex) \r\n" + 
+			"\r\n" + 
+			"select \r\n" + 
+			"	replace(c.depth_fullname,'<ROOT>','장비관리') as 'groupInfo',	\r\n" + 
+			"	a.nServerIndex as 'index',\r\n" + 
+			"	f.FACILITY_TYPE as 'facType',\r\n" + 
+			"	a.strServerName as 'name',\r\n" + 
+			"	f.CONN_METHOD as 'connMethod',\r\n" + 
+			"	f.COMM_PROTOCOL as 'commProtocol',\r\n" + 
+			"	f.SNMP_MIB as 'snmpProtocol',\r\n" + 
+			"	a.SERVER_CONDITION as 'condition'\r\n" + 
+			" \r\n" + 
+			"from SERVERINFO a inner join SERVERGROUPMAP b on a.nServerIndex=b.nServerIndex\r\n" + 
+			"	inner join tree_query c on b.nGroupIndex = c.ngroupIndex\r\n" + 
+			"	inner join SERVERINFO_FACILITY f ON a.nServerIndex = f.NODE_INDEX\r\n" + 
+			" order by a.nServerIndex";
 	
 }
