@@ -385,7 +385,7 @@ public class ServerList_Panel extends JPanel {
 			"WHERE B.nParentIndex = C.nGroupIndex) \r\n" + 
 			"\r\n" + 
 			"select \r\n" + 
-			"	replace(c.depth_fullname,'<ROOT>','장비관리') as 'groupInfo',	\r\n" + 
+			"	replace(c.depth_fullname,'<ROOT>','장비 관리 ( 그룹 없음 )') as 'groupInfo',	\r\n" + 
 			"	a.nServerIndex as 'index',\r\n" + 
 			"	f.FACILITY_TYPE as 'facType',\r\n" + 
 			"	a.strServerName as 'name',\r\n" + 

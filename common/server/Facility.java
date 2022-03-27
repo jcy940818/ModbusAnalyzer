@@ -30,9 +30,26 @@ public class Facility implements Comparable{
 	
 	private ArrayList<Perf> perfs;
 	
+	public static final String NO_GROUP_KO = "장비 관리 ( 그룹 없음 )";
+	public static final String NO_GROUP_EN = "Devices ( No Group )";
+	
+	
 	@Override
 	public int compareTo(Object obj) {		
 		Facility fac = (Facility)obj;
+		
+		if(this.groupInfo.equals(NO_GROUP_KO) || fac.groupInfo.equals(NO_GROUP_KO)) {			
+			boolean thisNoGroup = this.groupInfo.equals(NO_GROUP_KO);
+			boolean facNoGroup = fac.groupInfo.equals(NO_GROUP_KO);
+			
+			if (!thisNoGroup && facNoGroup) {
+				return -1;
+			} else if (thisNoGroup && facNoGroup) {
+				return 0;
+			} else if (thisNoGroup && !facNoGroup) {
+				return 1;
+			}			
+		}
 		
 		int compareGroup = AlphanumComparator.comparator.compare(this.groupInfo, fac.groupInfo);
 		
