@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -18,13 +17,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import src_ko.database.DbUtil;
 import src_ko.info.ONION_Info;
 import src_ko.util.Util;
-
-import javax.swing.SwingConstants;
 
 public class MK119_Login_Panel extends JPanel {
 	
@@ -167,6 +165,7 @@ public class MK119_Login_Panel extends JPanel {
 					case "ModbusAgent" : agent_ModbusAgent(); break;
 					case "DatabaseAgent" : agent_DatabaseAgent(); break;
 					case "storedProcedure" : agent_storedProcedure(); break;
+					case "SimpleServerViewer" : agent_ServerViewer(); break;
 					default : agent_DatabaseAgent(); break;
 				}
 			}else {
@@ -217,6 +216,14 @@ public class MK119_Login_Panel extends JPanel {
 		MainFrame.showStoredProcedure();
 		StoredProcedure_Panel.setSqlServerInfo(ONION_Info.getSqlServerInfo());							
 		StoredProcedure_Panel.resetQueryFormPanel();
+	}
+	
+	// Server List --------------------------------------------------
+	public static void agent_ServerViewer() {
+		// 연동에 성공한 데이터베이스 정보 출력
+		mk119ConnSuccess();			
+		// 메인 프레임 화면을 DB 로그인 성공 화면으로 변경			
+		MainFrame.showServerList();		
 	}
 	
 	

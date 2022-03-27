@@ -546,7 +546,10 @@ public class MainFrame extends JFrame {
 		/** StoredProcedure_Panel ***********************************/
 		StoredProcedure_Panel storedProcedure_Panel = new StoredProcedure_Panel();
 		actualPanel.add(storedProcedure_Panel, "StoredProcedure_Panel");
-						
+		
+		/** ServerList_Panel ***********************************/
+		ServerList_Panel serverList_Panel = new ServerList_Panel();
+		actualPanel.add(serverList_Panel, "ServerList_Panel");
 		
 		/** SimpleValueScan_Panel ***********************************/
 		SimpleValueScan_Panel simpleValueScan_Panel = new SimpleValueScan_Panel();
@@ -723,6 +726,10 @@ public class MainFrame extends JFrame {
 		StoredProcedure.init();
 		StoredProcedure.loadStoredProcedureMap();		
 		cardLayout.show(actualPanel, "StoredProcedure_Panel");		
+	}
+	
+	public static void showServerList() {		
+		cardLayout.show(actualPanel, "ServerList_Panel");		
 	}
 	
 	public static void showSimpleValueScan() {
