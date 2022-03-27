@@ -94,7 +94,7 @@ public class MK119_Login_Panel extends JPanel {
 		agentType_Label.setHorizontalAlignment(SwingConstants.LEFT);
 		agentType_Label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 25));		
 		agentType_Label.setBackground(Color.WHITE);
-		agentType_Label.setBounds(315, 180, 255, 52);
+		agentType_Label.setBounds(315, 180, 305, 52);
 		actualPanel.add(agentType_Label);
 		
 		

@@ -26,9 +26,8 @@ import javax.swing.border.LineBorder;
 import src_en.analyzer.RX.DataType;
 import src_en.database.StoredProcedure;
 import src_en.info.ONION_Info;
-import src_en.util.Util;
 import src_en.info.Protocol;
-import src_en.swing.ProtocolList_Panel;
+import src_en.util.Util;
 
 public class MainFrame extends JFrame {
 	
@@ -188,7 +187,14 @@ public class MainFrame extends JFrame {
 		storedProcedure.setHorizontalAlignment(SwingConstants.LEFT);
 		storedProcedure.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
 		DatabaseMenu.add(storedProcedure);
-//		DatabaseMenu.add(new JSeparator());
+		DatabaseMenu.add(new JSeparator());
+		
+		// Database 메뉴 - Simple Server Viewer : 간편 장비 조회
+		JMenuItem simpleServerViewer = new JMenuItem("Simple Server Viewer : Server inquiry");
+		simpleServerViewer.setHorizontalAlignment(SwingConstants.LEFT);
+		simpleServerViewer.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
+		DatabaseMenu.add(simpleServerViewer);
+		
 //		
 //		// Database 메뉴 - Procedure Generator : 저장 프로시저 생성
 //		JMenuItem procedureGenerator = new JMenuItem("Procedure Generator : Create a new procedure");
@@ -517,6 +523,13 @@ public class MainFrame extends JFrame {
 			}
 		});		
 		
+		/**  *************************************/
+		simpleServerViewer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				showMK119Login("SimpleServerViewer");				
+			}
+		});
+		
 		
 		/** DatabaseAccess_Panel ***********************************/
 		DatabaseAccess_Panel databaseAccess_Panel = new DatabaseAccess_Panel();
@@ -688,6 +701,7 @@ public class MainFrame extends JFrame {
 			case "ModbusAgent" : MK119_Login_Panel.setCurrentAgent("Modbus Collection"); break;
 			case "DatabaseAgent" : MK119_Login_Panel.setCurrentAgent("DataBase Access"); break;
 			case "storedProcedure" : MK119_Login_Panel.setCurrentAgent("Stored Procedure"); break;
+			case "SimpleServerViewer" : MK119_Login_Panel.setCurrentAgent("Simple Server Viewer"); break;
 			default : MK119_Login_Panel.setCurrentAgent("DataBase Access"); break;
 		}
 		
