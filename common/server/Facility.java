@@ -4,9 +4,8 @@ import java.util.ArrayList;
 
 import common.perf.Perf;
 
-public class Facility implements Comparable {
-	private String groupInfo; // 그룹 정보
-	private String group;
+public class Facility implements Comparable {	
+	private String group; // 그룹
 	
 	private int index; // 장비 인덱스	
 	private String name; // 장비명
@@ -22,7 +21,7 @@ public class Facility implements Comparable {
 	private int snmpProtocol;
 	
 	private int conditionCode; // 현재 상태
-	private String conditionString;
+	private String state;
 	
 	private ArrayList<Perf> perfs;
 
@@ -30,27 +29,31 @@ public class Facility implements Comparable {
 	public int compareTo(Object obj) {
 		Facility fac =  (Facility)obj;
 		
-		if(this.index < fac.getIndex()) {
+		if(this.group.compareTo(fac.getGroup()) < 0) {
 			return -1;
-		}else if(this.index == fac.getIndex()) {
-			return 0;
+			
+		}else if(this.group.compareTo(fac.getGroup()) == 0) { // 그룹명이 동일하다면 장비 인덱스 기준으로 정렬
+			
+			if(this.index < fac.getIndex()) {
+				return -1;
+			}else if(this.index == fac.getIndex()) {
+				return 0;
+			}else {
+				return 1;
+			}
+			
 		}else {
 			return 1;
 		}
-	}
-
-	public String getGroupInfo() {
-		return groupInfo;
-	}
-
-	public void setGroupInfo(String groupInfo) {
-		this.groupInfo = groupInfo;
-		String[] groups = groupInfo.split(" ");
-		this.group = groups[groups.length - 1];
+		
 	}
 
 	public String getGroup() {
 		return group;
+	}
+	
+	public void setGroup(String group) {
+		this.group = group;
 	}
 
 	public int getIndex() {
@@ -133,12 +136,12 @@ public class Facility implements Comparable {
 		this.conditionCode = conditionCode;
 	}
 
-	public String getConditionString() {
-		return conditionString;
+	public String getState() {
+		return state;
 	}
 
-	public void setConditionString(String conditionString) {
-		this.conditionString = conditionString;
+	public void setState(String state) {
+		this.state = state;
 	}
 
 	public ArrayList<Perf> getPerfs() {

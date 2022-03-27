@@ -786,6 +786,21 @@ public class DbUtil {
 			return isMK119DB;
 		}
 		
+		public static String getState(int condition) {
+			switch(condition) {
+				case 0 : return "접속 전";
+				case 1 : return "접속 전";
+				case 2 : return "접속 중";
+				case 3 : return "접속 성공";
+				case 4 : return "통신 중";
+				case 5 : return "통신 오류";
+				case 6 : return "접속 끊김";
+				case 7 : return "접속 오류";
+				case 8 : return "Unknown";
+				case 9 : return "Ping 실패";
+				default : return "Unknown";
+			}
+		}
 		
 		public static String getConnMethod(int connMethod) {
 			switch(connMethod) {
