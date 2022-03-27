@@ -33,14 +33,25 @@ import common.server.Facility;
 import src_ko.database.DbUtil;
 import src_ko.info.ONION_Info;
 import src_ko.util.Util;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class ServerList_Panel extends JPanel {
+	
+	public static final String GROUP_INFO = "그룹 정보";
+	public static final String FAC_TYPE = "시설물 종류";
+	public static final String CONN_METHOD = "연결 방식";
+	public static final String SERVER_INDEX = "장비 인덱스";
+	public static final String SERVER_NAME = "장비명";
+	public static final String SERVER_STATE = "장비 상태";
+	public static final String PROTOCOL_NUMBER = "프로토콜 번호";
 	
 	private JPanel infoPanel;
 		
 	private static ArrayList<Facility> facList;
 	private Facility selectedFac;
 	private static JTextField searchFacility_textField;
+	private static JComboBox searchFacility_ComboBox; 
 	
 	private static JTable table;		
 	private JButton goPerfViewer;	
@@ -90,7 +101,7 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_textField.setForeground(Color.BLACK);
 		searchFacility_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchFacility_textField.setColumns(10);
-		searchFacility_textField.setBounds(70, 97, 522, 35);
+		searchFacility_textField.setBounds(70, 97, 447, 35);
 		searchFacility_textField.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -207,8 +218,26 @@ public class ServerList_Panel extends JPanel {
 		goPerfViewer.setBackground(Color.WHITE);
 		goPerfViewer.setBounds(925, 97, 113, 35);
 		infoPanel.add(goPerfViewer);
+		
+		searchFacility_ComboBox = new JComboBox();
+		searchFacility_ComboBox.setBackground(Color.WHITE);
+		searchFacility_ComboBox.setForeground(Color.BLACK);
+		searchFacility_ComboBox.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		searchFacility_ComboBox.setModel(new DefaultComboBoxModel(
+				new String[] {
+						SERVER_NAME, // 장비명
+						SERVER_INDEX, // 장비 인덱스
+						GROUP_INFO, // 그룹 정보
+						FAC_TYPE, // 시설물 종류
+						CONN_METHOD, // 연결 방식
+						SERVER_STATE, // 장비 상태
+						PROTOCOL_NUMBER, // 프로토콜 번호
+						}));
+		searchFacility_ComboBox.setBounds(70, 60, 200, 30);
+		infoPanel.add(searchFacility_ComboBox);
 				
 		updateTable();
+		searchFacility_textField.requestFocus();
 	}
 	
 	
@@ -263,10 +292,10 @@ public class ServerList_Panel extends JPanel {
 		table.setRowHeight(25);
 		
 		// 테이블 셀 크기 설정
-		table.getColumnModel().getColumn(0).setPreferredWidth(300); // 그룹 정보
-		table.getColumnModel().getColumn(1).setPreferredWidth(100); // 시설물 종류
-		table.getColumnModel().getColumn(2).setPreferredWidth(150); // 장비명
-		table.getColumnModel().getColumn(3).setPreferredWidth(60); // 상 태	
+		table.getColumnModel().getColumn(0).setPreferredWidth(400); // 그룹 정보
+		table.getColumnModel().getColumn(1).setPreferredWidth(60); // 시설물 종류
+		table.getColumnModel().getColumn(2).setPreferredWidth(120); // 장비명
+		table.getColumnModel().getColumn(3).setPreferredWidth(20); // 상 태	
 		
 		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
 		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
@@ -330,6 +359,7 @@ public class ServerList_Panel extends JPanel {
 	
 	public static void resetForm() {
 		if(searchFacility_textField != null) searchFacility_textField.setText(null);
+		if(searchFacility_ComboBox != null) searchFacility_ComboBox.setSelectedIndex(0);
 	}
 	
 	public static void loadFacility(){
@@ -398,5 +428,4 @@ public class ServerList_Panel extends JPanel {
 			"	inner join tree_query c on b.nGroupIndex = c.ngroupIndex\r\n" + 
 			"	inner join SERVERINFO_FACILITY f ON a.nServerIndex = f.NODE_INDEX\r\n" + 
 			" order by a.nServerIndex";
-	
 }
