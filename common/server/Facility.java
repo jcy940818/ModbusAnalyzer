@@ -12,7 +12,7 @@ public class Facility implements Comparable{
 	private String groupInfo = null; // 그룹 정보
 	private String group;
 	
-	private int index; // 장비 인덱스	
+	private int index; // 장비 인덱스
 	private String name; // 장비명
 	
 	private int facType; // 시설물 종류

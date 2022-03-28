@@ -224,7 +224,7 @@ public class MK119_Login_Panel extends JPanel {
 		mk119ConnSuccess();			
 		// 메인 프레임 화면을 DB 로그인 성공 화면으로 변경
 		ServerList_Panel.loadFacility();
-		ServerList_Panel.updateTable();
+		ServerList_Panel.updateServerListTable();
 		MainFrame.showServerList();
 	}
 	
