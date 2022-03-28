@@ -16,7 +16,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -33,16 +35,15 @@ import common.server.Facility;
 import src_ko.database.DbUtil;
 import src_ko.info.ONION_Info;
 import src_ko.util.Util;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
 
 public class ServerList_Panel extends JPanel {
 		
+	public static final String ORDER = "순 서";
 	public static final String GROUP_INFO = "그룹 정보";
-	public static final String FAC_TYPE = "시설물 종류";
-	public static final String CONN_METHOD = "연결 방식";
 	public static final String SERVER_INDEX = "장비 인덱스";
 	public static final String SERVER_NAME = "장비명";
+	public static final String FAC_TYPE = "시설물 종류";
+	public static final String CONN_METHOD = "연결 방식";
 	public static final String SERVER_STATE = "장비 상태";
 	public static final String PROTOCOL_NUMBER = "프로토콜 번호";
 	
@@ -50,8 +51,10 @@ public class ServerList_Panel extends JPanel {
 		
 	private static ArrayList<Facility> facList;
 	private Facility selectedFac;
-	private static JTextField searchFacility_textField;
-	private static JComboBox searchFacility_ComboBox; 
+	private static JTextField searchFacility_textField1;
+	private static JTextField searchFacility_textField2;
+	private static JComboBox searchFacility_ComboBox1; 
+	private static JComboBox searchFacility_ComboBox2;
 	
 	private static JTable table;		
 	private JButton goPerfViewer;	
@@ -92,25 +95,56 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_Label.setForeground(Color.BLACK);
 		searchFacility_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		searchFacility_Label.setBackground(Color.WHITE);
-		searchFacility_Label.setBounds(16, 92, 50, 41);
+		searchFacility_Label.setBounds(16, 69, 50, 64);
 		infoPanel.add(searchFacility_Label);
 		
-		searchFacility_textField = new JTextField("");
-		searchFacility_textField.addFocusListener(Util.focusListener);
-		searchFacility_textField.setHorizontalAlignment(SwingConstants.LEFT);
-		searchFacility_textField.setForeground(Color.BLACK);
-		searchFacility_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
-		searchFacility_textField.setColumns(10);
-		searchFacility_textField.setBounds(70, 97, 447, 35);
-		searchFacility_textField.addKeyListener(new KeyAdapter() {			
+		
+		
+		searchFacility_ComboBox1 = new JComboBox();
+		searchFacility_ComboBox1.setBackground(Color.WHITE);
+		searchFacility_ComboBox1.setForeground(Color.BLACK);
+		searchFacility_ComboBox1.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		searchFacility_ComboBox1.setModel(new DefaultComboBoxModel(new String[] {
+				GROUP_INFO, // 그룹 정보
+				SERVER_INDEX, // 장비 인덱스
+				SERVER_NAME, // 장비명
+				FAC_TYPE, // 시설물 종류
+				CONN_METHOD, // 연결 방식
+				SERVER_STATE, // 장비 상태
+				PROTOCOL_NUMBER, // 프로토콜 번호
+				}));
+		searchFacility_ComboBox1.setBounds(70, 70, 150, 30);
+		searchFacility_ComboBox1.setSelectedIndex(0);
+		infoPanel.add(searchFacility_ComboBox1);
+		
+		searchFacility_ComboBox2 = new JComboBox();
+		searchFacility_ComboBox2.setBackground(Color.WHITE);
+		searchFacility_ComboBox2.setForeground(Color.BLACK);
+		searchFacility_ComboBox2.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		searchFacility_ComboBox2.setModel(new DefaultComboBoxModel(new String[] {
+				GROUP_INFO, // 그룹 정보
+				SERVER_INDEX, // 장비 인덱스
+				SERVER_NAME, // 장비명
+				FAC_TYPE, // 시설물 종류
+				CONN_METHOD, // 연결 방식
+				SERVER_STATE, // 장비 상태
+				PROTOCOL_NUMBER, // 프로토콜 번호
+				}));
+		searchFacility_ComboBox2.setBounds(70, 105, 150, 30);
+		searchFacility_ComboBox2.setSelectedIndex(2);
+		infoPanel.add(searchFacility_ComboBox2);
+		
+		searchFacility_textField1 = new JTextField("");
+		searchFacility_textField1.addFocusListener(Util.focusListener);
+		searchFacility_textField1.setHorizontalAlignment(SwingConstants.LEFT);
+		searchFacility_textField1.setForeground(Color.BLACK);
+		searchFacility_textField1.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
+		searchFacility_textField1.setColumns(10);
+		searchFacility_textField1.setBounds(225, 70, 300, 30);
+		searchFacility_textField1.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
-					String text = searchFacility_textField.getText();				
-					if(text == null || text.length() == 0 || text.equals("")) {
-						
-					}else {					
-						doTableFilter(text);
-					}
+					doTableFilter();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -118,18 +152,39 @@ public class ServerList_Panel extends JPanel {
 			
 			public void keyReleased(KeyEvent e) {
 				try {
-					String text = searchFacility_textField.getText();				
-					if(text == null || text.length() == 0 || text.equals("")) {
-						
-					}else {					
-						doTableFilter(text);
-					}
+					doTableFilter();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 		});
-		infoPanel.add(searchFacility_textField);
+		infoPanel.add(searchFacility_textField1);
+		
+		searchFacility_textField2 = new JTextField("");
+		searchFacility_textField2.addFocusListener(Util.focusListener);
+		searchFacility_textField2.setHorizontalAlignment(SwingConstants.LEFT);
+		searchFacility_textField2.setForeground(Color.BLACK);
+		searchFacility_textField2.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
+		searchFacility_textField2.setColumns(10);
+		searchFacility_textField2.setBounds(225, 105, 300, 30);
+		searchFacility_textField2.addKeyListener(new KeyAdapter() {			
+			public void keyPressed(KeyEvent e) {
+				try {
+					doTableFilter();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			
+			public void keyReleased(KeyEvent e) {
+				try {
+					doTableFilter();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		infoPanel.add(searchFacility_textField2);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBorder(new LineBorder(Color.BLACK, 3));
@@ -218,32 +273,49 @@ public class ServerList_Panel extends JPanel {
 		goPerfViewer.setBackground(Color.WHITE);
 		goPerfViewer.setBounds(925, 97, 113, 35);
 		infoPanel.add(goPerfViewer);
-		
-		searchFacility_ComboBox = new JComboBox();
-		searchFacility_ComboBox.setBackground(Color.WHITE);
-		searchFacility_ComboBox.setForeground(Color.BLACK);
-		searchFacility_ComboBox.setFont(new Font("맑은 고딕", Font.BOLD, 17));
-		searchFacility_ComboBox.setModel(new DefaultComboBoxModel(
-				new String[] {
-						SERVER_NAME, // 장비명
-						SERVER_INDEX, // 장비 인덱스
-						GROUP_INFO, // 그룹 정보
-						FAC_TYPE, // 시설물 종류
-						CONN_METHOD, // 연결 방식
-						SERVER_STATE, // 장비 상태
-						PROTOCOL_NUMBER, // 프로토콜 번호
-						}));
-		searchFacility_ComboBox.setBounds(70, 60, 200, 30);
-		infoPanel.add(searchFacility_ComboBox);
 				
-		updateTable();
-		searchFacility_textField.requestFocus();
+		updateTable();		
 	}
 	
-	
-	public static void doTableFilter(String text) {
+	public static void loadFacility(){
+		if(!ONION_Info.hasMk119Connection() || ONION_Info.getMk119Connection() == null) return;
 		
-	}
+		try {
+			Statement stmt = ONION_Info.getMk119Connection().createStatement();
+			ResultSet rs = stmt.executeQuery(serverQuery);
+			
+			facList = new ArrayList<Facility>();
+			
+			while(rs.next()) {
+				Facility fac = new Facility();
+				
+				fac.setGroupInfo(rs.getString("groupInfo"));				
+				
+				fac.setIndex(rs.getInt("index"));
+				fac.setName(rs.getString("name"));
+				
+				fac.setFacType(rs.getInt("facType"));
+				fac.setFacTypeString(DbUtil.getFacilityType(fac.getFacType()));
+				
+				fac.setConnCode(rs.getInt("connMethod"));
+				fac.setConnMethod(DbUtil.getConnMethod(fac.getConnCode()));
+				
+				fac.setCommProtocol(rs.getInt("commProtocol"));
+				fac.setSnmpProtocol(rs.getInt("snmpProtocol"));
+				fac.setCommon((fac.getCommProtocol() > fac.getSnmpProtocol()) ? true : false);
+				
+				fac.setConditionCode(rs.getInt("condition"));
+				fac.setState(DbUtil.getState(fac.getConditionCode()));
+				
+				facList.add(fac);
+			}
+			
+			Collections.sort(facList);
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}	
 	
 	public static void updateTable() {
 		loadFacility();
@@ -263,7 +335,7 @@ public class ServerList_Panel extends JPanel {
 
 		table.setModel(new DefaultTableModel(
 			content, 			
-			new String[] { "순 서", GROUP_INFO, FAC_TYPE, SERVER_NAME, SERVER_STATE }) {
+			new String[] { ORDER, GROUP_INFO, FAC_TYPE, SERVER_NAME, SERVER_STATE }) {
 			// 테이블 셀 내용 수정 금지
 			public boolean isCellEditable(int i, int c) {
 				return false;
@@ -361,49 +433,128 @@ public class ServerList_Panel extends JPanel {
 	}
 	
 	public static void resetForm() {
-		if(searchFacility_textField != null) searchFacility_textField.setText(null);
-		if(searchFacility_ComboBox != null) searchFacility_ComboBox.setSelectedIndex(0);
+		if(searchFacility_textField1 != null) searchFacility_textField1.setText(null);
+		if(searchFacility_ComboBox1 != null) searchFacility_ComboBox1.setSelectedIndex(0);
+		if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedIndex(2);
 	}
 	
-	public static void loadFacility(){
-		if(!ONION_Info.hasMk119Connection() || ONION_Info.getMk119Connection() == null) return;
+	
+	
+	
+	public static void doTableFilter() {		
+		ArrayList<Facility> filterFacilitys = new ArrayList<Facility>();
+		String text_1 = searchFacility_textField1.getText();
+		String text_2 = searchFacility_textField2.getText();
 		
-		try {
-			Statement stmt = ONION_Info.getMk119Connection().createStatement();
-			ResultSet rs = stmt.executeQuery(serverQuery);
+		boolean noSearch_1 = (text_1 == null || text_1.length() == 0 || text_1.equals(""));
+		boolean noSearch_2 = (text_2 == null || text_2.length() == 0 || text_2.equals(""));
+		
+		if(noSearch_1 && noSearch_2) {
+			updateTable();
+			return;
+		}
+		
+		text_1 = text_1.toUpperCase();
+		text_2 = text_2.toUpperCase();
+		
+		for(int i = 0; i < facList.size(); i++) {
+			Facility fac = facList.get(i);
 			
-			facList = new ArrayList<Facility>();
+			String searchElement_1 = null;
+			String searchElement_2 = null;
 			
-			while(rs.next()) {
-				Facility fac = new Facility();
-				
-				fac.setGroupInfo(rs.getString("groupInfo"));				
-				
-				fac.setIndex(rs.getInt("index"));
-				fac.setName(rs.getString("name"));
-				
-				fac.setFacType(rs.getInt("facType"));
-				fac.setFacTypeString(DbUtil.getFacilityType(fac.getFacType()));
-				
-				fac.setConnCode(rs.getInt("connMethod"));
-				fac.setConnMethod(DbUtil.getConnMethod(fac.getConnCode()));
-				
-				fac.setCommProtocol(rs.getInt("commProtocol"));
-				fac.setSnmpProtocol(rs.getInt("snmpProtocol"));
-				fac.setCommon((fac.getCommProtocol() > fac.getSnmpProtocol()) ? true : false);
-				
-				fac.setConditionCode(rs.getInt("condition"));
-				fac.setState(DbUtil.getState(fac.getConditionCode()));
-				
-				facList.add(fac);
+			switch(searchFacility_ComboBox1.getSelectedItem().toString()) {
+				case GROUP_INFO :  // 그룹 정보
+					searchElement_1 = fac.getGroupInfo();
+					break;
+				case SERVER_INDEX : // 장비 인덱스
+					searchElement_1 = String.valueOf(fac.getIndex());
+					break;
+				case SERVER_NAME : // 장비명
+					searchElement_1 = fac.getName();
+					break;
+				case FAC_TYPE : // 시설물 종류
+					searchElement_1 = fac.getFacTypeString();
+					break;
+				case CONN_METHOD : // 연결 방식
+					searchElement_1 = fac.getConnMethod();
+					break;
+				case SERVER_STATE : // 장비 상태
+					searchElement_1 = fac.getState();
+					break;
+				case PROTOCOL_NUMBER : // 프로토콜 번호
+					searchElement_1 = String.valueOf((fac.isCommon()?fac.getCommProtocol():fac.getSnmpProtocol()));
+					break;
+			}// switch - searchElement_1
+			
+			switch(searchFacility_ComboBox2.getSelectedItem().toString()) {
+				case GROUP_INFO :  // 그룹 정보
+					searchElement_2 = fac.getGroupInfo();
+					break;
+				case SERVER_INDEX : // 장비 인덱스
+					searchElement_2 = String.valueOf(fac.getIndex());
+					break;
+				case SERVER_NAME : // 장비명
+					searchElement_2 = fac.getName();
+					break;
+				case FAC_TYPE : // 시설물 종류
+					searchElement_2 = fac.getFacTypeString();
+					break;
+				case CONN_METHOD : // 연결 방식
+					searchElement_2 = fac.getConnMethod();
+					break;
+				case SERVER_STATE : // 장비 상태
+					searchElement_2 = fac.getState();
+					break;
+				case PROTOCOL_NUMBER : // 프로토콜 번호
+					searchElement_2 = String.valueOf((fac.isCommon()?fac.getCommProtocol():fac.getSnmpProtocol()));
+					break;
+			}// switch - searchElement_2
+			
+			if(searchElement_1 != null) {
+				searchElement_1 = searchElement_1.toUpperCase();
+			}else {
+				searchElement_1 = "";
 			}
 			
-			Collections.sort(facList);
+			if(searchElement_2 != null) {
+				searchElement_2 = searchElement_2.toUpperCase();
+			}else {
+				searchElement_2 = "";
+			}
 			
-		}catch(Exception e) {
-			e.printStackTrace();
+			boolean isContain_1 = searchElement_1.contains(text_1);
+			boolean isContain_2 = searchElement_2.contains(text_2);
+			
+			if(isContain_1 && isContain_2) {
+				filterFacilitys.add(fac);
+			}
+		}// for loop
+		
+		Object[][] content = new Object[filterFacilitys.size()][];
+		
+		for (int i = 0; i < filterFacilitys.size(); i++) {
+			Facility fac = filterFacilitys.get(i);
+			content[i] = new Object[5];
+			content[i][0] = i + 1;
+			content[i][1] = fac.getGroupInfo();
+			content[i][2] = fac.getFacTypeString();
+			content[i][3] = fac;
+			content[i][4] = fac.getState();
 		}
-	}
+
+		table.setModel(new DefaultTableModel(
+			content, 			
+			new String[] { ORDER, GROUP_INFO, FAC_TYPE, SERVER_NAME, SERVER_STATE }) {
+			// 테이블 셀 내용 수정 금지
+			public boolean isCellEditable(int i, int c) {
+				return false;
+			}
+		});
+
+		setTableStyle(table);
+	}	
+	
 	
 	private static String serverQuery = 
 			"WITH tree_query AS \r\n" + 
@@ -431,4 +582,5 @@ public class ServerList_Panel extends JPanel {
 			"	inner join tree_query c on b.nGroupIndex = c.ngroupIndex\r\n" + 
 			"	inner join SERVERINFO_FACILITY f ON a.nServerIndex = f.NODE_INDEX\r\n" + 
 			" order by a.nServerIndex";
+	
 }

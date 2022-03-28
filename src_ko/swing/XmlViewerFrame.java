@@ -640,7 +640,7 @@ public class XmlViewerFrame extends JFrame {
 				filterPerfs.add(p);
 			}
 			
-		}// end for-loof
+		}// end for-loop
 		
 		Object[][] content = new Object[filterPerfs.size()][];
 
