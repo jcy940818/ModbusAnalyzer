@@ -105,30 +105,30 @@ public class ServerList_Panel extends JPanel {
 		infoPanel.setBackground(Color.WHITE);
 		infoPanel.setLayout(null);
 		
-		JLabel MK119 = new JLabel();
-		MK119.setFont(new Font("맑은 고딕", Font.PLAIN, 12));
-		MK119.setForeground(Color.BLACK);
-		MK119.setHorizontalAlignment(SwingConstants.CENTER);
-		MK119.setIcon(new Util().getMK2Resource());
-		MK119.setBackground(Color.WHITE);
-		MK119.setBounds(958, 0, 80, 30);
-		infoPanel.add(MK119);
+//		JLabel MK119 = new JLabel();
+//		MK119.setFont(new Font("맑은 고딕", Font.PLAIN, 12));
+//		MK119.setForeground(Color.BLACK);
+//		MK119.setHorizontalAlignment(SwingConstants.CENTER);
+//		MK119.setIcon(new Util().getMK2Resource());
+//		MK119.setBackground(Color.WHITE);
+//		MK119.setBounds(958, 0, 80, 30);
+//		infoPanel.add(MK119);
 
-		JLabel currentFunction = new JLabel("Server List");
+		JLabel currentFunction = new JLabel("Facility List");
 		currentFunction.setForeground(Color.BLACK);
 		currentFunction.setBackground(Color.WHITE);
 		currentFunction.setIcon(new Util().getSubLogoResource());
-		currentFunction.setBounds(0, 0, 180, 55);
+		currentFunction.setBounds(0, 0, 200, 55);
 		currentFunction.setHorizontalAlignment(SwingConstants.LEFT);
 		currentFunction.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		infoPanel.add(currentFunction);
 		
 		JLabel searchFacility_Label = new JLabel("검 색");
-		searchFacility_Label.setHorizontalAlignment(SwingConstants.LEFT);
+		searchFacility_Label.setHorizontalAlignment(SwingConstants.CENTER);
 		searchFacility_Label.setForeground(Color.BLACK);
 		searchFacility_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		searchFacility_Label.setBackground(Color.WHITE);
-		searchFacility_Label.setBounds(22, 120, 50, 64);
+		searchFacility_Label.setBounds(28, 142, 50, 64);
 		infoPanel.add(searchFacility_Label);
 		
 		
@@ -146,7 +146,7 @@ public class ServerList_Panel extends JPanel {
 				SERVER_STATE, // 장비 상태
 				PROTOCOL_NUMBER, // 프로토콜 번호
 				}));
-		searchFacility_ComboBox1.setBounds(76, 121, 150, 30);
+		searchFacility_ComboBox1.setBounds(90, 142, 150, 30);
 		searchFacility_ComboBox1.setSelectedIndex(0);
 		infoPanel.add(searchFacility_ComboBox1);
 		
@@ -163,7 +163,7 @@ public class ServerList_Panel extends JPanel {
 				SERVER_STATE, // 장비 상태
 				PROTOCOL_NUMBER, // 프로토콜 번호
 				}));
-		searchFacility_ComboBox2.setBounds(76, 156, 150, 30);
+		searchFacility_ComboBox2.setBounds(90, 177, 150, 30);
 		searchFacility_ComboBox2.setSelectedIndex(2);
 		infoPanel.add(searchFacility_ComboBox2);
 		
@@ -173,7 +173,7 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_textField1.setForeground(Color.BLACK);
 		searchFacility_textField1.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchFacility_textField1.setColumns(10);
-		searchFacility_textField1.setBounds(231, 121, 423, 30);
+		searchFacility_textField1.setBounds(245, 142, 345, 30);
 		searchFacility_textField1.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -199,7 +199,7 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_textField2.setForeground(Color.BLACK);
 		searchFacility_textField2.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchFacility_textField2.setColumns(10);
-		searchFacility_textField2.setBounds(231, 156, 423, 30);
+		searchFacility_textField2.setBounds(245, 177, 345, 30);
 		searchFacility_textField2.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -221,7 +221,7 @@ public class ServerList_Panel extends JPanel {
 		
 		JScrollPane serverListPane = new JScrollPane();
 		serverListPane.setBorder(new LineBorder(Color.BLACK, 3));
-		serverListPane.setBounds(12, 191, 1026, 406);
+		serverListPane.setBounds(12, 214, 1026, 382);
 		infoPanel.add(serverListPane);
 		
 		serverListTable = new JTable();		
@@ -295,14 +295,14 @@ public class ServerList_Panel extends JPanel {
 		
 		JScrollPane serverInfoPane = new JScrollPane();		
 		serverInfoPane.setBorder(new LineBorder(Color.BLACK, 2));
-		serverInfoPane.setBounds(658, 31, 380, 155);	
+		serverInfoPane.setBounds(600, 26, 438, 180);	
 		infoPanel.add(serverInfoPane);
 		
 		serverInfoTable = new JTable();
 		serverInfoTable.setBorder(new LineBorder(Color.BLACK, 2));
 		serverInfoPane.setViewportView(serverInfoTable);
 				
-		updateServerListTable();
+		updateServerListTable();		
 		updateServerInfoTable(null);
 	}
 	
@@ -428,6 +428,7 @@ public class ServerList_Panel extends JPanel {
 						{ null, null },
 						{ null, null },
 						{ null, null },
+						{ null, null },
 						{ null, null }
 					},
 					new String[] { "항 목", "내 용" }) {
@@ -440,27 +441,31 @@ public class ServerList_Panel extends JPanel {
 			return;		
 		}
 		
-		Object[][] content = new Object[5][];
+		Object[][] content = new Object[6][];
 		
 		content[0] = new Object[2];
 		content[0][0] = FAC_TYPE;
 		content[0][1] = fac.getFacTypeString();
 		
 		content[1] = new Object[2];
-		content[1][0] = SERVER_INDEX;
-		content[1][1] = fac.getIndex();
+		content[1][0] = PROTOCOL_NUMBER;
+		content[1][1] = (fac.isCommon()) ? fac.getCommProtocol() : fac.getSnmpProtocol();
 		
 		content[2] = new Object[2];
-		content[2][0] = SERVER_NAME;
-		content[2][1] = fac.getName();
+		content[2][0] = SERVER_INDEX;
+		content[2][1] = fac.getIndex();
 		
 		content[3] = new Object[2];
-		content[3][0] = CONN_METHOD;
-		content[3][1] = fac.getConnMethod();
+		content[3][0] = SERVER_NAME;
+		content[3][1] = fac.getName();
 		
 		content[4] = new Object[2];
-		content[4][0] = SERVER_STATE;
-		content[4][1] = fac.getState();
+		content[4][0] = CONN_METHOD;
+		content[4][1] = fac.getConnMethod();
+		
+		content[5] = new Object[2];
+		content[5][0] = SERVER_STATE;
+		content[5][1] = fac.getState();
 
 		serverInfoTable.setModel(new DefaultTableModel(
 			content,
@@ -488,13 +493,13 @@ public class ServerList_Panel extends JPanel {
 		
 		// 테이블 셀 설정
 		table.setBorder(new EmptyBorder(0, 3, 0, 0));
-		table.setRowMargin(3);
 		table.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
+		table.setRowMargin(3);
 		table.setRowHeight(25);
 		
 		// 테이블 셀 크기 설정
-		table.getColumnModel().getColumn(0).setPreferredWidth(5); // 필 드
-		table.getColumnModel().getColumn(1).setPreferredWidth(100); // 내 용		
+		table.getColumnModel().getColumn(0).setPreferredWidth(3); // 필 드
+		table.getColumnModel().getColumn(1).setPreferredWidth(120); // 내 용		
 		
 		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
 		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
