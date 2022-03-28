@@ -523,12 +523,37 @@ public class ServerList_Panel extends JPanel {
 				searchElement_2 = "";
 			}
 			
-			boolean isContain_1 = searchElement_1.contains(text_1);
-			boolean isContain_2 = searchElement_2.contains(text_2);
+			boolean isContain_1 = false;
+			boolean isContain_2 = false;
+			
+			if(text_1.contains(",")) {
+				String[] textToken = text_1.split(",");
+				for(int i2 = 0; i2 < textToken.length; i2++) {
+					String token = textToken[i2];
+					if(searchElement_1.contains(token)) {
+						isContain_1 = true;
+					}
+				}
+			}else if(searchElement_1.contains(text_1)) {
+				isContain_1 = true;
+			}// set isContain_1
+			
+			if(text_2.contains(",")) {
+				String[] textToken = text_2.split(",");
+				for(int i2 = 0; i2 < textToken.length; i2++) {
+					String token = textToken[i2];
+					if(searchElement_2.contains(token)) {
+						isContain_2 = true;
+					}
+				}
+			}else if(searchElement_2.contains(text_2)) {
+				isContain_2 = true;
+			}// set isContain_2
 			
 			if(isContain_1 && isContain_2) {
 				filterFacilitys.add(fac);
-			}
+			}// AND Operation isContains 1, 2
+			
 		}// for loop
 		
 		Object[][] content = new Object[filterFacilitys.size()][];
@@ -553,7 +578,7 @@ public class ServerList_Panel extends JPanel {
 		});
 
 		setTableStyle(table);
-	}	
+	}
 	
 	
 	private static String serverQuery = 
