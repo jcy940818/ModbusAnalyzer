@@ -38,6 +38,8 @@ public class Facility implements Comparable{
 	public int compareTo(Object obj) {		
 		Facility fac = (Facility)obj;
 		
+		int compareName = AlphanumComparator.comparator.compare(this.name, fac.name);
+		
 		if(this.groupInfo.equals(NO_GROUP_KO) || fac.groupInfo.equals(NO_GROUP_KO)) {			
 			boolean thisNoGroup = this.groupInfo.equals(NO_GROUP_KO);
 			boolean facNoGroup = fac.groupInfo.equals(NO_GROUP_KO);
@@ -45,7 +47,15 @@ public class Facility implements Comparable{
 			if (!thisNoGroup && facNoGroup) {
 				return -1;
 			} else if (thisNoGroup && facNoGroup) {
-				return 0;
+				
+				if(compareName < 0) {
+					return -1;
+				}else if(compareName == 0) {
+					return 0;
+				}else {
+					return 1;
+				}
+				
 			} else if (thisNoGroup && !facNoGroup) {
 				return 1;
 			}			
@@ -56,8 +66,6 @@ public class Facility implements Comparable{
 		if(compareGroup < 0) {
 			return -1;
 		}else if(compareGroup == 0){			
-			
-			int compareName = AlphanumComparator.comparator.compare(this.name, fac.name);
 			
 			if(compareName < 0) {
 				return -1;

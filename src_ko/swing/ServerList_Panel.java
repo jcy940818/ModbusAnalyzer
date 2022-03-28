@@ -37,7 +37,7 @@ import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 
 public class ServerList_Panel extends JPanel {
-	
+		
 	public static final String GROUP_INFO = "그룹 정보";
 	public static final String FAC_TYPE = "시설물 종류";
 	public static final String CONN_METHOD = "연결 방식";
@@ -253,16 +253,17 @@ public class ServerList_Panel extends JPanel {
 
 		for (int i = 0; i < facList.size(); i++) {
 			Facility fac = facList.get(i);
-			content[i] = new Object[4];
-			content[i][0] = fac.getGroupInfo();
-			content[i][1] = fac.getFacTypeString();
-			content[i][2] = fac;
-			content[i][3] = fac.getState();
+			content[i] = new Object[5];
+			content[i][0] = i + 1;
+			content[i][1] = fac.getGroupInfo();
+			content[i][2] = fac.getFacTypeString();
+			content[i][3] = fac;
+			content[i][4] = fac.getState();
 		}
 
 		table.setModel(new DefaultTableModel(
 			content, 			
-			new String[] { "그룹 정보", "시설물 종류", "장비명", "상 태" }) {
+			new String[] { "순 서", GROUP_INFO, FAC_TYPE, SERVER_NAME, SERVER_STATE }) {
 			// 테이블 셀 내용 수정 금지
 			public boolean isCellEditable(int i, int c) {
 				return false;
@@ -292,10 +293,11 @@ public class ServerList_Panel extends JPanel {
 		table.setRowHeight(25);
 		
 		// 테이블 셀 크기 설정
-		table.getColumnModel().getColumn(0).setPreferredWidth(400); // 그룹 정보
-		table.getColumnModel().getColumn(1).setPreferredWidth(60); // 시설물 종류
-		table.getColumnModel().getColumn(2).setPreferredWidth(120); // 장비명
-		table.getColumnModel().getColumn(3).setPreferredWidth(20); // 상 태	
+		table.getColumnModel().getColumn(0).setPreferredWidth(10); // 순 서
+		table.getColumnModel().getColumn(1).setPreferredWidth(450); // 그룹 정보
+		table.getColumnModel().getColumn(2).setPreferredWidth(60); // 시설물 종류
+		table.getColumnModel().getColumn(3).setPreferredWidth(150); // 장비명
+		table.getColumnModel().getColumn(4).setPreferredWidth(40); // 상 태	
 		
 		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
 		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
@@ -305,10 +307,11 @@ public class ServerList_Panel extends JPanel {
 
 		// 정렬할 테이블의 ColumnModel을 가져옴
 		TableColumnModel tcmSchedule = table.getColumnModel();
-//		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 그룹 정보
-		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 시설물 종류
-		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 장비명
-		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 상 태
+		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
+//		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 그룹 정보
+		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 시설물 종류
+		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 장비명
+		tcmSchedule.getColumn(4).setCellRenderer(tScheduleCellRenderer); // 상 태
 	}
 	
 	
