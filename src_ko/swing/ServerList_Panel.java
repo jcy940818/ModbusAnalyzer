@@ -3,6 +3,8 @@ package src_ko.swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,7 +37,7 @@ import src_ko.info.ONION_Info;
 import src_ko.util.Util;
 
 public class ServerList_Panel extends JPanel {
-		
+	
 	private static final String serverQuery = 
 			"WITH tree_query AS \r\n" + 
 			"( SELECT nGroupIndex , nParentIndex , strGroupName \r\n" + 
@@ -71,6 +74,8 @@ public class ServerList_Panel extends JPanel {
 	public static final String SERVER_STATE = "¿Â∫Ò ªÛ≈¬";
 	public static final String PROTOCOL_NUMBER = "«¡∑Œ≈‰ƒ› π¯»£";
 	
+	public static JLabel sqlServerInfo_label;
+	private static JButton updateDB_Button;
 	private JPanel infoPanel;
 		
 	private static ArrayList<Facility> facList;
@@ -82,6 +87,7 @@ public class ServerList_Panel extends JPanel {
 	
 	private static JTable serverListTable;
 	private static JTable serverInfoTable;
+	private JButton resetForm_button;
 	
 	/**
 	 * Create the panel.
@@ -104,24 +110,24 @@ public class ServerList_Panel extends JPanel {
 		actualPanel.add(infoPanel);
 		infoPanel.setBackground(Color.WHITE);
 		infoPanel.setLayout(null);
-		
-//		JLabel MK119 = new JLabel();
-//		MK119.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 12));
-//		MK119.setForeground(Color.BLACK);
-//		MK119.setHorizontalAlignment(SwingConstants.CENTER);
-//		MK119.setIcon(new Util().getMK2Resource());
-//		MK119.setBackground(Color.WHITE);
-//		MK119.setBounds(958, 0, 80, 30);
-//		infoPanel.add(MK119);
 
-		JLabel currentFunction = new JLabel("Facility List");
-		currentFunction.setForeground(Color.BLACK);
-		currentFunction.setBackground(Color.WHITE);
-		currentFunction.setIcon(new Util().getSubLogoResource());
-		currentFunction.setBounds(0, 0, 200, 55);
-		currentFunction.setHorizontalAlignment(SwingConstants.LEFT);
-		currentFunction.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 22));
-		infoPanel.add(currentFunction);
+		JLabel onionLogo = new JLabel();
+		onionLogo.setForeground(Color.BLACK);
+		onionLogo.setBackground(Color.WHITE);
+		onionLogo.setIcon(new Util().getSubLogoResource());
+		onionLogo.setBounds(0, 0, 50, 55);
+		onionLogo.setHorizontalAlignment(SwingConstants.LEFT);
+		onionLogo.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 22));
+//		infoPanel.add(onionLogo);
+		
+		sqlServerInfo_label = new JLabel();
+		sqlServerInfo_label.setIcon(new Util().getMK2Resource());
+		sqlServerInfo_label.setHorizontalAlignment(SwingConstants.LEFT);
+		sqlServerInfo_label.setForeground(Color.BLUE);
+		sqlServerInfo_label.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 22));
+		sqlServerInfo_label.setBackground(Color.WHITE);
+		sqlServerInfo_label.setBounds(10, 0, 580, 55);
+		infoPanel.add(sqlServerInfo_label);
 		
 		JLabel searchFacility_Label = new JLabel("∞À ªˆ");
 		searchFacility_Label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -130,6 +136,32 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_Label.setBackground(Color.WHITE);
 		searchFacility_Label.setBounds(28, 142, 50, 64);
 		infoPanel.add(searchFacility_Label);
+		
+		updateDB_Button = new JButton("Database √÷Ω≈»≠");
+		updateDB_Button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 16));
+		updateDB_Button.setBackground(Color.WHITE);
+		updateDB_Button.setForeground(Color.BLACK);
+		updateDB_Button.setFocusPainted(false);		
+		updateDB_Button.setBounds(245, 100, 190, 37);
+		updateDB_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				resetForm(false);
+			}
+		});
+		infoPanel.add(updateDB_Button);
+		
+		resetForm_button = new JButton("Form √ ±‚»≠");
+		resetForm_button.setForeground(Color.BLACK);
+		resetForm_button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 16));
+		resetForm_button.setFocusPainted(false);
+		resetForm_button.setBackground(Color.WHITE);
+		resetForm_button.setBounds(440, 100, 150, 37);
+		resetForm_button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				resetForm(true);
+			}
+		});
+		infoPanel.add(resetForm_button);
 		
 		
 		
@@ -457,7 +489,7 @@ public class ServerList_Panel extends JPanel {
 		
 		content[3] = new Object[2];
 		content[3][0] = SERVER_NAME;
-		content[3][1] = fac.getName();
+		content[3][1] = fac;
 		
 		content[4] = new Object[2];
 		content[4][0] = CONN_METHOD;
@@ -552,10 +584,19 @@ public class ServerList_Panel extends JPanel {
 		}
 	}
 	
-	public static void resetForm() {
-		if(searchFacility_textField1 != null) searchFacility_textField1.setText(null);
-		if(searchFacility_ComboBox1 != null) searchFacility_ComboBox1.setSelectedIndex(0);
-		if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedIndex(2);
+	public static void resetForm(boolean allComponentReset) {
+		loadFacility();
+		updateServerListTable();
+		updateServerInfoTable(null);
+		
+		if(allComponentReset) {
+			if(searchFacility_textField1 != null) searchFacility_textField1.setText(null);
+			if(searchFacility_textField2 != null) searchFacility_textField2.setText(null);
+			if(searchFacility_ComboBox1 != null) searchFacility_ComboBox1.setSelectedIndex(0);
+			if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedIndex(2);	
+		}
+		
+		doTableFilter();
 	}
 	
 	public static void doTableFilter() {		
@@ -695,5 +736,9 @@ public class ServerList_Panel extends JPanel {
 		});
 
 		setTableStyle(serverListTable);
+	}
+	
+	public static void setSqlServerInfo(String sqlServerInfo) {
+		sqlServerInfo_label.setText(" " + sqlServerInfo);
 	}
 }
