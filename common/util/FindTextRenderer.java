@@ -24,7 +24,7 @@ public class FindTextRenderer extends DefaultTableCellRenderer {
 
 		Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-		String state = table.getValueAt(row, 4).toString();
+		String cellValue = table.getValueAt(row, this.colNum).toString();
 
 		try {
 
@@ -42,18 +42,18 @@ public class FindTextRenderer extends DefaultTableCellRenderer {
 				}
 				
 			}else {
-				boolean result = state.toUpperCase().contains(search.toUpperCase());
+				boolean result = cellValue.toUpperCase().contains(search.toUpperCase());
 
 				if (result) {
 					
 					// ¡Ú °Ë»ö ¹®ÀÚ¿­À» Æ÷ÇÔÇÒ °æ¿ì
 					if (isSelected) {
-						c.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+						c.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 						c.setBackground(new Color(0, 120, 215));
 						c.setForeground(new Color(255, 255, 255));
 						return c;
 					} else {
-						c.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+						c.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 						c.setBackground(this.color);
 						c.setForeground(Color.BLACK);
 						return c;
