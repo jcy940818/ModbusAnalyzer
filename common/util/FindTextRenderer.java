@@ -24,6 +24,10 @@ public class FindTextRenderer extends DefaultTableCellRenderer {
 
 		Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
+		if(table.getValueAt(row, this.colNum) == null) {
+			return c;		
+		}
+		
 		String cellValue = table.getValueAt(row, this.colNum).toString();
 
 		try {
@@ -42,7 +46,7 @@ public class FindTextRenderer extends DefaultTableCellRenderer {
 				}
 				
 			}else {
-				boolean result = cellValue.toUpperCase().contains(search.toUpperCase());
+				boolean result = cellValue.equalsIgnoreCase(search);
 
 				if (result) {
 					

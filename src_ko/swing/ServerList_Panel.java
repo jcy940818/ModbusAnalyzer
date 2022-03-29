@@ -75,6 +75,8 @@ public class ServerList_Panel extends JPanel {
 	public static final String SERVER_STATE = "장비 상태";
 	public static final String PROTOCOL_NUMBER = "프로토콜 번호";
 	
+	public static final String STATE_COMMER = "통신 오류";
+	
 	public static JLabel sqlServerInfo_label;
 	private static JButton updateDB_Button;
 	private JPanel infoPanel;
@@ -84,8 +86,7 @@ public class ServerList_Panel extends JPanel {
 	private static JTextField searchFacility_textField1;
 	private static JTextField searchFacility_textField2;
 	private static JComboBox searchFacility_ComboBox1; 
-	private static JComboBox searchFacility_ComboBox2;
-	
+	private static JComboBox searchFacility_ComboBox2;	
 	private static JTable serverListTable;
 	private static JTable serverInfoTable;
 	private JButton resetForm_button;
@@ -172,15 +173,24 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_ComboBox1.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		searchFacility_ComboBox1.setModel(new DefaultComboBoxModel(new String[] {
 				GROUP_INFO, // 그룹 정보
+				FAC_TYPE, // 시설물 종류
+				PROTOCOL_NUMBER, // 프로토콜 번호
 				SERVER_INDEX, // 장비 인덱스
 				SERVER_NAME, // 장비명
-				FAC_TYPE, // 시설물 종류
 				CONN_METHOD, // 연결 방식
 				SERVER_STATE, // 장비 상태
-				PROTOCOL_NUMBER, // 프로토콜 번호
 				}));
 		searchFacility_ComboBox1.setBounds(90, 142, 150, 30);
 		searchFacility_ComboBox1.setSelectedIndex(0);
+		searchFacility_ComboBox1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					doTableFilter();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
 		infoPanel.add(searchFacility_ComboBox1);
 		
 		searchFacility_ComboBox2 = new JComboBox();
@@ -189,15 +199,24 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_ComboBox2.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		searchFacility_ComboBox2.setModel(new DefaultComboBoxModel(new String[] {
 				GROUP_INFO, // 그룹 정보
+				FAC_TYPE, // 시설물 종류
+				PROTOCOL_NUMBER, // 프로토콜 번호
 				SERVER_INDEX, // 장비 인덱스
 				SERVER_NAME, // 장비명
-				FAC_TYPE, // 시설물 종류
 				CONN_METHOD, // 연결 방식
 				SERVER_STATE, // 장비 상태
-				PROTOCOL_NUMBER, // 프로토콜 번호
 				}));
 		searchFacility_ComboBox2.setBounds(90, 177, 150, 30);
-		searchFacility_ComboBox2.setSelectedIndex(2);
+		searchFacility_ComboBox2.setSelectedIndex(4);
+		searchFacility_ComboBox2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					doTableFilter();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
 		infoPanel.add(searchFacility_ComboBox2);
 		
 		searchFacility_textField1 = new JTextField("");
@@ -348,7 +367,7 @@ public class ServerList_Panel extends JPanel {
 				
 				fac.setConditionCode(rs.getInt("condition"));
 				fac.setState(DbUtil.getState(fac.getConditionCode()));
-				
+
 				facList.add(fac);
 			}
 			
@@ -419,7 +438,7 @@ public class ServerList_Panel extends JPanel {
 
 		// DefaultTableCellHeaderRenderer의 정렬을 가운데 정렬로 지정
 		tScheduleCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		FindTextRenderer findTextRenderer = new FindTextRenderer(4, "통신 오류", Color.RED);
+		FindTextRenderer findTextRenderer = new FindTextRenderer(4, STATE_COMMER, Color.RED);
 		findTextRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		// 정렬할 테이블의 ColumnModel을 가져옴
@@ -517,11 +536,13 @@ public class ServerList_Panel extends JPanel {
 
 		// DefaultTableCellHeaderRenderer의 정렬을 가운데 정렬로 지정
 		tScheduleCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-
+		FindTextRenderer findTextRenderer = new FindTextRenderer(1, STATE_COMMER, Color.RED);
+		findTextRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		
 		// 정렬할 테이블의 ColumnModel을 가져옴
 		TableColumnModel tcmSchedule = table.getColumnModel();
 		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 필 드
-		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 내 용
+		tcmSchedule.getColumn(1).setCellRenderer(findTextRenderer); // 내 용
 	}
 		
 	public static void showFunction(Facility fac) {
@@ -571,7 +592,7 @@ public class ServerList_Panel extends JPanel {
 			if(searchFacility_textField1 != null) searchFacility_textField1.setText(null);
 			if(searchFacility_textField2 != null) searchFacility_textField2.setText(null);
 			if(searchFacility_ComboBox1 != null) searchFacility_ComboBox1.setSelectedIndex(0);
-			if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedIndex(2);	
+			if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedIndex(4);	
 		}
 		
 		doTableFilter();
