@@ -32,6 +32,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import common.server.Facility;
+import common.util.FindTextRenderer;
 import src_ko.database.DbUtil;
 import src_ko.info.ONION_Info;
 import src_ko.util.Util;
@@ -111,14 +112,14 @@ public class ServerList_Panel extends JPanel {
 		infoPanel.setBackground(Color.WHITE);
 		infoPanel.setLayout(null);
 
-		JLabel onionLogo = new JLabel();
-		onionLogo.setForeground(Color.BLACK);
-		onionLogo.setBackground(Color.WHITE);
-		onionLogo.setIcon(new Util().getSubLogoResource());
-		onionLogo.setBounds(0, 0, 50, 55);
-		onionLogo.setHorizontalAlignment(SwingConstants.LEFT);
-		onionLogo.setFont(new Font("맑은 고딕", Font.BOLD, 22));
-//		infoPanel.add(onionLogo);
+		JLabel onion_Logo = new JLabel();
+		onion_Logo.setForeground(Color.BLACK);
+		onion_Logo.setBackground(Color.WHITE);
+		onion_Logo.setIcon(new Util().getSubLogoResource());
+		onion_Logo.setBounds(183, 82, 50, 55);
+		onion_Logo.setHorizontalAlignment(SwingConstants.LEFT);
+		onion_Logo.setFont(new Font("맑은 고딕", Font.BOLD, 22));
+		infoPanel.add(onion_Logo);
 		
 		sqlServerInfo_label = new JLabel();
 		sqlServerInfo_label.setIcon(new Util().getMK2Resource());
@@ -134,7 +135,7 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_Label.setForeground(Color.BLACK);
 		searchFacility_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		searchFacility_Label.setBackground(Color.WHITE);
-		searchFacility_Label.setBounds(28, 142, 50, 64);
+		searchFacility_Label.setBounds(25, 142, 50, 64);
 		infoPanel.add(searchFacility_Label);
 		
 		updateDB_Button = new JButton("Database 최신화");
@@ -260,65 +261,35 @@ public class ServerList_Panel extends JPanel {
 		serverListTable.setForeground(Color.BLACK);
 		serverListTable.addFocusListener(new FocusListener() {			
 			public void focusLost(FocusEvent e) {
-				try {
-					int row = serverListTable.getSelectedRow();
-					selectedFac = (Facility) serverListTable.getValueAt(row, 3);			
-					updateServerInfoTable(selectedFac);
-				}catch(Exception ex) {
-					ex.printStackTrace();
-				}
+				selectFacility();
 			}
 			
 			public void focusGained(FocusEvent e) {
-				try {
-					int row = serverListTable.getSelectedRow();
-					selectedFac = (Facility) serverListTable.getValueAt(row, 3);
-					updateServerInfoTable(selectedFac);
-				}catch(Exception ex) {
-					ex.printStackTrace();
-				}
+				selectFacility();
 			}
 		});
 		serverListTable.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
-				try {
-					int row = serverListTable.getSelectedRow();
-					selectedFac = (Facility) serverListTable.getValueAt(row, 3);
-					updateServerInfoTable(selectedFac);
-				}catch(Exception ex) {
-					ex.printStackTrace();
-				}
+				selectFacility();
 			}
 						
 			public void keyReleased(KeyEvent e) {
-				try {
-					int row = serverListTable.getSelectedRow();
-					selectedFac = (Facility) serverListTable.getValueAt(row, 3);
-					updateServerInfoTable(selectedFac);
-				}catch(Exception ex) {
-					ex.printStackTrace();
-				}
+				selectFacility();
 			}
 		});
 		serverListTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == 1) {
-					int row = serverListTable.getSelectedRow();
-					selectedFac = (Facility) serverListTable.getValueAt(row, 3);
-					updateServerInfoTable(selectedFac);
+					selectFacility();
 				} // 왼쪽 클릭
 				if (e.getButton() == 1 && e.getClickCount() == 2) {
 					// 왼쪽 버튼 더블 클릭
-					int row = serverListTable.getSelectedRow();
-					selectedFac = (Facility) serverListTable.getValueAt(row, 3);
-					updateServerInfoTable(selectedFac);
+					selectFacility();
 					showFunction(selectedFac);	
 				}
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
-					int row = serverListTable.getSelectedRow();
-					selectedFac = (Facility) serverListTable.getValueAt(row, 3);
-					updateServerInfoTable(selectedFac);
+					selectFacility();
 					showFunction(selectedFac);
 				}
 			}
@@ -338,8 +309,14 @@ public class ServerList_Panel extends JPanel {
 		updateServerInfoTable(null);
 	}
 	
-	public static void selectFacility(Facility fac) {
-		
+	public static void selectFacility() {
+		try {
+			int row = serverListTable.getSelectedRow();
+			selectedFac = (Facility) serverListTable.getValueAt(row, 3);
+			updateServerInfoTable(selectedFac);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void loadFacility(){
@@ -442,14 +419,16 @@ public class ServerList_Panel extends JPanel {
 
 		// DefaultTableCellHeaderRenderer의 정렬을 가운데 정렬로 지정
 		tScheduleCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-
+		FindTextRenderer findTextRenderer = new FindTextRenderer(4, "통신 오류", Color.RED);
+		findTextRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		
 		// 정렬할 테이블의 ColumnModel을 가져옴
 		TableColumnModel tcmSchedule = table.getColumnModel();
 		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
 //		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 그룹 정보
 		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 시설물 종류
 		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 장비명
-		tcmSchedule.getColumn(4).setCellRenderer(tScheduleCellRenderer); // 상 태
+		tcmSchedule.getColumn(4).setCellRenderer(findTextRenderer); // 상 태		
 	}
 		
 	public static void updateServerInfoTable(Facility fac) {
@@ -544,8 +523,7 @@ public class ServerList_Panel extends JPanel {
 		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 필 드
 		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 내 용
 	}
-	
-	
+		
 	public static void showFunction(Facility fac) {
 //		if(fac == null) return;
 //		
@@ -599,7 +577,7 @@ public class ServerList_Panel extends JPanel {
 		doTableFilter();
 	}
 	
-	public static void doTableFilter() {		
+	public static void doTableFilter() {
 		ArrayList<Facility> filterFacilitys = new ArrayList<Facility>();
 		String text_1 = searchFacility_textField1.getText();
 		String text_2 = searchFacility_textField2.getText();
@@ -741,4 +719,7 @@ public class ServerList_Panel extends JPanel {
 	public static void setSqlServerInfo(String sqlServerInfo) {
 		sqlServerInfo_label.setText(" " + sqlServerInfo);
 	}
+	
+	
 }
+
