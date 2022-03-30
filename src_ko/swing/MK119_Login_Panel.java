@@ -224,7 +224,8 @@ public class MK119_Login_Panel extends JPanel {
 		mk119ConnSuccess();
 		// 메인 프레임 화면을 DB 로그인 성공 화면으로 변경
 		ServerList_Panel.setSqlServerInfo(ONION_Info.getSqlServerInfo());
-		ServerList_Panel.updateServerListTable();
+		ServerList_Panel.isFirstLoad = true;
+		ServerList_Panel.updateServerListTable(true);
 		ServerList_Panel.updateServerInfoTable(null);
 		MainFrame.showServerList();
 	}

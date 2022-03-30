@@ -21,6 +21,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -43,6 +44,7 @@ import src_ko.util.Util;
 
 public class ServerList_Panel extends JPanel {
 	
+	public static boolean isFirstLoad;
 	public static final String ORDER = "순 서";
 	public static final String GROUP_INFO = "그룹 정보";
 	public static final String SERVER_INDEX = "장비 인덱스";
@@ -127,7 +129,7 @@ public class ServerList_Panel extends JPanel {
 		updateDB_Button.setBounds(245, 100, 190, 37);
 		updateDB_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				resetForm(false);
+				resetForm(true, false);
 			}
 		});
 		infoPanel.add(updateDB_Button);
@@ -140,12 +142,10 @@ public class ServerList_Panel extends JPanel {
 		resetForm_button.setBounds(440, 100, 150, 37);
 		resetForm_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				resetForm(true);
+				resetForm(false, true);
 			}
 		});
 		infoPanel.add(resetForm_button);
-		
-		
 		
 		searchFacility_ComboBox1 = new JComboBox();
 		searchFacility_ComboBox1.setBackground(Color.WHITE);
@@ -398,28 +398,55 @@ public class ServerList_Panel extends JPanel {
 			for(int i = 0; i < serverList.size(); i++) {
 				Server server = serverList.get(i);
 				
-				if(server.isFacility()) {
-					int rtuIndex = ((Facility)server).getRtuIndex();
-					if(rtuIndex != 0) {
-						RCU rcu = (RCU)serverMap.get(rtuIndex);
-						rcu.getFacList().add(server);
-						((Facility)server).setRcu(rcu);
-					}else {
-						continue;
-					}
+				if(server.isFacility()) {					
+						int rtuIndex = ((Facility)server).getRtuIndex();
+						
+						try {
+							if(rtuIndex != 0) {
+								RCU rcu = (RCU)serverMap.get(rtuIndex);
+								rcu.getFacList().add(server);
+								((Facility)server).setRcu(rcu);
+							}else {
+								continue;
+							}
+						}catch(NullPointerException e) {
+							RCU rcu = new RCU();
+							rcu.setIndex(rtuIndex);
+							rcu.setName("알 수 없음");
+							rcu.setRcuTypeDetail("알 수 없음");
+							rcu.setIp("알 수 없음");
+							((Facility)server).setRcu(rcu);
+							
+							if(isFirstLoad) {
+								StringBuilder sb = new StringBuilder();
+								sb.append(String.format("%s%s%s\n", Util.colorRed("Can Not Found RCU"), Util.separator, Util.separator));
+								
+								sb.append(Util.colorRed("알 수 없는 RCU 인덱스 : ") + rtuIndex + Util.separator + Util.separator + "\n\n");
+								
+								sb.append(Util.colorBlue("그룹 정보 : ") + server.getGroupInfo() + Util.separator + Util.separator + "\n");
+								sb.append(Util.colorBlue("장비 인덱스 : ") + server.getIndex() + Util.separator + Util.separator + "\n");
+								sb.append(Util.colorBlue("시설물 종류 : ") + server.getTypeString() + Util.separator + Util.separator + "\n");
+								sb.append(Util.colorBlue("연결 방식 : ") + ((Facility)server).getConnMethod() + Util.separator + Util.separator + "\n");
+								sb.append(Util.colorBlue("장비명 : ") + server.getName() + Util.separator + Util.separator + "\n\n");							
+								
+								sb.append("위의 장비가 바라보는 " + Util.colorRed("RCU") + " 장비를 찾을 수 없습니다" + Util.separator + Util.separator +"\n");
+								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+							}
+						}
 				}
 			}
 			
 			Collections.sort(serverList);
 			
+			isFirstLoad = false;
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	
-	public static void updateServerListTable() {		
-		loadServerInfo();
+	public static void updateServerListTable(boolean databaseLoad) {		
+		if(databaseLoad) loadServerInfo();
 		if(serverList == null) return;
 		
 		Object[][] content = new Object[serverList.size()][];
@@ -477,16 +504,20 @@ public class ServerList_Panel extends JPanel {
 
 		// DefaultTableCellHeaderRenderer의 정렬을 가운데 정렬로 지정
 		tScheduleCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		FindTextRenderer findTextRenderer = new FindTextRenderer(4, STATE_COMMER, Color.RED);
-		findTextRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		FindTextRenderer findCommerRenderer = new FindTextRenderer(4, STATE_COMMER, Color.RED);
+		findCommerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		FindTextRenderer findRCURenderer = new FindTextRenderer(2, "RCU", Color.GREEN);
+		findRCURenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		
 		
 		// 정렬할 테이블의 ColumnModel을 가져옴
 		TableColumnModel tcmSchedule = table.getColumnModel();
 		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
 //		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 그룹 정보
-		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 시설물 종류
+		tcmSchedule.getColumn(2).setCellRenderer(findRCURenderer); // 시설물 종류
 		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 장비명
-		tcmSchedule.getColumn(4).setCellRenderer(findTextRenderer); // 상 태		
+		tcmSchedule.getColumn(4).setCellRenderer(findCommerRenderer); // 상 태		
 	}
 		
 	public static void updateServerInfoTable(Server server) {
@@ -575,13 +606,13 @@ public class ServerList_Panel extends JPanel {
 
 		// DefaultTableCellHeaderRenderer의 정렬을 가운데 정렬로 지정
 		tScheduleCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		FindTextRenderer findTextRenderer = new FindTextRenderer(1, STATE_COMMER, Color.RED);
-		findTextRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		FindTextRenderer findCommerRenderer = new FindTextRenderer(1, STATE_COMMER, Color.RED);
+		findCommerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		// 정렬할 테이블의 ColumnModel을 가져옴
 		TableColumnModel tcmSchedule = table.getColumnModel();
 		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 필 드
-		tcmSchedule.getColumn(1).setCellRenderer(findTextRenderer); // 내 용
+		tcmSchedule.getColumn(1).setCellRenderer(findCommerRenderer); // 내 용
 	}
 		
 	public static void showFunction(Server server) {
@@ -622,9 +653,8 @@ public class ServerList_Panel extends JPanel {
 		}
 	}
 	
-	public static void resetForm(boolean allComponentReset) {
-		loadServerInfo();
-		updateServerListTable();
+	public static void resetForm(boolean databaseLoad, boolean allComponentReset) {		
+		updateServerListTable(databaseLoad);
 		updateServerInfoTable(null);
 		
 		if(allComponentReset) {
@@ -645,8 +675,8 @@ public class ServerList_Panel extends JPanel {
 		boolean noSearch_1 = (text_1 == null || text_1.length() == 0 || text_1.equals(""));
 		boolean noSearch_2 = (text_2 == null || text_2.length() == 0 || text_2.equals(""));
 		
-		if(noSearch_1 && noSearch_2) {
-			updateServerListTable();
+		if(noSearch_1 && noSearch_2) {	
+			updateServerListTable(false);
 			return;
 		}
 		
