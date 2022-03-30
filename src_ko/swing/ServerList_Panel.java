@@ -32,6 +32,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import common.server.Facility;
+import common.server.Server;
 import common.util.FindTextRenderer;
 import src_ko.database.DbUtil;
 import src_ko.info.ONION_Info;
@@ -39,38 +40,13 @@ import src_ko.util.Util;
 
 public class ServerList_Panel extends JPanel {
 	
-	private static final String serverQuery = 
-			"WITH tree_query AS \r\n" + 
-			"( SELECT nGroupIndex , nParentIndex , strGroupName \r\n" + 
-			", convert(varchar(255), nGroupIndex) sort \r\n" + 
-			", convert(varchar(255), strGroupName) depth_fullname \r\n" + 
-			"FROM SERVERGROUP WHERE nParentIndex = -1\r\n" + 
-			"UNION ALL SELECT B.nGroupIndex , B.nParentIndex , B.strGroupName \r\n" + 
-			", convert(varchar(255), convert(nvarchar,C.sort) + ' > ' + convert(varchar(255), B.nGroupIndex)) sort\r\n" + 
-			", convert(varchar(255), convert(nvarchar,C.depth_fullname) + ' > ' + convert(varchar(255), B.strGroupName)) depth_fullname \r\n" + 
-			"FROM SERVERGROUP B, tree_query C \r\n" + 
-			"WHERE B.nParentIndex = C.nGroupIndex) \r\n" + 
-			"\r\n" + 
-			"select \r\n" + 
-			"	replace(c.depth_fullname,'<ROOT>','장비 관리 ( 그룹 없음 )') as 'groupInfo',	\r\n" + 
-			"	a.nServerIndex as 'index',\r\n" + 
-			"	f.FACILITY_TYPE as 'facType',\r\n" + 
-			"	a.strServerName as 'name',\r\n" + 
-			"	f.CONN_METHOD as 'connMethod',\r\n" + 
-			"	f.COMM_PROTOCOL as 'commProtocol',\r\n" + 
-			"	f.SNMP_MIB as 'snmpProtocol',\r\n" + 
-			"	a.SERVER_CONDITION as 'condition'\r\n" + 
-			" \r\n" + 
-			"from SERVERINFO a inner join SERVERGROUPMAP b on a.nServerIndex=b.nServerIndex\r\n" + 
-			"	inner join tree_query c on b.nGroupIndex = c.ngroupIndex\r\n" + 
-			"	inner join SERVERINFO_FACILITY f ON a.nServerIndex = f.NODE_INDEX\r\n" + 
-			" order by a.nServerIndex";
-	
 	public static final String ORDER = "순 서";
 	public static final String GROUP_INFO = "그룹 정보";
 	public static final String SERVER_INDEX = "장비 인덱스";
 	public static final String SERVER_NAME = "장비명";
-	public static final String FAC_TYPE = "시설물 종류";
+	public static final String SERVER_TYPE = "장비 종류";
+	public static final String FACILITY_TYPE = "시설물 종류";
+	public static final String RTU_TYPE = "RCU 종류";
 	public static final String CONN_METHOD = "연결 방식";
 	public static final String SERVER_STATE = "장비 상태";
 	public static final String PROTOCOL_NUMBER = "프로토콜 번호";
@@ -81,8 +57,8 @@ public class ServerList_Panel extends JPanel {
 	private static JButton updateDB_Button;
 	private JPanel infoPanel;
 		
-	private static ArrayList<Facility> facList;
-	private static Facility selectedFac;
+	private static ArrayList<Server> ServerList;
+	private static Server selectedServer;
 	private static JTextField searchFacility_textField1;
 	private static JTextField searchFacility_textField2;
 	private static JComboBox searchFacility_ComboBox1; 
@@ -173,7 +149,7 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_ComboBox1.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		searchFacility_ComboBox1.setModel(new DefaultComboBoxModel(new String[] {
 				GROUP_INFO, // 그룹 정보
-				FAC_TYPE, // 시설물 종류
+				SERVER_TYPE, // 시설물 종류
 				PROTOCOL_NUMBER, // 프로토콜 번호
 				SERVER_INDEX, // 장비 인덱스
 				SERVER_NAME, // 장비명
@@ -199,7 +175,7 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_ComboBox2.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		searchFacility_ComboBox2.setModel(new DefaultComboBoxModel(new String[] {
 				GROUP_INFO, // 그룹 정보
-				FAC_TYPE, // 시설물 종류
+				SERVER_TYPE, // 시설물 종류
 				PROTOCOL_NUMBER, // 프로토콜 번호
 				SERVER_INDEX, // 장비 인덱스
 				SERVER_NAME, // 장비명
@@ -280,36 +256,36 @@ public class ServerList_Panel extends JPanel {
 		serverListTable.setForeground(Color.BLACK);
 		serverListTable.addFocusListener(new FocusListener() {			
 			public void focusLost(FocusEvent e) {
-				selectFacility();
+				selectServer();
 			}
 			
 			public void focusGained(FocusEvent e) {
-				selectFacility();
+				selectServer();
 			}
 		});
 		serverListTable.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
-				selectFacility();
+				selectServer();
 			}
 						
 			public void keyReleased(KeyEvent e) {
-				selectFacility();
+				selectServer();
 			}
 		});
 		serverListTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == 1) {
-					selectFacility();
+					selectServer();
 				} // 왼쪽 클릭
 				if (e.getButton() == 1 && e.getClickCount() == 2) {
 					// 왼쪽 버튼 더블 클릭
-					selectFacility();
-					showFunction(selectedFac);	
+					selectServer();
+					showFunction(selectedServer);	
 				}
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
-					selectFacility();
-					showFunction(selectedFac);
+					selectServer();
+					showFunction(selectedServer);
 				}
 			}
 		});
@@ -323,40 +299,40 @@ public class ServerList_Panel extends JPanel {
 		serverInfoTable = new JTable();
 		serverInfoTable.setBorder(new LineBorder(Color.BLACK, 2));
 		serverInfoPane.setViewportView(serverInfoTable);
-				
-		updateServerListTable();		
-		updateServerInfoTable(null);
+						
 	}
 	
-	public static void selectFacility() {
+	public static void selectServer() {
 		try {
 			int row = serverListTable.getSelectedRow();
-			selectedFac = (Facility) serverListTable.getValueAt(row, 3);
-			updateServerInfoTable(selectedFac);
+			selectedServer = (Server) serverListTable.getValueAt(row, 3);
+			updateServerInfoTable(selectedServer);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static void loadFacility(){
+	public static void loadServerInfo(){
 		if(!ONION_Info.hasMk119Connection() || ONION_Info.getMk119Connection() == null) return;
 		
 		try {
 			Statement stmt = ONION_Info.getMk119Connection().createStatement();
-			ResultSet rs = stmt.executeQuery(serverQuery);
+			ResultSet rs = stmt.executeQuery(Facility.GET_FACILITY);
 			
-			facList = new ArrayList<Facility>();
+			ServerList = new ArrayList<Server>();
 			
 			while(rs.next()) {
 				Facility fac = new Facility();
 				
 				fac.setGroupInfo(rs.getString("groupInfo"));				
 				
+				fac.setAgentType(rs.getInt("agentType"));
+				
 				fac.setIndex(rs.getInt("index"));
 				fac.setName(rs.getString("name"));
 				
-				fac.setFacType(rs.getInt("facType"));
-				fac.setFacTypeString(DbUtil.getFacilityType(fac.getFacType()));
+				fac.setType(rs.getInt("facType"));
+				fac.setTypeString(DbUtil.getFacilityType(fac.getType()));
 				
 				fac.setConnCode(rs.getInt("connMethod"));
 				fac.setConnMethod(DbUtil.getConnMethod(fac.getConnCode()));
@@ -365,13 +341,13 @@ public class ServerList_Panel extends JPanel {
 				fac.setSnmpProtocol(rs.getInt("snmpProtocol"));
 				fac.setCommon((fac.getCommProtocol() > fac.getSnmpProtocol()) ? true : false);
 				
-				fac.setConditionCode(rs.getInt("condition"));
-				fac.setState(DbUtil.getState(fac.getConditionCode()));
+				fac.setStateCode(rs.getInt("condition"));
+				fac.setState(DbUtil.getState(fac.getStateCode()));
 
-				facList.add(fac);
+				ServerList.add(fac);
 			}
 			
-			Collections.sort(facList);
+			Collections.sort(ServerList);
 			
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -379,25 +355,25 @@ public class ServerList_Panel extends JPanel {
 	}	
 	
 	
-	public static void updateServerListTable() {
-		loadFacility();
-		if(facList == null) return; 
+	public static void updateServerListTable() {		
+		loadServerInfo();
+		if(ServerList == null) return;
 		
-		Object[][] content = new Object[facList.size()][];
+		Object[][] content = new Object[ServerList.size()][];
 
-		for (int i = 0; i < facList.size(); i++) {
-			Facility fac = facList.get(i);
+		for (int i = 0; i < ServerList.size(); i++) {
+			Server fac = ServerList.get(i);
 			content[i] = new Object[5];
 			content[i][0] = i + 1;
 			content[i][1] = fac.getGroupInfo();
-			content[i][2] = fac.getFacTypeString();
+			content[i][2] = fac.getTypeString();
 			content[i][3] = fac;
 			content[i][4] = fac.getState();
 		}
 
 		serverListTable.setModel(new DefaultTableModel(
 			content, 			
-			new String[] { ORDER, GROUP_INFO, FAC_TYPE, SERVER_NAME, SERVER_STATE }) {
+			new String[] { ORDER, GROUP_INFO, SERVER_TYPE, SERVER_NAME, SERVER_STATE }) {
 			// 테이블 셀 내용 수정 금지
 			public boolean isCellEditable(int i, int c) {
 				return false;
@@ -450,8 +426,8 @@ public class ServerList_Panel extends JPanel {
 		tcmSchedule.getColumn(4).setCellRenderer(findTextRenderer); // 상 태		
 	}
 		
-	public static void updateServerInfoTable(Facility fac) {
-		if(fac == null) {
+	public static void updateServerInfoTable(Server server) {
+		if(server == null) {
 			serverInfoTable.setModel(new DefaultTableModel(
 					new Object[][] {
 						{ null, null },
@@ -474,28 +450,28 @@ public class ServerList_Panel extends JPanel {
 		Object[][] content = new Object[6][];
 		
 		content[0] = new Object[2];
-		content[0][0] = FAC_TYPE;
-		content[0][1] = fac.getFacTypeString();
+		content[0][0] = (server.isFacility()) ? FACILITY_TYPE : RTU_TYPE ;
+		content[0][1] = server.getTypeString();
 		
 		content[1] = new Object[2];
 		content[1][0] = PROTOCOL_NUMBER;
-		content[1][1] = (fac.isCommon()) ? fac.getCommProtocol() : fac.getSnmpProtocol();
+		content[1][1] = (((Facility)server).isCommon()) ? ((Facility)server).getCommProtocol() : ((Facility)server).getSnmpProtocol();
 		
 		content[2] = new Object[2];
 		content[2][0] = SERVER_INDEX;
-		content[2][1] = fac.getIndex();
+		content[2][1] = server.getIndex();
 		
 		content[3] = new Object[2];
 		content[3][0] = SERVER_NAME;
-		content[3][1] = fac;
+		content[3][1] = server;
 		
 		content[4] = new Object[2];
 		content[4][0] = CONN_METHOD;
-		content[4][1] = fac.getConnMethod();
+		content[4][1] = ((Facility)server).getConnMethod();
 		
 		content[5] = new Object[2];
 		content[5][0] = SERVER_STATE;
-		content[5][1] = fac.getState();
+		content[5][1] = server.getState();
 
 		serverInfoTable.setModel(new DefaultTableModel(
 			content,
@@ -545,7 +521,7 @@ public class ServerList_Panel extends JPanel {
 		tcmSchedule.getColumn(1).setCellRenderer(findTextRenderer); // 내 용
 	}
 		
-	public static void showFunction(Facility fac) {
+	public static void showFunction(Server server) {
 //		if(fac == null) return;
 //		
 //		String separator = Util.separator + Util.separator; 
@@ -584,7 +560,7 @@ public class ServerList_Panel extends JPanel {
 	}
 	
 	public static void resetForm(boolean allComponentReset) {
-		loadFacility();
+		loadServerInfo();
 		updateServerListTable();
 		updateServerInfoTable(null);
 		
@@ -599,7 +575,7 @@ public class ServerList_Panel extends JPanel {
 	}
 	
 	public static void doTableFilter() {
-		ArrayList<Facility> filterFacilitys = new ArrayList<Facility>();
+		ArrayList<Server> filteredServer = new ArrayList<Server>();
 		String text_1 = searchFacility_textField1.getText();
 		String text_2 = searchFacility_textField2.getText();
 		
@@ -614,57 +590,73 @@ public class ServerList_Panel extends JPanel {
 		text_1 = text_1.toUpperCase();
 		text_2 = text_2.toUpperCase();
 		
-		for(int i = 0; i < facList.size(); i++) {
-			Facility fac = facList.get(i);
+		for(int i = 0; i < ServerList.size(); i++) {
+			Server server = ServerList.get(i);
 			
 			String searchElement_1 = null;
 			String searchElement_2 = null;
 			
 			switch(searchFacility_ComboBox1.getSelectedItem().toString()) {
 				case GROUP_INFO :  // 그룹 정보
-					searchElement_1 = fac.getGroupInfo();
+					searchElement_1 = server.getGroupInfo();
 					break;
 				case SERVER_INDEX : // 장비 인덱스
-					searchElement_1 = String.valueOf(fac.getIndex());
+					searchElement_1 = String.valueOf(server.getIndex());
 					break;
 				case SERVER_NAME : // 장비명
-					searchElement_1 = fac.getName();
+					searchElement_1 = server.getName();
 					break;
-				case FAC_TYPE : // 시설물 종류
-					searchElement_1 = fac.getFacTypeString();
+				case SERVER_TYPE : // 시설물 종류
+					searchElement_1 = server.getTypeString();
 					break;
 				case CONN_METHOD : // 연결 방식
-					searchElement_1 = fac.getConnMethod();
+					if(server.isFacility()) {
+						searchElement_1 = ((Facility)server).getConnMethod();
+					}else {
+						searchElement_1 = "";
+					}
 					break;
 				case SERVER_STATE : // 장비 상태
-					searchElement_1 = fac.getState();
+					searchElement_1 = server.getState();
 					break;
 				case PROTOCOL_NUMBER : // 프로토콜 번호
-					searchElement_1 = String.valueOf((fac.isCommon()?fac.getCommProtocol():fac.getSnmpProtocol()));
+					if(server.isFacility()) {						
+						searchElement_1 = String.valueOf((((Facility)server).isCommon()?((Facility)server).getCommProtocol():((Facility)server).getSnmpProtocol()));	
+					}else {
+						searchElement_1 = "";
+					}
 					break;
 			}// switch - searchElement_1
 			
 			switch(searchFacility_ComboBox2.getSelectedItem().toString()) {
 				case GROUP_INFO :  // 그룹 정보
-					searchElement_2 = fac.getGroupInfo();
+					searchElement_2 = server.getGroupInfo();
 					break;
 				case SERVER_INDEX : // 장비 인덱스
-					searchElement_2 = String.valueOf(fac.getIndex());
+					searchElement_2 = String.valueOf(server.getIndex());
 					break;
 				case SERVER_NAME : // 장비명
-					searchElement_2 = fac.getName();
+					searchElement_2 = server.getName();
 					break;
-				case FAC_TYPE : // 시설물 종류
-					searchElement_2 = fac.getFacTypeString();
+				case SERVER_TYPE : // 시설물 종류
+					searchElement_2 = server.getTypeString();
 					break;
 				case CONN_METHOD : // 연결 방식
-					searchElement_2 = fac.getConnMethod();
+					if(server.isFacility()) {
+						searchElement_2 = ((Facility)server).getConnMethod();	
+					}else {
+						searchElement_2 = "";
+					}
 					break;
 				case SERVER_STATE : // 장비 상태
-					searchElement_2 = fac.getState();
+					searchElement_2 = server.getState();
 					break;
 				case PROTOCOL_NUMBER : // 프로토콜 번호
-					searchElement_2 = String.valueOf((fac.isCommon()?fac.getCommProtocol():fac.getSnmpProtocol()));
+					if(server.isFacility()) {						
+						searchElement_2 = String.valueOf((((Facility)server).isCommon()?((Facility)server).getCommProtocol():((Facility)server).getSnmpProtocol()));	
+					}else {
+						searchElement_2 = "";
+					}
 					break;
 			}// switch - searchElement_2
 			
@@ -708,26 +700,26 @@ public class ServerList_Panel extends JPanel {
 			}// set isContain_2
 			
 			if(isContain_1 && isContain_2) {
-				filterFacilitys.add(fac);
+				filteredServer.add(server);
 			}// AND Operation isContains 1, 2
 			
 		}// for loop
 		
-		Object[][] content = new Object[filterFacilitys.size()][];
+		Object[][] content = new Object[filteredServer.size()][];
 		
-		for (int i = 0; i < filterFacilitys.size(); i++) {
-			Facility fac = filterFacilitys.get(i);
+		for (int i = 0; i < filteredServer.size(); i++) {
+			Server server = filteredServer.get(i);
 			content[i] = new Object[5];
 			content[i][0] = i + 1;
-			content[i][1] = fac.getGroupInfo();
-			content[i][2] = fac.getFacTypeString();
-			content[i][3] = fac;
-			content[i][4] = fac.getState();
+			content[i][1] = server.getGroupInfo();
+			content[i][2] = server.getTypeString();
+			content[i][3] = server;
+			content[i][4] = server.getState();
 		}
 
 		serverListTable.setModel(new DefaultTableModel(
 			content, 			
-			new String[] { ORDER, GROUP_INFO, FAC_TYPE, SERVER_NAME, SERVER_STATE }) {
+			new String[] { ORDER, GROUP_INFO, SERVER_TYPE, SERVER_NAME, SERVER_STATE }) {
 			// 테이블 셀 내용 수정 금지
 			public boolean isCellEditable(int i, int c) {
 				return false;
