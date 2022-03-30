@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -32,6 +33,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import common.server.Facility;
+import common.server.MultiPortMap;
+import common.server.RCU;
 import common.server.Server;
 import common.util.FindTextRenderer;
 import src_ko.database.DbUtil;
@@ -57,7 +60,8 @@ public class ServerList_Panel extends JPanel {
 	private static JButton updateDB_Button;
 	private JPanel infoPanel;
 		
-	private static ArrayList<Server> ServerList;
+	private static ArrayList<Server> serverList;
+	private static HashMap<Integer, Server> serverMap;
 	private static Server selectedServer;
 	private static JTextField searchFacility_textField1;
 	private static JTextField searchFacility_textField2;
@@ -319,13 +323,18 @@ public class ServerList_Panel extends JPanel {
 			Statement stmt = ONION_Info.getMk119Connection().createStatement();
 			ResultSet rs = stmt.executeQuery(Facility.GET_FACILITY);
 			
-			ServerList = new ArrayList<Server>();
+			serverList = new ArrayList<Server>();
+			serverMap = new HashMap<Integer, Server>();
 			
 			while(rs.next()) {
 				Facility fac = new Facility();
 				
 				fac.setGroupInfo(rs.getString("groupInfo"));				
 				
+				fac.setIp(rs.getString("ip"));
+				fac.setPort(rs.getInt("port"));
+				fac.setRtuIndex(rs.getInt("rtuIndex"));
+
 				fac.setAgentType(rs.getInt("agentType"));
 				
 				fac.setIndex(rs.getInt("index"));
@@ -344,25 +353,79 @@ public class ServerList_Panel extends JPanel {
 				fac.setStateCode(rs.getInt("condition"));
 				fac.setState(DbUtil.getState(fac.getStateCode()));
 
-				ServerList.add(fac);
+				serverList.add(fac);
+				serverMap.put(fac.getIndex(), fac);
 			}
 			
-			Collections.sort(ServerList);
+			rs = stmt.executeQuery(RCU.GET_RTU);
+			while(rs.next()) {
+				RCU rcu = new RCU();
+				
+				rcu.setGroupInfo(rs.getString("groupInfo"));
+				
+				rcu.setIp(rs.getString("ip"));
+				rcu.setPort(rs.getInt("port"));				
+
+				rcu.setAgentType(rs.getInt("agentType"));
+				
+				rcu.setIndex(rs.getInt("index"));
+				rcu.setName(rs.getString("name"));
+				
+				rcu.setType(rs.getInt("rtuType"));
+				rcu.setTypeString("RCU");
+				rcu.setRcuTypeDetail(DbUtil.getRcuType(rcu.getType()));
+				
+				rcu.setStateCode(rs.getInt("condition"));
+				rcu.setState(DbUtil.getState(rcu.getStateCode()));
+
+				serverList.add(rcu);
+				serverMap.put(rcu.getIndex(), rcu);
+			}
+			
+			rs = stmt.executeQuery(MultiPortMap.GET_MULTI_PORT_MAP);
+			while(rs.next()) {
+				MultiPortMap map = new MultiPortMap();
+				int rcuIndex = rs.getInt("index");
+				int ch = rs.getInt("ch");
+				int port = rs.getInt("port");
+				map.setRtuIndex(rcuIndex);
+				map.setCh(ch);
+				map.setPort(port);
+				
+				((RCU)serverMap.get(rcuIndex)).getMultiPortMapList().add(map);
+			}
+			
+			for(int i = 0; i < serverList.size(); i++) {
+				Server server = serverList.get(i);
+				
+				if(server.isFacility()) {
+					int rtuIndex = ((Facility)server).getRtuIndex();
+					if(rtuIndex != 0) {
+						RCU rcu = (RCU)serverMap.get(rtuIndex);
+						rcu.getFacList().add(server);
+						((Facility)server).setRcu(rcu);
+					}else {
+						continue;
+					}
+				}
+			}
+			
+			Collections.sort(serverList);
 			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-	}	
+	}
 	
 	
 	public static void updateServerListTable() {		
 		loadServerInfo();
-		if(ServerList == null) return;
+		if(serverList == null) return;
 		
-		Object[][] content = new Object[ServerList.size()][];
+		Object[][] content = new Object[serverList.size()][];
 
-		for (int i = 0; i < ServerList.size(); i++) {
-			Server fac = ServerList.get(i);
+		for (int i = 0; i < serverList.size(); i++) {
+			Server fac = serverList.get(i);
 			content[i] = new Object[5];
 			content[i][0] = i + 1;
 			content[i][1] = fac.getGroupInfo();
@@ -590,8 +653,8 @@ public class ServerList_Panel extends JPanel {
 		text_1 = text_1.toUpperCase();
 		text_2 = text_2.toUpperCase();
 		
-		for(int i = 0; i < ServerList.size(); i++) {
-			Server server = ServerList.get(i);
+		for(int i = 0; i < serverList.size(); i++) {
+			Server server = serverList.get(i);
 			
 			String searchElement_1 = null;
 			String searchElement_2 = null;

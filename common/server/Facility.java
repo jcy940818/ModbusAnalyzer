@@ -20,6 +20,9 @@ public class Facility extends Server implements Comparable{
 			"\r\n" + 
 			"select \r\n" + 
 			"	replace(c.depth_fullname,'<ROOT>','장비 관리 ( 그룹 없음 )') as 'groupInfo',	\r\n" + 
+			"	a.strServerIP as 'ip',\r\n" + 
+			"	f.RTU_PORT_NUM as 'port',\r\n" + 
+			"	f.RTU_INDEX as 'rtuIndex',\r\n" + 
 			"	a.nAgentType AS 'agentType',\r\n" + 
 			"	a.nServerIndex as 'index',\r\n" + 
 			"	f.FACILITY_TYPE as 'facType',\r\n" + 
@@ -34,6 +37,10 @@ public class Facility extends Server implements Comparable{
 			"	inner join SERVERINFO_FACILITY f ON a.nServerIndex = f.NODE_INDEX\r\n" + 
 			" order by a.nServerIndex";
 	
+	private RCU rcu; // 시리얼 포트 연결 방식일 경우 바라보는 RCU
+	private int port; // 시리얼 포트 연결 방식일 경우 RCU의 포트 채널 번호
+	private int rtuIndex;
+	
 	private int connCode; // 연결 방식
 	private String connMethod;
 	
@@ -42,6 +49,30 @@ public class Facility extends Server implements Comparable{
 	private int snmpProtocol;
 	
 	private ArrayList<Perf> perfs;
+
+	public RCU getRcu() {
+		return rcu;
+	}
+
+	public void setRcu(RCU rcu) {
+		this.rcu = rcu;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public int getRtuIndex() {
+		return rtuIndex;
+	}
+
+	public void setRtuIndex(int rtuIndex) {
+		this.rtuIndex = rtuIndex;
+	}
 
 	public int getConnCode() {
 		return connCode;

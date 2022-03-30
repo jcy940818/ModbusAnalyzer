@@ -802,6 +802,26 @@ public class DbUtil {
 			}
 		}
 		
+		public static String getRcuType(int rcuType) {
+			switch(rcuType) {
+				case 3 : return "MK RCU V1.0";
+				case 5 : return "TCP/IP RCU";
+				case 6 : return "MK119 - REM 2408";
+				case 9 : return "MK119 - REM 1204";
+				case 11 : return "MK119 - REM 1204 v1.0.3";
+				case 12 : return "Passive TCP/IP Server";
+				case 13 : return "LSIS XGT PLC";
+				case 14 : return "PoscoICT HVAC SI";
+				case 15 : return "CIMON PLC";
+				case 16 : return "LSIS GLOFA PLC";
+				case 17 : return "MK Active RCU";
+				case 18 : return "TCP/IP Multiport RCU";
+				case 19 : return "Modbus Gateway";
+				case 20 : return "TCP/IP 이중화 RCU";
+				default : return "Unknown";
+			}
+		}
+		
 		public static String getConnMethod(int connMethod) {
 			switch(connMethod) {
 				case 1 : return "접점 연결"; 
