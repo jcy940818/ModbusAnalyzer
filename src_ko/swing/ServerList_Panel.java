@@ -438,6 +438,25 @@ public class ServerList_Panel extends JPanel {
 			
 			Collections.sort(serverList);
 			
+			// 멀티 포트 RCU 확인용
+//			for(int i = 0; i < serverList.size(); i++) {
+//				Server rcu = serverList.get(i);
+//				if(rcu.isRCU()){
+//					System.out.println("================================================================\n");
+//					System.out.println("index : " + rcu.getIndex());
+//					System.out.println("name : " + rcu.getName());
+//					System.out.println("type : " + ((RCU)rcu).getRcuTypeDetail());
+//					ArrayList mapList = ((RCU)rcu).getMultiPortMapList();
+//					if(mapList.size() != 0) {
+//						for(int j = 0; j < mapList.size(); j++) {
+//							MultiPortMap map = (MultiPortMap)mapList.get(j);
+//							System.out.println("ch : " + map.getCh() + ", port : " + map.getPort());
+//						}						
+//					}
+//					System.out.println("\n");
+//				}
+//			}
+			
 			isFirstLoad = false;
 		}catch(Exception e) {
 			e.printStackTrace();
