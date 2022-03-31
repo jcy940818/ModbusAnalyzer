@@ -37,6 +37,7 @@ public class Facility extends Server implements Comparable{
 			"	inner join SERVERINFO_FACILITY f ON a.nServerIndex = f.NODE_INDEX\r\n" + 
 			" order by a.nServerIndex";
 	
+	private boolean connRCU = false; 
 	private RCU rcu; // 시리얼 포트 연결 방식일 경우 바라보는 RCU
 	private int port; // 시리얼 포트 연결 방식일 경우 RCU의 포트 채널 번호
 	private int rtuIndex;
@@ -50,6 +51,14 @@ public class Facility extends Server implements Comparable{
 	private int snmpProtocol;
 	
 	private ArrayList<Perf> perfs;
+
+	public boolean isConnRCU() {
+		return connRCU;
+	}
+
+	public void setConnRCU(boolean connRCU) {
+		this.connRCU = connRCU;
+	}
 
 	public RCU getRcu() {
 		return rcu;

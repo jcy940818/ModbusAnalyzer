@@ -27,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -52,9 +53,9 @@ public class ServerList_Panel extends JPanel {
 	public static final String SERVER_TYPE = "장비 종류";
 	public static final String IP = "IP 주소";
 	public static final String FACILITY_TYPE = "시설물 종류";
-	public static final String RTU_TYPE = "RCU 종류";
+	public static final String RCU_TYPE = "RCU 종류";
 	public static final String CONN_METHOD = "연결 방식";
-	public static final String SERVER_STATE = "장비 상태";
+	public static final String SERVER_STATE = "장비 상태";	
 	public static final String PROTOCOL_NUMBER = "프로토콜 번호";
 	
 	public static final String STATE_COMMER = "통신 오류";
@@ -305,6 +306,22 @@ public class ServerList_Panel extends JPanel {
 		
 		serverInfoTable = new JTable();
 		serverInfoTable.setBorder(new LineBorder(Color.BLACK, 2));
+		serverInfoTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getButton() == 1) {
+					// 왼쪽 클릭
+					clickServerInfo();
+				} 
+				if (e.getButton() == 1 && e.getClickCount() == 2) {
+					// 왼쪽 버튼 더블 클릭
+					clickServerInfo();
+				}
+				if (e.getButton() == 3) {
+					// 오른쪽 클릭
+					clickServerInfo();
+				}
+			}
+		});
 		serverInfoPane.setViewportView(serverInfoTable);
 								
 	}
@@ -317,7 +334,13 @@ public class ServerList_Panel extends JPanel {
 		try {
 			int row = serverListTable.getSelectedRow();
 			selectedServer = (Server) serverListTable.getValueAt(row, 3);
-			updateFacilityInfo(selectedServer);
+			
+			if(selectedServer.isFacility()) {
+				updateFacilityInfo((Facility)selectedServer);	
+			}else {
+				updateRCUInfo((RCU)selectedServer);
+			}			
+			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -429,6 +452,7 @@ public class ServerList_Panel extends JPanel {
 							if(rtuIndex != 0) {
 								RCU rcu = (RCU)serverMap.get(rtuIndex);
 								rcu.getFacList().add(fac);
+								fac.setConnRCU(true);
 								fac.setRcu(rcu);								
 								fac.setIp(rcu.getIp()); // 시설물의 IP를 RCU에 등록된 IP로 설정
 								
@@ -556,8 +580,8 @@ public class ServerList_Panel extends JPanel {
 		tcmSchedule.getColumn(4).setCellRenderer(findCommerRenderer); // 상 태		
 	}
 		
-	public static void updateFacilityInfo(Server server) {
-		if(server == null) {
+	public static void updateFacilityInfo(Facility fac) {
+		if(fac == null) {
 			serverInfoTable.setModel(new DefaultTableModel(
 					new Object[][] {
 						{ null, null },
@@ -574,7 +598,7 @@ public class ServerList_Panel extends JPanel {
 						return false;
 					}
 			});
-			setServerInfoTableStyle(serverInfoTable);
+			setServerInfoTableStyle(serverInfoTable, Color.ORANGE);
 			return;		
 		}
 		
@@ -582,31 +606,37 @@ public class ServerList_Panel extends JPanel {
 		
 		content[0] = new Object[2];
 		content[0][0] = IP;
-		content[0][1] = server.getIp();
+		content[0][1] = fac.isConnRCU() ? "( RCU IP ) " + fac.getIp() : fac.getIp();
 		
 		content[1] = new Object[2];
 		content[1][0] = FACILITY_TYPE;
-		content[1][1] = server.getTypeString();
+		content[1][1] = fac.getTypeString();
 		
 		content[2] = new Object[2];
 		content[2][0] = PROTOCOL_NUMBER;
-		content[2][1] = (((Facility)server).isCommon()) ? ((Facility)server).getCommProtocol() : ((Facility)server).getSnmpProtocol();
+		content[2][1] = fac.isCommon() ? fac.getCommProtocol() : fac.getSnmpProtocol();
 		
 		content[3] = new Object[2];
 		content[3][0] = SERVER_INDEX;
-		content[3][1] = server.getIndex();
+		content[3][1] = fac.getIndex();
 		
 		content[4] = new Object[2];
 		content[4][0] = SERVER_NAME;
-		content[4][1] = server;
+		content[4][1] = fac;
 		
 		content[5] = new Object[2];
 		content[5][0] = CONN_METHOD;
-		content[5][1] = ((Facility)server).getConnMethod();
+		if(fac.getRtuIndex() != 0) {
+			content[5][1] = fac.getConnMethod() + " (Click : RCU 보기)";
+		}else {
+			content[5][1] = fac.getConnMethod();
+		}
+		
+		
 		
 		content[6] = new Object[2];
 		content[6][0] = SERVER_STATE;
-		content[6][1] = server.getState();
+		content[6][1] = fac.getState();
 
 		serverInfoTable.setModel(new DefaultTableModel(
 			content,
@@ -617,13 +647,77 @@ public class ServerList_Panel extends JPanel {
 			}
 		});
 
-		setServerInfoTableStyle(serverInfoTable);
+		setServerInfoTableStyle(serverInfoTable, Color.ORANGE);
 	}
 	
-	public static void setServerInfoTableStyle(JTable table) {
+	public static void updateRCUInfo(RCU rcu) {
+		if(rcu == null) {
+			serverInfoTable.setModel(new DefaultTableModel(
+					new Object[][] {
+						{ null, null },
+						{ null, null },
+						{ null, null },
+						{ null, null },
+						{ null, null },
+						{ null, null },
+						{ null, null }
+					},
+					new String[] { "항 목", "내 용" }) {
+					// 테이블 셀 내용 수정 금지
+					public boolean isCellEditable(int i, int c) {
+						return false;
+					}
+			});
+			setServerInfoTableStyle(serverInfoTable, Color.ORANGE);
+			return;		
+		}
+		
+		Object[][] content = new Object[7][];
+		
+		content[0] = new Object[2];
+		content[0][0] = IP;
+		content[0][1] = rcu.getIp();
+		
+		content[1] = new Object[2];
+		content[1][0] = RCU_TYPE;
+		content[1][1] = rcu.getRcuTypeDetail();
+		
+		content[2] = new Object[2];
+		content[2][0] = "RCU 인덱스";
+		content[2][1] = rcu.getIndex();
+		
+		content[3] = new Object[2];
+		content[3][0] = "RCU 이름";
+		content[3][1] = rcu;
+		
+		content[4] = new Object[2];
+		content[4][0] = "연결된 장비 개수";
+		content[4][1] = rcu.getFacList().size();
+		
+		content[5] = new Object[2];
+		content[5][0] = "연결된 장비 정보";
+		content[5][1] = "연결된 장비 내용 보기 (Click)";
+		
+		content[6] = new Object[2];
+		content[6][0] = "RCU 상태";
+		content[6][1] = rcu.getState();
+
+		serverInfoTable.setModel(new DefaultTableModel(
+			content,
+			new String[] { "항 목", "내 용" }) {
+			// 테이블 셀 내용 수정 금지
+			public boolean isCellEditable(int i, int c) {
+				return false;
+			}
+		});
+
+		setServerInfoTableStyle(serverInfoTable, Color.GREEN);
+	}
+	
+	public static void setServerInfoTableStyle(JTable table, Color headerColor) {
 		// 테이블 헤더 설정
 		table.getTableHeader().setForeground(Color.BLACK);
-		table.getTableHeader().setBackground(new Color(204, 255, 204));
+		table.getTableHeader().setBackground(headerColor);
 		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		
 		// 이동 불가, 셀 크기 조절 불가
@@ -913,6 +1007,57 @@ public class ServerList_Panel extends JPanel {
 
 				System.out.println();
 			}
+		}
+	}
+	
+	public void setFocusCell(JTable table, int row, int column) {
+		table.changeSelection(row, column, false, false);				
+		table.requestFocus();
+	}
+	
+	public void clickServerInfo() {
+		int row = serverInfoTable.getSelectedRow();
+		int column = serverInfoTable.getSelectedColumn();		
+		boolean isRCU = ((String)serverInfoTable.getValueAt(1, 0)).contains("RCU");
+				
+		if(row == 5 && column == 1) {
+			String text =  (String)serverInfoTable.getValueAt(row, column);
+			if(!text.contains("Click")) {
+				return;
+			}else {
+				Server server = (isRCU) ? (Server)serverInfoTable.getValueAt(3, 1) : (Server)serverInfoTable.getValueAt(4, 1);
+				
+				if(server.isFacility() && !isRCU) {
+					Facility fac = (Facility)serverMap.get(server.getIndex());					
+					int rtuIndex = fac.getRtuIndex();
+					if(rtuIndex == 0) {
+						return;
+					}else {
+						updateServerListTable(false);
+						int tableRow = serverInfoTable.getRowCount();
+						int col = 3;
+						for(int i = 0; i < tableRow; i++) {
+							Server targetRCU = (Server)serverListTable.getValueAt(i, 3);
+							if(targetRCU.getIndex() == rtuIndex) {
+								setFocusCell(serverListTable, i, col);
+								return;
+							}
+						}
+					}
+				}else if(server.isRCU() && isRCU) {
+					RCU rcu = (RCU)serverMap.get(server.getIndex());
+					
+					System.out.printf("RCU 정보 = index : %d, name : %s, type : %s\n", rcu.getIndex(), rcu.getName(), rcu.getRcuTypeDetail());
+					System.out.println("연결된 시설물 정보");
+					ArrayList<Server> facList = rcu.getFacList();
+					for(int i = 0; i < facList.size(); i++) {
+						Facility fac = (Facility)facList.get(i);
+						System.out.printf("%d. index : %d, name : %s , portInfo : %d\n", i+1, fac.getIndex(), fac.getName(), fac.getPort());
+					}
+					System.out.println();
+					
+				}
+			}			
 		}
 	}
 	
