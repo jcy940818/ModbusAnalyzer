@@ -60,7 +60,7 @@ public class ServerList_Panel extends JPanel {
 	public static final String STATE_COMMER = "통신 오류";
 	
 	public static JLabel sqlServerInfo_label;
-	private static JButton updateDB_Button;
+	
 	private JPanel infoPanel;
 		
 	private static ArrayList<Server> serverList;
@@ -72,7 +72,11 @@ public class ServerList_Panel extends JPanel {
 	private static JComboBox searchFacility_ComboBox2;	
 	private static JTable serverListTable;
 	private static JTable serverInfoTable;
-	private JButton resetForm_button;
+	
+	private static JButton rcuInfo_Button;
+	private static JButton perfInfo_Button;
+	private static JButton updateDB_Button;
+	private static JButton resetForm_button;
 	
 	/**
 	 * Create the panel.
@@ -100,10 +104,10 @@ public class ServerList_Panel extends JPanel {
 		onion_Logo.setForeground(Color.BLACK);
 		onion_Logo.setBackground(Color.WHITE);
 		onion_Logo.setIcon(new Util().getSubLogoResource());
-		onion_Logo.setBounds(183, 85, 50, 55);
+		onion_Logo.setBounds(136, 85, 50, 50);
 		onion_Logo.setHorizontalAlignment(SwingConstants.LEFT);
 		onion_Logo.setFont(new Font("맑은 고딕", Font.BOLD, 22));
-		infoPanel.add(onion_Logo);
+//		infoPanel.add(onion_Logo);
 		
 		sqlServerInfo_label = new JLabel();
 		sqlServerInfo_label.setIcon(new Util().getMK2Resource());
@@ -113,6 +117,24 @@ public class ServerList_Panel extends JPanel {
 		sqlServerInfo_label.setBackground(Color.WHITE);
 		sqlServerInfo_label.setBounds(10, 0, 580, 55);
 		infoPanel.add(sqlServerInfo_label);
+		
+		rcuInfo_Button = new JButton("RCU 정보");
+		rcuInfo_Button.setForeground(Color.BLACK);
+		rcuInfo_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		rcuInfo_Button.setFocusPainted(false);
+		rcuInfo_Button.setBackground(new Color(152, 251, 152));
+		rcuInfo_Button.setBounds(245, 62, 190, 37);
+		rcuInfo_Button.setEnabled(false);
+		infoPanel.add(rcuInfo_Button);
+		
+		perfInfo_Button = new JButton("성능 정보");
+		perfInfo_Button.setForeground(Color.BLACK);
+		perfInfo_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		perfInfo_Button.setFocusPainted(false);
+		perfInfo_Button.setBackground(Color.ORANGE);
+		perfInfo_Button.setBounds(440, 62, 150, 37);
+		perfInfo_Button.setEnabled(false);
+		infoPanel.add(perfInfo_Button);
 		
 		JLabel searchFacility_Label = new JLabel("검 색");
 		searchFacility_Label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -319,10 +341,35 @@ public class ServerList_Panel extends JPanel {
 			selectedServer = (Server) serverListTable.getValueAt(row, 3);
 			
 			if(selectedServer.isFacility()) {
-				updateFacilityInfo((Facility)selectedServer);	
+				// 시설물이 선택 되었을 경우
+				Facility fac = (Facility)selectedServer;
+				if(fac.isConnRCU()) {
+					rcuInfo_Button.setEnabled(true);
+					rcuInfo_Button.setBackground(new Color(152, 251, 152));
+					rcuInfo_Button.setText("연결된 RCU 정보");
+				}else {
+					rcuInfo_Button.setEnabled(false);
+					rcuInfo_Button.setBackground(Color.WHITE);
+					rcuInfo_Button.setText("연결된 RCU 없음");
+				}
+				
+				perfInfo_Button.setText("성능 정보");
+				perfInfo_Button.setBackground(Color.ORANGE);
+				perfInfo_Button.setEnabled(true);
+				
+				updateFacilityInfo((Facility)selectedServer); // <- 시설물 정보 테이블 업데이트
 			}else {
-				updateRCUInfo((RCU)selectedServer);
-			}			
+				// RCU가 선택 되었을 경우				
+				perfInfo_Button.setText("성능 정보 없음");
+				perfInfo_Button.setBackground(Color.WHITE);
+				perfInfo_Button.setEnabled(false);
+								
+				rcuInfo_Button.setEnabled(true);
+				rcuInfo_Button.setBackground(new Color(135, 206, 250));
+				rcuInfo_Button.setText("연결된 장비 리스트");
+				
+				updateRCUInfo((RCU)selectedServer); // <- RCU 정보 테이블 업데이트
+			}
 			
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -550,7 +597,7 @@ public class ServerList_Panel extends JPanel {
 		FindTextRenderer findCommerRenderer = new FindTextRenderer(4, STATE_COMMER, Color.RED);
 		findCommerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		FindTextRenderer findRCURenderer = new FindTextRenderer(2, "RCU", Color.GREEN);
+		FindTextRenderer findRCURenderer = new FindTextRenderer(2, "RCU", new Color(152, 251, 152));
 		findRCURenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		
@@ -564,7 +611,12 @@ public class ServerList_Panel extends JPanel {
 	}
 		
 	public static void updateFacilityInfo(Facility fac) {
-		if(fac == null) {
+		if(fac == null) {	
+			perfInfo_Button.setEnabled(false);
+			perfInfo_Button.setBackground(Color.WHITE);			
+			rcuInfo_Button.setEnabled(false);
+			rcuInfo_Button.setBackground(Color.WHITE);
+			
 			serverInfoTable.setModel(new DefaultTableModel(
 					new Object[][] {
 						{ null, null },
@@ -629,6 +681,11 @@ public class ServerList_Panel extends JPanel {
 	
 	public static void updateRCUInfo(RCU rcu) {
 		if(rcu == null) {
+			perfInfo_Button.setEnabled(false);
+			perfInfo_Button.setBackground(Color.WHITE);			
+			rcuInfo_Button.setEnabled(false);
+			rcuInfo_Button.setBackground(Color.WHITE);
+			
 			serverInfoTable.setModel(new DefaultTableModel(
 					new Object[][] {
 						{ null, null },
@@ -684,7 +741,7 @@ public class ServerList_Panel extends JPanel {
 			}
 		});
 
-		setServerInfoTableStyle(serverInfoTable, Color.GREEN);
+		setServerInfoTableStyle(serverInfoTable, new Color(152, 251, 152));
 	}
 	
 	public static void setServerInfoTableStyle(JTable table, Color headerColor) {
@@ -763,6 +820,10 @@ public class ServerList_Panel extends JPanel {
 	
 	public static void resetForm(boolean databaseLoad, boolean allComponentReset) {		
 		updateServerListTable(databaseLoad);
+		
+		rcuInfo_Button.setText("RCU 정보");
+		perfInfo_Button.setText("성능 정보");
+		
 		updateFacilityInfo(null);
 		
 		if(allComponentReset) {
@@ -987,6 +1048,5 @@ public class ServerList_Panel extends JPanel {
 		table.changeSelection(row, column, false, false);				
 		table.requestFocus();
 	}
-	
 }
 
