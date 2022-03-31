@@ -50,6 +50,7 @@ public class ServerList_Panel extends JPanel {
 	public static final String SERVER_INDEX = "장비 인덱스";
 	public static final String SERVER_NAME = "장비명";
 	public static final String SERVER_TYPE = "장비 종류";
+	public static final String IP = "IP 주소";
 	public static final String FACILITY_TYPE = "시설물 종류";
 	public static final String RTU_TYPE = "RCU 종류";
 	public static final String CONN_METHOD = "연결 방식";
@@ -99,7 +100,7 @@ public class ServerList_Panel extends JPanel {
 		onion_Logo.setForeground(Color.BLACK);
 		onion_Logo.setBackground(Color.WHITE);
 		onion_Logo.setIcon(new Util().getSubLogoResource());
-		onion_Logo.setBounds(183, 82, 50, 55);
+		onion_Logo.setBounds(183, 85, 50, 55);
 		onion_Logo.setHorizontalAlignment(SwingConstants.LEFT);
 		onion_Logo.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		infoPanel.add(onion_Logo);
@@ -118,7 +119,7 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_Label.setForeground(Color.BLACK);
 		searchFacility_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		searchFacility_Label.setBackground(Color.WHITE);
-		searchFacility_Label.setBounds(25, 142, 50, 64);
+		searchFacility_Label.setBounds(25, 146, 50, 64);
 		infoPanel.add(searchFacility_Label);
 		
 		updateDB_Button = new JButton("Database 최신화");
@@ -126,7 +127,7 @@ public class ServerList_Panel extends JPanel {
 		updateDB_Button.setBackground(Color.WHITE);
 		updateDB_Button.setForeground(Color.BLACK);
 		updateDB_Button.setFocusPainted(false);		
-		updateDB_Button.setBounds(245, 100, 190, 37);
+		updateDB_Button.setBounds(245, 103, 190, 37);
 		updateDB_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				resetForm(true, false);
@@ -139,7 +140,7 @@ public class ServerList_Panel extends JPanel {
 		resetForm_button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		resetForm_button.setFocusPainted(false);
 		resetForm_button.setBackground(Color.WHITE);
-		resetForm_button.setBounds(440, 100, 150, 37);
+		resetForm_button.setBounds(440, 103, 150, 37);
 		resetForm_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				resetForm(false, true);
@@ -152,6 +153,7 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_ComboBox1.setForeground(Color.BLACK);
 		searchFacility_ComboBox1.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		searchFacility_ComboBox1.setModel(new DefaultComboBoxModel(new String[] {
+				IP, // IP 주소
 				GROUP_INFO, // 그룹 정보
 				SERVER_TYPE, // 시설물 종류
 				PROTOCOL_NUMBER, // 프로토콜 번호
@@ -160,8 +162,8 @@ public class ServerList_Panel extends JPanel {
 				CONN_METHOD, // 연결 방식
 				SERVER_STATE, // 장비 상태
 				}));
-		searchFacility_ComboBox1.setBounds(90, 142, 150, 30);
-		searchFacility_ComboBox1.setSelectedIndex(0);
+		searchFacility_ComboBox1.setBounds(90, 145, 150, 30);
+		searchFacility_ComboBox1.setSelectedIndex(1);
 		searchFacility_ComboBox1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -178,6 +180,7 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_ComboBox2.setForeground(Color.BLACK);
 		searchFacility_ComboBox2.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		searchFacility_ComboBox2.setModel(new DefaultComboBoxModel(new String[] {
+				IP, // IP 주소
 				GROUP_INFO, // 그룹 정보
 				SERVER_TYPE, // 시설물 종류
 				PROTOCOL_NUMBER, // 프로토콜 번호
@@ -186,8 +189,8 @@ public class ServerList_Panel extends JPanel {
 				CONN_METHOD, // 연결 방식
 				SERVER_STATE, // 장비 상태
 				}));
-		searchFacility_ComboBox2.setBounds(90, 177, 150, 30);
-		searchFacility_ComboBox2.setSelectedIndex(4);
+		searchFacility_ComboBox2.setBounds(90, 181, 150, 30);
+		searchFacility_ComboBox2.setSelectedIndex(5);
 		searchFacility_ComboBox2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -205,7 +208,7 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_textField1.setForeground(Color.BLACK);
 		searchFacility_textField1.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchFacility_textField1.setColumns(10);
-		searchFacility_textField1.setBounds(245, 142, 345, 30);
+		searchFacility_textField1.setBounds(245, 145, 345, 30);
 		searchFacility_textField1.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -231,7 +234,7 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_textField2.setForeground(Color.BLACK);
 		searchFacility_textField2.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchFacility_textField2.setColumns(10);
-		searchFacility_textField2.setBounds(245, 177, 345, 30);
+		searchFacility_textField2.setBounds(245, 181, 345, 30);
 		searchFacility_textField2.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -253,7 +256,7 @@ public class ServerList_Panel extends JPanel {
 		
 		JScrollPane serverListPane = new JScrollPane();
 		serverListPane.setBorder(new LineBorder(Color.BLACK, 3));
-		serverListPane.setBounds(12, 214, 1026, 382);
+		serverListPane.setBounds(10, 216, 1028, 382);
 		infoPanel.add(serverListPane);
 		
 		serverListTable = new JTable();		
@@ -297,13 +300,13 @@ public class ServerList_Panel extends JPanel {
 		
 		JScrollPane serverInfoPane = new JScrollPane();		
 		serverInfoPane.setBorder(new LineBorder(Color.BLACK, 2));
-		serverInfoPane.setBounds(600, 26, 438, 180);	
+		serverInfoPane.setBounds(598, 6, 440, 205);	
 		infoPanel.add(serverInfoPane);
 		
 		serverInfoTable = new JTable();
 		serverInfoTable.setBorder(new LineBorder(Color.BLACK, 2));
 		serverInfoPane.setViewportView(serverInfoTable);
-						
+								
 	}
 	
 	public static void setSqlServerInfo(String sqlServerInfo) {
@@ -314,7 +317,7 @@ public class ServerList_Panel extends JPanel {
 		try {
 			int row = serverListTable.getSelectedRow();
 			selectedServer = (Server) serverListTable.getValueAt(row, 3);
-			updateServerInfoTable(selectedServer);
+			updateFacilityInfo(selectedServer);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -553,10 +556,11 @@ public class ServerList_Panel extends JPanel {
 		tcmSchedule.getColumn(4).setCellRenderer(findCommerRenderer); // 상 태		
 	}
 		
-	public static void updateServerInfoTable(Server server) {
+	public static void updateFacilityInfo(Server server) {
 		if(server == null) {
 			serverInfoTable.setModel(new DefaultTableModel(
 					new Object[][] {
+						{ null, null },
 						{ null, null },
 						{ null, null },
 						{ null, null },
@@ -574,31 +578,35 @@ public class ServerList_Panel extends JPanel {
 			return;		
 		}
 		
-		Object[][] content = new Object[6][];
+		Object[][] content = new Object[7][];
 		
 		content[0] = new Object[2];
-		content[0][0] = (server.isFacility()) ? FACILITY_TYPE : RTU_TYPE ;
-		content[0][1] = server.getTypeString();
+		content[0][0] = IP;
+		content[0][1] = server.getIp();
 		
 		content[1] = new Object[2];
-		content[1][0] = PROTOCOL_NUMBER;
-		content[1][1] = (((Facility)server).isCommon()) ? ((Facility)server).getCommProtocol() : ((Facility)server).getSnmpProtocol();
+		content[1][0] = FACILITY_TYPE;
+		content[1][1] = server.getTypeString();
 		
 		content[2] = new Object[2];
-		content[2][0] = SERVER_INDEX;
-		content[2][1] = server.getIndex();
+		content[2][0] = PROTOCOL_NUMBER;
+		content[2][1] = (((Facility)server).isCommon()) ? ((Facility)server).getCommProtocol() : ((Facility)server).getSnmpProtocol();
 		
 		content[3] = new Object[2];
-		content[3][0] = SERVER_NAME;
-		content[3][1] = server;
+		content[3][0] = SERVER_INDEX;
+		content[3][1] = server.getIndex();
 		
 		content[4] = new Object[2];
-		content[4][0] = CONN_METHOD;
-		content[4][1] = ((Facility)server).getConnMethod();
+		content[4][0] = SERVER_NAME;
+		content[4][1] = server;
 		
 		content[5] = new Object[2];
-		content[5][0] = SERVER_STATE;
-		content[5][1] = server.getState();
+		content[5][0] = CONN_METHOD;
+		content[5][1] = ((Facility)server).getConnMethod();
+		
+		content[6] = new Object[2];
+		content[6][0] = SERVER_STATE;
+		content[6][1] = server.getState();
 
 		serverInfoTable.setModel(new DefaultTableModel(
 			content,
@@ -615,7 +623,7 @@ public class ServerList_Panel extends JPanel {
 	public static void setServerInfoTableStyle(JTable table) {
 		// 테이블 헤더 설정
 		table.getTableHeader().setForeground(Color.BLACK);
-		table.getTableHeader().setBackground(new Color(255, 255, 153));
+		table.getTableHeader().setBackground(new Color(204, 255, 204));
 		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		
 		// 이동 불가, 셀 크기 조절 불가
@@ -688,13 +696,13 @@ public class ServerList_Panel extends JPanel {
 	
 	public static void resetForm(boolean databaseLoad, boolean allComponentReset) {		
 		updateServerListTable(databaseLoad);
-		updateServerInfoTable(null);
+		updateFacilityInfo(null);
 		
 		if(allComponentReset) {
 			if(searchFacility_textField1 != null) searchFacility_textField1.setText(null);
 			if(searchFacility_textField2 != null) searchFacility_textField2.setText(null);
-			if(searchFacility_ComboBox1 != null) searchFacility_ComboBox1.setSelectedIndex(0);
-			if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedIndex(4);	
+			if(searchFacility_ComboBox1 != null) searchFacility_ComboBox1.setSelectedIndex(1);
+			if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedIndex(5);	
 		}
 		
 		doTableFilter();
@@ -723,6 +731,9 @@ public class ServerList_Panel extends JPanel {
 			String searchElement_2 = null;
 			
 			switch(searchFacility_ComboBox1.getSelectedItem().toString()) {
+				case IP :  // IP 주소
+					searchElement_1 = server.getIp();
+					break;
 				case GROUP_INFO :  // 그룹 정보
 					searchElement_1 = server.getGroupInfo();
 					break;
@@ -755,6 +766,9 @@ public class ServerList_Panel extends JPanel {
 			}// switch - searchElement_1
 			
 			switch(searchFacility_ComboBox2.getSelectedItem().toString()) {
+				case IP :  // IP 주소
+					searchElement_2 = server.getIp();
+					break;
 				case GROUP_INFO :  // 그룹 정보
 					searchElement_2 = server.getGroupInfo();
 					break;

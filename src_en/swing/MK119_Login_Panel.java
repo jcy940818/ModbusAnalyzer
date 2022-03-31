@@ -226,7 +226,7 @@ public class MK119_Login_Panel extends JPanel {
 		ServerList_Panel.setSqlServerInfo(ONION_Info.getSqlServerInfo());
 		ServerList_Panel.isFirstLoad = true;
 		ServerList_Panel.updateServerListTable(true);
-		ServerList_Panel.updateServerInfoTable(null);
+		ServerList_Panel.updateFacilityInfo(null);
 		MainFrame.showServerList();
 	}
 	
