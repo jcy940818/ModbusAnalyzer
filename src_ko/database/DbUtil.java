@@ -818,6 +818,7 @@ public class DbUtil {
 				case 18 : return "TCP/IP Multiport RCU";
 				case 19 : return "Modbus Gateway";
 				case 20 : return "TCP/IP ¿Ã¡ﬂ»≠ RCU";
+				case 21 : return "MQTT Broker";
 				default : return "Unknown";
 			}
 		}

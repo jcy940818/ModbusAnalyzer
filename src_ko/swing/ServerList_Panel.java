@@ -456,12 +456,22 @@ public class ServerList_Panel extends JPanel {
 					System.out.println("index : " + rcu.getIndex());
 					System.out.println("name : " + rcu.getName());
 					System.out.println("type : " + ((RCU)rcu).getRcuTypeDetail());
+					System.out.println();
+					
+					ArrayList<Server> rcuFacList = ((RCU)rcu).getFacList();
+					Collections.sort(rcuFacList);					
+					for(int j = 0; j < rcuFacList.size(); j++) {
+						Server fac = rcuFacList.get(j);
+						System.out.print((j+1) +". FacIndex : " + fac.getIndex());
+						System.out.println(" | Name : " + fac.getName() + " | Type : " + fac.getTypeString());
+					}
+					
 					ArrayList mapList = ((RCU)rcu).getMultiPortMapList();
 					if(mapList.size() != 0) {
 						for(int j = 0; j < mapList.size(); j++) {
 							MultiPortMap map = (MultiPortMap)mapList.get(j);
 							Facility fac = (Facility)serverMap.get(map.getFacIndex());
-							System.out.println("ch : " + map.getCh() + ", port : " + map.getPort() + ", Facility : " + fac.getName() + "( " + fac.getIndex() + " )");
+							System.out.println("multiPortCh : " + map.getCh() + " | port : " + map.getPort() + " | Facility : " + fac.getName() + "( " + fac.getIndex() + " )");
 						}						
 					}
 					System.out.println("\n");
