@@ -403,9 +403,11 @@ public class ServerList_Panel extends JPanel {
 				rcu.setMultiPort(true);
 				rcu.getMultiPortMapList().add(map);
 				
-				Facility fac = (Facility)serverMap.get(facIndex);
-				fac.setRcuPortCh(ch);
-				fac.setPort(port);
+				if(serverMap.containsKey(facIndex)) {
+					Facility fac = (Facility)serverMap.get(facIndex);
+					fac.setRcuPortCh(ch);
+					fac.setPort(port);
+				}
 			}
 			
 			/* RCU & 시설물 매핑 */
@@ -467,15 +469,38 @@ public class ServerList_Panel extends JPanel {
 			
 			// 멀티 포트 RCU 확인용
 			for(int i = 0; i < serverList.size(); i++) {
-				Server rcu = serverList.get(i);
-				if(rcu.isRCU()){
+				Server server = serverList.get(i);
+				if(server.isRCU()){
+					RCU rcu = (RCU)serverMap.get(server.getIndex());
+					
 					System.out.println("================================================================\n");
 					System.out.println("index : " + rcu.getIndex());
 					System.out.println("name : " + rcu.getName());
 					System.out.println("type : " + ((RCU)rcu).getRcuTypeDetail());
-					System.out.println();
+					System.out.println("ip : " + rcu.getIp());
 					
-					ArrayList<Server> rcuFacList = ((RCU)rcu).getFacList();
+					
+					if(!rcu.isMultiPort()) {
+						System.out.println("port : " + rcu.getPort());
+					}else {
+						ArrayList<MultiPortMap> mapList = rcu.getMultiPortMapList();
+						for(int k = 0; k < mapList.size(); k++) {							
+							MultiPortMap map = mapList.get(k);
+							System.out.printf("%d. port ch [ %d ] : %d", k+1, map.getCh(), map.getPort());
+							
+							if(map.getFacIndex() != 0) {
+								Facility fac = (Facility)serverMap.get(map.getFacIndex());
+								System.out.printf("  <=> Facility : %d ( %s )\n", fac.getIndex(), fac.getName());
+							}else {
+								System.out.println();
+							}
+							
+						}
+					}
+					
+					System.out.println("[ Connected Facility List ]");
+					
+					ArrayList<Server> rcuFacList = rcu.getFacList();
 					Collections.sort(rcuFacList);					
 					for(int j = 0; j < rcuFacList.size(); j++) {
 						Server fac = rcuFacList.get(j);
@@ -483,15 +508,7 @@ public class ServerList_Panel extends JPanel {
 						System.out.println(" | Name : " + fac.getName() + " | Type : " + fac.getTypeString());
 					}
 					
-					ArrayList mapList = ((RCU)rcu).getMultiPortMapList();
-					if(mapList.size() != 0) {
-						for(int j = 0; j < mapList.size(); j++) {
-							MultiPortMap map = (MultiPortMap)mapList.get(j);
-							Facility fac = (Facility)serverMap.get(map.getFacIndex());
-							System.out.println("multiPortCh : " + map.getCh() + " | port : " + map.getPort() + " | Facility : " + fac.getName() + "( " + fac.getIndex() + " )");
-						}						
-					}
-					System.out.println("\n");
+					System.out.println();					
 				}
 			}
 			
