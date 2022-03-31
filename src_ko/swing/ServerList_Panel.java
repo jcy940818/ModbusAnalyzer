@@ -306,6 +306,10 @@ public class ServerList_Panel extends JPanel {
 						
 	}
 	
+	public static void setSqlServerInfo(String sqlServerInfo) {
+		sqlServerInfo_label.setText(" " + sqlServerInfo);
+	}
+	
 	public static void selectServer() {
 		try {
 			int row = serverListTable.getSelectedRow();
@@ -466,51 +470,6 @@ public class ServerList_Panel extends JPanel {
 			}
 			
 			Collections.sort(serverList);
-			
-			// 멀티 포트 RCU 확인용
-			for(int i = 0; i < serverList.size(); i++) {
-				Server server = serverList.get(i);
-				if(server.isRCU()){
-					RCU rcu = (RCU)serverMap.get(server.getIndex());
-					
-					System.out.println("================================================================\n");
-					System.out.println("index : " + rcu.getIndex());
-					System.out.println("name : " + rcu.getName());
-					System.out.println("type : " + ((RCU)rcu).getRcuTypeDetail());
-					System.out.println("ip : " + rcu.getIp());
-					
-					
-					if(!rcu.isMultiPort()) {
-						System.out.println("port : " + rcu.getPort());
-					}else {
-						ArrayList<MultiPortMap> mapList = rcu.getMultiPortMapList();
-						for(int k = 0; k < mapList.size(); k++) {							
-							MultiPortMap map = mapList.get(k);
-							System.out.printf("%d. port ch [ %d ] : %d", k+1, map.getCh(), map.getPort());
-							
-							if(map.getFacIndex() != 0) {
-								Facility fac = (Facility)serverMap.get(map.getFacIndex());
-								System.out.printf("  <=> Facility : %d ( %s )\n", fac.getIndex(), fac.getName());
-							}else {
-								System.out.println();
-							}
-							
-						}
-					}
-					
-					System.out.println("[ Connected Facility List ]");
-					
-					ArrayList<Server> rcuFacList = rcu.getFacList();
-					Collections.sort(rcuFacList);					
-					for(int j = 0; j < rcuFacList.size(); j++) {
-						Server fac = rcuFacList.get(j);
-						System.out.print((j+1) +". FacIndex : " + fac.getIndex());
-						System.out.println(" | Name : " + fac.getName() + " | Type : " + fac.getTypeString());
-					}
-					
-					System.out.println();					
-				}
-			}
 			
 			isFirstLoad = false;
 		}catch(Exception e) {
@@ -896,10 +855,52 @@ public class ServerList_Panel extends JPanel {
 		setTableStyle(serverListTable);
 	}
 	
-	public static void setSqlServerInfo(String sqlServerInfo) {
-		sqlServerInfo_label.setText(" " + sqlServerInfo);
-	}
 	
+	public static void printRcuInformation() {
+		// 멀티 포트 RCU 확인용
+		for (int i = 0; i < serverList.size(); i++) {
+			Server server = serverList.get(i);
+			if (server.isRCU()) {
+				RCU rcu = (RCU) serverMap.get(server.getIndex());
+
+				System.out.println("================================================================\n");
+				System.out.println("index : " + rcu.getIndex());
+				System.out.println("name : " + rcu.getName());
+				System.out.println("type : " + ((RCU) rcu).getRcuTypeDetail());
+				System.out.println("ip : " + rcu.getIp());
+
+				if (!rcu.isMultiPort()) {
+					System.out.println("port : " + rcu.getPort());
+				} else {
+					ArrayList<MultiPortMap> mapList = rcu.getMultiPortMapList();
+					for (int k = 0; k < mapList.size(); k++) {
+						MultiPortMap map = mapList.get(k);
+						System.out.printf("%d. port ch [ %d ] : %d", k + 1, map.getCh(), map.getPort());
+
+						if (map.getFacIndex() != 0) {
+							Facility fac = (Facility) serverMap.get(map.getFacIndex());
+							System.out.printf("  <=> Facility : %d ( %s )\n", fac.getIndex(), fac.getName());
+						} else {
+							System.out.println();
+						}
+
+					}
+				}
+
+				System.out.println("[ Connected Facility List ]");
+
+				ArrayList<Server> rcuFacList = rcu.getFacList();
+				Collections.sort(rcuFacList);
+				for (int j = 0; j < rcuFacList.size(); j++) {
+					Server fac = rcuFacList.get(j);
+					System.out.print((j + 1) + ". FacIndex : " + fac.getIndex());
+					System.out.println(" | Name : " + fac.getName() + " | Type : " + fac.getTypeString());
+				}
+
+				System.out.println();
+			}
+		}
+	}
 	
 }
 
