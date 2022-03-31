@@ -320,12 +320,13 @@ public class ServerList_Panel extends JPanel {
 		if(!ONION_Info.hasMk119Connection() || ONION_Info.getMk119Connection() == null) return;
 		
 		try {
-			Statement stmt = ONION_Info.getMk119Connection().createStatement();
-			ResultSet rs = stmt.executeQuery(Facility.GET_FACILITY);
-			
 			serverList = new ArrayList<Server>();
 			serverMap = new HashMap<Integer, Server>();
 			
+			Statement stmt = ONION_Info.getMk119Connection().createStatement();
+		
+			/* 시설물 초기화 */
+			ResultSet rs = stmt.executeQuery(Facility.GET_FACILITY);
 			while(rs.next()) {
 				Facility fac = new Facility();
 				
@@ -357,6 +358,7 @@ public class ServerList_Panel extends JPanel {
 				serverMap.put(fac.getIndex(), fac);
 			}
 			
+			/* RCU 초기화 */
 			rs = stmt.executeQuery(RCU.GET_RTU);
 			while(rs.next()) {
 				RCU rcu = new RCU();
@@ -382,6 +384,7 @@ public class ServerList_Panel extends JPanel {
 				serverMap.put(rcu.getIndex(), rcu);
 			}
 			
+			/* 멀티 포트 RCU 포트 채널 매핑 정보 초기화 */
 			rs = stmt.executeQuery(MultiPortMap.GET_MULTI_PORT_MAP);
 			while(rs.next()) {
 				MultiPortMap map = new MultiPortMap();
@@ -395,6 +398,7 @@ public class ServerList_Panel extends JPanel {
 				((RCU)serverMap.get(rcuIndex)).getMultiPortMapList().add(map);
 			}
 			
+			/* RCU & 시설물 매핑 */
 			for(int i = 0; i < serverList.size(); i++) {
 				Server server = serverList.get(i);
 				
@@ -410,11 +414,15 @@ public class ServerList_Panel extends JPanel {
 								continue;
 							}
 						}catch(NullPointerException e) {
+							e.printStackTrace();
+							
 							RCU rcu = new RCU();
-							rcu.setIndex(rtuIndex);
+							rcu.setIndex(rtuIndex);							
 							rcu.setName("알 수 없음");
+							rcu.setTypeString("알 수 없음");
 							rcu.setRcuTypeDetail("알 수 없음");
 							rcu.setIp("알 수 없음");
+							rcu.setState("알 수 없음");
 							((Facility)server).setRcu(rcu);
 							
 							if(isFirstLoad) {
