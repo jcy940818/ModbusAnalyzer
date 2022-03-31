@@ -388,12 +388,14 @@ public class ServerList_Panel extends JPanel {
 			rs = stmt.executeQuery(MultiPortMap.GET_MULTI_PORT_MAP);
 			while(rs.next()) {
 				MultiPortMap map = new MultiPortMap();
-				int rcuIndex = rs.getInt("index");
+				int rcuIndex = rs.getInt("rtuindex");
 				int ch = rs.getInt("ch");
 				int port = rs.getInt("port");
+				int facIndex = rs.getInt("facIndex");
 				map.setRtuIndex(rcuIndex);
 				map.setCh(ch);
 				map.setPort(port);
+				map.setFacIndex(facIndex);
 				
 				((RCU)serverMap.get(rcuIndex)).getMultiPortMapList().add(map);
 			}
@@ -447,23 +449,24 @@ public class ServerList_Panel extends JPanel {
 			Collections.sort(serverList);
 			
 			// 멀티 포트 RCU 확인용
-//			for(int i = 0; i < serverList.size(); i++) {
-//				Server rcu = serverList.get(i);
-//				if(rcu.isRCU()){
-//					System.out.println("================================================================\n");
-//					System.out.println("index : " + rcu.getIndex());
-//					System.out.println("name : " + rcu.getName());
-//					System.out.println("type : " + ((RCU)rcu).getRcuTypeDetail());
-//					ArrayList mapList = ((RCU)rcu).getMultiPortMapList();
-//					if(mapList.size() != 0) {
-//						for(int j = 0; j < mapList.size(); j++) {
-//							MultiPortMap map = (MultiPortMap)mapList.get(j);
-//							System.out.println("ch : " + map.getCh() + ", port : " + map.getPort());
-//						}						
-//					}
-//					System.out.println("\n");
-//				}
-//			}
+			for(int i = 0; i < serverList.size(); i++) {
+				Server rcu = serverList.get(i);
+				if(rcu.isRCU()){
+					System.out.println("================================================================\n");
+					System.out.println("index : " + rcu.getIndex());
+					System.out.println("name : " + rcu.getName());
+					System.out.println("type : " + ((RCU)rcu).getRcuTypeDetail());
+					ArrayList mapList = ((RCU)rcu).getMultiPortMapList();
+					if(mapList.size() != 0) {
+						for(int j = 0; j < mapList.size(); j++) {
+							MultiPortMap map = (MultiPortMap)mapList.get(j);
+							Facility fac = (Facility)serverMap.get(map.getFacIndex());
+							System.out.println("ch : " + map.getCh() + ", port : " + map.getPort() + ", Facility : " + fac.getName() + "( " + fac.getIndex() + " )");
+						}						
+					}
+					System.out.println("\n");
+				}
+			}
 			
 			isFirstLoad = false;
 		}catch(Exception e) {

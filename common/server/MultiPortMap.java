@@ -2,17 +2,23 @@ package common.server;
 
 public class MultiPortMap implements Comparable{
 	
-	public static final String GET_MULTI_PORT_MAP = "SELECT \r\n" + 
-			"	NODE_INDEX AS 'index',\r\n" + 
-			"	PORT_NUMBER AS 'ch',\r\n" + 
-			"	TCP_SERIAL_PORT AS 'port'\r\n" + 
+	public static final String GET_MULTI_PORT_MAP = 
+			"SELECT \r\n" + 
+			"	rtu.NODE_INDEX AS 'rtuIndex',	\r\n" + 
+			"	portMap.PORT_NUMBER AS 'ch',\r\n" + 
+			"	portMap.TCP_SERIAL_PORT AS 'port',\r\n" + 
+			"	fac.NODE_INDEX AS 'facIndex'\r\n" + 
 			"FROM \r\n" + 
-			"	SERVERINFO_RTU_MULTIPORT \r\n" + 
-			"	ORDER BY NODE_INDEX, PORT_NUMBER ASC";
+			"	SERVERINFO_RTU rtu\r\n" + 
+			"	\r\n" + 
+			"	INNER JOIN SERVERINFO_RTU_MULTIPORT portMap ON portMap.NODE_INDEX = rtu.NODE_INDEX\r\n" + 
+			"	INNER JOIN SERVERINFO_FACILITY fac ON fac.RTU_INDEX = rtu.NODE_INDEX AND fac.RTU_PORT_NUM = portMap.PORT_NUMBER\r\n" + 
+			"ORDER BY rtu.NODE_INDEX, portMap.PORT_NUMBER ASC";
 	
 	private int rtuIndex;
 	private int ch;
 	private int port;
+	private int facIndex;
 	
 	public int getRtuIndex() {
 		return rtuIndex;
@@ -31,6 +37,12 @@ public class MultiPortMap implements Comparable{
 	}
 	public void setPort(int port) {
 		this.port = port;
+	}	
+	public int getFacIndex() {
+		return facIndex;
+	}
+	public void setFacIndex(int facIndex) {
+		this.facIndex = facIndex;
 	}
 	
 	@Override
