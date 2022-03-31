@@ -28,13 +28,20 @@ public class RCU extends Server{
 			"from SERVERINFO a inner join SERVERGROUPMAP b on a.nServerIndex=b.nServerIndex\r\n" + 
 			"	inner join tree_query c on b.nGroupIndex = c.ngroupIndex\r\n" + 
 			"	inner join SERVERINFO_RTU rtu ON a.nServerIndex = rtu.NODE_INDEX\r\n" + 
-			" order by a.nServerIndex";
+			" order by a.nServerIndex";	
 	
+	private boolean isMultiPort = false;
 	private int port;
 	private String rcuTypeDetail;
 	private ArrayList<Server> facList = new ArrayList<Server>();
 	private ArrayList<MultiPortMap> multiPortMapList = new ArrayList<MultiPortMap>();
 	
+	public boolean isMultiPort() {
+		return isMultiPort;
+	}
+	public void setMultiPort(boolean isMultiPort) {
+		this.isMultiPort = isMultiPort;
+	}
 	public int getPort() {
 		return port;
 	}

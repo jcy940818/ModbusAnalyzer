@@ -384,6 +384,7 @@ public class ServerList_Panel extends JPanel {
 				serverMap.put(rcu.getIndex(), rcu);
 			}
 			
+		
 			/* 멀티 포트 RCU 포트 채널 매핑 정보 초기화 */
 			rs = stmt.executeQuery(MultiPortMap.GET_MULTI_PORT_MAP);
 			while(rs.next()) {
@@ -392,26 +393,42 @@ public class ServerList_Panel extends JPanel {
 				int ch = rs.getInt("ch");
 				int port = rs.getInt("port");
 				int facIndex = rs.getInt("facIndex");
+				
 				map.setRtuIndex(rcuIndex);
 				map.setCh(ch);
 				map.setPort(port);
 				map.setFacIndex(facIndex);
 				
-				((RCU)serverMap.get(rcuIndex)).getMultiPortMapList().add(map);
+				RCU rcu = (RCU)serverMap.get(rcuIndex);
+				rcu.setMultiPort(true);
+				rcu.getMultiPortMapList().add(map);
+				
+				Facility fac = (Facility)serverMap.get(facIndex);
+				fac.setRcuPortCh(ch);
+				fac.setPort(port);
 			}
 			
 			/* RCU & 시설물 매핑 */
 			for(int i = 0; i < serverList.size(); i++) {
 				Server server = serverList.get(i);
 				
-				if(server.isFacility()) {					
-						int rtuIndex = ((Facility)server).getRtuIndex();
+				if(server.isFacility()) {
+					Facility fac = (Facility)serverMap.get(server.getIndex());					
+					int rtuIndex = fac.getRtuIndex();
 						
 						try {
 							if(rtuIndex != 0) {
 								RCU rcu = (RCU)serverMap.get(rtuIndex);
-								rcu.getFacList().add(server);
-								((Facility)server).setRcu(rcu);
+								rcu.getFacList().add(fac);
+								fac.setRcu(rcu);								
+								fac.setIp(rcu.getIp()); // 시설물의 IP를 RCU에 등록된 IP로 설정
+								
+								// 시설물에 RCU 포트 채널, 포트 번호 저장
+								if(!rcu.isMultiPort()){
+									fac.setRcuPortCh(fac.getPort());
+									fac.setPort(rcu.getPort());
+								}
+								
 							}else {
 								continue;
 							}
@@ -425,7 +442,7 @@ public class ServerList_Panel extends JPanel {
 							rcu.setRcuTypeDetail("알 수 없음");
 							rcu.setIp("알 수 없음");
 							rcu.setState("알 수 없음");
-							((Facility)server).setRcu(rcu);
+							fac.setRcu(rcu);
 							
 							if(isFirstLoad) {
 								StringBuilder sb = new StringBuilder();

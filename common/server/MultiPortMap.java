@@ -12,7 +12,7 @@ public class MultiPortMap implements Comparable{
 			"	SERVERINFO_RTU rtu\r\n" + 
 			"	\r\n" + 
 			"	INNER JOIN SERVERINFO_RTU_MULTIPORT portMap ON portMap.NODE_INDEX = rtu.NODE_INDEX\r\n" + 
-			"	INNER JOIN SERVERINFO_FACILITY fac ON fac.RTU_INDEX = rtu.NODE_INDEX AND fac.RTU_PORT_NUM = portMap.PORT_NUMBER\r\n" + 
+			"	LEFT JOIN SERVERINFO_FACILITY fac ON fac.RTU_INDEX = rtu.NODE_INDEX AND fac.RTU_PORT_NUM = portMap.PORT_NUMBER\r\n" + 
 			"ORDER BY rtu.NODE_INDEX, portMap.PORT_NUMBER ASC";
 	
 	private int rtuIndex;

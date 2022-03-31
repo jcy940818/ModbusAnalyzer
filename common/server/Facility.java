@@ -40,6 +40,7 @@ public class Facility extends Server implements Comparable{
 	private RCU rcu; // 시리얼 포트 연결 방식일 경우 바라보는 RCU
 	private int port; // 시리얼 포트 연결 방식일 경우 RCU의 포트 채널 번호
 	private int rtuIndex;
+	private int rcuPortCh;
 	
 	private int connCode; // 연결 방식
 	private String connMethod;
@@ -72,6 +73,14 @@ public class Facility extends Server implements Comparable{
 
 	public void setRtuIndex(int rtuIndex) {
 		this.rtuIndex = rtuIndex;
+	}
+
+	public int getRcuPortCh() {
+		return rcuPortCh;
+	}
+
+	public void setRcuPortCh(int rcuPortCh) {
+		this.rcuPortCh = rcuPortCh;
 	}
 
 	public int getConnCode() {
