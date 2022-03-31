@@ -27,7 +27,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -305,23 +304,7 @@ public class ServerList_Panel extends JPanel {
 		infoPanel.add(serverInfoPane);
 		
 		serverInfoTable = new JTable();
-		serverInfoTable.setBorder(new LineBorder(Color.BLACK, 2));
-		serverInfoTable.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				if (e.getButton() == 1) {
-					// 왼쪽 클릭
-					clickServerInfo();
-				} 
-				if (e.getButton() == 1 && e.getClickCount() == 2) {
-					// 왼쪽 버튼 더블 클릭
-					clickServerInfo();
-				}
-				if (e.getButton() == 3) {
-					// 오른쪽 클릭
-					clickServerInfo();
-				}
-			}
-		});
+		serverInfoTable.setBorder(new LineBorder(Color.BLACK, 2));		
 		serverInfoPane.setViewportView(serverInfoTable);
 								
 	}
@@ -626,13 +609,7 @@ public class ServerList_Panel extends JPanel {
 		
 		content[5] = new Object[2];
 		content[5][0] = CONN_METHOD;
-		if(fac.getRtuIndex() != 0) {
-			content[5][1] = fac.getConnMethod() + " (Click : RCU 보기)";
-		}else {
-			content[5][1] = fac.getConnMethod();
-		}
-		
-		
+		content[5][1] = fac.getConnMethod();
 		
 		content[6] = new Object[2];
 		content[6][0] = SERVER_STATE;
@@ -672,7 +649,7 @@ public class ServerList_Panel extends JPanel {
 			return;		
 		}
 		
-		Object[][] content = new Object[7][];
+		Object[][] content = new Object[6][];
 		
 		content[0] = new Object[2];
 		content[0][0] = IP;
@@ -695,12 +672,8 @@ public class ServerList_Panel extends JPanel {
 		content[4][1] = rcu.getFacList().size();
 		
 		content[5] = new Object[2];
-		content[5][0] = "연결된 장비 정보";
-		content[5][1] = "연결된 장비 내용 보기 (Click)";
-		
-		content[6] = new Object[2];
-		content[6][0] = "RCU 상태";
-		content[6][1] = rcu.getState();
+		content[5][0] = "RCU 상태";
+		content[5][1] = rcu.getState();
 
 		serverInfoTable.setModel(new DefaultTableModel(
 			content,
@@ -1013,52 +986,6 @@ public class ServerList_Panel extends JPanel {
 	public void setFocusCell(JTable table, int row, int column) {
 		table.changeSelection(row, column, false, false);				
 		table.requestFocus();
-	}
-	
-	public void clickServerInfo() {
-		int row = serverInfoTable.getSelectedRow();
-		int column = serverInfoTable.getSelectedColumn();		
-		boolean isRCU = ((String)serverInfoTable.getValueAt(1, 0)).contains("RCU");
-				
-		if(row == 5 && column == 1) {
-			String text =  (String)serverInfoTable.getValueAt(row, column);
-			if(!text.contains("Click")) {
-				return;
-			}else {
-				Server server = (isRCU) ? (Server)serverInfoTable.getValueAt(3, 1) : (Server)serverInfoTable.getValueAt(4, 1);
-				
-				if(server.isFacility() && !isRCU) {
-					Facility fac = (Facility)serverMap.get(server.getIndex());					
-					int rtuIndex = fac.getRtuIndex();
-					if(rtuIndex == 0) {
-						return;
-					}else {
-						updateServerListTable(false);
-						int tableRow = serverInfoTable.getRowCount();
-						int col = 3;
-						for(int i = 0; i < tableRow; i++) {
-							Server targetRCU = (Server)serverListTable.getValueAt(i, 3);
-							if(targetRCU.getIndex() == rtuIndex) {
-								setFocusCell(serverListTable, i, col);
-								return;
-							}
-						}
-					}
-				}else if(server.isRCU() && isRCU) {
-					RCU rcu = (RCU)serverMap.get(server.getIndex());
-					
-					System.out.printf("RCU 정보 = index : %d, name : %s, type : %s\n", rcu.getIndex(), rcu.getName(), rcu.getRcuTypeDetail());
-					System.out.println("연결된 시설물 정보");
-					ArrayList<Server> facList = rcu.getFacList();
-					for(int i = 0; i < facList.size(); i++) {
-						Facility fac = (Facility)facList.get(i);
-						System.out.printf("%d. index : %d, name : %s , portInfo : %d\n", i+1, fac.getIndex(), fac.getName(), fac.getPort());
-					}
-					System.out.println();
-					
-				}
-			}			
-		}
 	}
 	
 }
