@@ -19,6 +19,7 @@ public class Facility extends Server implements Comparable{
 			"WHERE B.nParentIndex = C.nGroupIndex) \r\n" + 
 			"\r\n" + 
 			"select \r\n" + 
+			"	DISTINCT\r\n" + 
 			"	replace(c.depth_fullname,'<ROOT>','장비 관리 ( 그룹 없음 )') as 'groupInfo',	\r\n" + 
 			"	a.strServerIP as 'ip',\r\n" + 
 			"	f.RTU_PORT_NUM as 'port',\r\n" + 

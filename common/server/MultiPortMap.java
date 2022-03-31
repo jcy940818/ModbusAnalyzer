@@ -4,6 +4,7 @@ public class MultiPortMap implements Comparable{
 	
 	public static final String GET_MULTI_PORT_MAP = 
 			"SELECT \r\n" + 
+			"	DISTINCT\r\n" + 
 			"	rtu.NODE_INDEX AS 'rtuIndex',	\r\n" + 
 			"	portMap.PORT_NUMBER AS 'ch',\r\n" + 
 			"	portMap.TCP_SERIAL_PORT AS 'port',\r\n" + 
