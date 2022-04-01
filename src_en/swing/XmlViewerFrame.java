@@ -385,6 +385,7 @@ public class XmlViewerFrame extends JFrame {
 		actualPanel.add(searchPerf_textField_1);
 		
 		searchPerf_textField_2 = new JTextField();
+		searchPerf_textField_2.addFocusListener(Util.focusListener);
 		searchPerf_textField_2.setHorizontalAlignment(SwingConstants.LEFT);
 		searchPerf_textField_2.setForeground(Color.BLACK);
 		searchPerf_textField_2.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 16));

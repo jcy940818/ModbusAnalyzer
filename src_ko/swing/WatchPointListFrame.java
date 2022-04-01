@@ -22,7 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
@@ -35,7 +34,6 @@ import common.perf.FmsPerfItem;
 import common.perf.Perf;
 import common.perf.PerfLabelStatusBean;
 import common.server.Facility;
-import common.server.Server;
 import src_ko.info.ONION_Info;
 import src_ko.util.Util;
 
@@ -60,7 +58,7 @@ public class WatchPointListFrame extends JFrame {
 	private JTable perfLabelTable;
 	
 	public static boolean isExist = false;
-	private JButton MK119_REST_API_Button;
+	private JLabel MK119;
 	 
 //	private File xmlFile;
 //	private Protocol protocol;
@@ -138,14 +136,14 @@ public class WatchPointListFrame extends JFrame {
 		currentFunction.setBounds(0, 0, 240, 55);
 		actualPanel.add(currentFunction);
 		
-		MK119_REST_API_Button = new JButton(" REST API 연동");
-		MK119_REST_API_Button.setIcon(new Util().getMK2Resource());
-		MK119_REST_API_Button.setForeground(new Color(0, 128, 0));
-		MK119_REST_API_Button.setBackground(Color.WHITE);
-		MK119_REST_API_Button.setFocusPainted(false);
-		MK119_REST_API_Button.setFont(new Font("맑은 고딕", Font.BOLD, 17));
-		MK119_REST_API_Button.setBounds(802, 9, 240, 36);
-		actualPanel.add(MK119_REST_API_Button);
+		MK119 = new JLabel();
+		MK119.setHorizontalAlignment(SwingConstants.CENTER);
+		MK119.setIcon(new Util().getMK2Resource());
+		MK119.setForeground(Color.BLACK);
+		MK119.setBackground(Color.WHITE);		
+		MK119.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		MK119.setBounds(957, 9, 85, 36);
+		actualPanel.add(MK119);
 		
 		JScrollPane perfList_scrollPane = new JScrollPane();
 		perfList_scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
@@ -203,15 +201,15 @@ public class WatchPointListFrame extends JFrame {
 		actualPanel.add(view_Panel);
 		
 		perfInfoPanel = new JScrollPane();
-		perfInfoPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		perfInfoPanel.setBackground(Color.WHITE);
 		perfInfoPanel.setBorder(new LineBorder(Color.BLACK, 2));
-		perfInfoPanel.setBounds(0, 0, 483, 240);
+		perfInfoPanel.setBounds(0, 0, 483, 272);
 		view_Panel.add(perfInfoPanel);		
 		
 		perfInfoTable = new JTable();
 		perfInfoTable.setModel(new DefaultTableModel(
 				new Object[][] {
+					{null, null},
 					{null, null},
 					{null, null},
 					{null, null},
@@ -237,11 +235,11 @@ public class WatchPointListFrame extends JFrame {
 		mappingLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		mappingLabel.setForeground(Color.BLACK);
 		mappingLabel.setFont(new Font("맑은 고딕", Font.BOLD, 17));
-		mappingLabel.setBounds(0, 252, 483, 26);
+		mappingLabel.setBounds(0, 288, 483, 26);
 		view_Panel.add(mappingLabel);
 		
 		perfLabelInfoPanel = new JScrollPane();
-		perfLabelInfoPanel.setBounds(0, 286, 483, 242);
+		perfLabelInfoPanel.setBounds(0, 318, 483, 212);
 		perfLabelInfoPanel.setBorder(new LineBorder(Color.BLACK, 2));
 		view_Panel.add(perfLabelInfoPanel);
 		
@@ -253,8 +251,7 @@ public class WatchPointListFrame extends JFrame {
 					{null, null},
 					{null, null},
 					{null, null},
-					{null, null},
-					{null, null},
+					{null, null}
 				},
 				new String[] { "값", "매핑 내용"}) {
 				boolean[] columnEditables = new boolean[] {
@@ -265,7 +262,7 @@ public class WatchPointListFrame extends JFrame {
 					return columnEditables[column];
 				}
 		});
-		setTableStyle(perfLabelTable, PERF_LABEL_TABLE);
+		setTableStyle(perfLabelTable, PERF_LABEL_TABLE);		
 		perfLabelInfoPanel.setViewportView(perfLabelTable);
 		
 		JLabel searchPerf_label = new JLabel("검 색");
@@ -340,6 +337,7 @@ public class WatchPointListFrame extends JFrame {
 		actualPanel.add(searchPerf_textField_1);
 		
 		searchPerf_textField_2 = new JTextField();
+		searchPerf_textField_2.addFocusListener(Util.focusListener);
 		searchPerf_textField_2.setHorizontalAlignment(SwingConstants.LEFT);
 		searchPerf_textField_2.setForeground(Color.BLACK);
 		searchPerf_textField_2.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
@@ -363,9 +361,6 @@ public class WatchPointListFrame extends JFrame {
 			}
 		});
 		actualPanel.add(searchPerf_textField_2);
-		
-		// 테이블 로드
-		updatePerfListTable(perfListTable);
 		
 		FacilityInfoLabel = new JLabel(String.format("[ %s ] %s", fac.getTypeString(), fac.getName()));
 		FacilityInfoLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -393,10 +388,15 @@ public class WatchPointListFrame extends JFrame {
 			}
 		});
 		actualPanel.add(dbRefreshButton);
-				
+		
+		
+		// 테이블 로드
+		updatePerfListTable(perfListTable);
+		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
+		
 	}
 	
 	
@@ -410,10 +410,13 @@ public class WatchPointListFrame extends JFrame {
 	// ************ XML Reload *******************************************
 	public void refreshDB() {
 		
+		this.perfs = Perf.getFaciltiyPerfList(ONION_Info.getMk119Connection(), this.fac);
+		
 		updatePerfListTable(perfListTable);
 		
 		perfInfoTable.setModel(new DefaultTableModel(
 				new Object[][] {
+					{null, null},
 					{null, null},
 					{null, null},
 					{null, null},
@@ -431,6 +434,7 @@ public class WatchPointListFrame extends JFrame {
 					return columnEditables[column];
 				}
 		});
+		setTableStyle(perfInfoTable, PERF_INFO_TABLE);
 		
 		perfLabelTable.setModel(new DefaultTableModel(
 				new Object[][] {
@@ -439,8 +443,7 @@ public class WatchPointListFrame extends JFrame {
 					{null, null},
 					{null, null},
 					{null, null},
-					{null, null},
-					{null, null},
+					{null, null},					
 				},
 				new String[] { "값", "매핑 내용"}) {
 				boolean[] columnEditables = new boolean[] {
@@ -451,14 +454,11 @@ public class WatchPointListFrame extends JFrame {
 					return columnEditables[column];
 				}
 		});
+		setTableStyle(perfLabelTable, PERF_LABEL_TABLE);
 		
 		searchPerf_textField_1.setText(null);
+		searchPerf_textField_2.setText(null);
 		mappingLabel.setText(null);
-	}
-	
-	public void setFocusCell(JTable table, int row, int column) {
-		table.changeSelection(row, column, false, false);				
-		table.requestFocus();
 	}
 	
 	
@@ -471,10 +471,10 @@ public class WatchPointListFrame extends JFrame {
 
 		for (int i = 0; i < perfs.size(); i++) {
 			Perf perf = perfs.get(i);
-			perf.setIndex(i + 1);
+//			perf.setIndex(i + 1);
 			
 			content[i] = new Object[2];
-			content[i][0] = perf.getIndex(); // 순 서
+			content[i][0] = i + 1; // 순 서
 			content[i][1] = perf;
 		}
 
@@ -492,38 +492,42 @@ public class WatchPointListFrame extends JFrame {
 	
 	
 	//******************** 성능 정보 테이블 관련 *********************************************************************
-	public void updatePerfInfoTable(JTable table, Perf perf) {		
+	public void updatePerfInfoTable(JTable table, Perf perf) {
 
 		if (table == null || perf == null) return;
 		
-		Object[][] content = new Object[7][];
+		Object[][] content = new Object[8][];
 
 		content[0] = new Object[2];
 		content[0][0] = "성능명";
 		content[0][1] = perf.getDisplayName();
 		
 		content[1] = new Object[2];
-		content[1][0] = (this.isCommon) ? "성능 카운터" : "OID";
-		content[1][1] = perf.getCounter();
+		content[1][0] = "성능 종류";
+		content[1][1] = perf.getPerfTypeString();
 		
 		content[2] = new Object[2];
-		content[2][0] = "수집 주기";
-		content[2][1] = perf.getInterval();
+		content[2][0] = (this.isCommon) ? "성능 카운터" : "OID";
+		content[2][1] = perf.getCounter();
 		
 		content[3] = new Object[2];
-		content[3][0] = "단 위";
-		content[3][1] = perf.getMeasure();
+		content[3][0] = "수집 주기";
+		content[3][1] = perf.getInterval();
 		
 		content[4] = new Object[2];
-		content[4][0] = "보정식";
-		content[4][1] = perf.getScaleFunction();
+		content[4][0] = "단 위";
+		content[4][1] = perf.getMeasure();
 		
 		content[5] = new Object[2];
-		content[5][0] = "데이터 형식";
-		content[5][1] = perf.getDataFormat();
+		content[5][0] = "보정식";
+		content[5][1] = perf.getScaleFunction();
 		
 		content[6] = new Object[2];
-		content[6][0] = "데이터 형식 내용";
+		content[6][0] = "데이터 형식";
+		content[6][1] = perf.getDataFormat();
+		
+		content[7] = new Object[2];
+		content[7][0] = "데이터 형식 내용";
 		String type = null;
 		
 		int format = perf.getDataFormat();
@@ -543,7 +547,7 @@ public class WatchPointListFrame extends JFrame {
 			mappingLabel.setText("상태 매핑 정보 없음");
 			perfLabelTable.setVisible(false);
 		}
-		content[6][1] = type;
+		content[7][1] = type;
 
 		table.setModel(new DefaultTableModel(
 				content,
@@ -657,12 +661,11 @@ public class WatchPointListFrame extends JFrame {
 			if(tableType == PERF_LABEL_TABLE) {
 				tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 성능 레이블 테이블만 가운데 정렬
 			}else {
-//				tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
+				// tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
 			}
 		}
 		
-		
-		// 커스텀 두필터
+		//******************** 테이블 필터링 관련 *********************************************************************
 		public void doTableFilter() {
 			ArrayList<FmsPerfItem> filteredPerf = new ArrayList<FmsPerfItem>();
 			String text_1 = searchPerf_textField_1.getText().trim();
