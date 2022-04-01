@@ -1,6 +1,7 @@
 package common.server;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import common.perf.Perf;
 
@@ -38,6 +39,9 @@ public class Facility extends Server implements Comparable{
 			"	inner join SERVERINFO_FACILITY f ON a.nServerIndex = f.NODE_INDEX\r\n" + 
 			" order by a.nServerIndex";
 	
+	ArrayList<Perf> perfList = new ArrayList<Perf>();
+	HashMap<Integer, Perf> perfMap = new HashMap<Integer, Perf>();
+	
 	private boolean connRCU = false; 
 	private RCU rcu; // 시리얼 포트 연결 방식일 경우 바라보는 RCU
 	private int port; // 시리얼 포트 연결 방식일 경우 RCU의 포트 채널 번호
@@ -49,9 +53,7 @@ public class Facility extends Server implements Comparable{
 	
 	private boolean isCommon; // 프로토콜 정보
 	private int commProtocol;
-	private int snmpProtocol;
-	
-	private ArrayList<Perf> perfs;
+	private int snmpProtocol;		
 
 	public boolean isConnRCU() {
 		return connRCU;
@@ -132,13 +134,22 @@ public class Facility extends Server implements Comparable{
 	public void setSnmpProtocol(int snmpProtocol) {
 		this.snmpProtocol = snmpProtocol;
 	}
-	
-	public ArrayList<Perf> getPerfs() {
-		return perfs;
+
+	public ArrayList<Perf> getPerfList() {
+		return perfList;
 	}
 
-	public void setPerfs(ArrayList<Perf> perfs) {
-		this.perfs = perfs;
+	public void setPerfList(ArrayList<Perf> perfList) {
+		this.perfList = perfList;
 	}
+
+	public HashMap<Integer, Perf> getPerfMap() {
+		return perfMap;
+	}
+
+	public void setPerfMap(HashMap<Integer, Perf> perfMap) {
+		this.perfMap = perfMap;
+	}
+	
 
 }

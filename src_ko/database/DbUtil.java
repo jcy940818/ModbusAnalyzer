@@ -823,6 +823,47 @@ public class DbUtil {
 			}
 		}
 		
+		public static String getPerfType(int perfType) {
+			switch(perfType) {
+				case 1 : return "에이전트";	
+				case 2 : return "SNMP";
+				case 3 : return "포트 응답";
+				case 4 : return "오라클 DB";
+				case 5 : return "RCU 접점";
+				case 6 : return "RCU 시리얼 연결";
+				case 8 : return "TCP 시리얼 연결";
+				case 9 : return "ZigBee 코디네이터 연결";
+				case 10 : return "UDP 연결";
+				case 11 : return "BACnet 연결";
+				case 12 : return "File 접근";
+				case 13 : return "PSM 연결";
+				case 14 : return "DB 접근";
+				case 15 : return "Modbus 연결";
+				case 16 : return "iLON 연결";
+				case 17 : return "LNS DDE 연결";
+				case 18 : return "PLC 연결";
+				case 19 : return "가상성능";
+				case 20 : return "IPMI 연결";
+				case 22 : return "가상(누적)";
+				case 23 : return "가상(일전력량)";
+				case 24 : return "가상(월전력량)";
+				case 25 : return "가상(SQL)";
+				case 26 : return "리포트성능";
+				case 27 : return "MUX 연동";
+				case 28 : return "UDP RECV 연동";
+				case 29 : return "REST";
+				case 30 : return "MidasCon";
+				case 31 : return "MidasAp";
+				case 32 : return "가상(리셋 카운터)";
+				case 33 : return "랙가드 연결";
+				case 34 : return "일가동시간";
+				case 35 : return "가상(초기화)";
+				case 36 : return "가상(측정시간)";
+				case 37 : return "REST API";
+				default : return "알 수 없음";
+			}
+		}
+		
 		public static String getConnMethod(int connMethod) {
 			switch(connMethod) {
 				case 1 : return "접점 연결"; 

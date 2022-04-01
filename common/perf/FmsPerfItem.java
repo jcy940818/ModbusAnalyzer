@@ -1,5 +1,6 @@
 package common.perf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -32,8 +33,9 @@ public class FmsPerfItem extends Perf {
 	public String binLabel[] = new String[] { "", "" };
 
 	/** 다중 상태 레이블 */
-	public PerfLabelStatusBean labels[];
-
+	public PerfLabelStatusBean labels[];	
+	public ArrayList<PerfLabelStatusBean> labelList = new ArrayList<PerfLabelStatusBean>();
+	
 	/** 성능 항목 자동 등록 여부 */
 	public boolean autoReg = false;
 
@@ -222,6 +224,11 @@ public class FmsPerfItem extends Perf {
 		return this.binLabel;
 	}
 
+	public void setStatusLabels() {
+		 this.labels = (PerfLabelStatusBean[])this.labelList.toArray();
+		 Arrays.sort(this.labels);
+	}
+	
 	public PerfLabelStatusBean[] getStatusLabels() {
 		Arrays.sort(this.labels);
 		return this.labels;
