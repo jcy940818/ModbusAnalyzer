@@ -229,13 +229,13 @@ public class MainFrame extends JFrame {
 		utilMenu.setHorizontalAlignment(SwingConstants.CENTER);
 		utilMenu.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 		
-		// Database 메뉴 - Simple Server Viewer : 간편 장비 조회
+		// Database 메뉴 - Simple Server Viewer : 간편 장비 조회 (영문 버전 미구현)
 		JMenuItem simpleServerViewer = new JMenuItem("Simple Server Viewer : Server inquiry");
 		simpleServerViewer.setForeground(Color.BLACK);
 		simpleServerViewer.setHorizontalAlignment(SwingConstants.LEFT);
 		simpleServerViewer.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
-		utilMenu.add(simpleServerViewer);
-		utilMenu.add(new JSeparator());
+//		utilMenu.add(simpleServerViewer);
+//		utilMenu.add(new JSeparator());
 		
 		// Util 메뉴 : XML 뷰어
 		JMenuItem xmlViewer = new JMenuItem("Protocol XML Viewer : Watch Point XML inquiry");
