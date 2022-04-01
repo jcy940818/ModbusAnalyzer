@@ -291,6 +291,7 @@ public class WatchPointListFrame extends JFrame {
 				}
 			}
 		});
+		searchPerf_ComboBox_1.setSelectedIndex(0);
 		actualPanel.add(searchPerf_ComboBox_1);
 		
 		searchPerf_ComboBox_2 = new JComboBox();
@@ -308,6 +309,7 @@ public class WatchPointListFrame extends JFrame {
 				}
 			}
 		});
+		searchPerf_ComboBox_2.setSelectedIndex(1);
 		actualPanel.add(searchPerf_ComboBox_2);
 		
 		
@@ -380,7 +382,7 @@ public class WatchPointListFrame extends JFrame {
 		dbRefreshButton.setContentAreaFilled(false);
 		dbRefreshButton.setBorder(UIManager.getBorder("Button.border"));
 		dbRefreshButton.setBackground(Color.WHITE);
-		dbRefreshButton.setBounds(559, 86, 180, 35);
+		dbRefreshButton.setBounds(560, 89, 180, 35);
 		dbRefreshButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {

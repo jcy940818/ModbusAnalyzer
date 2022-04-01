@@ -427,7 +427,7 @@ public class XmlViewerFrame extends JFrame {
 		xmlOpenButton.setContentAreaFilled(false);
 		xmlOpenButton.setBorder(UIManager.getBorder("Button.border"));
 		xmlOpenButton.setBackground(Color.WHITE);
-		xmlOpenButton.setBounds(559, 87, 160, 35);
+		xmlOpenButton.setBounds(560, 89, 160, 35);
 		xmlOpenButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -466,7 +466,7 @@ public class XmlViewerFrame extends JFrame {
 		xmlReloadButton.setContentAreaFilled(false);
 		xmlReloadButton.setBorder(UIManager.getBorder("Button.border"));
 		xmlReloadButton.setBackground(Color.WHITE);
-		xmlReloadButton.setBounds(725, 87, 160, 35);
+		xmlReloadButton.setBounds(726, 89, 160, 35);
 		xmlReloadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -485,7 +485,7 @@ public class XmlViewerFrame extends JFrame {
 		encodingButton.setContentAreaFilled(false);
 		encodingButton.setBorder(UIManager.getBorder("Button.border"));
 		encodingButton.setBackground(Color.WHITE);
-		encodingButton.setBounds(936, 87, 106, 35);
+		encodingButton.setBounds(936, 89, 106, 35);
 		encodingButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -512,7 +512,7 @@ public class XmlViewerFrame extends JFrame {
 		resetFormButton.setContentAreaFilled(false);
 		resetFormButton.setBorder(UIManager.getBorder("Button.border"));
 		resetFormButton.setBackground(Color.WHITE);
-		resetFormButton.setBounds(559, 48, 160, 35);
+		resetFormButton.setBounds(560, 50, 160, 35);
 		resetFormButton.addActionListener(new ActionListener() {
 			
 			@Override
