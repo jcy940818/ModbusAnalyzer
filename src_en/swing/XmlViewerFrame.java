@@ -336,6 +336,7 @@ public class XmlViewerFrame extends JFrame {
 				}
 			}
 		});
+		searchPerf_ComboBox_1.setSelectedIndex(0);
 		actualPanel.add(searchPerf_ComboBox_1);
 		
 		searchPerf_ComboBox_2 = new JComboBox();
@@ -353,6 +354,7 @@ public class XmlViewerFrame extends JFrame {
 				}
 			}
 		});
+		searchPerf_ComboBox_2.setSelectedIndex(1);
 		actualPanel.add(searchPerf_ComboBox_2);
 		
 		
@@ -503,6 +505,26 @@ public class XmlViewerFrame extends JFrame {
 		});
 		actualPanel.add(encodingButton);
 				
+		JButton resetFormButton = new JButton("Reset Form");
+		resetFormButton.setForeground(Color.BLACK);
+		resetFormButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		resetFormButton.setFocusPainted(false);
+		resetFormButton.setContentAreaFilled(false);
+		resetFormButton.setBorder(UIManager.getBorder("Button.border"));
+		resetFormButton.setBackground(Color.WHITE);
+		resetFormButton.setBounds(559, 48, 160, 35);
+		resetFormButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				searchPerf_textField_1.setText(null);
+				searchPerf_textField_2.setText(null);
+				searchPerf_ComboBox_1.setSelectedIndex(0);
+				searchPerf_ComboBox_2.setSelectedIndex(1);
+			}
+		});
+		actualPanel.add(resetFormButton);
+		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
