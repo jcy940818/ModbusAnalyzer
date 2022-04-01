@@ -181,12 +181,12 @@ public abstract class Perf implements Comparable {
 		Perf perf = (Perf) obj;
 		int compareName = AlphanumComparator.comparator.compare(this.getDisplayName(), perf.getDisplayName());
 
-		if(compareName < -1) {
+		if(compareName < 0) {
 			return -1;
 		}else if(compareName == 0) {
 			return 0;
 		}else {
-			return -1;
+			return 1;
 		}
 	}
 	

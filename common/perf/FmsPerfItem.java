@@ -225,8 +225,10 @@ public class FmsPerfItem extends Perf {
 	}
 
 	public void setStatusLabels() {
-		 this.labels = (PerfLabelStatusBean[])this.labelList.toArray();
-		 Arrays.sort(this.labels);
+		this.labels = new PerfLabelStatusBean[this.labelList.size()];
+		for(int i = 0; i < this.labelList.size(); i++) {
+			labels[i] = this.labelList.get(i);
+		}		
 	}
 	
 	public PerfLabelStatusBean[] getStatusLabels() {
