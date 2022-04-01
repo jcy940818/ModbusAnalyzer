@@ -11,7 +11,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.DefaultComboBoxModel;
@@ -32,15 +31,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-import common.perf.FmsPerfConf;
 import common.perf.FmsPerfItem;
 import common.perf.Perf;
 import common.perf.PerfLabelStatusBean;
-import common.perf.SnmpPerfConf;
-import common.perf.SnmpPerfItem;
 import common.server.Facility;
 import src_ko.info.ONION_Info;
-import src_ko.info.Protocol;
 import src_ko.util.Util;
 
 public class WatchPointListFrame extends JFrame {
@@ -66,13 +61,12 @@ public class WatchPointListFrame extends JFrame {
 	public static boolean isExist = false;
 	private JLabel mk119_Logo;
 	 
+//	private File xmlFile;
+//	private Protocol protocol;
+	
 	private Facility fac;
-	
-	
-	private File xmlFile;
-	private Protocol protocol;
 	private boolean isCommon;
-	private ArrayList<Perf> perfs;
+	private ArrayList<FmsPerfItem> perfs;
 	private Perf selectedPerf;	
 	
 	private JPanel contentPane;
@@ -84,7 +78,6 @@ public class WatchPointListFrame extends JFrame {
 	private JTextField searchPerf_textField;	
 	private JLabel protocolNameLabel;
 	private JButton dbRefreshButton;
-	
 	
 	/**
 	 * Launch the application.
@@ -109,13 +102,13 @@ public class WatchPointListFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public WatchPointListFrame(String protocolName, File xmlFile, Protocol protocol) {		
-		this.xmlFile = xmlFile;
-		this.protocol = protocol;
-		this.isCommon = (protocol.getProtocolType() == Protocol.COMMON_PROTOCOL) ? true : false;		
+	public WatchPointListFrame(Facility fac) {		
+		this.fac = fac;
+		this.isCommon = fac.isCommon();
+		this.perfs = Perf.getFaciltiyPerfList(ONION_Info.getMk119Connection(), fac);
 		
 		WatchPointListFrame.isExist = true;
-		setTitle(String.format("Watch Point List : [ %s ] %s ( %s )", protocol.getFacType(), protocolName, xmlFile.getName()));
+		setTitle(String.format("Watch Point List : [ %s ] %s", fac.getTypeString(), fac.getName()));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
@@ -142,7 +135,6 @@ public class WatchPointListFrame extends JFrame {
 		currentFunction.setBounds(0, 0, 240, 55);
 		actualPanel.add(currentFunction);
 		
-				
 		mk119_Logo = new JLabel(new Util().getMK2Resource());
 		mk119_Logo.setIcon(new Util().getMK2Resource());
 		mk119_Logo.setForeground(Color.BLACK);
@@ -178,7 +170,7 @@ public class WatchPointListFrame extends JFrame {
 				Perf perf = (Perf) perfListTable.getValueAt(row, 1);	
 				selectedPerf = perf;
 				updatePerfInfoTable(perfInfoTable, perf);
-			}						
+			}
 			public void keyReleased(KeyEvent e) { 
 				int row = perfListTable.getSelectedRow();				
 				Perf perf = (Perf) perfListTable.getValueAt(row, 1);	
@@ -341,14 +333,13 @@ public class WatchPointListFrame extends JFrame {
 		// 테이블 로드
 		updatePerfListTable(perfListTable);
 		
-		protocolNameLabel = new JLabel(protocolName);
+		protocolNameLabel = new JLabel(String.format("[ %s ] %s", fac.getTypeString(), fac.getName()));
 		protocolNameLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		protocolNameLabel.setForeground(Color.BLUE);
 		protocolNameLabel.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		protocolNameLabel.setBackground(Color.WHITE);
 		protocolNameLabel.setBounds(252, 11, 693, 35);
 		actualPanel.add(protocolNameLabel);
-		
 		
 		dbRefreshButton = new JButton("Database 최신화");
 		dbRefreshButton.setForeground(Color.BLACK);
@@ -361,7 +352,7 @@ public class WatchPointListFrame extends JFrame {
 		dbRefreshButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					refreshXML();
+					refreshDB();
 				}catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -383,7 +374,7 @@ public class WatchPointListFrame extends JFrame {
 	
 	
 	// ************ XML Reload *******************************************
-	public void refreshXML() {
+	public void refreshDB() {
 		
 		updatePerfListTable(perfListTable);
 		
@@ -445,7 +436,7 @@ public class WatchPointListFrame extends JFrame {
 		Object[][] content = new Object[perfs.size()][];
 
 		for (int i = 0; i < perfs.size(); i++) {
-			Perf perf = (this.isCommon) ? (FmsPerfItem) perfs.get(i) : (SnmpPerfItem) perfs.get(i);
+			Perf perf = perfs.get(i);
 			perf.setIndex(i + 1);
 			
 			content[i] = new Object[2];

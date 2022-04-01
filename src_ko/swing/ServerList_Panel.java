@@ -41,6 +41,7 @@ import common.util.FindTextRenderer;
 import src_ko.database.DbUtil;
 import src_ko.info.ONION_Info;
 import src_ko.util.Util;
+import sun.nio.ch.SelChImpl;
 
 public class ServerList_Panel extends JPanel {
 	
@@ -134,6 +135,13 @@ public class ServerList_Panel extends JPanel {
 		perfInfo_Button.setBackground(Color.ORANGE);
 		perfInfo_Button.setBounds(440, 62, 150, 37);
 		perfInfo_Button.setEnabled(false);
+		perfInfo_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {	
+				if(selectedServer.isFacility()) {
+					new WatchPointListFrame((Facility)selectedServer);
+				}
+			}
+		});
 		infoPanel.add(perfInfo_Button);
 		
 		JLabel searchFacility_Label = new JLabel("°Ë »ö");
