@@ -1,5 +1,8 @@
 package common.perf;
 
+import common.server.Server;
+import common.util.AlphanumComparator;
+
 public abstract class Perf implements Comparable {
 	private int index;
 	 
@@ -19,13 +22,16 @@ public abstract class Perf implements Comparable {
 	
 	@Override
 	public int compareTo(Object obj) {
-		Perf bean = (Perf) obj;
-		if (this.index < bean.index) {
+		Perf perf = (Perf) obj;
+		int compareName = AlphanumComparator.comparator.compare(this.getDisplayName(), perf.getDisplayName());
+
+		if(compareName < -1) {
 			return -1;
-		} else if (this.index == bean.index) {
+		}else if(compareName == 0) {
 			return 0;
-		} else {
-			return 1;
+		}else {
+			return -1;
 		}
 	}
+	
 }
