@@ -846,8 +846,8 @@ public class ServerList_Panel extends JPanel {
 	
 	public static void doTableFilter() {
 		ArrayList<Server> filteredServer = new ArrayList<Server>();
-		String text_1 = searchFacility_textField1.getText();
-		String text_2 = searchFacility_textField2.getText();
+		String text_1 = searchFacility_textField1.getText().trim();
+		String text_2 = searchFacility_textField2.getText().trim();
 		
 		boolean noSearch_1 = (text_1 == null || text_1.length() == 0 || text_1.equals(""));
 		boolean noSearch_2 = (text_2 == null || text_2.length() == 0 || text_2.equals(""));
@@ -954,7 +954,7 @@ public class ServerList_Panel extends JPanel {
 			if(text_1.contains(",")) {
 				String[] textToken = text_1.split(",");
 				for(int i2 = 0; i2 < textToken.length; i2++) {
-					String token = textToken[i2];
+					String token = textToken[i2].trim();
 					if(searchElement_1.contains(token)) {
 						isContain_1 = true;
 					}
@@ -966,7 +966,7 @@ public class ServerList_Panel extends JPanel {
 			if(text_2.contains(",")) {
 				String[] textToken = text_2.split(",");
 				for(int i2 = 0; i2 < textToken.length; i2++) {
-					String token = textToken[i2];
+					String token = textToken[i2].trim();
 					if(searchElement_2.contains(token)) {
 						isContain_2 = true;
 					}

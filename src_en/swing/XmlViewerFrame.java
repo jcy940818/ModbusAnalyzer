@@ -80,8 +80,10 @@ public class XmlViewerFrame extends JFrame {
 	private JLabel mappingLabel;
 	private JScrollPane perfInfoPanel;
 	private JScrollPane perfLabelInfoPanel;
-	private JComboBox searchPerf_ComboBox;
-	private JTextField searchPerf_textField;
+	private JComboBox searchPerf_ComboBox_1;
+	private JComboBox searchPerf_ComboBox_2;
+	private JTextField searchPerf_textField_1;	
+	private JTextField searchPerf_textField_2;		
 	private JLabel protocolNameLabel;
 	private JButton xmlReloadButton;
 	private JButton encodingButton;
@@ -311,52 +313,60 @@ public class XmlViewerFrame extends JFrame {
 		setTableStyle(perfLabelTable, PERF_LABEL_TABLE);
 		perfLabelInfoPanel.setViewportView(perfLabelTable);
 		
-		searchPerf_ComboBox = new JComboBox();
-		searchPerf_ComboBox.setForeground(Color.BLACK);
-		searchPerf_ComboBox.setBackground(Color.WHITE);		
-		searchPerf_ComboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
-		searchPerf_ComboBox.setBounds(88, 52, 200, 30);
-		searchPerf_ComboBox.setModel(new DefaultComboBoxModel(new String[] {PERF_NAME,(this.isCommon) ? PERF_COUNTER : OID, INTERVAL, UNIT, SCALE, DATA_FORMAT}));
-		searchPerf_ComboBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					String text = searchPerf_textField.getText();				
-					if(text == null || text.length() == 0 || text.equals("")) {
-						updatePerfListTable(perfListTable);
-					}else {					
-						doTableFilter(text);
-					}
-				}catch(Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		});
-		actualPanel.add(searchPerf_ComboBox);
-		
 		JLabel searchPerf_label = new JLabel("Search");
 		searchPerf_label.setHorizontalAlignment(SwingConstants.LEFT);
 		searchPerf_label.setForeground(Color.BLACK);
 		searchPerf_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
 		searchPerf_label.setBackground(Color.WHITE);
-		searchPerf_label.setBounds(23, 84, 72, 36);
+		searchPerf_label.setBounds(23, 60, 72, 60);
 		actualPanel.add(searchPerf_label);
 		
-		searchPerf_textField = new JTextField();
-		searchPerf_textField.addFocusListener(Util.focusListener);
-		searchPerf_textField.setHorizontalAlignment(SwingConstants.LEFT);
-		searchPerf_textField.setForeground(Color.BLACK);
-		searchPerf_textField.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 16));
-		searchPerf_textField.setColumns(10);
-		searchPerf_textField.setBounds(88, 87, 459, 35);
-		searchPerf_textField.addKeyListener(new KeyAdapter() {			
+		searchPerf_ComboBox_1 = new JComboBox();
+		searchPerf_ComboBox_1.setForeground(Color.BLACK);
+		searchPerf_ComboBox_1.setBackground(Color.WHITE);		
+		searchPerf_ComboBox_1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+		searchPerf_ComboBox_1.setBounds(90, 60, 135, 30);
+		searchPerf_ComboBox_1.setModel(new DefaultComboBoxModel(new String[] {PERF_NAME,(this.isCommon) ? PERF_COUNTER : OID, INTERVAL, UNIT, SCALE, DATA_FORMAT}));
+		searchPerf_ComboBox_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					doTableFilter();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		actualPanel.add(searchPerf_ComboBox_1);
+		
+		searchPerf_ComboBox_2 = new JComboBox();
+		searchPerf_ComboBox_2.setForeground(Color.BLACK);
+		searchPerf_ComboBox_2.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+		searchPerf_ComboBox_2.setBackground(Color.WHITE);
+		searchPerf_ComboBox_2.setBounds(90, 94, 135, 30);
+		searchPerf_ComboBox_2.setModel(new DefaultComboBoxModel(new String[] {PERF_NAME,(this.isCommon) ? PERF_COUNTER : OID, INTERVAL, UNIT, SCALE, DATA_FORMAT}));
+		searchPerf_ComboBox_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					doTableFilter();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		actualPanel.add(searchPerf_ComboBox_2);
+		
+		
+		searchPerf_textField_1 = new JTextField();
+		searchPerf_textField_1.addFocusListener(Util.focusListener);
+		searchPerf_textField_1.setHorizontalAlignment(SwingConstants.LEFT);
+		searchPerf_textField_1.setForeground(Color.BLACK);
+		searchPerf_textField_1.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 16));
+		searchPerf_textField_1.setColumns(10);
+		searchPerf_textField_1.setBounds(230, 60, 317, 30);
+		searchPerf_textField_1.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
-					String text = searchPerf_textField.getText();				
-					if(text == null || text.length() == 0 || text.equals("")) {
-						updatePerfListTable(perfListTable);
-					}else {					
-						doTableFilter(text);
-					}
+					doTableFilter();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -364,18 +374,38 @@ public class XmlViewerFrame extends JFrame {
 			
 			public void keyReleased(KeyEvent e) {
 				try {
-					String text = searchPerf_textField.getText();				
-					if(text == null || text.length() == 0 || text.equals("")) {
-						updatePerfListTable(perfListTable);
-					}else {					
-						doTableFilter(text);
-					}
+					doTableFilter();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 		});
-		actualPanel.add(searchPerf_textField);				
+		actualPanel.add(searchPerf_textField_1);
+		
+		searchPerf_textField_2 = new JTextField();
+		searchPerf_textField_2.setHorizontalAlignment(SwingConstants.LEFT);
+		searchPerf_textField_2.setForeground(Color.BLACK);
+		searchPerf_textField_2.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 16));
+		searchPerf_textField_2.setColumns(10);
+		searchPerf_textField_2.setBounds(230, 94, 317, 30);
+		searchPerf_textField_2.addKeyListener(new KeyAdapter() {			
+			public void keyPressed(KeyEvent e) {
+				try {
+					doTableFilter();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			
+			public void keyReleased(KeyEvent e) {
+				try {
+					doTableFilter();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		actualPanel.add(searchPerf_textField_2);				
 		
 		// Å×ÀÌºí ·Îµå
 		updatePerfListTable(perfListTable);
@@ -550,7 +580,8 @@ public class XmlViewerFrame extends JFrame {
 				}
 		});
 		
-		searchPerf_textField.setText(null);
+		searchPerf_textField_1.setText(null);
+		searchPerf_textField_2.setText(null);
 		mappingLabel.setText(null);
 	}
 	
@@ -588,64 +619,127 @@ public class XmlViewerFrame extends JFrame {
 		setTableStyle(table, PERF_LIST_TABLE);
 	}
 	
-	public void doTableFilter(String text) {
-		text = text.toUpperCase();
-		ArrayList<Perf> filterPerfs = new ArrayList<Perf>();
-
+	public void doTableFilter() {
+		ArrayList<Perf> filteredPerf = new ArrayList<Perf>();
+		String text_1 = searchPerf_textField_1.getText().trim();
+		String text_2 = searchPerf_textField_2.getText().trim();
+		
+		boolean noSearch_1 = (text_1 == null || text_1.length() == 0 || text_1.equals(""));
+		boolean noSearch_2 = (text_2 == null || text_2.length() == 0 || text_2.equals(""));
+		
+		if(noSearch_1 && noSearch_2) {	
+			updatePerfListTable(perfListTable);
+			return;
+		}
+		
+		text_1 = text_1.toUpperCase();
+		text_2 = text_2.toUpperCase();
+		
 		for(int i = 0; i < perfs.size(); i++) {
-			Perf p = perfs.get(i);
-
-			String searchElement = null;
+			Perf perf = perfs.get(i);
 			
-			switch(searchPerf_ComboBox.getSelectedItem().toString()) {
+			String searchElement_1 = null;
+			String searchElement_2 = null;
+			
+			switch(searchPerf_ComboBox_1.getSelectedItem().toString()) {
 				case PERF_NAME :
-					searchElement = p.getDisplayName();
+					searchElement_1 = perf.getDisplayName();
 					break;
 				case PERF_COUNTER :
 				case OID :
-					searchElement = p.getCounter();
+					searchElement_1 = perf.getCounter();
 					break;
 				case INTERVAL :
-					searchElement = String.valueOf(p.getInterval());
+					searchElement_1 = String.valueOf(perf.getInterval());
 					break;
 				case UNIT :
-					searchElement = p.getMeasure();
+					searchElement_1 = perf.getMeasure();
 					break;
 				case SCALE :
-					searchElement = p.getScaleFunction();
+					searchElement_1 = perf.getScaleFunction();
 					break;
 				case DATA_FORMAT :
-					searchElement = String.valueOf(p.getDataFormat());
+					searchElement_1 = String.valueOf(perf.getDataFormat());
 					break;
 				default : 
-					searchElement = p.getDisplayName();
+					searchElement_1 = perf.getDisplayName();
 					break;
+			}// switch - searchElement_1
+			
+			switch(searchPerf_ComboBox_2.getSelectedItem().toString()) {
+				case PERF_NAME :
+					searchElement_2 = perf.getDisplayName();
+					break;
+				case PERF_COUNTER :
+				case OID :
+					searchElement_2 = perf.getCounter();
+					break;
+				case INTERVAL :
+					searchElement_2 = String.valueOf(perf.getInterval());
+					break;
+				case UNIT :
+					searchElement_2 = perf.getMeasure();
+					break;
+				case SCALE :
+					searchElement_2 = perf.getScaleFunction();
+					break;
+				case DATA_FORMAT :
+					searchElement_2 = String.valueOf(perf.getDataFormat());
+					break;
+				default : 
+					searchElement_2 = perf.getDisplayName();
+					break;
+			}// switch - searchElement_2
+			
+			if(searchElement_1 != null) {
+				searchElement_1 = searchElement_1.toUpperCase();
+			}else {
+				searchElement_1 = "";
 			}
 			
-			if(searchElement != null) {
-				searchElement = searchElement.toUpperCase();
+			if(searchElement_2 != null) {
+				searchElement_2 = searchElement_2.toUpperCase();
 			}else {
-				searchElement = "";
+				searchElement_2 = "";
 			}
-
-			if(text.contains(",")) {
-				String[] textToken = text.split(",");
+			
+			boolean isContain_1 = false;
+			boolean isContain_2 = false;
+			
+			if(text_1.contains(",")) {
+				String[] textToken = text_1.split(",");
 				for(int i2 = 0; i2 < textToken.length; i2++) {
-					String token = textToken[i2];
-					if(searchElement.contains(token)) {
-						filterPerfs.add(p);
+					String token = textToken[i2].trim();
+					if(searchElement_1.contains(token)) {
+						isContain_1 = true;
 					}
 				}
-			}else if(searchElement.contains(text)) {
-				filterPerfs.add(p);
-			}
+			}else if(searchElement_1.contains(text_1)) {
+				isContain_1 = true;
+			}// set isContain_1
 			
-		}// end for-loof
+			if(text_2.contains(",")) {
+				String[] textToken = text_2.split(",");
+				for(int i2 = 0; i2 < textToken.length; i2++) {
+					String token = textToken[i2].trim();
+					if(searchElement_2.contains(token)) {
+						isContain_2 = true;
+					}
+				}
+			}else if(searchElement_2.contains(text_2)) {
+				isContain_2 = true;
+			}// set isContain_2
+			
+			if(isContain_1 && isContain_2) {
+				filteredPerf.add(perf);
+			}// AND Operation isContains 1, 2
+			
+		}// for loop
 		
-		Object[][] content = new Object[filterPerfs.size()][];
-
-		for (int i = 0; i < filterPerfs.size(); i++) {
-			Perf perf = filterPerfs.get(i);
+		Object[][] content = new Object[filteredPerf.size()][];
+		
+		for (int i = 0; i < filteredPerf.size(); i++) {
+			Perf perf = filteredPerf.get(i);
 			content[i] = new Object[2];
 			content[i][0] = perf.getIndex();
 			content[i][1] = perf;

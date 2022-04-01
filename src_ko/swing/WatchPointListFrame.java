@@ -35,6 +35,7 @@ import common.perf.FmsPerfItem;
 import common.perf.Perf;
 import common.perf.PerfLabelStatusBean;
 import common.server.Facility;
+import common.server.Server;
 import src_ko.info.ONION_Info;
 import src_ko.util.Util;
 
@@ -59,7 +60,7 @@ public class WatchPointListFrame extends JFrame {
 	private JTable perfLabelTable;
 	
 	public static boolean isExist = false;
-	private JLabel mk119_Logo;
+	private JButton MK119_REST_API_Button;
 	 
 //	private File xmlFile;
 //	private Protocol protocol;
@@ -74,9 +75,11 @@ public class WatchPointListFrame extends JFrame {
 	private JLabel mappingLabel;
 	private JScrollPane perfInfoPanel;
 	private JScrollPane perfLabelInfoPanel;
-	private JComboBox searchPerf_ComboBox;
-	private JTextField searchPerf_textField;	
-	private JLabel protocolNameLabel;
+	private JComboBox searchPerf_ComboBox_1;
+	private JComboBox searchPerf_ComboBox_2;
+	private JTextField searchPerf_textField_1;	
+	private JTextField searchPerf_textField_2;
+	private JLabel FacilityInfoLabel;
 	private JButton dbRefreshButton;
 	
 	/**
@@ -135,13 +138,14 @@ public class WatchPointListFrame extends JFrame {
 		currentFunction.setBounds(0, 0, 240, 55);
 		actualPanel.add(currentFunction);
 		
-		mk119_Logo = new JLabel(new Util().getMK2Resource());
-		mk119_Logo.setIcon(new Util().getMK2Resource());
-		mk119_Logo.setForeground(Color.BLACK);
-		mk119_Logo.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));				
-		mk119_Logo.setBackground(Color.WHITE);
-		mk119_Logo.setBounds(957, 9, 85, 36);				
-		actualPanel.add(mk119_Logo);
+		MK119_REST_API_Button = new JButton(" REST API ¿¬µ¿");
+		MK119_REST_API_Button.setIcon(new Util().getMK2Resource());
+		MK119_REST_API_Button.setForeground(new Color(0, 128, 0));
+		MK119_REST_API_Button.setBackground(Color.WHITE);
+		MK119_REST_API_Button.setFocusPainted(false);
+		MK119_REST_API_Button.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
+		MK119_REST_API_Button.setBounds(802, 9, 240, 36);
+		actualPanel.add(MK119_REST_API_Button);
 		
 		JScrollPane perfList_scrollPane = new JScrollPane();
 		perfList_scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
@@ -264,52 +268,60 @@ public class WatchPointListFrame extends JFrame {
 		setTableStyle(perfLabelTable, PERF_LABEL_TABLE);
 		perfLabelInfoPanel.setViewportView(perfLabelTable);
 		
-		searchPerf_ComboBox = new JComboBox();
-		searchPerf_ComboBox.setForeground(Color.BLACK);
-		searchPerf_ComboBox.setBackground(Color.WHITE);		
-		searchPerf_ComboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
-		searchPerf_ComboBox.setBounds(77, 52, 200, 30);
-		searchPerf_ComboBox.setModel(new DefaultComboBoxModel(new String[] {PERF_NAME,(this.isCommon) ? PERF_COUNTER : OID, INTERVAL, UNIT, SCALE, DATA_FORMAT}));
-		searchPerf_ComboBox.addActionListener(new ActionListener() {
+		JLabel searchPerf_label = new JLabel("°Ë »ö");
+		searchPerf_label.setHorizontalAlignment(SwingConstants.CENTER);
+		searchPerf_label.setForeground(Color.BLACK);
+		searchPerf_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
+		searchPerf_label.setBackground(Color.WHITE);
+		searchPerf_label.setBounds(12, 55, 63, 68);
+		actualPanel.add(searchPerf_label);		
+		
+		searchPerf_ComboBox_1 = new JComboBox();
+		searchPerf_ComboBox_1.setForeground(Color.BLACK);
+		searchPerf_ComboBox_1.setBackground(Color.WHITE);		
+		searchPerf_ComboBox_1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+		searchPerf_ComboBox_1.setBounds(77, 60, 120, 30);
+		searchPerf_ComboBox_1.setModel(new DefaultComboBoxModel(new String[] {PERF_NAME,(this.isCommon) ? PERF_COUNTER : OID, INTERVAL, UNIT, SCALE, DATA_FORMAT}));
+		searchPerf_ComboBox_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String text = searchPerf_textField.getText();				
-					if(text == null || text.length() == 0 || text.equals("")) {
-						updatePerfListTable(perfListTable);
-					}else {					
-						doTableFilter(text);
-					}
+					doTableFilter();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 		});
-		actualPanel.add(searchPerf_ComboBox);
+		actualPanel.add(searchPerf_ComboBox_1);
 		
-		JLabel searchPerf_label = new JLabel("°Ë »ö");
-		searchPerf_label.setHorizontalAlignment(SwingConstants.LEFT);
-		searchPerf_label.setForeground(Color.BLACK);
-		searchPerf_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
-		searchPerf_label.setBackground(Color.WHITE);
-		searchPerf_label.setBounds(23, 84, 55, 36);
-		actualPanel.add(searchPerf_label);
+		searchPerf_ComboBox_2 = new JComboBox();
+		searchPerf_ComboBox_2.setForeground(Color.BLACK);
+		searchPerf_ComboBox_2.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+		searchPerf_ComboBox_2.setBackground(Color.WHITE);
+		searchPerf_ComboBox_2.setBounds(77, 94, 120, 30);
+		searchPerf_ComboBox_2.setModel(new DefaultComboBoxModel(new String[] {PERF_NAME,(this.isCommon) ? PERF_COUNTER : OID, INTERVAL, UNIT, SCALE, DATA_FORMAT}));
+		searchPerf_ComboBox_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					doTableFilter();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		actualPanel.add(searchPerf_ComboBox_2);
 		
-		searchPerf_textField = new JTextField();
-		searchPerf_textField.addFocusListener(Util.focusListener);
-		searchPerf_textField.setHorizontalAlignment(SwingConstants.LEFT);
-		searchPerf_textField.setForeground(Color.BLACK);
-		searchPerf_textField.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 16));
-		searchPerf_textField.setColumns(10);
-		searchPerf_textField.setBounds(77, 87, 470, 35);
-		searchPerf_textField.addKeyListener(new KeyAdapter() {			
+		
+		searchPerf_textField_1 = new JTextField();
+		searchPerf_textField_1.addFocusListener(Util.focusListener);
+		searchPerf_textField_1.setHorizontalAlignment(SwingConstants.LEFT);
+		searchPerf_textField_1.setForeground(Color.BLACK);
+		searchPerf_textField_1.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 16));
+		searchPerf_textField_1.setColumns(10);
+		searchPerf_textField_1.setBounds(201, 60, 346, 30);
+		searchPerf_textField_1.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
-					String text = searchPerf_textField.getText();				
-					if(text == null || text.length() == 0 || text.equals("")) {
-						updatePerfListTable(perfListTable);
-					}else {					
-						doTableFilter(text);
-					}
+					doTableFilter();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -317,29 +329,49 @@ public class WatchPointListFrame extends JFrame {
 			
 			public void keyReleased(KeyEvent e) {
 				try {
-					String text = searchPerf_textField.getText();				
-					if(text == null || text.length() == 0 || text.equals("")) {
-						updatePerfListTable(perfListTable);
-					}else {					
-						doTableFilter(text);
-					}
+					doTableFilter();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 		});
-		actualPanel.add(searchPerf_textField);				
+		actualPanel.add(searchPerf_textField_1);
+		
+		searchPerf_textField_2 = new JTextField();
+		searchPerf_textField_2.setHorizontalAlignment(SwingConstants.LEFT);
+		searchPerf_textField_2.setForeground(Color.BLACK);
+		searchPerf_textField_2.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 16));
+		searchPerf_textField_2.setColumns(10);
+		searchPerf_textField_2.setBounds(201, 94, 346, 30);
+		searchPerf_textField_2.addKeyListener(new KeyAdapter() {			
+			public void keyPressed(KeyEvent e) {
+				try {
+					doTableFilter();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			
+			public void keyReleased(KeyEvent e) {
+				try {
+					doTableFilter();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		actualPanel.add(searchPerf_textField_2);
 		
 		// Å×ÀÌºí ·Îµå
 		updatePerfListTable(perfListTable);
 		
-		protocolNameLabel = new JLabel(String.format("[ %s ] %s", fac.getTypeString(), fac.getName()));
-		protocolNameLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		protocolNameLabel.setForeground(Color.BLUE);
-		protocolNameLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
-		protocolNameLabel.setBackground(Color.WHITE);
-		protocolNameLabel.setBounds(252, 11, 693, 35);
-		actualPanel.add(protocolNameLabel);
+		FacilityInfoLabel = new JLabel(String.format("[ %s ] %s", fac.getTypeString(), fac.getName()));
+		FacilityInfoLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		FacilityInfoLabel.setForeground(Color.BLUE);
+		FacilityInfoLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
+		FacilityInfoLabel.setBackground(Color.WHITE);
+		FacilityInfoLabel.setBounds(252, 8, 693, 35);
+		actualPanel.add(FacilityInfoLabel);
 		
 		dbRefreshButton = new JButton("Database ÃÖ½ÅÈ­");
 		dbRefreshButton.setForeground(Color.BLACK);
@@ -418,7 +450,7 @@ public class WatchPointListFrame extends JFrame {
 				}
 		});
 		
-		searchPerf_textField.setText(null);
+		searchPerf_textField_1.setText(null);
 		mappingLabel.setText(null);
 	}
 	
@@ -456,80 +488,6 @@ public class WatchPointListFrame extends JFrame {
 		setTableStyle(table, PERF_LIST_TABLE);
 	}
 	
-	public void doTableFilter(String text) {
-		text = text.toUpperCase();
-		ArrayList<Perf> filterPerfs = new ArrayList<Perf>();
-
-		for(int i = 0; i < perfs.size(); i++) {
-			Perf p = perfs.get(i);
-
-			String searchElement = null;
-			
-			switch(searchPerf_ComboBox.getSelectedItem().toString()) {
-				case PERF_NAME :
-					searchElement = p.getDisplayName();
-					break;
-				case PERF_COUNTER :
-				case OID :
-					searchElement = p.getCounter();
-					break;
-				case INTERVAL :
-					searchElement = String.valueOf(p.getInterval());
-					break;
-				case UNIT :
-					searchElement = p.getMeasure();
-					break;
-				case SCALE :
-					searchElement = p.getScaleFunction();
-					break;
-				case DATA_FORMAT :
-					searchElement = String.valueOf(p.getDataFormat());
-					break;
-				default : 
-					searchElement = p.getDisplayName();
-					break;
-			}
-			
-			if(searchElement != null) {
-				searchElement = searchElement.toUpperCase();
-			}else {
-				searchElement = "";
-			}
-
-			if(text.contains(",")) {
-				String[] textToken = text.split(",");
-				for(int i2 = 0; i2 < textToken.length; i2++) {
-					String token = textToken[i2];
-					if(searchElement.contains(token)) {
-						filterPerfs.add(p);
-					}
-				}
-			}else if(searchElement.contains(text)) {
-				filterPerfs.add(p);
-			}
-			
-		}// end for-loop
-		
-		Object[][] content = new Object[filterPerfs.size()][];
-
-		for (int i = 0; i < filterPerfs.size(); i++) {
-			Perf perf = filterPerfs.get(i);
-			content[i] = new Object[2];
-			content[i][0] = perf.getIndex();
-			content[i][1] = perf;
-		}
-
-		perfListTable.setModel(new DefaultTableModel(
-				content,
-				new String[] { "¼ø ¼­", "¼º ´É"}) {
-				// Å×ÀÌºí ¼¿ ³»¿ë ¼öÁ¤ ±ÝÁö
-				public boolean isCellEditable(int i, int c) {
-					return false;
-				}
-		});
-
-		setTableStyle(perfListTable, PERF_LIST_TABLE);
-	}
 	
 	//******************** ¼º´É Á¤º¸ Å×ÀÌºí °ü·Ã *********************************************************************
 	public void updatePerfInfoTable(JTable table, Perf perf) {		
@@ -700,4 +658,146 @@ public class WatchPointListFrame extends JFrame {
 //				tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
 			}
 		}
+		
+		
+		// Ä¿½ºÅÒ µÎÇÊÅÍ
+		public void doTableFilter() {
+			ArrayList<FmsPerfItem> filteredPerf = new ArrayList<FmsPerfItem>();
+			String text_1 = searchPerf_textField_1.getText().trim();
+			String text_2 = searchPerf_textField_2.getText().trim();
+			
+			boolean noSearch_1 = (text_1 == null || text_1.length() == 0 || text_1.equals(""));
+			boolean noSearch_2 = (text_2 == null || text_2.length() == 0 || text_2.equals(""));
+			
+			if(noSearch_1 && noSearch_2) {	
+				updatePerfListTable(perfListTable);
+				return;
+			}
+			
+			text_1 = text_1.toUpperCase();
+			text_2 = text_2.toUpperCase();
+			
+			for(int i = 0; i < perfs.size(); i++) {
+				FmsPerfItem perf = perfs.get(i);
+				
+				String searchElement_1 = null;
+				String searchElement_2 = null;
+				
+				switch(searchPerf_ComboBox_1.getSelectedItem().toString()) {
+					case PERF_NAME :
+						searchElement_1 = perf.getDisplayName();
+						break;
+					case PERF_COUNTER :
+					case OID :
+						searchElement_1 = perf.getCounter();
+						break;
+					case INTERVAL :
+						searchElement_1 = String.valueOf(perf.getInterval());
+						break;
+					case UNIT :
+						searchElement_1 = perf.getMeasure();
+						break;
+					case SCALE :
+						searchElement_1 = perf.getScaleFunction();
+						break;
+					case DATA_FORMAT :
+						searchElement_1 = String.valueOf(perf.getDataFormat());
+						break;
+					default : 
+						searchElement_1 = perf.getDisplayName();
+						break;
+				}// switch - searchElement_1
+				
+				switch(searchPerf_ComboBox_2.getSelectedItem().toString()) {
+					case PERF_NAME :
+						searchElement_2 = perf.getDisplayName();
+						break;
+					case PERF_COUNTER :
+					case OID :
+						searchElement_2 = perf.getCounter();
+						break;
+					case INTERVAL :
+						searchElement_2 = String.valueOf(perf.getInterval());
+						break;
+					case UNIT :
+						searchElement_2 = perf.getMeasure();
+						break;
+					case SCALE :
+						searchElement_2 = perf.getScaleFunction();
+						break;
+					case DATA_FORMAT :
+						searchElement_2 = String.valueOf(perf.getDataFormat());
+						break;
+					default : 
+						searchElement_2 = perf.getDisplayName();
+						break;
+				}// switch - searchElement_2
+				
+				if(searchElement_1 != null) {
+					searchElement_1 = searchElement_1.toUpperCase();
+				}else {
+					searchElement_1 = "";
+				}
+				
+				if(searchElement_2 != null) {
+					searchElement_2 = searchElement_2.toUpperCase();
+				}else {
+					searchElement_2 = "";
+				}
+				
+				boolean isContain_1 = false;
+				boolean isContain_2 = false;
+				
+				if(text_1.contains(",")) {
+					String[] textToken = text_1.split(",");
+					for(int i2 = 0; i2 < textToken.length; i2++) {
+						String token = textToken[i2].trim();
+						if(searchElement_1.contains(token)) {
+							isContain_1 = true;
+						}
+					}
+				}else if(searchElement_1.contains(text_1)) {
+					isContain_1 = true;
+				}// set isContain_1
+				
+				if(text_2.contains(",")) {
+					String[] textToken = text_2.split(",");
+					for(int i2 = 0; i2 < textToken.length; i2++) {
+						String token = textToken[i2].trim();
+						if(searchElement_2.contains(token)) {
+							isContain_2 = true;
+						}
+					}
+				}else if(searchElement_2.contains(text_2)) {
+					isContain_2 = true;
+				}// set isContain_2
+				
+				if(isContain_1 && isContain_2) {
+					filteredPerf.add(perf);
+				}// AND Operation isContains 1, 2
+				
+			}// for loop
+			
+			Object[][] content = new Object[filteredPerf.size()][];
+			
+			for (int i = 0; i < filteredPerf.size(); i++) {
+				FmsPerfItem perf = filteredPerf.get(i);
+				content[i] = new Object[2];
+				content[i][0] = perf.getIndex();
+				content[i][1] = perf;
+			}
+
+			perfListTable.setModel(new DefaultTableModel(
+					content,
+					new String[] { "¼ø ¼­", "¼º ´É"}) {
+					// Å×ÀÌºí ¼¿ ³»¿ë ¼öÁ¤ ±ÝÁö
+					public boolean isCellEditable(int i, int c) {
+						return false;
+					}
+			});
+
+			setTableStyle(perfListTable, PERF_LIST_TABLE);
+		}
+		
+		
 }
