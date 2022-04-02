@@ -824,6 +824,7 @@ public class ServerList_Panel extends JPanel {
 				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 이름"), fac.getRcu().getName(), separator, separator));
 				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU IP 주소"), fac.getRcu().getIp(), separator, separator));
 				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 종류"), fac.getRcu().getRcuTypeDetail(), separator, separator));
+				msg.append(String.format("%s : %d개%s%s\n", Util.colorGreen("연결된 장비 개수"), fac.getRcu().getFacList().size(), separator, separator));
 			}
 			
 			if(fac.isConnRCU() && fac.getRcu() != null) {
