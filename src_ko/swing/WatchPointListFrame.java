@@ -409,14 +409,30 @@ public class WatchPointListFrame extends JFrame {
 		});
 		actualPanel.add(dbRefreshButton);
 		
-		
 		// 테이블 로드
 		updatePerfListTable(perfListTable);
+		
+		JButton formReset_Button = new JButton("Form 초기화");
+		formReset_Button.setForeground(Color.BLACK);
+		formReset_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		formReset_Button.setFocusPainted(false);
+		formReset_Button.setContentAreaFilled(false);
+		formReset_Button.setBorder(UIManager.getBorder("Button.border"));
+		formReset_Button.setBackground(Color.WHITE);
+		formReset_Button.setBounds(560, 50, 180, 35);
+		formReset_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				searchPerf_textField_1.setText(null);
+				searchPerf_textField_2.setText(null);
+				searchPerf_ComboBox_1.setSelectedIndex(0);
+				searchPerf_ComboBox_2.setSelectedIndex(3);
+			}
+		});
+		actualPanel.add(formReset_Button);
 		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
-		
 	}
 	
 	
@@ -836,6 +852,4 @@ public class WatchPointListFrame extends JFrame {
 
 			setTableStyle(perfListTable, PERF_LIST_TABLE);
 		}
-		
-		
 }

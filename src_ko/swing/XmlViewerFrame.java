@@ -410,8 +410,6 @@ public class XmlViewerFrame extends JFrame {
 		});
 		actualPanel.add(searchPerf_textField_2);			
 		
-		// 테이블 로드
-		updatePerfListTable(perfListTable);
 		
 		protocolNameLabel = new JLabel(protocolName);
 		protocolNameLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -526,6 +524,9 @@ public class XmlViewerFrame extends JFrame {
 		});
 		actualPanel.add(resetFormButton);
 				
+		// 테이블 로드
+		updatePerfListTable(perfListTable);
+		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -582,6 +583,7 @@ public class XmlViewerFrame extends JFrame {
 					return columnEditables[column];
 				}
 		});
+		setTableStyle(perfInfoTable, PERF_INFO_TABLE);
 		
 		perfLabelTable.setModel(new DefaultTableModel(
 				new Object[][] {
@@ -602,6 +604,7 @@ public class XmlViewerFrame extends JFrame {
 					return columnEditables[column];
 				}
 		});
+		setTableStyle(perfLabelTable, PERF_LABEL_TABLE);
 		
 		searchPerf_textField_1.setText(null);
 		searchPerf_textField_2.setText(null);
