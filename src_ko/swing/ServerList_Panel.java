@@ -116,7 +116,7 @@ public class ServerList_Panel extends JPanel {
 		sqlServerInfo_label.setForeground(Color.BLUE);
 		sqlServerInfo_label.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		sqlServerInfo_label.setBackground(Color.WHITE);
-		sqlServerInfo_label.setBounds(10, 0, 580, 55);
+		sqlServerInfo_label.setBounds(10, 0, 580, 48);
 		infoPanel.add(sqlServerInfo_label);
 		
 		rcuInfo_Button = new JButton("RCU 정보");
@@ -836,7 +836,7 @@ public class ServerList_Panel extends JPanel {
 						
 					case 1: // 연결된 RCU 정보 보기
 						// RCU 정보 표시
-						
+						new RcuInfoFrame(fac.getRcu());
 						break;
 						
 					default :
@@ -867,7 +867,7 @@ public class ServerList_Panel extends JPanel {
 			menu = Util.showOption(msg.toString(), new String[] { "연결된 장비 목록 보기", "취 소"}, JOptionPane.INFORMATION_MESSAGE, false);		
 			switch (menu) {				
 				case 0: // 연결된 장비 목록 보기
-					
+					new RcuInfoFrame(rcu);
 					return;									
 				default :
 					return;
