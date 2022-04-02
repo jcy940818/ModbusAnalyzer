@@ -40,6 +40,8 @@ import src_ko.util.Util;
 public class WatchPointListFrame extends JFrame {
 			
 	private static final String PERF_NAME = "성능명";
+	private static final String PERF_INDEX = "성능 인덱스";
+	private static final String PERF_TYPE = "성능 종류";
 	private static final String PERF_COUNTER =  "성능 카운터";
 	private static final String OID = "OID";
 	private static final String INTERVAL = "수집 주기";
@@ -278,7 +280,16 @@ public class WatchPointListFrame extends JFrame {
 		searchPerf_ComboBox_1.setBackground(Color.WHITE);		
 		searchPerf_ComboBox_1.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		searchPerf_ComboBox_1.setBounds(77, 60, 120, 30);
-		searchPerf_ComboBox_1.setModel(new DefaultComboBoxModel(new String[] {PERF_NAME,(this.isCommon) ? PERF_COUNTER : OID, INTERVAL, UNIT, SCALE, DATA_FORMAT}));
+		searchPerf_ComboBox_1.setModel(new DefaultComboBoxModel(new String[] {
+				PERF_NAME,
+				PERF_INDEX,
+				PERF_TYPE,
+				(this.isCommon) ? PERF_COUNTER : OID, 
+				INTERVAL, 
+				UNIT, 
+				SCALE, 
+				DATA_FORMAT
+		}));
 		searchPerf_ComboBox_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -296,7 +307,16 @@ public class WatchPointListFrame extends JFrame {
 		searchPerf_ComboBox_2.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		searchPerf_ComboBox_2.setBackground(Color.WHITE);
 		searchPerf_ComboBox_2.setBounds(77, 94, 120, 30);
-		searchPerf_ComboBox_2.setModel(new DefaultComboBoxModel(new String[] {PERF_NAME,(this.isCommon) ? PERF_COUNTER : OID, INTERVAL, UNIT, SCALE, DATA_FORMAT}));
+		searchPerf_ComboBox_2.setModel(new DefaultComboBoxModel(new String[] {
+				PERF_NAME,
+				PERF_INDEX,
+				PERF_TYPE,
+				(this.isCommon) ? PERF_COUNTER : OID, 
+				INTERVAL, 
+				UNIT, 
+				SCALE, 
+				DATA_FORMAT
+		}));
 		searchPerf_ComboBox_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -306,7 +326,7 @@ public class WatchPointListFrame extends JFrame {
 				}
 			}
 		});
-		searchPerf_ComboBox_2.setSelectedIndex(1);
+		searchPerf_ComboBox_2.setSelectedIndex(3);
 		actualPanel.add(searchPerf_ComboBox_2);
 		
 		
@@ -503,51 +523,52 @@ public class WatchPointListFrame extends JFrame {
 		content[0][1] = perf.getDisplayName();
 		
 		content[1] = new Object[2];
-		content[1][0] = "성능 종류";
-		content[1][1] = perf.getPerfTypeString();
+		content[1][0] = "성능 인덱스";
+		content[1][1] = perf.getIndex();
 		
 		content[2] = new Object[2];
-		content[2][0] = (this.isCommon) ? "성능 카운터" : "OID";
-		content[2][1] = perf.getCounter();
+		content[2][0] = "성능 종류";
+		content[2][1] = perf.getPerfTypeString();
 		
 		content[3] = new Object[2];
-		content[3][0] = "수집 주기";
-		content[3][1] = perf.getInterval();
+		content[3][0] = (this.isCommon) ? "성능 카운터" : "OID";
+		content[3][1] = perf.getCounter();
 		
 		content[4] = new Object[2];
-		content[4][0] = "단 위";
-		content[4][1] = perf.getMeasure();
+		content[4][0] = "수집 주기";
+		content[4][1] = perf.getInterval();
 		
 		content[5] = new Object[2];
-		content[5][0] = "보정식";
-		content[5][1] = perf.getScaleFunction();
+		content[5][0] = "단 위";
+		content[5][1] = perf.getMeasure();
 		
 		content[6] = new Object[2];
-		content[6][0] = "데이터 형식";
-		content[6][1] = perf.getDataFormat();
+		content[6][0] = "보정식";
+		content[6][1] = perf.getScaleFunction();
 		
 		content[7] = new Object[2];
-		content[7][0] = "데이터 형식 내용";
-		String type = null;
+		content[7][0] = "데이터 형식";
+
+		String dataFormat = String.valueOf(perf.getDataFormat() + " : ");
 		
 		int format = perf.getDataFormat();
 		
 		if(format == 1) {
-			type = "이진 상태 ( DI )";
+			dataFormat += "이진 상태 ( DI )";
 			mappingLabel.setText("이진 상태 매핑 정보");
 			perfLabelTable.setVisible(true);
 			updatePerfLabelMappingTable(perfLabelTable, perf);
 		}else if(format == 2) {
-			type = "다중 상태 성능";
+			dataFormat += "다중 상태 성능";
 			mappingLabel.setText("다중 상태 매핑 정보");
 			perfLabelTable.setVisible(true);
 			updatePerfLabelMappingTable(perfLabelTable, perf);
 		}else {
-			type = "성능 데이터 ( Analog )";
+			dataFormat += "성능 데이터 ( Analog )";
 			mappingLabel.setText("상태 매핑 정보 없음");
 			perfLabelTable.setVisible(false);
 		}
-		content[7][1] = type;
+		content[7][1] = dataFormat;
 
 		table.setModel(new DefaultTableModel(
 				content,
@@ -692,6 +713,12 @@ public class WatchPointListFrame extends JFrame {
 					case PERF_NAME :
 						searchElement_1 = perf.getDisplayName();
 						break;
+					case PERF_INDEX :
+						searchElement_1 = String.valueOf(perf.getIndex());
+						break;
+					case PERF_TYPE :
+						searchElement_1 = perf.getPerfTypeString();
+						break;
 					case PERF_COUNTER :
 					case OID :
 						searchElement_1 = perf.getCounter();
@@ -716,6 +743,12 @@ public class WatchPointListFrame extends JFrame {
 				switch(searchPerf_ComboBox_2.getSelectedItem().toString()) {
 					case PERF_NAME :
 						searchElement_2 = perf.getDisplayName();
+						break;
+					case PERF_INDEX :
+						searchElement_2 = String.valueOf(perf.getIndex());
+						break;
+					case PERF_TYPE :
+						searchElement_2 = perf.getPerfTypeString();
 						break;
 					case PERF_COUNTER :
 					case OID :
