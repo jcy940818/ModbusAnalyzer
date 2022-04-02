@@ -183,17 +183,17 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_ComboBox1.setForeground(Color.BLACK);
 		searchFacility_ComboBox1.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		searchFacility_ComboBox1.setModel(new DefaultComboBoxModel(new String[] {
-				IP, // IP 주소
 				GROUP_INFO, // 그룹 정보
-				SERVER_TYPE, // 시설물 종류
-				PROTOCOL_NUMBER, // 프로토콜 번호
-				SERVER_INDEX, // 장비 인덱스
 				SERVER_NAME, // 장비명
+				SERVER_INDEX, // 장비 인덱스
+				IP, // IP 주소
+				SERVER_TYPE, // 시설물 종류
 				CONN_METHOD, // 연결 방식
+				PROTOCOL_NUMBER, // 프로토콜 번호								
 				SERVER_STATE, // 장비 상태
 				}));
 		searchFacility_ComboBox1.setBounds(90, 145, 150, 30);
-		searchFacility_ComboBox1.setSelectedIndex(1);
+		searchFacility_ComboBox1.setSelectedIndex(0);
 		searchFacility_ComboBox1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -210,17 +210,17 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_ComboBox2.setForeground(Color.BLACK);
 		searchFacility_ComboBox2.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		searchFacility_ComboBox2.setModel(new DefaultComboBoxModel(new String[] {
-				IP, // IP 주소
 				GROUP_INFO, // 그룹 정보
-				SERVER_TYPE, // 시설물 종류
-				PROTOCOL_NUMBER, // 프로토콜 번호
-				SERVER_INDEX, // 장비 인덱스
 				SERVER_NAME, // 장비명
+				SERVER_INDEX, // 장비 인덱스
+				IP, // IP 주소
+				SERVER_TYPE, // 시설물 종류
 				CONN_METHOD, // 연결 방식
+				PROTOCOL_NUMBER, // 프로토콜 번호								
 				SERVER_STATE, // 장비 상태
 				}));
 		searchFacility_ComboBox2.setBounds(90, 181, 150, 30);
-		searchFacility_ComboBox2.setSelectedIndex(5);
+		searchFacility_ComboBox2.setSelectedIndex(1);
 		searchFacility_ComboBox2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -317,12 +317,12 @@ public class ServerList_Panel extends JPanel {
 				if (e.getButton() == 1 && e.getClickCount() == 2) {
 					// 왼쪽 버튼 더블 클릭
 					selectServer();
-					showFunction(selectedServer);	
+					showFacilityMenu(selectedServer);	
 				}
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
 					selectServer();
-					showFunction(selectedServer);
+					showFacilityMenu(selectedServer);
 				}
 			}
 		});
@@ -374,7 +374,7 @@ public class ServerList_Panel extends JPanel {
 								
 				rcuInfo_Button.setEnabled(true);
 				rcuInfo_Button.setBackground(new Color(135, 206, 250));
-				rcuInfo_Button.setText("연결된 장비 리스트");
+				rcuInfo_Button.setText("연결된 장비 목록");
 				
 				updateRCUInfo((RCU)selectedServer); // <- RCU 정보 테이블 업데이트
 			}
@@ -647,30 +647,37 @@ public class ServerList_Panel extends JPanel {
 		
 		Object[][] content = new Object[7][];
 		
+		// 장비명
 		content[0] = new Object[2];
-		content[0][0] = IP;
-		content[0][1] = fac.isConnRCU() ? "( RCU IP ) " + fac.getIp() : fac.getIp();
+		content[0][0] = SERVER_NAME;
+		content[0][1] = fac;
 		
+		// 장비 인덱스
 		content[1] = new Object[2];
-		content[1][0] = FACILITY_TYPE;
-		content[1][1] = fac.getTypeString();
+		content[1][0] = SERVER_INDEX;
+		content[1][1] = fac.getIndex();
 		
+		// IP 주소
 		content[2] = new Object[2];
-		content[2][0] = PROTOCOL_NUMBER;
-		content[2][1] = fac.isCommon() ? fac.getCommProtocol() : fac.getSnmpProtocol();
+		content[2][0] = IP;
+		content[2][1] = fac.isConnRCU() ? "( RCU IP ) " + fac.getIp() : fac.getIp();
 		
+		// 시설물 종류
 		content[3] = new Object[2];
-		content[3][0] = SERVER_INDEX;
-		content[3][1] = fac.getIndex();
+		content[3][0] = FACILITY_TYPE;
+		content[3][1] = fac.getTypeString();
 		
+		// 연결 방식
 		content[4] = new Object[2];
-		content[4][0] = SERVER_NAME;
-		content[4][1] = fac;
+		content[4][0] = CONN_METHOD;
+		content[4][1] = fac.getConnMethod();
 		
+		// 프로토콜 번호
 		content[5] = new Object[2];
-		content[5][0] = CONN_METHOD;
-		content[5][1] = fac.getConnMethod();
+		content[5][0] = PROTOCOL_NUMBER;
+		content[5][1] = fac.isCommon() ? fac.getCommProtocol() : fac.getSnmpProtocol();		
 		
+		// 장비 상태
 		content[6] = new Object[2];
 		content[6][0] = SERVER_STATE;
 		content[6][1] = fac.getState();
@@ -716,26 +723,32 @@ public class ServerList_Panel extends JPanel {
 		
 		Object[][] content = new Object[6][];
 		
+		// RCU 이름
 		content[0] = new Object[2];
-		content[0][0] = IP;
-		content[0][1] = rcu.getIp();
+		content[0][0] = "RCU 이름";
+		content[0][1] = rcu;
 		
+		// RCU 인덱스
 		content[1] = new Object[2];
-		content[1][0] = RCU_TYPE;
-		content[1][1] = rcu.getRcuTypeDetail();
+		content[1][0] = "RCU 인덱스";
+		content[1][1] = rcu.getIndex();
 		
+		// IP 주소
 		content[2] = new Object[2];
-		content[2][0] = "RCU 인덱스";
-		content[2][1] = rcu.getIndex();
+		content[2][0] = IP;
+		content[2][1] = rcu.getIp();
 		
+		// RCU 종류
 		content[3] = new Object[2];
-		content[3][0] = "RCU 이름";
-		content[3][1] = rcu;
+		content[3][0] = RCU_TYPE;
+		content[3][1] = rcu.getRcuTypeDetail();
 		
+		// 연결된 장비 개수
 		content[4] = new Object[2];
 		content[4][0] = "연결된 장비 개수";
 		content[4][1] = rcu.getFacList().size();
 		
+		// RCU 상태
 		content[5] = new Object[2];
 		content[5][0] = "RCU 상태";
 		content[5][1] = rcu.getState();
@@ -788,41 +801,76 @@ public class ServerList_Panel extends JPanel {
 		tcmSchedule.getColumn(1).setCellRenderer(findCommerRenderer); // 내 용
 	}
 		
-	public static void showFunction(Server server) {
-//		if(fac == null) return;
-//		
-//		String separator = Util.separator + Util.separator; 
-//		StringBuilder msg = new StringBuilder();
-//		msg.append("<font color='Green'>Protocol Information</font>\n");		
-//		
-//		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("시설물 종류"), p.getFacType(), separator, separator));
-//		msg.append(String.format("%s : %d%s%s\n\n", Util.colorBlue("프로토콜 번호"), p.getNumber(), separator, separator));
-//		
-//		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("프로토콜 이름"),pName , separator, separator));
-//		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("성능 XML"), p.getXml(), separator, separator));
-//		
-//		int menu = Util.showOption(msg.toString(), new String[] { "XML Viewer 열기", "XML 파일 열기"}, JOptionPane.QUESTION_MESSAGE);
-//
-//		switch (menu) {
-//			case -1: // 사용자가 메뉴를 선택하지 않고 대화상자를 나갔을 때				
-//				return;
-//				
-//			case 0: // XML Viewer 열기
-//				// 에디터 열기 작업
-//				showXmlViewer();
-//				break;
-//				
-//			case 1: // XML 파일 바로 열기
-//				
-//				break;
-//		}
-	}
-	
-	public static void showPerfViewer() {
-		try {			
+	public static void showFacilityMenu(Server server) {
+		if(server == null) return;
+
+		int menu = -1;
+		String separator = Util.separator + Util.separator;
+		
+		if(server.isFacility()) {
+			Facility fac = (Facility)server;
 			
-		}catch(Exception e) {			
-			e.printStackTrace();
+			// 시설물
+			StringBuilder msg = new StringBuilder();
+						
+			msg.append(String.format("%s%s%s\n", Util.colorBlue("──────────[ 시설물 정보 ]──────────"), separator, separator));
+			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("장비명"), fac.getName(), separator, separator));			
+			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("IP 주소"), fac.isConnRCU() ? "( RCU IP ) " + fac.getIp() : fac.getIp(), separator, separator));
+			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("시설물 종류"), fac.getTypeString(), separator, separator));
+			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 방식"), fac.getConnMethod(), separator, separator));
+			
+			if(fac.isConnRCU() && fac.getRcu() != null) {
+				msg.append(String.format("\n%s%s%s\n", Util.colorGreen("──────────[ RCU 정보 ]──────────"), separator, separator));
+				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 이름"), fac.getRcu().getName(), separator, separator));
+				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU IP 주소"), fac.getRcu().getIp(), separator, separator));
+				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 종류"), fac.getRcu().getRcuTypeDetail(), separator, separator));
+			}
+			
+			if(fac.isConnRCU() && fac.getRcu() != null) {
+				menu = Util.showOption(msg.toString(), new String[] { "성능 정보 보기", "RCU 정보 보기", "취 소"}, JOptionPane.INFORMATION_MESSAGE, false);
+				switch (menu) {				
+					case 0: // 성능 정보 보기
+						new WatchPointListFrame(fac);
+						return;
+						
+					case 1: // 연결된 RCU 정보 보기
+						// RCU 정보 표시
+						
+						break;
+						
+					default :
+						return;
+				}
+			}else {
+				menu = Util.showOption(msg.toString(), new String[] { "성능 정보 보기", "취 소"}, JOptionPane.INFORMATION_MESSAGE, false);
+				switch (menu) {					
+					case 0: // 성능 정보 보기
+						new WatchPointListFrame(fac);
+						return;					
+					default :
+						return;
+				}
+			}
+			
+		}else {
+			// RCU
+			RCU rcu = (RCU)server;
+			
+			StringBuilder msg = new StringBuilder();			
+			msg.append(String.format("%s%s%s\n", Util.colorGreen("──────────[ RCU 정보 ]──────────"), separator, separator));
+			msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 이름"), rcu.getName(), separator, separator));
+			msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU IP 주소"), rcu.getIp(), separator, separator));
+			msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 종류"), rcu.getRcuTypeDetail(), separator, separator));
+			msg.append(String.format("%s : %d개%s%s\n", Util.colorGreen("연결된 장비 개수"), rcu.getFacList().size(), separator, separator));
+			
+			menu = Util.showOption(msg.toString(), new String[] { "연결된 장비 목록 보기", "취 소"}, JOptionPane.INFORMATION_MESSAGE, false);		
+			switch (menu) {				
+				case 0: // 연결된 장비 목록 보기
+					
+					return;									
+				default :
+					return;
+			}
 		}
 	}
 	
@@ -837,8 +885,8 @@ public class ServerList_Panel extends JPanel {
 		if(allComponentReset) {
 			if(searchFacility_textField1 != null) searchFacility_textField1.setText(null);
 			if(searchFacility_textField2 != null) searchFacility_textField2.setText(null);
-			if(searchFacility_ComboBox1 != null) searchFacility_ComboBox1.setSelectedIndex(1);
-			if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedIndex(5);	
+			if(searchFacility_ComboBox1 != null) searchFacility_ComboBox1.setSelectedIndex(0);
+			if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedIndex(1);	
 		}
 		
 		doTableFilter();

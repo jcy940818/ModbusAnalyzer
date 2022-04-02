@@ -111,7 +111,7 @@ public class WatchPointListFrame extends JFrame {
 		this.perfs = Perf.getFaciltiyPerfList(ONION_Info.getMk119Connection(), fac);
 		
 		WatchPointListFrame.isExist = true;
-		setTitle(String.format("Watch Point List : [ %s ] %s", fac.getTypeString(), fac.getName()));
+		setTitle(String.format("Watch Point List   [ 시설물 종류 : %s ]  [ 장비 인덱스 : %d ]  [ 장비명 : %s ]", fac.getTypeString(),fac.getIndex() ,fac.getName()));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
@@ -387,7 +387,7 @@ public class WatchPointListFrame extends JFrame {
 		FacilityInfoLabel.setForeground(Color.BLUE);
 		FacilityInfoLabel.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		FacilityInfoLabel.setBackground(Color.WHITE);
-		FacilityInfoLabel.setBounds(252, 8, 693, 35);
+		FacilityInfoLabel.setBounds(252, 10, 693, 35);
 		actualPanel.add(FacilityInfoLabel);
 		
 		dbRefreshButton = new JButton("Database 최신화");

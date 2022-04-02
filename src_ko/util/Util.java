@@ -225,6 +225,17 @@ public class Util {
 		return JOptionPane.showOptionDialog(null, label, "ModbusAnalyzer", JOptionPane.DEFAULT_OPTION, msgType, null, options, null);		
 	}
 	
+	public static int showOption(String msg, String[] options, int msgType, boolean useLineSeparator) {
+		if(useLineSeparator) {
+			msg = msg.replaceFirst("\n", "<br><br>").replaceAll("\n", "<br>");
+		}else {
+			msg = msg.replaceAll("\n", "<br>");
+		}
+		JLabel label = new JLabel("<html>" + msg + "<br></html>");		
+		label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));						
+		return JOptionPane.showOptionDialog(null, label, "ModbusAnalyzer", JOptionPane.DEFAULT_OPTION, msgType, null, options, null);		
+	}
+	
 	public static Object showInput(String msg, int msgType) {
 		msg = msg.replaceFirst("\n", "<br><br>").replaceAll("\n", "<br>");
 		JLabel label = new JLabel("<html>" + msg + "<br></html>");		
