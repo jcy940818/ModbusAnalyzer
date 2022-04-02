@@ -689,8 +689,8 @@ public class WatchPointListFrame extends JFrame {
 		//******************** 테이블 필터링 관련 *********************************************************************
 		public void doTableFilter() {
 			ArrayList<FmsPerfItem> filteredPerf = new ArrayList<FmsPerfItem>();
-			String text_1 = searchPerf_textField_1.getText().trim();
-			String text_2 = searchPerf_textField_2.getText().trim();
+			String text_1 = searchPerf_textField_1.getText();
+			String text_2 = searchPerf_textField_2.getText();
 			
 			boolean noSearch_1 = (text_1 == null || text_1.length() == 0 || text_1.equals(""));
 			boolean noSearch_2 = (text_2 == null || text_2.length() == 0 || text_2.equals(""));
@@ -700,8 +700,8 @@ public class WatchPointListFrame extends JFrame {
 				return;
 			}
 			
-			text_1 = text_1.toUpperCase();
-			text_2 = text_2.toUpperCase();
+			text_1 = text_1.toUpperCase().trim();
+			text_2 = text_2.toUpperCase().trim();
 			
 			for(int i = 0; i < perfs.size(); i++) {
 				FmsPerfItem perf = perfs.get(i);
