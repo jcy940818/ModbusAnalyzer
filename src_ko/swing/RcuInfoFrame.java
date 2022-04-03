@@ -49,6 +49,7 @@ public class RcuInfoFrame extends JFrame {;
 	public static final String RCU_TYPE = "RCU 종류";
 	public static final String CONN_METHOD = "연결 방식";	
 	public static final String PROTOCOL_NUMBER = "프로토콜 번호";
+	public static final String SERVER_STATE = "장비 상태";
 	
 	private String searchElement = SERVER_NAME;
 	
@@ -158,12 +159,13 @@ public class RcuInfoFrame extends JFrame {;
 		searchFacility_ComboBox.setForeground(Color.BLACK);
 		searchFacility_ComboBox.setBackground(Color.WHITE);		
 		searchFacility_ComboBox.setFont(new Font("맑은 고딕", Font.BOLD, 16));
-		searchFacility_ComboBox.setBounds(81, 86, 120, 35);
+		searchFacility_ComboBox.setBounds(81, 86, 142, 35);
 		searchFacility_ComboBox.setModel(new DefaultComboBoxModel(new String[] {				
 				SERVER_NAME, // 장비명
 				SERVER_INDEX, // 장비 인덱스				
 				FACILITY_TYPE, // 시설물 종류				
 				PROTOCOL_NUMBER, // 프로토콜 번호
+				SERVER_STATE, // 장비 상태
 		}));
 		searchFacility_ComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -183,7 +185,7 @@ public class RcuInfoFrame extends JFrame {;
 		searchFacility_textField.setForeground(Color.BLACK);
 		searchFacility_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchFacility_textField.setColumns(10);
-		searchFacility_textField.setBounds(208, 86, 480, 35);
+		searchFacility_textField.setBounds(228, 86, 460, 35);
 		searchFacility_textField.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -399,6 +401,9 @@ public class RcuInfoFrame extends JFrame {;
 					break;
 				case PROTOCOL_NUMBER : // 프로토콜 번호
 					searchElement = String.valueOf(fac.isCommon() ? fac.getCommProtocol() : fac.getSnmpProtocol());
+					break;
+				case SERVER_STATE : // 장비 상태
+					searchElement = fac.getState();
 					break;
 				default : 
 					searchElement = fac.getName();
