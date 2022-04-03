@@ -406,7 +406,7 @@ public class WatchPointListFrame extends JFrame {
 		dbRefreshButton.setContentAreaFilled(false);
 		dbRefreshButton.setBorder(UIManager.getBorder("Button.border"));
 		dbRefreshButton.setBackground(Color.WHITE);
-		dbRefreshButton.setBounds(560, 89, 180, 35);
+		dbRefreshButton.setBounds(560, 89, 160, 35);
 		dbRefreshButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -428,7 +428,7 @@ public class WatchPointListFrame extends JFrame {
 		formReset_Button.setContentAreaFilled(false);
 		formReset_Button.setBorder(UIManager.getBorder("Button.border"));
 		formReset_Button.setBackground(Color.WHITE);
-		formReset_Button.setBounds(560, 50, 180, 35);
+		formReset_Button.setBounds(725, 89, 136, 35);
 		formReset_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				searchPerf_textField_1.setText(null);
