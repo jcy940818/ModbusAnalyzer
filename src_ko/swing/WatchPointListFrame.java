@@ -81,6 +81,7 @@ public class WatchPointListFrame extends JFrame {
 	private JTextField searchPerf_textField_2;
 	private JLabel FacilityInfoLabel;
 	private JButton dbRefreshButton;
+	private JLabel FacilityInfoLabel2;
 	
 	/**
 	 * Launch the application.
@@ -111,7 +112,7 @@ public class WatchPointListFrame extends JFrame {
 		this.perfs = Perf.getFaciltiyPerfList(ONION_Info.getMk119Connection(), fac);
 		
 		WatchPointListFrame.isExist = true;
-		setTitle(String.format("Watch Point List   [ Ω√º≥π∞ ¡æ∑˘ : %s ]  [ ¿Â∫Ò ¿Œµ¶Ω∫ : %d ]  [ ¿Â∫Ò∏Ì : %s ]", fac.getTypeString(),fac.getIndex() ,fac.getName()));
+		setTitle("Watch Point List");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
@@ -144,7 +145,7 @@ public class WatchPointListFrame extends JFrame {
 		MK119.setForeground(Color.BLACK);
 		MK119.setBackground(Color.WHITE);		
 		MK119.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
-		MK119.setBounds(957, 9, 85, 36);
+		MK119.setBounds(962, 6, 85, 36);
 		actualPanel.add(MK119);
 		
 		JScrollPane perfList_scrollPane = new JScrollPane();
@@ -382,13 +383,21 @@ public class WatchPointListFrame extends JFrame {
 		});
 		actualPanel.add(searchPerf_textField_2);
 		
-		FacilityInfoLabel = new JLabel(String.format("[ %s ] %s", fac.getTypeString(), fac.getName()));
+		FacilityInfoLabel = new JLabel(String.format("IP : %s", fac.getIp()));
 		FacilityInfoLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		FacilityInfoLabel.setForeground(Color.BLUE);
-		FacilityInfoLabel.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 18));
+		FacilityInfoLabel.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
 		FacilityInfoLabel.setBackground(Color.WHITE);
-		FacilityInfoLabel.setBounds(252, 10, 693, 35);
+		FacilityInfoLabel.setBounds(252, 0, 693, 30);
 		actualPanel.add(FacilityInfoLabel);
+		
+		FacilityInfoLabel2 = new JLabel(String.format("<html>%s %s</html>",fac.getName(), Util.colorGreen("( " + fac.getTypeString() + " )")));
+		FacilityInfoLabel2.setHorizontalAlignment(SwingConstants.LEFT);
+		FacilityInfoLabel2.setForeground(Color.BLUE);
+		FacilityInfoLabel2.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
+		FacilityInfoLabel2.setBackground(Color.WHITE);
+		FacilityInfoLabel2.setBounds(252, 27, 693, 30);
+		actualPanel.add(FacilityInfoLabel2);
 		
 		dbRefreshButton = new JButton("Database √÷Ω≈»≠");
 		dbRefreshButton.setForeground(Color.BLACK);
