@@ -35,6 +35,7 @@ import common.server.Facility;
 import common.server.MultiPortMap;
 import common.server.RCU;
 import common.server.Server;
+import common.util.FindTextRenderer;
 import src_ko.info.ONION_Info;
 import src_ko.util.Util;
 
@@ -243,7 +244,7 @@ public class RcuInfoFrame extends JFrame {;
 	}
 	
 	
-	//*************** 성능 리스트 테이블  *********************************************************************************
+	//*************** 시설물 목록 테이블  *********************************************************************************
 	public void updateFacilityTable(JTable table) {		
 
 		if (table == null || rcu == null) return;		
@@ -255,24 +256,24 @@ public class RcuInfoFrame extends JFrame {;
 			
 			for (int i = 0; i < portMap.size(); i++) {
 				MultiPortMap map = portMap.get(i);							
-				int facIndex = map.getFacIndex();				
-				if(!ServerList_Panel.serverMap.containsKey(facIndex)) continue;
+				int facIndex = map.getFacIndex();
 				
-				Facility fac = (Facility)ServerList_Panel.serverMap.get(facIndex);
-				if(fac.getRcuPortCh() != map.getCh() || fac.getPort() != map.getPort()) continue;
-				
-				content[i] = new Object[5];
-				content[i][0] = i + 1;
-				content[i][1] = fac.getTypeString();
-				content[i][2] = fac;
-				String port = null;
-				if(fac.getPort() != 0) {
-					port = String.format("%d ( %d )",  map.getCh(), map.getPort());
+				if(ServerList_Panel.serverMap.containsKey(facIndex)) {
+					Facility fac = (Facility)ServerList_Panel.serverMap.get(facIndex);
+					content[i] = new Object[5];
+					content[i][0] = i + 1;
+					content[i][1] = fac.getTypeString();
+					content[i][2] = fac;					
+					content[i][3] = (fac.getPort() != 0) ? String.format("%d ( %d )",  map.getCh(), map.getPort()) : "Unknown"; 	
+					content[i][4] = fac.getState();
 				}else {
-					port = "Unknown";
+					content[i] = new Object[5];
+					content[i][0] = i + 1;
+					content[i][1] = null;
+					content[i][2] = null;
+					content[i][3] = String.format("%d ( %d )",  map.getCh(), map.getPort());			
+					content[i][4] = null;
 				}
-				content[i][3] = port;			
-				content[i][4] = fac.getState();
 			}
 		}else {
 			content = new Object[rcu.getFacList().size()][];
@@ -281,14 +282,8 @@ public class RcuInfoFrame extends JFrame {;
 				content[i] = new Object[5];
 				content[i][0] = i + 1;
 				content[i][1] = fac.getTypeString();
-				content[i][2] = fac;
-				String port = null;
-				if(rcu.getPort() != 0) {
-					port = String.format("%d ( %d )",  1, fac.getPort());
-				}else {
-					port = "Unknown";
-				}
-				content[i][3] = port;			
+				content[i][2] = fac;				
+				content[i][3] = (rcu.getPort() != 0) ? String.format("%d ( %d )",  1, fac.getPort()) : "Unknown";  		
 				content[i][4] = fac.getState();
 			}
 		}
@@ -342,13 +337,16 @@ public class RcuInfoFrame extends JFrame {;
 		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
 		tScheduleCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 
+		FindTextRenderer findCommerRenderer = new FindTextRenderer(4, "통신 오류", Color.RED);
+		findCommerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		
 		// DefaultTableCellHeaderRenderer의 정렬을 가운데 정렬로 지정
 		TableColumnModel tcmSchedule = table.getColumnModel();
 		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
 		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 시설물 종류
 //		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 장비명
 		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 포트
-		tcmSchedule.getColumn(4).setCellRenderer(tScheduleCellRenderer); // 장비 상태
+		tcmSchedule.getColumn(4).setCellRenderer(findCommerRenderer); // 장비 상태
 	}
 	
 	//******************** 테이블 필터링 관련 *********************************************************************

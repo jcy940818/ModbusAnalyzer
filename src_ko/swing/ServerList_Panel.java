@@ -125,7 +125,18 @@ public class ServerList_Panel extends JPanel {
 		rcuInfo_Button.setFocusPainted(false);
 		rcuInfo_Button.setBackground(new Color(152, 251, 152));
 		rcuInfo_Button.setBounds(245, 62, 190, 37);
-		rcuInfo_Button.setEnabled(false);
+		rcuInfo_Button.setEnabled(false);		
+		rcuInfo_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(selectedServer.isRCU()) {
+					new RcuInfoFrame((RCU)selectedServer);
+				}else if(selectedServer.isFacility()) {
+					Facility fac = (Facility)selectedServer;
+					if(fac.isConnRCU() && fac.getRcu() != null) new RcuInfoFrame(fac.getRcu()); 
+				}
+			}
+		});
+		
 		infoPanel.add(rcuInfo_Button);
 		
 		perfInfo_Button = new JButton("성능 정보");
@@ -478,6 +489,9 @@ public class ServerList_Panel extends JPanel {
 				}
 			}
 			
+			// Server List 정렬
+			Collections.sort(serverList);
+			
 			/* RCU & 시설물 매핑 */
 			for(int i = 0; i < serverList.size(); i++) {
 				Server server = serverList.get(i);
@@ -533,8 +547,6 @@ public class ServerList_Panel extends JPanel {
 						}
 				}
 			}
-			
-			Collections.sort(serverList);
 			
 			isFirstLoad = false;
 		}catch(Exception e) {
