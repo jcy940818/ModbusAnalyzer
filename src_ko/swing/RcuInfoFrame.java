@@ -246,12 +246,13 @@ public class RcuInfoFrame extends JFrame {;
 	//*************** 성능 리스트 테이블  *********************************************************************************
 	public void updateFacilityTable(JTable table) {		
 
-		if (table == null || rcu == null) return;
-		
-		Object[][] content = new Object[rcu.getFacList().size()][];
+		if (table == null || rcu == null) return;		
+		Object[][] content = null; 
 
-		if(rcu.isMultiPort() && rcu.getPort() == 0) {
+		if(rcu.isMultiPort() && rcu.getPort() == 0) {			
 			ArrayList<MultiPortMap> portMap = rcu.getMultiPortMapList();
+			content= new Object[portMap.size()][];
+			
 			for (int i = 0; i < portMap.size(); i++) {
 				MultiPortMap map = portMap.get(i);							
 				int facIndex = map.getFacIndex();				
@@ -265,7 +266,7 @@ public class RcuInfoFrame extends JFrame {;
 				content[i][1] = fac.getTypeString();
 				content[i][2] = fac;
 				String port = null;
-				if(rcu.getPort() != 0) {
+				if(fac.getPort() != 0) {
 					port = String.format("%d ( %d )",  map.getCh(), map.getPort());
 				}else {
 					port = "Unknown";
@@ -274,18 +275,19 @@ public class RcuInfoFrame extends JFrame {;
 				content[i][4] = fac.getState();
 			}
 		}else {
+			content = new Object[rcu.getFacList().size()][];
 			for (int i = 0; i < rcu.getFacList().size(); i++) {
 				Facility fac = (Facility)rcu.getFacList().get(i);
 				content[i] = new Object[5];
 				content[i][0] = i + 1;
 				content[i][1] = fac.getTypeString();
-				content[i][2] = fac;			
-				String port = null;			
-				if(!rcu.isMultiPort() && rcu.getPort() != 0) {
+				content[i][2] = fac;
+				String port = null;
+				if(rcu.getPort() != 0) {
 					port = String.format("%d ( %d )",  1, fac.getPort());
 				}else {
 					port = "Unknown";
-				}			
+				}
 				content[i][3] = port;			
 				content[i][4] = fac.getState();
 			}
