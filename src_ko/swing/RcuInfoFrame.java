@@ -63,6 +63,7 @@ public class RcuInfoFrame extends JFrame {;
 	private JComboBox searchFacility_ComboBox;
 	private JTextField searchFacility_textField;	
 	private JLabel RCUInfoLabel;
+	private JLabel RCUInfoLabel2;
 	private JButton dbRefresh_Button;
 	
 	/**
@@ -92,7 +93,7 @@ public class RcuInfoFrame extends JFrame {;
 		this.rcu = rcu;
 		
 		RcuInfoFrame.isExist = true;
-		setTitle(String.format("RCU Information [ RCU IP : %s ] [ RCU ¿Ã∏ß : %s ]", rcu.getIp(), rcu.getName()));
+		setTitle("RCU Information");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
@@ -125,7 +126,7 @@ public class RcuInfoFrame extends JFrame {;
 		MK119.setForeground(Color.BLACK);
 		MK119.setBackground(Color.WHITE);		
 		MK119.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
-		MK119.setBounds(777, 11, 85, 36);
+		MK119.setBounds(782, 8, 85, 36);
 		actualPanel.add(MK119);
 		
 		JScrollPane perfList_scrollPane = new JScrollPane();
@@ -205,13 +206,21 @@ public class RcuInfoFrame extends JFrame {;
 		});
 		actualPanel.add(searchFacility_textField);
 		
-		RCUInfoLabel = new JLabel(String.format("%s",rcu.getName()));
+		RCUInfoLabel = new JLabel(String.format("IP : %s",rcu.getIp()));
 		RCUInfoLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		RCUInfoLabel.setForeground(Color.BLUE);
 		RCUInfoLabel.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 18));
 		RCUInfoLabel.setBackground(Color.WHITE);
-		RCUInfoLabel.setBounds(251, 11, 392, 35);
+		RCUInfoLabel.setBounds(251, 10, 530, 35);
 		actualPanel.add(RCUInfoLabel);
+		
+		RCUInfoLabel2 = new JLabel(String.format("<html>RCU : %s %s</html>",rcu.getName(), Util.colorGreen("( " + rcu.getRcuTypeDetail() + " )")));
+		RCUInfoLabel2.setHorizontalAlignment(SwingConstants.LEFT);
+		RCUInfoLabel2.setForeground(Color.BLUE);
+		RCUInfoLabel2.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 18));
+		RCUInfoLabel2.setBackground(Color.WHITE);
+		RCUInfoLabel2.setBounds(251, 45, 530, 35);
+		actualPanel.add(RCUInfoLabel2);
 		
 		dbRefresh_Button = new JButton("Database √÷Ω≈»≠");
 		dbRefresh_Button.setFocusPainted(false);
