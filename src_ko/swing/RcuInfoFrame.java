@@ -247,43 +247,63 @@ public class RcuInfoFrame extends JFrame {;
 	//*************** 시설물 목록 테이블  *********************************************************************************
 	public void updateFacilityTable(JTable table) {		
 
-		if (table == null || rcu == null) return;		
-		Object[][] content = null; 
+		if (table == null || rcu == null) return;
+		Object[][] content = new Object[rcu.getFacList().size()][];
 
-		if(rcu.isMultiPort() && rcu.getPort() == 0) {			
-			ArrayList<MultiPortMap> portMap = rcu.getMultiPortMapList();
-			content= new Object[portMap.size()][];
+		if(rcu.isMultiPort() && rcu.getPort() == 0) {
+			int index = 0;
+			ArrayList<MultiPortMap> portMappingList = rcu.getMultiPortMapList();
 			
-			for (int i = 0; i < portMap.size(); i++) {
-				MultiPortMap map = portMap.get(i);							
+			for (int i = 0; i < portMappingList.size(); i++) {
+				MultiPortMap map = portMappingList.get(i);							
 				int facIndex = map.getFacIndex();
 				
 				if(ServerList_Panel.serverMap.containsKey(facIndex)) {
 					Facility fac = (Facility)ServerList_Panel.serverMap.get(facIndex);
-					content[i] = new Object[5];
-					content[i][0] = i + 1;
-					content[i][1] = fac.getTypeString();
-					content[i][2] = fac;					
-					content[i][3] = (fac.getPort() != 0) ? String.format("%d ( %d )",  map.getCh(), map.getPort()) : "Unknown"; 	
-					content[i][4] = fac.getState();
-				}else {
-					content[i] = new Object[5];
-					content[i][0] = i + 1;
-					content[i][1] = null;
-					content[i][2] = null;
-					content[i][3] = String.format("%d ( %d )",  map.getCh(), map.getPort());			
-					content[i][4] = null;
+					content[index] = new Object[5];
+					content[index][0] = index + 1;
+					content[index][1] = fac.getTypeString();
+					content[index][2] = fac;
+					content[index][3] = (fac.getPort() != 0) ? String.format("%d ( %d )",  map.getCh(), map.getPort()) : "Unknown"; 	
+					content[index][4] = fac.getState();
+					index++;
 				}
 			}
+			
+			for(int i = 0; i < rcu.getFacList().size(); i++) {
+				boolean hasMapping = false;
+				Facility fac = (Facility)rcu.getFacList().get(i);
+				
+				for(int i2 = 0; i2 < portMappingList.size(); i2++) {
+					MultiPortMap map = portMappingList.get(i2);
+					if(fac.getIndex() == map.getFacIndex()) {
+						hasMapping = true;
+						break;
+					}
+				}
+				
+				if(hasMapping) {
+					continue;
+				}else {
+					// RCU와 연결은 되어있지만 멀티 포트 매핑 테이블에는 정보가 없는 시설물
+					content[index] = new Object[5];
+					content[index][0] = index + 1;
+					content[index][1] = fac.getTypeString();
+					content[index][2] = fac;
+					content[index][3] = (fac.getPort() != 0) ? String.format("%d ( %d )",  fac.getRcuPortCh(), fac.getPort()) : "Unknown"; 	
+					content[index][4] = fac.getState();
+					index++;
+				}
+			}
+			
 		}else {
-			content = new Object[rcu.getFacList().size()][];
 			for (int i = 0; i < rcu.getFacList().size(); i++) {
 				Facility fac = (Facility)rcu.getFacList().get(i);
 				content[i] = new Object[5];
 				content[i][0] = i + 1;
 				content[i][1] = fac.getTypeString();
-				content[i][2] = fac;				
-				content[i][3] = (rcu.getPort() != 0) ? String.format("%d ( %d )",  1, fac.getPort()) : "Unknown";  		
+				content[i][2] = fac;
+				content[i][3] = (fac.getPort() != 0) ? String.format("%d ( %d )",  fac.getRcuPortCh(), fac.getPort()) : "Unknown";
 				content[i][4] = fac.getState();
 			}
 		}
