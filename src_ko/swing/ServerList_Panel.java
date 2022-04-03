@@ -64,8 +64,8 @@ public class ServerList_Panel extends JPanel {
 	
 	private JPanel infoPanel;
 		
-	private static ArrayList<Server> serverList;
-	private static HashMap<Integer, Server> serverMap;
+	public static ArrayList<Server> serverList;
+	public static HashMap<Integer, Server> serverMap;
 	private static Server selectedServer;
 	private static JTextField searchFacility_textField1;
 	private static JTextField searchFacility_textField2;

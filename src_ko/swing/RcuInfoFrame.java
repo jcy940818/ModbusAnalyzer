@@ -94,7 +94,7 @@ public class RcuInfoFrame extends JFrame {;
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
 				
-		setBounds(100, 100, 778, 717);
+		setBounds(100, 100, 900, 717);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new LineBorder(new Color(255, 140, 0), 10));
@@ -122,12 +122,12 @@ public class RcuInfoFrame extends JFrame {;
 		MK119.setForeground(Color.BLACK);
 		MK119.setBackground(Color.WHITE);		
 		MK119.setFont(new Font("맑은 고딕", Font.BOLD, 17));
-		MK119.setBounds(657, 8, 85, 36);
+		MK119.setBounds(777, 11, 85, 36);
 		actualPanel.add(MK119);
 		
 		JScrollPane perfList_scrollPane = new JScrollPane();
 		perfList_scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
-		perfList_scrollPane.setBounds(12, 128, 728, 530);
+		perfList_scrollPane.setBounds(12, 128, 850, 530);
 		actualPanel.add(perfList_scrollPane);
 		
 		FacListTable = new JTable();		
@@ -150,7 +150,7 @@ public class RcuInfoFrame extends JFrame {;
 		searchPerf_label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		searchPerf_label.setBackground(Color.WHITE);
 		searchPerf_label.setBounds(12, 86, 63, 35);
-		actualPanel.add(searchPerf_label);		
+		actualPanel.add(searchPerf_label);
 		
 		searchFacility_ComboBox = new JComboBox();
 		searchFacility_ComboBox.setForeground(Color.BLACK);
@@ -181,7 +181,7 @@ public class RcuInfoFrame extends JFrame {;
 		searchFacility_textField.setForeground(Color.BLACK);
 		searchFacility_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchFacility_textField.setColumns(10);
-		searchFacility_textField.setBounds(208, 86, 360, 35);
+		searchFacility_textField.setBounds(208, 86, 480, 35);
 		searchFacility_textField.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -214,7 +214,7 @@ public class RcuInfoFrame extends JFrame {;
 		dbRefresh_Button.setBackground(Color.WHITE);
 		dbRefresh_Button.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		dbRefresh_Button.setForeground(Color.BLACK);
-		dbRefresh_Button.setBounds(572, 86, 168, 35);
+		dbRefresh_Button.setBounds(694, 86, 168, 35);
 		actualPanel.add(dbRefresh_Button);
 		
 		// 테이블 로드
@@ -251,15 +251,34 @@ public class RcuInfoFrame extends JFrame {;
 
 		for (int i = 0; i < rcu.getFacList().size(); i++) {
 			Facility fac = (Facility)rcu.getFacList().get(i);
-			content[i] = new Object[3];
+			content[i] = new Object[5];
 			content[i][0] = i + 1;
 			content[i][1] = fac.getTypeString();
 			content[i][2] = fac;
+			
+			String port = null;
+			
+			if(rcu.isMultiPort()) {
+				port = String.format("%d ( %d )", fac.getRcuPortCh(), fac.getPort());
+			}else if(!rcu.isMultiPort() && rcu.getPort() != 0) {
+				port = String.format("%d ( %d )",  1, fac.getPort());
+			}else {
+				port = "Unknown";
+			}			
+			content[i][3] = port;
+			
+			content[i][4] = fac.getState();
 		}
 
 		table.setModel(new DefaultTableModel(
 			content,
-			new String[] { "순 서", "시설물 종류", "장비명"}) {
+			new String[] {
+				"순 서",
+				"시설물 종류",
+				"장비명",
+				"포 트",
+				"장비 상태"
+			}) {
 			// 테이블 셀 내용 수정 금지
 			public boolean isCellEditable(int i, int c) {
 				return false;
@@ -290,8 +309,10 @@ public class RcuInfoFrame extends JFrame {;
 		
 		// 성능 리스트 테이블
 		table.getColumnModel().getColumn(0).setPreferredWidth(5); // 순 서
-		table.getColumnModel().getColumn(1).setPreferredWidth(30); // 시설물 종류		
+		table.getColumnModel().getColumn(1).setPreferredWidth(60); // 시설물 종류		
 		table.getColumnModel().getColumn(2).setPreferredWidth(400); // 장비명
+		table.getColumnModel().getColumn(3).setPreferredWidth(50); // 포트
+		table.getColumnModel().getColumn(4).setPreferredWidth(50); // 장비 상태
 		
 		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
 		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
@@ -301,10 +322,12 @@ public class RcuInfoFrame extends JFrame {;
 		TableColumnModel tcmSchedule = table.getColumnModel();
 		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
 		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 시설물 종류
+//		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 장비명
+		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 포트
+		tcmSchedule.getColumn(4).setCellRenderer(tScheduleCellRenderer); // 장비 상태
 	}
 	
 	//******************** 테이블 필터링 관련 *********************************************************************
-	@SuppressWarnings("serial")
 	public void doTableFilter() {
 		ArrayList<Facility> filteredFac = new ArrayList<Facility>();			
 		
@@ -371,15 +394,34 @@ public class RcuInfoFrame extends JFrame {;
 		
 		for (int i = 0; i < filteredFac.size(); i++) {
 			Facility fac = (Facility)filteredFac.get(i);
-			content[i] = new Object[3];
+			content[i] = new Object[5];
 			content[i][0] = i + 1;
 			content[i][1] = fac.getTypeString();
 			content[i][2] = fac;
+			
+			String port = null;
+			
+			if(rcu.isMultiPort()) {
+				port = String.format("%d ( %d )", fac.getRcuPortCh(), fac.getPort());
+			}else if(!rcu.isMultiPort() && rcu.getPort() != 0) {
+				port = String.format("%d ( %d )",  1, fac.getPort());
+			}else {
+				port = "Unknown";
+			}			
+			content[i][3] = port;
+			
+			content[i][4] = fac.getState();
 		}
 
 		FacListTable.setModel(new DefaultTableModel(
 				content,
-				new String[] { "순 서", "시설물 종류", "장비명"}) {
+				new String[] { 
+						"순 서",
+						"시설물 종류",
+						"장비명",
+						"포 트",
+						"장비 상태"
+						}) {
 				// 테이블 셀 내용 수정 금지
 				public boolean isCellEditable(int i, int c) {
 					return false;
