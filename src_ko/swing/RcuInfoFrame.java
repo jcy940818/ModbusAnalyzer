@@ -32,6 +32,7 @@ import javax.swing.table.TableColumnModel;
 import common.perf.FmsPerfItem;
 import common.perf.Perf;
 import common.server.Facility;
+import common.server.MultiPortMap;
 import common.server.RCU;
 import common.server.Server;
 import src_ko.info.ONION_Info;
@@ -249,26 +250,47 @@ public class RcuInfoFrame extends JFrame {;
 		
 		Object[][] content = new Object[rcu.getFacList().size()][];
 
-		for (int i = 0; i < rcu.getFacList().size(); i++) {
-			Facility fac = (Facility)rcu.getFacList().get(i);
-			content[i] = new Object[5];
-			content[i][0] = i + 1;
-			content[i][1] = fac.getTypeString();
-			content[i][2] = fac;
-			
-			String port = null;
-			
-			if(rcu.isMultiPort()) {
-				port = String.format("%d ( %d )", fac.getRcuPortCh(), fac.getPort());
-			}else if(!rcu.isMultiPort() && rcu.getPort() != 0) {
-				port = String.format("%d ( %d )",  1, fac.getPort());
-			}else {
-				port = "Unknown";
-			}			
-			content[i][3] = port;
-			
-			content[i][4] = fac.getState();
+		if(rcu.isMultiPort() && rcu.getPort() == 0) {
+			ArrayList<MultiPortMap> portMap = rcu.getMultiPortMapList();
+			for (int i = 0; i < portMap.size(); i++) {
+				MultiPortMap map = portMap.get(i);							
+				int facIndex = map.getFacIndex();				
+				if(!ServerList_Panel.serverMap.containsKey(facIndex)) continue;
+				
+				Facility fac = (Facility)ServerList_Panel.serverMap.get(facIndex);
+				if(fac.getRcuPortCh() != map.getCh() || fac.getPort() != map.getPort()) continue;
+				
+				content[i] = new Object[5];
+				content[i][0] = i + 1;
+				content[i][1] = fac.getTypeString();
+				content[i][2] = fac;
+				String port = null;
+				if(rcu.getPort() != 0) {
+					port = String.format("%d ( %d )",  map.getCh(), map.getPort());
+				}else {
+					port = "Unknown";
+				}
+				content[i][3] = port;			
+				content[i][4] = fac.getState();
+			}
+		}else {
+			for (int i = 0; i < rcu.getFacList().size(); i++) {
+				Facility fac = (Facility)rcu.getFacList().get(i);
+				content[i] = new Object[5];
+				content[i][0] = i + 1;
+				content[i][1] = fac.getTypeString();
+				content[i][2] = fac;			
+				String port = null;			
+				if(!rcu.isMultiPort() && rcu.getPort() != 0) {
+					port = String.format("%d ( %d )",  1, fac.getPort());
+				}else {
+					port = "Unknown";
+				}			
+				content[i][3] = port;			
+				content[i][4] = fac.getState();
+			}
 		}
+		
 
 		table.setModel(new DefaultTableModel(
 			content,
