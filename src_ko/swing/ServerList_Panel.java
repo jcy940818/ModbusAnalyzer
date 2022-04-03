@@ -849,7 +849,7 @@ public class ServerList_Panel extends JPanel {
 					case 1: // 연결된 RCU 정보 보기
 						// RCU 정보 표시
 						new RcuInfoFrame(fac.getRcu());
-						break;
+						return;
 						
 					default :
 						return;
