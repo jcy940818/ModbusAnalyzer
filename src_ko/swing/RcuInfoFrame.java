@@ -216,7 +216,34 @@ public class RcuInfoFrame extends JFrame {;
 		});
 		actualPanel.add(searchFacility_textField);
 		
-		RCUInfoLabel_1 = new JLabel(String.format("<html>%s %s %s</html>",Util.colorBlue("RCU :"), rcu.getName(), Util.colorGreen("( " + rcu.getRcuTypeDetail() + " )")));
+		String RcuInfo_1 = "<html>";
+		RcuInfo_1 += Util.colorBlue("RCU : ") + rcu.getName();
+		RcuInfo_1 += "&nbsp;&nbsp;";
+		RcuInfo_1 += " ( " + Util.colorGreen(rcu.getRcuTypeDetail()) + " )";
+		RcuInfo_1 += "</html>";
+		
+		String RcuInfo_2 = "<html>";
+		RcuInfo_2 += Util.colorBlue("IP : ") + rcu.getIp();
+		RcuInfo_2 += Util.separator + Util.colorRed("/") + Util.separator;
+		RcuInfo_2 += Util.colorBlue("Port : " );
+		if(rcu.isMultiPort() && rcu.getPort() == 0) {
+			ArrayList<MultiPortMap> portMap = rcu.getMultiPortMapList();
+			MultiPortMap start = portMap.get(0);
+			MultiPortMap end = portMap.get(portMap.size() - 1);
+			
+			RcuInfo_2 += start.getCh() + " ( " + start.getPort() + " )";
+			RcuInfo_2 += " ~ ";
+			RcuInfo_2 += end.getCh() + " ( " + end.getPort() + " ) ";
+		}else if(!rcu.isMultiPort() && rcu.getPort() != 0) {
+			RcuInfo_2 += rcu.getPort();
+		}else if(!rcu.isMultiPort() && rcu.getPort() == 0){
+			RcuInfo_2 += "Unknown";
+		}else {
+			RcuInfo_2 += "Unknown";
+		}
+		RcuInfo_2 += "</html>";
+		
+		RCUInfoLabel_1 = new JLabel(RcuInfo_1);
 		RCUInfoLabel_1.setHorizontalAlignment(SwingConstants.LEFT);
 		RCUInfoLabel_1.setForeground(Color.BLACK);
 		RCUInfoLabel_1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
@@ -224,7 +251,7 @@ public class RcuInfoFrame extends JFrame {;
 		RCUInfoLabel_1.setBounds(251, 8, 530, 35);
 		actualPanel.add(RCUInfoLabel_1);
 		
-		RCUInfoLabel_2 = new JLabel(String.format("<html>%s %s</html>",Util.colorBlue("IP :"), rcu.getIp()));
+		RCUInfoLabel_2 = new JLabel(RcuInfo_2);
 		RCUInfoLabel_2.setHorizontalAlignment(SwingConstants.LEFT);
 		RCUInfoLabel_2.setForeground(Color.BLACK);
 		RCUInfoLabel_2.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
@@ -273,9 +300,35 @@ public class RcuInfoFrame extends JFrame {;
 		if(ServerList_Panel.serverMap.containsKey(rcu.getIndex())) {
 			this.rcu = (RCU)ServerList_Panel.serverMap.get(rcu.getIndex());			
 			
-			RCUInfoLabel_1.setText(String.format("<html>%s %s %s</html>",Util.colorBlue("RCU :"), rcu.getName(), Util.colorGreen("( " + rcu.getRcuTypeDetail() + " )")));
-			RCUInfoLabel_2.setText(String.format("<html>%s %s</html>", Util.colorBlue("IP :"), rcu.getIp()));			
+			String RcuInfo_1 = "<html>";
+			RcuInfo_1 += Util.colorBlue("RCU : ") + rcu.getName();
+			RcuInfo_1 += "&nbsp;&nbsp;";
+			RcuInfo_1 += " ( " + Util.colorGreen(rcu.getRcuTypeDetail()) + " )";
+			RcuInfo_1 += "</html>";
 			
+			String RcuInfo_2 = "<html>";
+			RcuInfo_2 += Util.colorBlue("IP : ") + rcu.getIp();
+			RcuInfo_2 += Util.separator + Util.colorRed("/") + Util.separator;
+			RcuInfo_2 += Util.colorBlue("Port : " );
+			if(rcu.isMultiPort() && rcu.getPort() == 0) {
+				ArrayList<MultiPortMap> portMap = rcu.getMultiPortMapList();
+				MultiPortMap start = portMap.get(0);
+				MultiPortMap end = portMap.get(portMap.size() - 1);
+				
+				RcuInfo_2 += start.getCh() + " ( " + start.getPort() + " )";
+				RcuInfo_2 += " ~ ";
+				RcuInfo_2 += end.getCh() + " ( " + end.getPort() + " ) ";
+			}else if(!rcu.isMultiPort() && rcu.getPort() != 0) {
+				RcuInfo_2 += rcu.getPort();
+			}else if(!rcu.isMultiPort() && rcu.getPort() == 0){
+				RcuInfo_2 += "Unknown";
+			}else {
+				RcuInfo_2 += "Unknown";
+			}
+			RcuInfo_2 += "</html>";
+			
+			RCUInfoLabel_1.setText(RcuInfo_1);
+			RCUInfoLabel_2.setText(RcuInfo_2);
 		}else {
 			String separator = Util.separator + Util.separator;
 			
@@ -323,7 +376,7 @@ public class RcuInfoFrame extends JFrame {;
 					content[index][0] = index + 1;
 					content[index][1] = fac.getTypeString();
 					content[index][2] = fac;
-					content[index][3] = (fac.getPort() != 0) ? String.format("%d ( %d )",  map.getCh(), map.getPort()) : "Unknown"; 	
+					content[index][3] = (fac.getRcuPortCh() != 0 && fac.getPort() != 0) ? String.format("%d ( %d )",  map.getCh(), map.getPort()) : "Unknown"; 	
 					content[index][4] = fac.getState();
 					index++;
 				}
@@ -349,7 +402,7 @@ public class RcuInfoFrame extends JFrame {;
 					content[index][0] = index + 1;
 					content[index][1] = fac.getTypeString();
 					content[index][2] = fac;
-					content[index][3] = (fac.getPort() != 0) ? String.format("%d ( %d )",  fac.getRcuPortCh(), fac.getPort()) : "Unknown"; 	
+					content[index][3] = (fac.getRcuPortCh() != 0 && fac.getPort() != 0) ? String.format("%d ( %d )",  fac.getRcuPortCh(), fac.getPort()) : "Unknown"; 	
 					content[index][4] = fac.getState();
 					index++;
 				}
@@ -362,7 +415,7 @@ public class RcuInfoFrame extends JFrame {;
 				content[i][0] = i + 1;
 				content[i][1] = fac.getTypeString();
 				content[i][2] = fac;
-				content[i][3] = (fac.getPort() != 0) ? String.format("%d ( %d )",  fac.getRcuPortCh(), fac.getPort()) : "Unknown";
+				content[i][3] = (fac.getRcuPortCh() != 0 && fac.getPort() != 0) ? String.format("%d ( %d )",  fac.getRcuPortCh(), fac.getPort()) : "Unknown";
 				content[i][4] = fac.getState();
 			}
 		}
@@ -507,13 +560,13 @@ public class RcuInfoFrame extends JFrame {;
 			
 			String port = null;
 			
-			if(rcu.isMultiPort()) {
+			if(rcu.isMultiPort() && rcu.getPort() == 0) {
 				port = String.format("%d ( %d )", fac.getRcuPortCh(), fac.getPort());
 			}else if(!rcu.isMultiPort() && rcu.getPort() != 0) {
-				port = String.format("%d ( %d )",  1, fac.getPort());
+				port = String.format("%d ( %d )", fac.getRcuPortCh(), fac.getPort());
 			}else {
 				port = "Unknown";
-			}			
+			}
 			content[i][3] = port;
 			
 			content[i][4] = fac.getState();
