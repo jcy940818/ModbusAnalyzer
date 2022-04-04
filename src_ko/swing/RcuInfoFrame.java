@@ -277,10 +277,20 @@ public class RcuInfoFrame extends JFrame {;
 			RCUInfoLabel_2.setText(String.format("<html>%s %s</html>", Util.colorBlue("IP :"), rcu.getIp()));			
 			
 		}else {
+			String separator = Util.separator + Util.separator;
+			
 			StringBuilder sb = new StringBuilder();
 			sb.append(String.format("%s%s%s\n", Util.colorRed("Can Not Found RCU") , Util.separator, Util.separator));
-			sb.append(String.format("최신 데이터베이스 내용에서 현재 RCU 정보를 찾을 수 없습니다%s%s\n\n", Util.separator, Util.separator));			
-			sb.append(String.format("%s %s ( %s )\n", Util.colorRed("현재 RCU 정보 :"), rcu.getName(), rcu.getRcuTypeDetail()));
+			
+			sb.append(String.format("%s%s%s\n", Util.colorRed("──────────[ 기존 RCU 정보 ]──────────"), separator, separator));				
+			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 이름"), rcu.getName(), separator, separator));
+			sb.append(String.format("%s : %d%s%s\n", Util.colorRed("RCU 인덱스"), rcu.getIndex(), separator, separator));
+			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU IP 주소"), rcu.getIp(), separator, separator));
+			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 종류"), rcu.getRcuTypeDetail(), separator, separator));
+			sb.append(String.format("%s : %d개%s%s\n", Util.colorRed("연결된 장비 개수"), rcu.getFacList().size(), separator, separator));
+			
+			sb.append(String.format("\n최신 데이터베이스 내용에서 기존 RCU 장비의 " + Util.colorRed("인덱스") + " 정보를 찾을 수 없습니다%s%s\n", Util.separator, Util.separator));
+			
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 			this.dispose();
 			return;

@@ -542,7 +542,7 @@ public class ServerList_Panel extends JPanel {
 								sb.append(Util.colorBlue("연결 방식 : ") + ((Facility)server).getConnMethod() + Util.separator + Util.separator + "\n\n");
 								
 								sb.append("위의 장비가 바라보는 " + Util.colorRed("RCU") + " 장비를 찾을 수 없습니다" + Util.separator + Util.separator +"\n\n");
-								sb.append("해당 현상은 " + Util.colorRed("RCU") + " 장비와 " + Util.colorBlue("시설물") + "이 연결된 상태에서 " + Util.colorRed("RCU") + " 장비가 삭제되었을 경우 발생 할 수 있습니다" + Util.separator + Util.separator +"\n");
+								sb.append("해당 현상은 " + Util.colorRed("RCU") + " 장비와 " + Util.colorBlue("시설물") + "이 연결된 상태에서 " + Util.colorRed("RCU") + " 장비가 삭제 되었을 경우 발생 할 수 있습니다" + Util.separator + Util.separator +"\n");
 								
 								int menu = Util.showOption(sb.toString(), new String[] { "확 인", " 동일한 내용의 메시지 그만보기 "}, JOptionPane.ERROR_MESSAGE);
 								switch (menu) {
@@ -870,7 +870,7 @@ public class ServerList_Panel extends JPanel {
 					msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU IP 주소"), fac.getRcu().getIp(), separator, separator));
 					msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 종류"), fac.getRcu().getRcuTypeDetail(), separator, separator));
 					msg.append(String.format("%s : %d개%s%s\n\n", Util.colorRed("연결된 장비 개수"), fac.getRcu().getFacList().size(), separator, separator));
-					msg.append(String.format("%s%s%s\n", Util.colorRed("RCU") + " 장비와 " + Util.colorBlue("시설물") + "이 연결된 상태에서 " + Util.colorRed("RCU") + " 장비가 삭제되었을 수 있습니다", separator, separator));
+					msg.append(String.format("%s%s%s\n", Util.colorRed("RCU") + " 장비와 " + Util.colorBlue("시설물") + "이 연결된 상태에서 " + Util.colorRed("RCU") + " 장비가 삭제 되었을 수 있습니다", separator, separator));
 				}else {
 					msg.append(String.format("\n%s%s%s\n", Util.colorGreen("──────────[ RCU 정보 ]──────────"), separator, separator));				
 					msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 이름"), fac.getRcu().getName(), separator, separator));

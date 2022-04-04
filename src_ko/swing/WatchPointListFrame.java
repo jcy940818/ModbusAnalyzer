@@ -484,10 +484,20 @@ public class WatchPointListFrame extends JFrame {
 			FacilityInfoLabel_1.setText(facInfo_1);
 			FacilityInfoLabel_2.setText(facInfo_2);
 		}else {
+			String separator = Util.separator + Util.separator;
+			
 			StringBuilder sb = new StringBuilder();
 			sb.append(String.format("%s%s%s\n", Util.colorRed("Can Not Found Facility") , Util.separator, Util.separator));
-			sb.append(String.format("최신 데이터베이스 내용에서 현재 장비의 정보를 찾을 수 없습니다%s%s\n\n", Util.separator, Util.separator));			
-			sb.append(String.format("%s %s ( %s / %s )\n", Util.colorRed("현재 장비 정보 :"), fac.getName(), fac.getTypeString(), fac.getConnMethod()));
+			
+			sb.append(String.format("%s%s%s\n", Util.colorRed("──────────[ 기존 시설물 정보 ]──────────"), separator, separator));
+			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("장비명"), fac.getName(), separator, separator));
+			sb.append(String.format("%s : %d%s%s\n", Util.colorRed("장비 인덱스"), fac.getIndex(), separator, separator));
+			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("IP 주소"), fac.isConnRCU() ? "( RCU IP ) " + fac.getIp() : fac.getIp(), separator, separator));
+			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("시설물 종류"), fac.getTypeString(), separator, separator));
+			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("연결 방식"), fac.getConnMethod(), separator, separator));
+			
+			sb.append(String.format("\n최신 데이터베이스 내용에서 기존 장비의 " + Util.colorRed("인덱스") + " 정보를 찾을 수 없습니다%s%s\n", Util.separator, Util.separator));	
+			
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 			this.dispose();
 			return;
