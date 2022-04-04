@@ -211,7 +211,7 @@ public class RcuInfoFrame extends JFrame {;
 		RCUInfoLabel.setForeground(Color.BLUE);
 		RCUInfoLabel.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 18));
 		RCUInfoLabel.setBackground(Color.WHITE);
-		RCUInfoLabel.setBounds(251, 10, 530, 35);
+		RCUInfoLabel.setBounds(251, 8, 530, 35);
 		actualPanel.add(RCUInfoLabel);
 		
 		RCUInfoLabel2 = new JLabel(String.format("<html>RCU : %s %s</html>",rcu.getName(), Util.colorGreen("( " + rcu.getRcuTypeDetail() + " )")));
@@ -219,7 +219,7 @@ public class RcuInfoFrame extends JFrame {;
 		RCUInfoLabel2.setForeground(Color.BLUE);
 		RCUInfoLabel2.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 18));
 		RCUInfoLabel2.setBackground(Color.WHITE);
-		RCUInfoLabel2.setBounds(251, 45, 530, 35);
+		RCUInfoLabel2.setBounds(251, 43, 530, 35);
 		actualPanel.add(RCUInfoLabel2);
 		
 		dbRefresh_Button = new JButton("Database √÷Ω≈»≠");

@@ -383,7 +383,14 @@ public class WatchPointListFrame extends JFrame {
 		});
 		actualPanel.add(searchPerf_textField_2);
 		
-		FacilityInfoLabel = new JLabel(String.format("IP : %s", fac.getIp()));
+		String facInfo = null;
+		if(fac.isConnRCU() && fac.getRcu() != null) {
+			facInfo = String.format("<html>RCU IP : %s %s</html>", fac.getIp(), Util.colorGreen("( RCU : " + fac.getRcu().getName() + " )"));	
+		}else {
+			facInfo = String.format("IP : %s", fac.getIp());	
+		}
+		
+		FacilityInfoLabel = new JLabel(facInfo);
 		FacilityInfoLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		FacilityInfoLabel.setForeground(Color.BLUE);
 		FacilityInfoLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
@@ -391,7 +398,10 @@ public class WatchPointListFrame extends JFrame {
 		FacilityInfoLabel.setBounds(252, 0, 693, 30);
 		actualPanel.add(FacilityInfoLabel);
 		
-		FacilityInfoLabel2 = new JLabel(String.format("<html>%s %s</html>",fac.getName(), Util.colorGreen("( " + fac.getTypeString() + " )")));
+		String facInfo2 = null;
+		facInfo2 = String.format("<html>%s %s</html>",fac.getName(), Util.colorGreen("( " + fac.getTypeString() + " / " + fac.getConnMethod() + " )"));
+		
+		FacilityInfoLabel2 = new JLabel(facInfo2);
 		FacilityInfoLabel2.setHorizontalAlignment(SwingConstants.LEFT);
 		FacilityInfoLabel2.setForeground(Color.BLUE);
 		FacilityInfoLabel2.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
