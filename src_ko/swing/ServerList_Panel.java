@@ -521,7 +521,7 @@ public class ServerList_Panel extends JPanel {
 							e.printStackTrace();
 							
 							RCU rcu = new RCU();
-							rcu.setIndex(rtuIndex);							
+							rcu.setIndex(rtuIndex);
 							rcu.setName("알 수 없음");
 							rcu.setTypeString("알 수 없음");
 							rcu.setRcuTypeDetail("알 수 없음");
@@ -536,12 +536,13 @@ public class ServerList_Panel extends JPanel {
 								sb.append(Util.colorRed("알 수 없는 RCU 인덱스 : ") + rtuIndex + Util.separator + Util.separator + "\n\n");
 								
 								sb.append(Util.colorBlue("그룹 정보 : ") + server.getGroupInfo() + Util.separator + Util.separator + "\n");
+								sb.append(Util.colorBlue("장비명 : ") + server.getName() + Util.separator + Util.separator + "\n");							
 								sb.append(Util.colorBlue("장비 인덱스 : ") + server.getIndex() + Util.separator + Util.separator + "\n");
 								sb.append(Util.colorBlue("시설물 종류 : ") + server.getTypeString() + Util.separator + Util.separator + "\n");
-								sb.append(Util.colorBlue("연결 방식 : ") + ((Facility)server).getConnMethod() + Util.separator + Util.separator + "\n");
-								sb.append(Util.colorBlue("장비명 : ") + server.getName() + Util.separator + Util.separator + "\n\n");							
+								sb.append(Util.colorBlue("연결 방식 : ") + ((Facility)server).getConnMethod() + Util.separator + Util.separator + "\n\n");
 								
-								sb.append("위의 장비가 바라보는 " + Util.colorRed("RCU") + " 장비를 찾을 수 없습니다" + Util.separator + Util.separator +"\n");
+								sb.append("위의 장비가 바라보는 " + Util.colorRed("RCU") + " 장비를 찾을 수 없습니다" + Util.separator + Util.separator +"\n\n");
+								sb.append("해당 현상은 " + Util.colorRed("RCU") + " 장비와 " + Util.colorBlue("시설물") + "이 연결된 상태에서 " + Util.colorRed("RCU") + " 장비가 삭제 되었을 경우 발생 할 수 있습니다" + Util.separator + Util.separator +"\n");
 								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 							}
 						}
@@ -549,6 +550,12 @@ public class ServerList_Panel extends JPanel {
 			}
 			
 			isFirstLoad = false;
+			
+			if(selectedServer != null) {
+				int lastSelectedServerIndex = selectedServer.getIndex();
+				selectedServer = serverMap.get(lastSelectedServerIndex);
+			}
+			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -893,7 +900,13 @@ public class ServerList_Panel extends JPanel {
 		rcuInfo_Button.setText("RCU 정보");
 		perfInfo_Button.setText("성능 정보");
 		
-		updateFacilityInfo(null);
+		if(selectedServer != null && selectedServer.isFacility()) {
+			updateFacilityInfo((Facility)selectedServer);
+		}else if(selectedServer != null && selectedServer.isRCU()){
+			updateRCUInfo((RCU)selectedServer);
+		}else {
+			updateFacilityInfo(null);
+		}
 		
 		if(allComponentReset) {
 			if(searchFacility_textField1 != null) searchFacility_textField1.setText(null);

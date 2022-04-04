@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -464,6 +465,32 @@ public class WatchPointListFrame extends JFrame {
 	
 	// ************ XML Reload *******************************************
 	public void refreshDB() {
+		
+		ServerList_Panel.resetForm(true, false);
+		
+		if(ServerList_Panel.serverMap.containsKey(fac.getIndex())) {
+			this.fac = (Facility)ServerList_Panel.serverMap.get(fac.getIndex());
+			this.isCommon = fac.isCommon();
+			
+			String facInfo = null;
+			if(fac.isConnRCU() && fac.getRcu() != null) {
+				facInfo = String.format("<html>RCU IP : %s %s</html>", fac.getIp(), Util.colorGreen("( RCU : " + fac.getRcu().getName() + " )"));	
+			}else {
+				facInfo = String.format("IP : %s", fac.getIp());	
+			}			
+			FacilityInfoLabel.setText(facInfo);
+			
+			String facInfo2 = String.format("<html>%s %s</html>",fac.getName(), Util.colorGreen("( " + fac.getTypeString() + " / " + fac.getConnMethod() + " )"));			
+			FacilityInfoLabel2.setText(facInfo2);
+		}else {
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("%s%s%s\n", Util.colorRed("Can Not Found Facility") , Util.separator, Util.separator));
+			sb.append(String.format("최신 데이터베이스 내용에서 현재 장비의 정보를 찾을 수 없습니다%s%s\n\n", Util.separator, Util.separator));			
+			sb.append(String.format("%s %s ( %s / %s )\n", Util.colorRed("현재 장비 정보 :"), fac.getName(), fac.getTypeString(), fac.getConnMethod()));
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			this.dispose();
+			return;
+		}
 		
 		this.perfs = Perf.getFaciltiyPerfList(ONION_Info.getMk119Connection(), this.fac);
 		
