@@ -415,7 +415,7 @@ public class RcuInfoFrame extends JFrame {;
 				content[i][0] = i + 1;
 				content[i][1] = fac.getTypeString();
 				content[i][2] = fac;
-				content[i][3] = (fac.getRcuPortCh() != 0 && fac.getPort() != 0) ? String.format("%d ( %d )",  fac.getRcuPortCh(), fac.getPort()) : "Unknown";
+				content[i][3] = (fac.getPort() != 0) ? String.format("%d ( %d )",  fac.getRcuPortCh(), fac.getPort()) : "Unknown";
 				content[i][4] = fac.getState();
 			}
 		}
