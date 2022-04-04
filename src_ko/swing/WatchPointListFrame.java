@@ -80,9 +80,9 @@ public class WatchPointListFrame extends JFrame {
 	private JComboBox searchPerf_ComboBox_2;
 	private JTextField searchPerf_textField_1;	
 	private JTextField searchPerf_textField_2;
-	private JLabel FacilityInfoLabel;
+	private JLabel FacilityInfoLabel_1;
+	private JLabel FacilityInfoLabel_2;
 	private JButton dbRefreshButton;
-	private JLabel FacilityInfoLabel2;
 	
 	/**
 	 * Launch the application.
@@ -274,14 +274,14 @@ public class WatchPointListFrame extends JFrame {
 		searchPerf_label.setForeground(Color.BLACK);
 		searchPerf_label.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 18));
 		searchPerf_label.setBackground(Color.WHITE);
-		searchPerf_label.setBounds(12, 55, 63, 68);
+		searchPerf_label.setBounds(18, 58, 63, 68);
 		actualPanel.add(searchPerf_label);		
 		
 		searchPerf_ComboBox_1 = new JComboBox();
 		searchPerf_ComboBox_1.setForeground(Color.BLACK);
 		searchPerf_ComboBox_1.setBackground(Color.WHITE);		
 		searchPerf_ComboBox_1.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
-		searchPerf_ComboBox_1.setBounds(77, 60, 120, 30);
+		searchPerf_ComboBox_1.setBounds(85, 60, 120, 30);
 		searchPerf_ComboBox_1.setModel(new DefaultComboBoxModel(new String[] {
 				PERF_NAME,
 				PERF_INDEX,
@@ -308,7 +308,7 @@ public class WatchPointListFrame extends JFrame {
 		searchPerf_ComboBox_2.setForeground(Color.BLACK);
 		searchPerf_ComboBox_2.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
 		searchPerf_ComboBox_2.setBackground(Color.WHITE);
-		searchPerf_ComboBox_2.setBounds(77, 94, 120, 30);
+		searchPerf_ComboBox_2.setBounds(85, 94, 120, 30);
 		searchPerf_ComboBox_2.setModel(new DefaultComboBoxModel(new String[] {
 				PERF_NAME,
 				PERF_INDEX,
@@ -338,7 +338,7 @@ public class WatchPointListFrame extends JFrame {
 		searchPerf_textField_1.setForeground(Color.BLACK);
 		searchPerf_textField_1.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 16));
 		searchPerf_textField_1.setColumns(10);
-		searchPerf_textField_1.setBounds(201, 60, 346, 30);
+		searchPerf_textField_1.setBounds(209, 60, 338, 30);
 		searchPerf_textField_1.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -364,7 +364,7 @@ public class WatchPointListFrame extends JFrame {
 		searchPerf_textField_2.setForeground(Color.BLACK);
 		searchPerf_textField_2.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 16));
 		searchPerf_textField_2.setColumns(10);
-		searchPerf_textField_2.setBounds(201, 94, 346, 30);
+		searchPerf_textField_2.setBounds(209, 94, 338, 30);
 		searchPerf_textField_2.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -384,31 +384,31 @@ public class WatchPointListFrame extends JFrame {
 		});
 		actualPanel.add(searchPerf_textField_2);
 		
-		String facInfo = null;
+		String facInfo_1 = null;
+		facInfo_1 = String.format("<html>%s %s %s</html>",Util.colorBlue("Ω√º≥π∞ :"), fac.getName(), Util.colorGreen("( " + fac.getTypeString() + " / " + fac.getConnMethod() + " )"));
+		
+		String facInfo_2 = null;
 		if(fac.isConnRCU() && fac.getRcu() != null) {
-			facInfo = String.format("<html>RCU IP : %s %s</html>", fac.getIp(), Util.colorGreen("( RCU : " + fac.getRcu().getName() + " )"));	
+			facInfo_2 = String.format("<html>%s %s %s</html>",Util.colorBlue("RCU IP :"), fac.getIp(), Util.colorGreen("( RCU : " + fac.getRcu().getName() + " )"));	
 		}else {
-			facInfo = String.format("IP : %s", fac.getIp());	
+			facInfo_2 = String.format("<html>%s %s</html>",Util.colorBlue("IP :"), fac.getIp());	
 		}
 		
-		FacilityInfoLabel = new JLabel(facInfo);
-		FacilityInfoLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		FacilityInfoLabel.setForeground(Color.BLUE);
-		FacilityInfoLabel.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
-		FacilityInfoLabel.setBackground(Color.WHITE);
-		FacilityInfoLabel.setBounds(252, 0, 693, 30);
-		actualPanel.add(FacilityInfoLabel);
+		FacilityInfoLabel_1 = new JLabel(facInfo_1);
+		FacilityInfoLabel_1.setHorizontalAlignment(SwingConstants.LEFT);
+		FacilityInfoLabel_1.setForeground(Color.BLACK);
+		FacilityInfoLabel_1.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
+		FacilityInfoLabel_1.setBackground(Color.WHITE);
+		FacilityInfoLabel_1.setBounds(252, 1, 710, 30);
+		actualPanel.add(FacilityInfoLabel_1);
 		
-		String facInfo2 = null;
-		facInfo2 = String.format("<html>%s %s</html>",fac.getName(), Util.colorGreen("( " + fac.getTypeString() + " / " + fac.getConnMethod() + " )"));
-		
-		FacilityInfoLabel2 = new JLabel(facInfo2);
-		FacilityInfoLabel2.setHorizontalAlignment(SwingConstants.LEFT);
-		FacilityInfoLabel2.setForeground(Color.BLUE);
-		FacilityInfoLabel2.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
-		FacilityInfoLabel2.setBackground(Color.WHITE);
-		FacilityInfoLabel2.setBounds(252, 27, 693, 30);
-		actualPanel.add(FacilityInfoLabel2);
+		FacilityInfoLabel_2 = new JLabel(facInfo_2);
+		FacilityInfoLabel_2.setHorizontalAlignment(SwingConstants.LEFT);
+		FacilityInfoLabel_2.setForeground(Color.BLACK);
+		FacilityInfoLabel_2.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
+		FacilityInfoLabel_2.setBackground(Color.WHITE);
+		FacilityInfoLabel_2.setBounds(252, 28, 710, 30);		
+		actualPanel.add(FacilityInfoLabel_2);
 		
 		dbRefreshButton = new JButton("Database √÷Ω≈»≠");
 		dbRefreshButton.setForeground(Color.BLACK);
@@ -472,16 +472,17 @@ public class WatchPointListFrame extends JFrame {
 			this.fac = (Facility)ServerList_Panel.serverMap.get(fac.getIndex());
 			this.isCommon = fac.isCommon();
 			
-			String facInfo = null;
-			if(fac.isConnRCU() && fac.getRcu() != null) {
-				facInfo = String.format("<html>RCU IP : %s %s</html>", fac.getIp(), Util.colorGreen("( RCU : " + fac.getRcu().getName() + " )"));	
-			}else {
-				facInfo = String.format("IP : %s", fac.getIp());	
-			}			
-			FacilityInfoLabel.setText(facInfo);
+			String facInfo_1 = String.format("<html>%s %s %s</html>",Util.colorBlue("Ω√º≥π∞ :"), fac.getName(), Util.colorGreen("( " + fac.getTypeString() + " / " + fac.getConnMethod() + " )"));			
 			
-			String facInfo2 = String.format("<html>%s %s</html>",fac.getName(), Util.colorGreen("( " + fac.getTypeString() + " / " + fac.getConnMethod() + " )"));			
-			FacilityInfoLabel2.setText(facInfo2);
+			String facInfo_2 = null;
+			if(fac.isConnRCU() && fac.getRcu() != null) {
+				facInfo_2 = String.format("<html>%s %s %s</html>",Util.colorBlue("RCU IP :"), fac.getIp(), Util.colorGreen("( RCU : " + fac.getRcu().getName() + " )"));	
+			}else {
+				facInfo_2 = String.format("<html>%s %s</html>",Util.colorBlue("IP :"), fac.getIp());	
+			}			
+			
+			FacilityInfoLabel_1.setText(facInfo_1);
+			FacilityInfoLabel_2.setText(facInfo_2);
 		}else {
 			StringBuilder sb = new StringBuilder();
 			sb.append(String.format("%s%s%s\n", Util.colorRed("Can Not Found Facility") , Util.separator, Util.separator));

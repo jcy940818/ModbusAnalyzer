@@ -542,7 +542,7 @@ public class ServerList_Panel extends JPanel {
 								sb.append(Util.colorBlue("연결 방식 : ") + ((Facility)server).getConnMethod() + Util.separator + Util.separator + "\n\n");
 								
 								sb.append("위의 장비가 바라보는 " + Util.colorRed("RCU") + " 장비를 찾을 수 없습니다" + Util.separator + Util.separator +"\n\n");
-								sb.append("해당 현상은 " + Util.colorRed("RCU") + " 장비와 " + Util.colorBlue("시설물") + "이 연결된 상태에서 " + Util.colorRed("RCU") + " 장비가 삭제 되었을 경우 발생 할 수 있습니다" + Util.separator + Util.separator +"\n");
+								sb.append("해당 현상은 " + Util.colorRed("RCU") + " 장비와 " + Util.colorBlue("시설물") + "이 연결된 상태에서 " + Util.colorRed("RCU") + " 장비가 삭제되었을 경우 발생 할 수 있습니다" + Util.separator + Util.separator +"\n");
 								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 							}
 						}
@@ -833,17 +833,42 @@ public class ServerList_Panel extends JPanel {
 			StringBuilder msg = new StringBuilder();
 						
 			msg.append(String.format("%s%s%s\n", Util.colorBlue("──────────[ 시설물 정보 ]──────────"), separator, separator));
-			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("장비명"), fac.getName(), separator, separator));			
+			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("장비명"), fac.getName(), separator, separator));
+			msg.append(String.format("%s : %d%s%s\n", Util.colorBlue("장비 인덱스"), fac.getIndex(), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("IP 주소"), fac.isConnRCU() ? "( RCU IP ) " + fac.getIp() : fac.getIp(), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("시설물 종류"), fac.getTypeString(), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 방식"), fac.getConnMethod(), separator, separator));
 			
-			if(fac.isConnRCU() && fac.getRcu() != null) {
-				msg.append(String.format("\n%s%s%s\n", Util.colorGreen("──────────[ RCU 정보 ]──────────"), separator, separator));
-				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 이름"), fac.getRcu().getName(), separator, separator));
-				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU IP 주소"), fac.getRcu().getIp(), separator, separator));
-				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 종류"), fac.getRcu().getRcuTypeDetail(), separator, separator));
-				msg.append(String.format("%s : %d개%s%s\n", Util.colorGreen("연결된 장비 개수"), fac.getRcu().getFacList().size(), separator, separator));
+			if(fac.getRcu() != null) {
+				
+				RCU rcu = fac.getRcu();
+				String unknown = "알 수 없음";
+				boolean unknownRCU = false;
+				
+				if(rcu.getName().equals(unknown) 
+						&& rcu.getTypeString().equals(unknown) 
+						&& rcu.getRcuTypeDetail().equals(unknown) 
+						&& rcu.getIp().equals(unknown) 
+						&& rcu.getState().equals(unknown)) {
+					unknownRCU = true;
+				}
+				
+				if(unknownRCU) {
+					msg.append(String.format("\n%s%s%s\n", Util.colorRed("──────────[ 알 수 없는 RCU 정보 ]──────────"), separator, separator));
+					msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 이름"), fac.getRcu().getName(), separator, separator));
+					msg.append(String.format("%s : %d%s%s\n", Util.colorRed("RCU 인덱스"), fac.getRcu().getIndex(), separator, separator));
+					msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU IP 주소"), fac.getRcu().getIp(), separator, separator));
+					msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 종류"), fac.getRcu().getRcuTypeDetail(), separator, separator));
+					msg.append(String.format("%s : %d개%s%s\n\n", Util.colorRed("연결된 장비 개수"), fac.getRcu().getFacList().size(), separator, separator));
+					msg.append(String.format("%s%s%s\n", Util.colorRed("RCU") + " 장비와 " + Util.colorBlue("시설물") + "이 연결된 상태에서 " + Util.colorRed("RCU") + " 장비가 삭제되었을 수 있습니다", separator, separator));
+				}else {
+					msg.append(String.format("\n%s%s%s\n", Util.colorGreen("──────────[ RCU 정보 ]──────────"), separator, separator));				
+					msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 이름"), fac.getRcu().getName(), separator, separator));
+					msg.append(String.format("%s : %d%s%s\n", Util.colorGreen("RCU 인덱스"), fac.getRcu().getIndex(), separator, separator));
+					msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU IP 주소"), fac.getRcu().getIp(), separator, separator));
+					msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 종류"), fac.getRcu().getRcuTypeDetail(), separator, separator));
+					msg.append(String.format("%s : %d개%s%s\n", Util.colorGreen("연결된 장비 개수"), fac.getRcu().getFacList().size(), separator, separator));
+				}
 			}
 			
 			if(fac.isConnRCU() && fac.getRcu() != null) {
@@ -876,9 +901,10 @@ public class ServerList_Panel extends JPanel {
 			// RCU
 			RCU rcu = (RCU)server;
 			
-			StringBuilder msg = new StringBuilder();			
+			StringBuilder msg = new StringBuilder();
 			msg.append(String.format("%s%s%s\n", Util.colorGreen("──────────[ RCU 정보 ]──────────"), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 이름"), rcu.getName(), separator, separator));
+			msg.append(String.format("%s : %d%s%s\n", Util.colorGreen("RCU 인덱스"), rcu.getIndex(), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU IP 주소"), rcu.getIp(), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 종류"), rcu.getRcuTypeDetail(), separator, separator));
 			msg.append(String.format("%s : %d개%s%s\n", Util.colorGreen("연결된 장비 개수"), rcu.getFacList().size(), separator, separator));

@@ -63,8 +63,8 @@ public class RcuInfoFrame extends JFrame {;
 	private JPanel contentPane;
 	private JComboBox searchFacility_ComboBox;
 	private JTextField searchFacility_textField;	
-	private JLabel RCUInfoLabel;
-	private JLabel RCUInfoLabel2;
+	private JLabel RCUInfoLabel_1;
+	private JLabel RCUInfoLabel_2;
 	private JButton dbRefresh_Button;
 	
 	/**
@@ -163,7 +163,7 @@ public class RcuInfoFrame extends JFrame {;
 		searchPerf_label.setForeground(Color.BLACK);
 		searchPerf_label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		searchPerf_label.setBackground(Color.WHITE);
-		searchPerf_label.setBounds(12, 86, 63, 35);
+		searchPerf_label.setBounds(15, 86, 63, 35);
 		actualPanel.add(searchPerf_label);
 		
 		searchFacility_ComboBox = new JComboBox();
@@ -216,21 +216,21 @@ public class RcuInfoFrame extends JFrame {;
 		});
 		actualPanel.add(searchFacility_textField);
 		
-		RCUInfoLabel = new JLabel(String.format("IP : %s",rcu.getIp()));
-		RCUInfoLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		RCUInfoLabel.setForeground(Color.BLUE);
-		RCUInfoLabel.setFont(new Font("맑은 고딕", Font.BOLD, 18));
-		RCUInfoLabel.setBackground(Color.WHITE);
-		RCUInfoLabel.setBounds(251, 8, 530, 35);
-		actualPanel.add(RCUInfoLabel);
+		RCUInfoLabel_1 = new JLabel(String.format("<html>%s %s %s</html>",Util.colorBlue("RCU :"), rcu.getName(), Util.colorGreen("( " + rcu.getRcuTypeDetail() + " )")));
+		RCUInfoLabel_1.setHorizontalAlignment(SwingConstants.LEFT);
+		RCUInfoLabel_1.setForeground(Color.BLACK);
+		RCUInfoLabel_1.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		RCUInfoLabel_1.setBackground(Color.WHITE);
+		RCUInfoLabel_1.setBounds(251, 8, 530, 35);
+		actualPanel.add(RCUInfoLabel_1);
 		
-		RCUInfoLabel2 = new JLabel(String.format("<html>RCU : %s %s</html>",rcu.getName(), Util.colorGreen("( " + rcu.getRcuTypeDetail() + " )")));
-		RCUInfoLabel2.setHorizontalAlignment(SwingConstants.LEFT);
-		RCUInfoLabel2.setForeground(Color.BLUE);
-		RCUInfoLabel2.setFont(new Font("맑은 고딕", Font.BOLD, 18));
-		RCUInfoLabel2.setBackground(Color.WHITE);
-		RCUInfoLabel2.setBounds(251, 43, 530, 35);
-		actualPanel.add(RCUInfoLabel2);
+		RCUInfoLabel_2 = new JLabel(String.format("<html>%s %s</html>",Util.colorBlue("IP :"), rcu.getIp()));
+		RCUInfoLabel_2.setHorizontalAlignment(SwingConstants.LEFT);
+		RCUInfoLabel_2.setForeground(Color.BLACK);
+		RCUInfoLabel_2.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		RCUInfoLabel_2.setBackground(Color.WHITE);
+		RCUInfoLabel_2.setBounds(271, 43, 510, 35);
+		actualPanel.add(RCUInfoLabel_2);
 		
 		dbRefresh_Button = new JButton("Database 최신화");
 		dbRefresh_Button.setFocusPainted(false);
@@ -273,8 +273,8 @@ public class RcuInfoFrame extends JFrame {;
 		if(ServerList_Panel.serverMap.containsKey(rcu.getIndex())) {
 			this.rcu = (RCU)ServerList_Panel.serverMap.get(rcu.getIndex());			
 			
-			RCUInfoLabel.setText(String.format("IP : %s",rcu.getIp()));			
-			RCUInfoLabel2.setText(String.format("<html>RCU : %s %s</html>",rcu.getName(), Util.colorGreen("( " + rcu.getRcuTypeDetail() + " )")));
+			RCUInfoLabel_1.setText(String.format("<html>%s %s %s</html>",Util.colorBlue("RCU :"), rcu.getName(), Util.colorGreen("( " + rcu.getRcuTypeDetail() + " )")));
+			RCUInfoLabel_2.setText(String.format("<html>%s %s</html>", Util.colorBlue("IP :"), rcu.getIp()));			
 			
 		}else {
 			StringBuilder sb = new StringBuilder();
@@ -539,18 +539,40 @@ public class RcuInfoFrame extends JFrame {;
 			StringBuilder msg = new StringBuilder();
 						
 			msg.append(String.format("%s%s%s\n", Util.colorBlue("──────────[ 시설물 정보 ]──────────"), separator, separator));
-			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("장비명"), fac.getName(), separator, separator));			
+			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("장비명"), fac.getName(), separator, separator));
+			msg.append(String.format("%s : %d%s%s\n", Util.colorBlue("장비 인덱스"), fac.getIndex(), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("IP 주소"), fac.isConnRCU() ? "( RCU IP ) " + fac.getIp() : fac.getIp(), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("시설물 종류"), fac.getTypeString(), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 방식"), fac.getConnMethod(), separator, separator));
 			
-			if(fac.isConnRCU() && fac.getRcu() != null) {
-				msg.append(String.format("\n%s%s%s\n", Util.colorGreen("──────────[ RCU 정보 ]──────────"), separator, separator));
+			RCU rcu = fac.getRcu();
+			String unknown = "알 수 없음";
+			boolean unknownRCU = false;
+			
+			if(rcu.getName().equals(unknown) 
+					&& rcu.getTypeString().equals(unknown) 
+					&& rcu.getRcuTypeDetail().equals(unknown) 
+					&& rcu.getIp().equals(unknown) 
+					&& rcu.getState().equals(unknown)) {
+				unknownRCU = true;
+			}
+			
+			if(unknownRCU) {
+				msg.append(String.format("\n%s%s%s\n", Util.colorRed("──────────[ 알 수 없는 RCU 정보 ]──────────"), separator, separator));
+				msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 이름"), fac.getRcu().getName(), separator, separator));
+				msg.append(String.format("%s : %d%s%s\n", Util.colorRed("RCU 인덱스"), fac.getRcu().getIndex(), separator, separator));
+				msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU IP 주소"), fac.getRcu().getIp(), separator, separator));
+				msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 종류"), fac.getRcu().getRcuTypeDetail(), separator, separator));
+				msg.append(String.format("%s : %d개%s%s\n\n", Util.colorRed("연결된 장비 개수"), fac.getRcu().getFacList().size(), separator, separator));
+				msg.append(String.format("%s%s%s\n", Util.colorRed("RCU") + " 장비와 " + Util.colorBlue("시설물") + "이 연결된 상태에서 " + Util.colorRed("RCU") + " 장비가 삭제되었을 수 있습니다", separator, separator));
+			}else {
+				msg.append(String.format("\n%s%s%s\n", Util.colorGreen("──────────[ RCU 정보 ]──────────"), separator, separator));				
 				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 이름"), fac.getRcu().getName(), separator, separator));
+				msg.append(String.format("%s : %d%s%s\n", Util.colorGreen("RCU 인덱스"), fac.getRcu().getIndex(), separator, separator));
 				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU IP 주소"), fac.getRcu().getIp(), separator, separator));
 				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 종류"), fac.getRcu().getRcuTypeDetail(), separator, separator));
 				msg.append(String.format("%s : %d개%s%s\n", Util.colorGreen("연결된 장비 개수"), fac.getRcu().getFacList().size(), separator, separator));
-			}			
+			}
 			
 			menu = Util.showOption(msg.toString(), new String[] { "성능 정보 보기", "취 소"}, JOptionPane.INFORMATION_MESSAGE, false);
 			switch (menu) {		
