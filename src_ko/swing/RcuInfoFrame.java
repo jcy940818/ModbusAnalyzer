@@ -382,6 +382,8 @@ public class RcuInfoFrame extends JFrame {;
 	
 	//******************** 테이블 필터링 관련 *********************************************************************
 	public void doTableFilter() {
+		if(searchFacility_textField == null) return;
+		
 		ArrayList<Facility> filteredFac = new ArrayList<Facility>();			
 		
 		String text = searchFacility_textField.getText();

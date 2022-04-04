@@ -713,6 +713,8 @@ public class WatchPointListFrame extends JFrame {
 		
 		//******************** 테이블 필터링 관련 *********************************************************************
 		public void doTableFilter() {
+			if(searchPerf_textField_1 == null || searchPerf_textField_2 == null) return;
+			
 			ArrayList<FmsPerfItem> filteredPerf = new ArrayList<FmsPerfItem>();
 			String text_1 = searchPerf_textField_1.getText();
 			String text_2 = searchPerf_textField_2.getText();
