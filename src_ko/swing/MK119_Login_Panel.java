@@ -246,7 +246,7 @@ public class MK119_Login_Panel extends JPanel {
 		StringBuilder msg2 = new StringBuilder("<html><br>");
 		msg2.append(String.format("%s&nbsp;1. SQL Server : <font color='blue'>%s</font>%s<br><br>", longSeparator, ONION_Info.getSimpleSqlServerInfo() ,longSeparator));
 		msg2.append(String.format("%s&nbsp;2. 데이터베이스 : <font color='blue'>%s</font>%s<br><br>", longSeparator, ONION_Info.getDataBaseName() ,longSeparator));
-		msg2.append(String.format("%s&nbsp;3. MK119 버전 정보 : <font color='blue'>%s</font>%s<br>", longSeparator, DbUtil.getMK119VersionInfo() ,longSeparator));				
+		msg2.append(String.format("%s&nbsp;3. MK119 버전 : <font color='blue'>%s</font>%s<br>", longSeparator, DbUtil.getMK119VersionInfo() ,longSeparator));				
 		msg2.append("<br></html>");		
 		JLabel MK119_VersionInfo = new JLabel(msg2.toString());
 		

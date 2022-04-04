@@ -384,14 +384,45 @@ public class WatchPointListFrame extends JFrame {
 		});
 		actualPanel.add(searchPerf_textField_2);
 		
-		String facInfo_1 = null;
-		facInfo_1 = String.format("<html>%s %s %s</html>",Util.colorBlue("시설물 :"), fac.getName(), Util.colorGreen("( " + fac.getTypeString() + " / " + fac.getConnMethod() + " )"));
+		String facInfo_1 = "";
+		facInfo_1 += "<html>";
+		facInfo_1 += Util.colorBlue("시설물 : ") + fac.getName();
+		facInfo_1 += "&nbsp;&nbsp;";
+		facInfo_1 += "( ";
+		facInfo_1 += Util.colorGreen(fac.getTypeString() + Util.colorRed(" / ") + fac.getConnMethod());
+		facInfo_1 += " )";
+		facInfo_1 += "</html>";
 		
-		String facInfo_2 = null;
+		String facInfo_2 = "";
 		if(fac.isConnRCU() && fac.getRcu() != null) {
-			facInfo_2 = String.format("<html>%s %s %s</html>",Util.colorBlue("RCU IP :"), fac.getIp(), Util.colorGreen("( RCU : " + fac.getRcu().getName() + " )"));	
+			facInfo_2 += "<html>";
+			facInfo_2 += Util.colorBlue("RCU : ") + fac.getRcu().getName();
+			facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
+
+			facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
+			facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
+
+			facInfo_2 += Util.colorBlue("RCU Port : ");
+			
+			if(fac.getRcuPortCh() != 0 && fac.getPort() != 0) {
+				facInfo_2 += fac.getRcuPortCh() + " ( " + fac.getPort() + " )";
+			}else if(fac.getRcuPortCh() == 0) {
+				facInfo_2 += "Unknown";
+			}else {
+				facInfo_2 += "Unknown";
+			}
+					
+			facInfo_2 += "</html>";
+		}else if(!fac.isConnRCU() && fac.getRcu() != null){
+			facInfo_2 += "<html>";
+			facInfo_2 += Util.colorRed("장비와 연결된 RCU 정보를 찾을 수 없습니다");
+			facInfo_2 += "</html>";
 		}else {
-			facInfo_2 = String.format("<html>%s %s</html>",Util.colorBlue("IP :"), fac.getIp());	
+			facInfo_2 = "<html>";
+			facInfo_2 += Util.colorBlue("IP : ") + fac.getIp();
+			facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
+			facInfo_2 += Util.colorBlue("Port : ") + fac.getPort(); 
+			facInfo_2 += "</html>";
 		}
 		
 		FacilityInfoLabel_1 = new JLabel(facInfo_1);
@@ -472,14 +503,46 @@ public class WatchPointListFrame extends JFrame {
 			this.fac = (Facility)ServerList_Panel.serverMap.get(fac.getIndex());
 			this.isCommon = fac.isCommon();
 			
-			String facInfo_1 = String.format("<html>%s %s %s</html>",Util.colorBlue("시설물 :"), fac.getName(), Util.colorGreen("( " + fac.getTypeString() + " / " + fac.getConnMethod() + " )"));			
+			String facInfo_1 = "";
+			facInfo_1 += "<html>";
+			facInfo_1 += Util.colorBlue("시설물 : ") + fac.getName();
+			facInfo_1 += "&nbsp;&nbsp;";
+			facInfo_1 += "( ";
+			facInfo_1 += Util.colorGreen(fac.getTypeString() + Util.colorRed(" / ") + fac.getConnMethod());
+			facInfo_1 += " )";
+			facInfo_1 += "</html>";
 			
-			String facInfo_2 = null;
+			String facInfo_2 = "";
 			if(fac.isConnRCU() && fac.getRcu() != null) {
-				facInfo_2 = String.format("<html>%s %s %s</html>",Util.colorBlue("RCU IP :"), fac.getIp(), Util.colorGreen("( RCU : " + fac.getRcu().getName() + " )"));	
+				facInfo_2 += "<html>";
+				facInfo_2 += Util.colorBlue("RCU : ") + fac.getRcu().getName();
+				facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
+
+				facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
+				facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
+
+				facInfo_2 += Util.colorBlue("RCU Port : ");
+				
+				if(fac.getRcuPortCh() != 0 && fac.getPort() != 0) {
+					facInfo_2 += fac.getRcuPortCh() + " ( " + fac.getPort() + " )";
+				}else if(fac.getRcuPortCh() == 0) {
+					facInfo_2 += "Unknown";
+				}else {
+					facInfo_2 += "Unknown";
+				}
+						
+				facInfo_2 += "</html>";
+			}else if(!fac.isConnRCU() && fac.getRcu() != null){
+				facInfo_2 += "<html>";
+				facInfo_2 += Util.colorRed("장비와 연결된 RCU 정보를 찾을 수 없습니다");
+				facInfo_2 += "</html>";
 			}else {
-				facInfo_2 = String.format("<html>%s %s</html>",Util.colorBlue("IP :"), fac.getIp());	
-			}			
+				facInfo_2 = "<html>";
+				facInfo_2 += Util.colorBlue("IP : ") + fac.getIp();
+				facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
+				facInfo_2 += Util.colorBlue("Port : ") + fac.getPort(); 
+				facInfo_2 += "</html>";
+			}
 			
 			FacilityInfoLabel_1.setText(facInfo_1);
 			FacilityInfoLabel_2.setText(facInfo_2);
