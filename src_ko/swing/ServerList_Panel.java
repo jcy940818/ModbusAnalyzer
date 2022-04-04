@@ -543,7 +543,17 @@ public class ServerList_Panel extends JPanel {
 								
 								sb.append("위의 장비가 바라보는 " + Util.colorRed("RCU") + " 장비를 찾을 수 없습니다" + Util.separator + Util.separator +"\n\n");
 								sb.append("해당 현상은 " + Util.colorRed("RCU") + " 장비와 " + Util.colorBlue("시설물") + "이 연결된 상태에서 " + Util.colorRed("RCU") + " 장비가 삭제되었을 경우 발생 할 수 있습니다" + Util.separator + Util.separator +"\n");
-								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+								
+								int menu = Util.showOption(sb.toString(), new String[] { "확 인", " 동일한 내용의 메시지 그만보기 "}, JOptionPane.ERROR_MESSAGE);
+								switch (menu) {
+									case 1: // 동일한 내용의 메시지 그만보기
+										isFirstLoad = false;
+										continue;
+									case 0: // 확 인	
+									default :
+										continue;
+								}// switch
+								
 							}
 						}
 				}
