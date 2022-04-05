@@ -895,6 +895,60 @@ public class DbUtil {
 			}
 		}
 		
+		public static ArrayList<Integer> getAllFacilityCodeList() {
+			ArrayList<Integer> facCodeList = new ArrayList<Integer>();
+				facCodeList.add(1); // UPS
+				facCodeList.add(2); // CRAC
+				facCodeList.add(3); // 하론소화기
+				facCodeList.add(4); // 정류기
+				facCodeList.add(5); // 인버터
+				facCodeList.add(6); // AVC
+				facCodeList.add(7); // 분전반
+				facCodeList.add(8); // 누수감지기
+				facCodeList.add(9); // 카메라
+				facCodeList.add(10); // VESDA
+				facCodeList.add(11); // STS
+				facCodeList.add(12); // 계전기
+				facCodeList.add(13); // BMS
+				facCodeList.add(14); // 온습도계
+				facCodeList.add(15); // 화재 수신기
+				facCodeList.add(16); // 선형 탐지기
+				facCodeList.add(17); // 카메라 컨트롤러
+				facCodeList.add(18); // 랙
+				facCodeList.add(19); // 디지털 미터
+				facCodeList.add(20); // 지문 인식기
+				facCodeList.add(21); // 발전기
+				facCodeList.add(22); // 풍량계
+				facCodeList.add(23); // 가습기
+				facCodeList.add(24); // 모터 감시장치
+				facCodeList.add(25); // 풍속계
+				facCodeList.add(26); // PDU
+				facCodeList.add(27); // 공조 설비
+				facCodeList.add(28); // 냉동기
+				facCodeList.add(29); // XD
+				facCodeList.add(98); // AI-Net 다중 센서
+				facCodeList.add(99); // 센서류
+				facCodeList.add(102); // Access Floor
+				facCodeList.add(103); // CTTS
+				facCodeList.add(199); // 서버
+				facCodeList.add(200); // IBS 설비 : AHU				
+				facCodeList.add(201); // IBS 설비 : FCU
+				facCodeList.add(202); // IBS 설비 : FPU
+				facCodeList.add(203); // IBS 설비 : HV
+				facCodeList.add(204); // IBS 설비 : 보일러
+				facCodeList.add(205); // IBS 설비 : PAC
+				facCodeList.add(206); // IBS 설비 : 냉각수
+				facCodeList.add(207); // IBS 설비 : 시수조
+				facCodeList.add(208); // IBS 설비 : 냉온수기				
+				facCodeList.add(209); // IBS 설비 : 팬
+				facCodeList.add(210); // IBS 설비 : 배수탱크
+				facCodeList.add(211); // IBS 설비 : 우수시스템
+				facCodeList.add(212); // IBS 설비 : 중수시스템
+				facCodeList.add(213); // IBS 설비 : 조명
+				facCodeList.add(214); // IBS 설비 : 전력
+				return facCodeList;
+		}
+		
 		
 		public static String getFacilityType(int facilityType) {
 			switch(facilityType) {
