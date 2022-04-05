@@ -17,6 +17,13 @@ import src_ko.util.ProtocolDownloader;
 
 public class Protocol implements Comparable {
 	
+	// 모든 시설물에 포함되는 프로토콜
+	public static final int PROTOCOL_MODBUS_RTU = 997;
+	public static final int PROTOCOL_MODBUS_TCP = 998;
+	public static final int PROTOCOL_CONTACT = 999;
+	public static final int PROTOCOL_VIRTUAL = 1000;
+	public static final int PROTOCOL_BACNET = 1002;
+	
 	public static final int COMMON_PROTOCOL = 0;
 	public static final int SNMP_PROTOCOL = 1;
 	
@@ -250,6 +257,7 @@ public class Protocol implements Comparable {
 	// 4.5 FmsProtocol : Protocol List 파싱
 	public static ArrayList<Protocol> getFmsProtocolList(String fmsProtocol, String enumKo, String enumEn) throws IOException{
 		ArrayList<Protocol> list = new ArrayList<Protocol>();
+		HashMap<Integer, CommonChecker> checkerMap = new HashMap<Integer, CommonChecker>();
 		
 		Scanner sc = new Scanner(fmsProtocol);
 		
@@ -290,7 +298,7 @@ public class Protocol implements Comparable {
 				}catch(Exception e) {
 					controlXml = "---";
 				}
-												
+				
 				p.setEnumKey(enumKey);
 				p.setFacCode(DbUtil.getFacilityCode(facType));
 				p.setFacType(facType);
@@ -301,6 +309,14 @@ public class Protocol implements Comparable {
 				p.setControlXml(controlXml);
 				list.add(p);
 			
+				if(number == PROTOCOL_MODBUS_RTU 
+					|| number == PROTOCOL_MODBUS_TCP
+					|| number == PROTOCOL_CONTACT
+					|| number == PROTOCOL_VIRTUAL
+					|| number == PROTOCOL_BACNET ){
+					공통 프로토콜 검사 추가중
+				}
+				
 			}catch(Exception e) {
 				e.printStackTrace();
 				continue;
@@ -590,5 +606,45 @@ public class Protocol implements Comparable {
 			return null;
 		}
 	}
+	
+	
+	// ****************************************************************************************************
+	class CommonChecker{
+		int facCode;
+		boolean modbus_RTU = false;
+		boolean modbus_TCP = false;
+		boolean contact = false;
+		boolean virtual = false;
+		boolean bacnet = false;
+		
+		public int getFacCode() { return facCode; }
+		public void setFacCode(int facCode) { this.facCode = facCode; }
+		public boolean hasModbus_RTU() { return modbus_RTU; }
+		public boolean hasModbus_TCP() { return modbus_TCP; }
+		public boolean hasContact() { return contact; }
+		public boolean hasVirtual() { return virtual; }
+		public boolean hasBacnet() { return bacnet; }
+		
+		public void havaProtocol(int protocolNum) {
+			switch(protocolNum) {
+				case Protocol.PROTOCOL_MODBUS_RTU :
+					this.modbus_RTU = true;
+					break;
+				case Protocol.PROTOCOL_MODBUS_TCP :
+					this.modbus_TCP = true;
+					break;
+				case Protocol.PROTOCOL_CONTACT :
+					this.contact = true;
+					break;
+				case Protocol.PROTOCOL_VIRTUAL :
+					this.virtual = true;
+					break;
+				case Protocol.PROTOCOL_BACNET :
+					this.bacnet = true;
+					break;
+			}
+		}
+	}
+	// ****************************************************************************************************
 	
 }
