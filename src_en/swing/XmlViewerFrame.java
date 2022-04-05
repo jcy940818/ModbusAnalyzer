@@ -124,7 +124,7 @@ public class XmlViewerFrame extends JFrame {
 		}
 		
 		XmlViewerFrame.isExist = true;
-		setTitle(String.format("XML Viewer : [ %s ] %s ( %s )", protocol.getFacType(), protocolName, xmlFile.getName()));
+		setTitle(String.format("XML Viewer [ %s : %d ] %s ( %s )", protocol.getFacType(), protocol.getNumber(), protocolName, xmlFile.getName()));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
