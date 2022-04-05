@@ -384,7 +384,7 @@ public class ServerList_Panel extends JPanel {
 				perfInfo_Button.setEnabled(false);
 								
 				rcuInfo_Button.setEnabled(true);
-				rcuInfo_Button.setBackground(new Color(135, 206, 250));
+				rcuInfo_Button.setBackground(new Color(152, 251, 152));
 				rcuInfo_Button.setText("연결된 장비 목록");
 				
 				updateRCUInfo((RCU)selectedServer); // <- RCU 정보 테이블 업데이트
