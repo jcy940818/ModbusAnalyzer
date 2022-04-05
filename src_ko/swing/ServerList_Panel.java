@@ -458,7 +458,11 @@ public class ServerList_Panel extends JPanel {
 				
 				rcu.setStateCode(rs.getInt("condition"));
 				rcu.setState(DbUtil.getState(rcu.getStateCode()));
-
+				
+				// TCP/IP 이중화 RCU 전용
+				rcu.setAuxIP(rs.getString("auxIP"));
+				rcu.setAuxPort(rs.getInt("auxPort"));
+				
 				serverList.add(rcu);
 				serverMap.put(rcu.getIndex(), rcu);
 			}
