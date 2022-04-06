@@ -700,7 +700,7 @@ public class MainFrame extends JFrame {
 		ProtocolList_Panel.xmlDir = xmlDir;
 		ProtocolList_Panel.protocols = protocols;
 		ProtocolList_Panel.setFacilityComboBox(protocols, true);
-		ProtocolList_Panel.setTableContent("COMMON", "전 체", protocols, ProtocolList_Panel.isKorean);
+		ProtocolList_Panel.setTableContent("PROTOCOL", "전 체", protocols, ProtocolList_Panel.isKorean);
 		ProtocolList_Panel.resetForm();
 		cardLayout.show(actualPanel, "xmlEditor_Panel");
 	}
