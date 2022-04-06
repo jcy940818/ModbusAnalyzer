@@ -527,6 +527,18 @@ public class XmlViewerFrame extends JFrame {
 		// 테이블 로드
 		updatePerfListTable(perfListTable);
 		
+		// ESC : Close Listener
+		CloseListener close = new CloseListener();
+		this.addKeyListener(close);
+		getContentPane().addKeyListener(close);
+		searchPerf_ComboBox_1.addKeyListener(close);
+		searchPerf_ComboBox_2.addKeyListener(close);
+		searchPerf_textField_1.addKeyListener(close);
+		searchPerf_textField_2.addKeyListener(close);
+		perfListTable.addKeyListener(close);
+		perfInfoTable.addKeyListener(close);
+		perfLabelTable.addKeyListener(close);
+		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -951,5 +963,21 @@ public class XmlViewerFrame extends JFrame {
 			}else {
 //				tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
 			}
+		}
+		
+		
+		// 사용자 정의 키 이벤트 리스너
+		class CloseListener extends KeyAdapter{	
+			public void keyPressed(KeyEvent e) {			
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					dispose();
+				}
+			}		
+			
+			public void keyReleased(KeyEvent e) {			
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					dispose();
+				}
+			}		
 		}
 }
