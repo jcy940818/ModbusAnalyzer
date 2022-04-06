@@ -38,6 +38,20 @@ public class Protocol implements Comparable {
 	private String enName; // 프로토콜 영문 이름
 	private String enumKey; // 프로토콜 Enum Key
 	
+	public Protocol() {
+		
+	}
+
+	public Protocol(int protocolType, int facCode, int protocolNumber, String name_ko, String name_en, String xml, String controlXml) {
+		this.setProtocolType(protocolType);					
+		this.setFacCode(facCode);
+		this.setNumber(protocolNumber);
+		this.setName(name_ko);
+		this.setEnName(name_en);
+		this.setXml(xml);
+		this.setControlXml(controlXml);
+	}
+	
 	public int getProtocolType() {
 		return protocolType;
 	}
@@ -194,6 +208,7 @@ public class Protocol implements Comparable {
 	// 4.2 SystemConfig : Protocol List 파싱
 	public static ArrayList<Protocol> getProtocolList(String protocolConfig){
 		ArrayList<Protocol> list = new ArrayList<Protocol>();
+		HashMap<Integer, CommonProtocol> cpCheckMap = new HashMap<Integer, CommonProtocol>();
 		
 		Scanner sc = new Scanner(protocolConfig);
 		
@@ -223,18 +238,18 @@ public class Protocol implements Comparable {
 				try {
 					xml = token2[3].split("/")[1].split(".xml")[0].trim() + ".xml"; 				
 				}catch(Exception e) {
-					xml = "---";
+					xml = "-";
 				}
 				
 				String controlXml = null;
 				try {
 					if(token2[3].contains("\", null")) {
-						controlXml = "---";
+						controlXml = "-";
 					} else {
 						controlXml = token2[4].split("/")[1].split(".xml")[0].trim() + ".xml";
 					}
 				}catch(Exception e) {
-					controlXml = "---";
+					controlXml = "-";
 				}
 				
 				p.setFacCode(facCode);
@@ -244,20 +259,34 @@ public class Protocol implements Comparable {
 				p.setControlXml(controlXml);
 				list.add(p);
 				
+				// Common Protocol
+				if( p.getProtocolType() == Protocol.COMMON_PROTOCOL &&
+					(number == PROTOCOL_MODBUS_RTU || number == PROTOCOL_MODBUS_TCP || number == PROTOCOL_CONTACT || number == PROTOCOL_VIRTUAL || number == PROTOCOL_BACNET) ){					
+					if(cpCheckMap.containsKey(p.getFacCode())) {
+						CommonProtocol cp = cpCheckMap.get(p.getFacCode());
+						cp.haveProtocol(number);
+					}else {
+						CommonProtocol cp = new CommonProtocol();
+						cp.setFacType(p.getFacCode());
+						cp.haveProtocol(number);
+						cpCheckMap.put(p.getFacCode(), cp);
+					}
+				}
+				
 			}catch(Exception e) {
 				e.printStackTrace();
 				continue;
 			}
 		}// While
 		
-		return list;
+		return CommonProtocol.generateCommonProtocol(list, cpCheckMap);
 	}
 	
 	
 	// 4.5 FmsProtocol : Protocol List 파싱
 	public static ArrayList<Protocol> getFmsProtocolList(String fmsProtocol, String enumKo, String enumEn) throws IOException{
 		ArrayList<Protocol> list = new ArrayList<Protocol>();
-		HashMap<Integer, CommonChecker> checkerMap = new HashMap<Integer, CommonChecker>();
+		HashMap<Integer, CommonProtocol> cpCheckMap = new HashMap<Integer, CommonProtocol>();
 		
 		Scanner sc = new Scanner(fmsProtocol);
 		
@@ -285,36 +314,42 @@ public class Protocol implements Comparable {
 				try {
 					xml = token[6].split("/")[1].split(".xml")[0].trim() + ".xml";
 				}catch(Exception e) {
-					xml = "---";
+					xml = "-";
 				}
 								
 				String controlXml = null;
 				try {
 					if(token[7].contains("\", null")) {
-						controlXml = "---";
+						controlXml = "-";
 					} else {
 						controlXml = token[7].split("/")[1].split(".xml")[0].trim() + ".xml";
 					}
 				}catch(Exception e) {
-					controlXml = "---";
+					controlXml = "-";
 				}
 				
 				p.setEnumKey(enumKey);
 				p.setFacCode(DbUtil.getFacilityCode(facType));
-				p.setFacType(facType);
+				// p.setFacType(facType);
 				p.setNumber(number);
 				p.setName(name);
 				p.setEnName(enName);
 				p.setXml(xml);
 				p.setControlXml(controlXml);
 				list.add(p);
-			
-				if(number == PROTOCOL_MODBUS_RTU 
-					|| number == PROTOCOL_MODBUS_TCP
-					|| number == PROTOCOL_CONTACT
-					|| number == PROTOCOL_VIRTUAL
-					|| number == PROTOCOL_BACNET ){
-					공통 프로토콜 검사 추가중
+				 
+				// Common Protocol
+				if( p.getProtocolType() == Protocol.COMMON_PROTOCOL &&
+					(number == PROTOCOL_MODBUS_RTU || number == PROTOCOL_MODBUS_TCP || number == PROTOCOL_CONTACT || number == PROTOCOL_VIRTUAL || number == PROTOCOL_BACNET) ){					
+					if(cpCheckMap.containsKey(p.getFacCode())) {
+						CommonProtocol cp = cpCheckMap.get(p.getFacCode());
+						cp.haveProtocol(number);
+					}else {
+						CommonProtocol cp = new CommonProtocol();
+						cp.setFacType(p.getFacCode());
+						cp.haveProtocol(number);
+						cpCheckMap.put(p.getFacCode(), cp);
+					}
 				}
 				
 			}catch(Exception e) {
@@ -322,8 +357,8 @@ public class Protocol implements Comparable {
 				continue;
 			}
 		}// while
-
-		return list;
+		
+		return CommonProtocol.generateCommonProtocol(list, cpCheckMap);
 	}
 	
 	
@@ -357,23 +392,23 @@ public class Protocol implements Comparable {
 				try {
 					xml = token[6].split("/")[1].split(".xml")[0].trim() + ".xml"; 				
 				}catch(Exception e) {
-					xml = "---";
+					xml = "-";
 				}									
 								
 				String controlXml = null;
 				try {
 					if(token[7].contains("\", null")) {
-						controlXml = "---";
+						controlXml = "-";
 					} else {
 						controlXml = token[7].split("/")[1].split(".xml")[0].trim() + ".xml";
 					}
 				}catch(Exception e) {
-					controlXml = "---";
+					controlXml = "-";
 				}
 				
 				p.setEnumKey(enumKey);
 				p.setFacCode(DbUtil.getFacilityCode(facType));
-				p.setFacType(facType);
+//				p.setFacType(facType);
 				p.setNumber(number);
 				p.setName(name);
 				p.setEnName(enName);
@@ -484,7 +519,7 @@ public class Protocol implements Comparable {
 				
 				/* column[0] */ record.add((p.getProtocolType() == Protocol.COMMON_PROTOCOL ? "COMMON" : "SNMP")); // 프로토콜 타입
 				/* column[1] */ record.add(p.getFacCode()); // 시설물 코드
-				/* column[2] */ record.add(DbUtil.getFacilityType(p.getFacType()));  // 시설물 종류
+				/* column[2] */ record.add(p.getFacType());  // 시설물 종류
 				/* column[3] */ record.add(p.getNumber());  // 프로토콜 번호
 				/* column[4] */ record.add(p.getName()); // 프로토콜 이름 (한글)
 				/* column[5] */ record.add(p.getEnName()); // 프로토콜 이름 (영문)
@@ -594,57 +629,110 @@ public class Protocol implements Comparable {
 				fmsProtocolList.add(fmsMibList.get(i));
 			}
 			
-			for(int i =0; i < fmsProtocolList.size(); i++) {
-				Protocol p = fmsProtocolList.get(i);
-				String facType = DbUtil.getFacilityType(p.getFacType());
-				p.setFacType(facType);		
-			}
-			
 			return fmsProtocolList;
 		}catch(Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
+}
+
+//*** [ 공통 프로토콜 검사 클래스 ] *************************************************************************************************
+class CommonProtocol{
+	int facType;
+	boolean modbus_RTU = false;
+	boolean modbus_TCP = false;
+	boolean contact = false;
+	boolean virtual = false;
+	boolean bacnet = false;
 	
+	public int getFacType() { return facType; }
+	public void setFacType(int facType) { this.facType = facType; }
+	public boolean hasModbus_RTU() { return modbus_RTU; }
+	public boolean hasModbus_TCP() { return modbus_TCP; }
+	public boolean hasContact() { return contact; }
+	public boolean hasVirtual() { return virtual; }
+	public boolean hasBacnet() { return bacnet; }
 	
-	// ****************************************************************************************************
-	class CommonChecker{
-		int facCode;
-		boolean modbus_RTU = false;
-		boolean modbus_TCP = false;
-		boolean contact = false;
-		boolean virtual = false;
-		boolean bacnet = false;
-		
-		public int getFacCode() { return facCode; }
-		public void setFacCode(int facCode) { this.facCode = facCode; }
-		public boolean hasModbus_RTU() { return modbus_RTU; }
-		public boolean hasModbus_TCP() { return modbus_TCP; }
-		public boolean hasContact() { return contact; }
-		public boolean hasVirtual() { return virtual; }
-		public boolean hasBacnet() { return bacnet; }
-		
-		public void havaProtocol(int protocolNum) {
-			switch(protocolNum) {
-				case Protocol.PROTOCOL_MODBUS_RTU :
-					this.modbus_RTU = true;
-					break;
-				case Protocol.PROTOCOL_MODBUS_TCP :
-					this.modbus_TCP = true;
-					break;
-				case Protocol.PROTOCOL_CONTACT :
-					this.contact = true;
-					break;
-				case Protocol.PROTOCOL_VIRTUAL :
-					this.virtual = true;
-					break;
-				case Protocol.PROTOCOL_BACNET :
-					this.bacnet = true;
-					break;
-			}
+	public void haveProtocol(int protocolNum) {
+		switch(protocolNum) {
+			case Protocol.PROTOCOL_MODBUS_RTU :
+				this.modbus_RTU = true;
+				break;
+			case Protocol.PROTOCOL_MODBUS_TCP :
+				this.modbus_TCP = true;
+				break;
+			case Protocol.PROTOCOL_CONTACT :
+				this.contact = true;
+				break;
+			case Protocol.PROTOCOL_VIRTUAL :
+				this.virtual = true;
+				break;
+			case Protocol.PROTOCOL_BACNET :
+				this.bacnet = true;
+				break;
 		}
 	}
-	// ****************************************************************************************************
+	
+	public static ArrayList<Protocol> generateCommonProtocol(ArrayList<Protocol> list, HashMap<Integer, CommonProtocol> map){
+		ArrayList<Integer> facCodeList = DbUtil.getAllFacilityCodeList();
+		
+		for(int i = 0; i < facCodeList.size(); i++) {
+			try {
+				
+			int facCode = facCodeList.get(i);
+			CommonProtocol cp = map.get(facCode);
+			
+			if(cp == null) {
+				// 프로토콜 정보 클래스에 존재하지 않아서 추가하지 못한 시설물
+				Protocol p = null;
+				
+				p = new Protocol(Protocol.COMMON_PROTOCOL, facCode, Protocol.PROTOCOL_MODBUS_RTU, "Modbus-RTU 연결 프로토콜", "Modbus-RTU Connection Protocol", "-", "-");
+				list.add(p);
+				
+				p = new Protocol(Protocol.COMMON_PROTOCOL, facCode, Protocol.PROTOCOL_MODBUS_TCP, "Modbus-TCP 연결 프로토콜", "Modbus-TCP Connection Protocol", "-", "-");
+				list.add(p);
+				
+				p = new Protocol(Protocol.COMMON_PROTOCOL, facCode, Protocol.PROTOCOL_CONTACT, "접점 연결 프로토콜", "Contact Point Connection Protocol", "point.xml", "-");
+				list.add(p);
+				
+				p = new Protocol(Protocol.COMMON_PROTOCOL, facCode, Protocol.PROTOCOL_VIRTUAL, "가상 연결 프로토콜", "Virtual Connection Protocol", "point.xml", "-");
+				list.add(p);
+				
+				p = new Protocol(Protocol.COMMON_PROTOCOL, facCode, Protocol.PROTOCOL_BACNET, "BACnet 연결 프로토콜", "BACnet Connection Protocol", "-", "-");
+				list.add(p);
+			}else {
+				// 프로토콜 정보 클래스에 존재하는 시설물 일 경우
+				if(!cp.hasModbus_RTU()) {
+					Protocol p = new Protocol(Protocol.COMMON_PROTOCOL, cp.getFacType(), Protocol.PROTOCOL_MODBUS_RTU, "Modbus-RTU 연결 프로토콜", "Modbus-RTU Connection Protocol", "-", "-");
+					list.add(p);
+				}
+				if(!cp.hasModbus_TCP()) {
+					Protocol p = new Protocol(Protocol.COMMON_PROTOCOL, cp.getFacType(), Protocol.PROTOCOL_MODBUS_TCP, "Modbus-TCP 연결 프로토콜", "Modbus-TCP Connection Protocol", "-", "-");
+					list.add(p);
+				}
+				if(!cp.hasContact()) {
+					Protocol p = new Protocol(Protocol.COMMON_PROTOCOL, cp.getFacType(), Protocol.PROTOCOL_CONTACT, "접점 연결 프로토콜", "Contact Point Connection Protocol", "point.xml", "-");
+					list.add(p);
+				}
+				if(!cp.hasVirtual()) {
+					Protocol p = new Protocol(Protocol.COMMON_PROTOCOL, cp.getFacType(), Protocol.PROTOCOL_VIRTUAL, "가상 연결 프로토콜", "Virtual Connection Protocol", "point.xml", "-");
+					list.add(p);
+				}
+				if(!cp.hasBacnet()) {
+					Protocol p = new Protocol(Protocol.COMMON_PROTOCOL, cp.getFacType(), Protocol.PROTOCOL_BACNET, "BACnet 연결 프로토콜", "BACnet Connection Protocol", "-", "-");
+					list.add(p);
+				}
+			}				
+			
+			}catch(Exception e) {
+				e.printStackTrace();
+				continue;
+			}
+		}// End for-Loop
+		
+		return list;
+	}
 	
 }
+// ****************************************************************************************************

@@ -905,7 +905,7 @@ public class DbUtil {
 				facCodeList.add(6); // AVC
 				facCodeList.add(7); // 분전반
 				facCodeList.add(8); // 누수감지기
-				facCodeList.add(9); // 카메라
+//				facCodeList.add(9); // 카메라
 				facCodeList.add(10); // VESDA
 				facCodeList.add(11); // STS
 				facCodeList.add(12); // 계전기
@@ -1012,7 +1012,7 @@ public class DbUtil {
 				case "FacilityType.AINETCONTROLLER" : return "AI-Net 컨트롤러";
 				case "FacilityType.AINETTEMHUM" : return "AI-Net 온습도계";
 				case "FacilityType.AINET_SENSOR" : return "AI-Net 다중 센서";
-				case "FacilityType.AIRCON" : return "에어컨 (미구현)";
+				case "FacilityType.AIRCON" : return "에어컨";
 				case "FacilityType.AIRFLOWMETER" : return "풍량계";
 				case "FacilityType.AIR_CONDITIONING" : return "공조 설비";
 				case "FacilityType.ANEMOMETER" : return "풍속계";
