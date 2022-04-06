@@ -104,7 +104,7 @@ public class ProtocolList_Panel extends JPanel {
 		protocolType_comboBox.setBackground(Color.WHITE);
 		protocolType_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		protocolType_comboBox.setBounds(358, 12, 157, 35);
-		protocolType_comboBox.setModel(new DefaultComboBoxModel(new String[] {"COMMON", "SNMP"}));
+		protocolType_comboBox.setModel(new DefaultComboBoxModel(new String[] {"PROTOCOL", "SNMP"}));
 		protocolType_comboBox.setSelectedIndex(0);		
 		protocolType_comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {			
@@ -458,12 +458,12 @@ public class ProtocolList_Panel extends JPanel {
 					selectedProtocols.add(p);
 				}
 				
-			}else if(protocolType.equalsIgnoreCase("COMMON") && p.getProtocolType() == Protocol.COMMON_PROTOCOL) {
+			}else if(protocolType.equalsIgnoreCase("PROTOCOL") && p.getProtocolType() == Protocol.PROTOCOL) {
 				if(facType.equalsIgnoreCase("Àü Ã¼") || facType.equalsIgnoreCase(p.getFacType())) {
 					selectedProtocols.add(p);
 				}
 				
-			}else if(protocolType.equalsIgnoreCase("SNMP") && p.getProtocolType() == Protocol.SNMP_PROTOCOL) {
+			}else if(protocolType.equalsIgnoreCase("SNMP") && p.getProtocolType() == Protocol.SNMP) {
 				if(facType.equalsIgnoreCase("Àü Ã¼") || facType.equalsIgnoreCase(p.getFacType())) {
 					selectedProtocols.add(p);
 				}

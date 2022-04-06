@@ -188,7 +188,7 @@ public class ProtocolDownloader extends Thread{
 						cell.setCellStyle(centerStyle); // 셀 내용 가운데 정렬
 						
 						// 첫 번째 열의 내용을 검사 후 조건에 해당되면 배경색이 있는 셀 스타일 지정
-						if(j == 0 && value.contains("COMMON")) {
+						if(j == 0 && value.contains("PROTOCOL")) {
 							cell.setCellStyle(yellowCell);
 						}else if(j == 0 && value.contains("SNMP")) {
 							cell.setCellStyle(orangeCell);

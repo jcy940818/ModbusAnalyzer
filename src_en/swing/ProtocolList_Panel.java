@@ -87,7 +87,7 @@ public class ProtocolList_Panel extends JPanel {
 		currentFunction.setForeground(Color.BLACK);
 		currentFunction.setBackground(Color.WHITE);
 		currentFunction.setIcon(new Util().getSubLogoResource());
-		currentFunction.setBounds(0, 0, 220, 55);
+		currentFunction.setBounds(0, 0, 200, 55);
 		currentFunction.setHorizontalAlignment(SwingConstants.LEFT);
 		currentFunction.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
 		infoPanel.add(currentFunction);
@@ -97,15 +97,15 @@ public class ProtocolList_Panel extends JPanel {
 		protocolType_Label.setForeground(Color.BLACK);
 		protocolType_Label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
 		protocolType_Label.setBackground(Color.WHITE);
-		protocolType_Label.setBounds(239, 0, 120, 55);
+		protocolType_Label.setBounds(230, 0, 120, 55);
 		infoPanel.add(protocolType_Label);
 		
 		protocolType_comboBox = new JComboBox();
 		protocolType_comboBox.setForeground(Color.BLACK);
 		protocolType_comboBox.setBackground(Color.WHITE);
 		protocolType_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
-		protocolType_comboBox.setBounds(365, 12, 116, 35);
-		protocolType_comboBox.setModel(new DefaultComboBoxModel(new String[] {"COMMON", "SNMP"}));
+		protocolType_comboBox.setBounds(358, 12, 130, 35);
+		protocolType_comboBox.setModel(new DefaultComboBoxModel(new String[] {"PROTOCOL", "SNMP"}));
 		protocolType_comboBox.setSelectedIndex(0);		
 		protocolType_comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {			
@@ -459,12 +459,12 @@ public class ProtocolList_Panel extends JPanel {
 					selectedProtocols.add(p);
 				}
 				
-			}else if(protocolType.equalsIgnoreCase("COMMON") && p.getProtocolType() == Protocol.COMMON_PROTOCOL) {
+			}else if(protocolType.equalsIgnoreCase("PROTOCOL") && p.getProtocolType() == Protocol.PROTOCOL) {
 				if(facType.equalsIgnoreCase("All Types") || facType.equalsIgnoreCase(p.getFacType())) {
 					selectedProtocols.add(p);
 				}
 				
-			}else if(protocolType.equalsIgnoreCase("SNMP") && p.getProtocolType() == Protocol.SNMP_PROTOCOL) {
+			}else if(protocolType.equalsIgnoreCase("SNMP") && p.getProtocolType() == Protocol.SNMP) {
 				if(facType.equalsIgnoreCase("All Types") || facType.equalsIgnoreCase(p.getFacType())) {
 					selectedProtocols.add(p);
 				}

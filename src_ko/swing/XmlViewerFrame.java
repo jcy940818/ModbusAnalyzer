@@ -115,7 +115,7 @@ public class XmlViewerFrame extends JFrame {
 		this.encoding = (ONION_Info.getMK119Version() >= 4.5) ? "UTF-8" : "EUC-KR";
 		this.xmlFile = xmlFile;
 		this.protocol = protocol;
-		this.isCommon = (protocol.getProtocolType() == Protocol.COMMON_PROTOCOL) ? true : false;
+		this.isCommon = (protocol.getProtocolType() == Protocol.PROTOCOL) ? true : false;
 		
 		if (this.isCommon) {
 			this.perfs = FmsPerfConf.getFmsPerfList(xmlFile, this.encoding);
