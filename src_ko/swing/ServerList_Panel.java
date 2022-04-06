@@ -433,6 +433,11 @@ public class ServerList_Panel extends JPanel {
 				fac.setStateCode(rs.getInt("condition"));
 				fac.setState(DbUtil.getState(fac.getStateCode()));
 
+				// BACnet 연결 포트 : 47808 (0xBAC0) 
+				if(fac.getConnCode() == 128) {
+					fac.setPort(0xBAC0);
+				}
+				
 				serverList.add(fac);
 				serverMap.put(fac.getIndex(), fac);
 			}
@@ -707,8 +712,9 @@ public class ServerList_Panel extends JPanel {
 		
 		// IP 주소
 		content[2] = new Object[2];
-		content[2][0] = IP;
-		content[2][1] = fac.isConnRCU() ? "( RCU IP ) " + fac.getIp() : fac.getIp();
+		content[2][0] = "연결 정보";
+		String connInfo = fac.getIp() + " : " + fac.getPort();
+		content[2][1] = fac.isConnRCU() ? "( RCU ) " + connInfo : connInfo ;
 		
 		// 시설물 종류
 		content[3] = new Object[2];
