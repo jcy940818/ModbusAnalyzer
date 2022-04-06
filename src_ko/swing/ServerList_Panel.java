@@ -459,9 +459,23 @@ public class ServerList_Panel extends JPanel {
 				rcu.setStateCode(rs.getInt("condition"));
 				rcu.setState(DbUtil.getState(rcu.getStateCode()));
 				
-				// TCP/IP 이중화 RCU 전용
-				rcu.setAuxIP(rs.getString("auxIP"));
-				rcu.setAuxPort(rs.getInt("auxPort"));
+				switch(rcu.getType()) {
+					case RCU.RTU_TYPE_DY_MUX : // MK_RCU_V1.0
+					case RCU.RTU_TYPE_REM2408 : // MK119_-_REM_2408
+					case RCU.RTU_TYPE_REM1204 : // MK119_-_REM_1204
+					case RCU.RTU_TYPE_REM1204v103 : // MK119_-_REM_1204_v1.0.3
+						rcu.setPort(RCU.DEFAULT_PORT);
+						break;
+
+					case RCU.RTU_TYPE_DUPLEXED_TCP : // TCP/IP_이중화_RCU
+						rcu.setAuxIP(rs.getString("auxIP"));
+						rcu.setAuxPort(rs.getInt("auxPort"));
+						break;
+						
+					case RCU.RTU_TYPE_MQTT_BROKER : // MQTT_Broker
+						rcu.setPort(rs.getInt("mqttPort"));
+						break;
+				}
 				
 				serverList.add(rcu);
 				serverMap.put(rcu.getIndex(), rcu);

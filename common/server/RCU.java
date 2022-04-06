@@ -43,11 +43,13 @@ public class RCU extends Server{
 			"	a.strServerName as 'name',\r\n" + 
 			"	a.SERVER_CONDITION as 'condition',\r\n" + 
 			"	a.AUX_SERVER_IP as 'auxIP',\r\n" + 
-			"	rtu.AUX_TCP_PORT as 'auxPort'\r\n" + 
+			"	rtu.AUX_TCP_PORT as 'auxPort',\r\n" + 
+			"	addInfo.FIELD1_TEXT as 'mqttPort'\r\n" + 
 			" \r\n" + 
 			"from SERVERINFO a inner join SERVERGROUPMAP b on a.nServerIndex=b.nServerIndex\r\n" + 
 			"	inner join tree_query c on b.nGroupIndex = c.ngroupIndex\r\n" + 
 			"	inner join SERVERINFO_RTU rtu ON a.nServerIndex = rtu.NODE_INDEX\r\n" + 
+			"	left join SERVERINFO_ADDINFO addInfo ON a.nServerIndex = addInfo.EQUIP_ID\r\n" + 
 			" order by a.nServerIndex";
 	
 	public static final int DEFAULT_PORT = 1470;
