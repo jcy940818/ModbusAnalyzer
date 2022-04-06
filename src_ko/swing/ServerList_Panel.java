@@ -468,6 +468,7 @@ public class ServerList_Panel extends JPanel {
 						break;
 
 					case RCU.RTU_TYPE_DUPLEXED_TCP : // TCP/IP_¿Ã¡ﬂ»≠_RCU
+						rcu.setDuplexedPort(true);
 						rcu.setAuxIP(rs.getString("auxIP"));
 						rcu.setAuxPort(rs.getInt("auxPort"));
 						break;

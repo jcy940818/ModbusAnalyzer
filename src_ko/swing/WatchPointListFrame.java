@@ -147,7 +147,7 @@ public class WatchPointListFrame extends JFrame {
 		MK119.setBackground(Color.WHITE);		
 		MK119.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
 		MK119.setBounds(962, 6, 85, 36);
-		actualPanel.add(MK119);
+//		actualPanel.add(MK119);
 		
 		JScrollPane perfList_scrollPane = new JScrollPane();
 		perfList_scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
@@ -396,22 +396,44 @@ public class WatchPointListFrame extends JFrame {
 		String facInfo_2 = "";
 		if(fac.isConnRCU() && fac.getRcu() != null) {
 			facInfo_2 += "<html>";
-			facInfo_2 += Util.colorBlue("RCU : ") + fac.getRcu().getName();
-			facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
-
-			facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
-			facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
-
-			facInfo_2 += Util.colorBlue("RCU Port : ");
 			
-			if(fac.getRcuPortCh() != 0 && fac.getPort() != 0) {
-				facInfo_2 += fac.getRcuPortCh() + " ( " + fac.getPort() + " )";
-			}else if(fac.getRcuPortCh() == 0) {
-				facInfo_2 += "Unknown";
+			// TCP/IP ¿Ã¡ﬂ»≠ RCU
+			if(fac.getRcu().isDuplexedPort()) {
+				facInfo_2 += Util.colorBlue("RCU : ") + fac.getRcu().getName();
+				facInfo_2 += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
+
+				facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
+				facInfo_2 += Util.colorBlue(" & ")  + fac.getRcu().getAuxIP();
+				facInfo_2 += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
+
+				facInfo_2 += Util.colorBlue("RCU Port : ");
+				
+				if(fac.getRcuPortCh() != 0 && fac.getPort() != 0) {
+					facInfo_2 += fac.getPort() + Util.colorBlue(" & ") + fac.getRcu().getAuxPort();
+				}else if(fac.getRcuPortCh() == 0) {
+					facInfo_2 += "Unknown";
+				}else {
+					facInfo_2 += "Unknown";
+				}
 			}else {
-				facInfo_2 += "Unknown";
+				// ¿œπ› RCU
+				facInfo_2 += Util.colorBlue("RCU : ") + fac.getRcu().getName();
+				facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
+
+				facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
+				facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
+
+				facInfo_2 += Util.colorBlue("RCU Port : ");
+				
+				if(fac.getRcuPortCh() != 0 && fac.getPort() != 0) {
+					facInfo_2 += fac.getRcuPortCh() + " ( " + fac.getPort() + " )";
+				}else if(fac.getRcuPortCh() == 0) {
+					facInfo_2 += "Unknown";
+				}else {
+					facInfo_2 += "Unknown";
+				}
 			}
-					
+			
 			facInfo_2 += "</html>";
 		}else if(!fac.isConnRCU() && fac.getRcu() != null){
 			facInfo_2 += "<html>";
@@ -430,7 +452,7 @@ public class WatchPointListFrame extends JFrame {
 		FacilityInfoLabel_1.setForeground(Color.BLACK);
 		FacilityInfoLabel_1.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
 		FacilityInfoLabel_1.setBackground(Color.WHITE);
-		FacilityInfoLabel_1.setBounds(252, 1, 710, 30);
+		FacilityInfoLabel_1.setBounds(252, 1, 802, 30);
 		actualPanel.add(FacilityInfoLabel_1);
 		
 		FacilityInfoLabel_2 = new JLabel(facInfo_2);
@@ -438,7 +460,7 @@ public class WatchPointListFrame extends JFrame {
 		FacilityInfoLabel_2.setForeground(Color.BLACK);
 		FacilityInfoLabel_2.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
 		FacilityInfoLabel_2.setBackground(Color.WHITE);
-		FacilityInfoLabel_2.setBounds(252, 28, 710, 30);		
+		FacilityInfoLabel_2.setBounds(252, 28, 802, 30);		
 		actualPanel.add(FacilityInfoLabel_2);
 		
 		dbRefreshButton = new JButton("Database √÷Ω≈»≠");
@@ -527,22 +549,44 @@ public class WatchPointListFrame extends JFrame {
 			String facInfo_2 = "";
 			if(fac.isConnRCU() && fac.getRcu() != null) {
 				facInfo_2 += "<html>";
-				facInfo_2 += Util.colorBlue("RCU : ") + fac.getRcu().getName();
-				facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
-
-				facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
-				facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
-
-				facInfo_2 += Util.colorBlue("RCU Port : ");
 				
-				if(fac.getRcuPortCh() != 0 && fac.getPort() != 0) {
-					facInfo_2 += fac.getRcuPortCh() + " ( " + fac.getPort() + " )";
-				}else if(fac.getRcuPortCh() == 0) {
-					facInfo_2 += "Unknown";
+				// TCP/IP ¿Ã¡ﬂ»≠ RCU
+				if(fac.getRcu().isDuplexedPort()) {
+					facInfo_2 += Util.colorBlue("RCU : ") + fac.getRcu().getName();
+					facInfo_2 += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
+
+					facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
+					facInfo_2 += Util.colorBlue(" & ")  + fac.getRcu().getAuxIP();
+					facInfo_2 += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
+
+					facInfo_2 += Util.colorBlue("RCU Port : ");
+					
+					if(fac.getRcuPortCh() != 0 && fac.getPort() != 0) {
+						facInfo_2 += fac.getPort() + Util.colorBlue(" & ") + fac.getRcu().getAuxPort();
+					}else if(fac.getRcuPortCh() == 0) {
+						facInfo_2 += "Unknown";
+					}else {
+						facInfo_2 += "Unknown";
+					}
 				}else {
-					facInfo_2 += "Unknown";
+					// ¿œπ› RCU
+					facInfo_2 += Util.colorBlue("RCU : ") + fac.getRcu().getName();
+					facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
+
+					facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
+					facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
+
+					facInfo_2 += Util.colorBlue("RCU Port : ");
+					
+					if(fac.getRcuPortCh() != 0 && fac.getPort() != 0) {
+						facInfo_2 += fac.getRcuPortCh() + " ( " + fac.getPort() + " )";
+					}else if(fac.getRcuPortCh() == 0) {
+						facInfo_2 += "Unknown";
+					}else {
+						facInfo_2 += "Unknown";
+					}
 				}
-						
+				
 				facInfo_2 += "</html>";
 			}else if(!fac.isConnRCU() && fac.getRcu() != null){
 				facInfo_2 += "<html>";
