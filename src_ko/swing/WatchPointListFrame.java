@@ -408,10 +408,8 @@ public class WatchPointListFrame extends JFrame {
 
 				facInfo_2 += Util.colorBlue("RCU Port : ");
 				
-				if(fac.getRcuPortCh() != 0 && fac.getPort() != 0) {
+				if(fac.getPort() != 0) {
 					facInfo_2 += fac.getPort() + Util.colorBlue(" & ") + fac.getRcu().getAuxPort();
-				}else if(fac.getRcuPortCh() == 0) {
-					facInfo_2 += "Unknown";
 				}else {
 					facInfo_2 += "Unknown";
 				}
@@ -425,10 +423,8 @@ public class WatchPointListFrame extends JFrame {
 
 				facInfo_2 += Util.colorBlue("RCU Port : ");
 				
-				if(fac.getRcuPortCh() != 0 && fac.getPort() != 0) {
+				if(fac.getPort() != 0) {
 					facInfo_2 += fac.getRcuPortCh() + " ( " + fac.getPort() + " )";
-				}else if(fac.getRcuPortCh() == 0) {
-					facInfo_2 += "Unknown";
 				}else {
 					facInfo_2 += "Unknown";
 				}
@@ -561,10 +557,8 @@ public class WatchPointListFrame extends JFrame {
 
 					facInfo_2 += Util.colorBlue("RCU Port : ");
 					
-					if(fac.getRcuPortCh() != 0 && fac.getPort() != 0) {
+					if(fac.getPort() != 0) {
 						facInfo_2 += fac.getPort() + Util.colorBlue(" & ") + fac.getRcu().getAuxPort();
-					}else if(fac.getRcuPortCh() == 0) {
-						facInfo_2 += "Unknown";
 					}else {
 						facInfo_2 += "Unknown";
 					}
@@ -578,10 +572,8 @@ public class WatchPointListFrame extends JFrame {
 
 					facInfo_2 += Util.colorBlue("RCU Port : ");
 					
-					if(fac.getRcuPortCh() != 0 && fac.getPort() != 0) {
+					if(fac.getPort() != 0) {
 						facInfo_2 += fac.getRcuPortCh() + " ( " + fac.getPort() + " )";
-					}else if(fac.getRcuPortCh() == 0) {
-						facInfo_2 += "Unknown";
 					}else {
 						facInfo_2 += "Unknown";
 					}
