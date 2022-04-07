@@ -670,6 +670,47 @@ public class ProtocolList_Panel extends JPanel {
 			if(pName == null) {
 				return;
 			}
+			
+			if(protocol.getXml().equals("-")) {
+				StringBuilder msg = new StringBuilder();
+				msg.append(Util.colorRed("The XML File does not Exist"));
+				msg.append(String.format("%s%s%s", Util.separator, Util.separator, "\n"));
+				
+				msg.append("선택하신 프로토콜은 성능 XML 파일이 존재하지 않습니다");
+				msg.append(String.format("%s%s", Util.separator, Util.separator));
+				msg.append("\n\n");
+				
+				msg.append(Util.colorBlue("시설물 종류 : ") + protocol.getFacType());
+				msg.append(String.format("%s%s%s", Util.separator, Util.separator, "\n"));
+				
+				msg.append(Util.colorBlue("프로토콜 번호 : ") + protocol.getNumber());
+				msg.append(String.format("%s%s%s", Util.separator, Util.separator, "\n"));
+				
+				msg.append(Util.colorBlue("프로토콜 이름: ") + pName);
+				msg.append(String.format("%s%s%s", Util.separator, Util.separator, "\n"));
+				
+				Util.showMessage(msg.toString(), JOptionPane.ERROR_MESSAGE);
+				return;
+			}else if(!xmlFile.exists()) {
+				StringBuilder msg = new StringBuilder();
+				msg.append(Util.colorRed("XML file not found"));
+				msg.append(String.format("%s%s", Util.separator, Util.separator));
+				msg.append("\n");
+				
+				msg.append("아래의 경로에서 XML 파일을 찾을 수 없습니다");
+				msg.append(String.format("%s%s", Util.separator, Util.separator));
+				msg.append("\n\n");
+				
+				msg.append("XML 파일 경로 : " + xmlFile.getParent().replace("\\", Util.colorRed("\\")));
+				msg.append(String.format("%s%s", Util.separator, Util.separator));
+				msg.append("\n\n");
+				msg.append("XML 파일 이름 : " + Util.colorRed(xmlFile.getName()));
+				msg.append(String.format("%s%s", Util.separator, Util.separator));
+				msg.append("\n");
+				
+				Util.showMessage(msg.toString(), JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 						
 			// XML Viewer Frame 생성
 			new XmlViewerFrame(pName, xmlFile, protocol);

@@ -671,6 +671,47 @@ public class ProtocolList_Panel extends JPanel {
 			if(pName == null) {
 				return;
 			}
+			
+			if(protocol.getXml().equals("-")) {
+				StringBuilder msg = new StringBuilder();
+				msg.append(Util.colorRed("The XML File does not Exist"));
+				msg.append(String.format("%s%s%s", Util.separator, Util.separator, "\n"));
+				
+				msg.append("Watch Point XML File does not exist for the selected protocol");
+				msg.append(String.format("%s%s", Util.separator, Util.separator));
+				msg.append("\n\n");
+				
+				msg.append(Util.colorBlue("Facility Type : ") + protocol.getFacType());
+				msg.append(String.format("%s%s%s", Util.separator, Util.separator, "\n"));
+				
+				msg.append(Util.colorBlue("Protocol Number : ") + protocol.getNumber());
+				msg.append(String.format("%s%s%s", Util.separator, Util.separator, "\n"));
+				
+				msg.append(Util.colorBlue("Protocol Name : ") + pName);
+				msg.append(String.format("%s%s%s", Util.separator, Util.separator, "\n"));
+				
+				Util.showMessage(msg.toString(), JOptionPane.ERROR_MESSAGE);
+				return;
+			}else if(!xmlFile.exists()) {
+				StringBuilder msg = new StringBuilder();
+				msg.append(Util.colorRed("XML File not found"));
+				msg.append(String.format("%s%s", Util.separator, Util.separator));
+				msg.append("\n");
+				
+				msg.append("XML File not found in the following path");
+				msg.append(String.format("%s%s", Util.separator, Util.separator));
+				msg.append("\n\n");
+				
+				msg.append("XML File Path : " + xmlFile.getParent().replace("\\", Util.colorRed("\\")));
+				msg.append(String.format("%s%s", Util.separator, Util.separator));
+				msg.append("\n\n");
+				msg.append("XML File Name : " + Util.colorRed(xmlFile.getName()));
+				msg.append(String.format("%s%s", Util.separator, Util.separator));
+				msg.append("\n");
+
+				Util.showMessage(msg.toString(), JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 						
 			// XML Viewer Frame »ý¼º
 			new XmlViewerFrame(pName, xmlFile, protocol);
