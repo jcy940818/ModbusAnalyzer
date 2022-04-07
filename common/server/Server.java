@@ -51,11 +51,15 @@ public class Server implements Comparable {
 		return groupInfo;
 	}
 
-	public void setGroupInfo(String groupInfo) {
-		if (!groupInfo.contains(">")) {
+	public void setGroupInfo(String groupInfo, boolean useSplit) {
+		if(useSplit) {
+			if (!groupInfo.contains(">")) {
+				this.groupInfo = groupInfo;
+			} else {
+				this.groupInfo = groupInfo.substring(groupInfo.indexOf(" > ") + 3);
+			}	
+		}else {
 			this.groupInfo = groupInfo;
-		} else {
-			this.groupInfo = groupInfo.substring(groupInfo.indexOf(" > ") + 3);
 		}
 	}
 

@@ -37,6 +37,7 @@ import common.server.Facility;
 import common.server.MultiPortMap;
 import common.server.RCU;
 import common.server.Server;
+import common.util.AlphanumComparator;
 import common.util.FindTextRenderer;
 import src_ko.database.DbUtil;
 import src_ko.info.ONION_Info;
@@ -59,6 +60,8 @@ public class ServerList_Panel extends JPanel {
 	public static final String PROTOCOL_NUMBER = "프로토콜 번호";
 	
 	public static final String STATE_COMMER = "통신 오류";
+	
+	public static final String OVERLAPPING = "( 중복 )";
 	
 	public static JLabel sqlServerInfo_label;
 	
@@ -409,7 +412,7 @@ public class ServerList_Panel extends JPanel {
 			while(rs.next()) {
 				Facility fac = new Facility();
 				
-				fac.setGroupInfo(rs.getString("groupInfo"));				
+				fac.setGroupInfo(rs.getString("groupInfo"), true);				
 				
 				fac.setIp(rs.getString("ip"));
 				fac.setPort(rs.getInt("port"));
@@ -438,6 +441,25 @@ public class ServerList_Panel extends JPanel {
 					fac.setPort(0xBAC0);
 				}
 				
+				// 그룹 정보를 제외하고 인덱스를 포함한 모든 정보가 중복되는 시설물이 존재한다
+				if(serverMap.containsKey(fac.getIndex())) {
+					Facility originFac = (Facility)serverMap.get(fac.getIndex());
+					String groupInfo = null;
+					
+					int compareGroup = AlphanumComparator.comparator.compare(originFac.getGroupInfo(), fac.getGroupInfo());
+					
+					if(compareGroup < 0) {
+						groupInfo = originFac.getGroupInfo() + "   /   " + OVERLAPPING + fac.getGroupInfo();
+					}else if(compareGroup == 0) {
+						groupInfo = originFac.getGroupInfo();
+					}else {
+						groupInfo = fac.getGroupInfo() + "   /   " + OVERLAPPING + originFac.getGroupInfo();
+					}
+					
+					originFac.setGroupInfo(groupInfo, false);
+					continue;
+				}
+				
 				serverList.add(fac);
 				serverMap.put(fac.getIndex(), fac);
 			}
@@ -447,7 +469,7 @@ public class ServerList_Panel extends JPanel {
 			while(rs.next()) {
 				RCU rcu = new RCU();
 				
-				rcu.setGroupInfo(rs.getString("groupInfo"));
+				rcu.setGroupInfo(rs.getString("groupInfo"), true);
 				
 				rcu.setIp(rs.getString("ip"));
 				rcu.setPort(rs.getInt("port"));				
@@ -481,6 +503,25 @@ public class ServerList_Panel extends JPanel {
 					case RCU.RTU_TYPE_MQTT_BROKER : // MQTT_Broker
 						rcu.setPort(rs.getInt("mqttPort"));
 						break;
+				}
+				
+				// 그룹 정보를 제외하고 인덱스를 포함한 모든 정보가 중복되는 장비가 존재한다
+				if(serverMap.containsKey(rcu.getIndex())) {
+					RCU originRCU = (RCU)serverMap.get(rcu.getIndex());
+					String groupInfo = null;
+					
+					int compareGroup = AlphanumComparator.comparator.compare(originRCU.getGroupInfo(), rcu.getGroupInfo());
+					
+					if(compareGroup < 0) {
+						groupInfo = originRCU.getGroupInfo() + "   /   " + OVERLAPPING + rcu.getGroupInfo();
+					}else if(compareGroup == 0) {
+						groupInfo = originRCU.getGroupInfo();
+					}else {
+						groupInfo = rcu.getGroupInfo() + "   /   " + OVERLAPPING + originRCU.getGroupInfo();
+					}
+					
+					originRCU.setGroupInfo(groupInfo, false);
+					continue;
 				}
 				
 				serverList.add(rcu);
