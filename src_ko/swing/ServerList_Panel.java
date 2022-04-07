@@ -61,7 +61,7 @@ public class ServerList_Panel extends JPanel {
 	
 	public static final String STATE_COMMER = "통신 오류";
 	
-	public static final String OVERLAPPING = "( 중복 )";
+	public static final String OVERLAPPING = "( 중복 ) ";
 	
 	public static JLabel sqlServerInfo_label;
 	
@@ -449,11 +449,11 @@ public class ServerList_Panel extends JPanel {
 					int compareGroup = AlphanumComparator.comparator.compare(originFac.getGroupInfo(), fac.getGroupInfo());
 					
 					if(compareGroup < 0) {
-						groupInfo = originFac.getGroupInfo() + "   /   " + OVERLAPPING + fac.getGroupInfo();
+						groupInfo = originFac.getGroupInfo() + "  /  " + OVERLAPPING + fac.getGroupInfo();
 					}else if(compareGroup == 0) {
 						groupInfo = originFac.getGroupInfo();
 					}else {
-						groupInfo = fac.getGroupInfo() + "   /   " + OVERLAPPING + originFac.getGroupInfo();
+						groupInfo = fac.getGroupInfo() + "  /  " + OVERLAPPING + originFac.getGroupInfo();
 					}
 					
 					originFac.setGroupInfo(groupInfo, false);
@@ -513,11 +513,11 @@ public class ServerList_Panel extends JPanel {
 					int compareGroup = AlphanumComparator.comparator.compare(originRCU.getGroupInfo(), rcu.getGroupInfo());
 					
 					if(compareGroup < 0) {
-						groupInfo = originRCU.getGroupInfo() + "   /   " + OVERLAPPING + rcu.getGroupInfo();
+						groupInfo = originRCU.getGroupInfo() + "  /  " + OVERLAPPING + rcu.getGroupInfo();
 					}else if(compareGroup == 0) {
 						groupInfo = originRCU.getGroupInfo();
 					}else {
-						groupInfo = rcu.getGroupInfo() + "   /   " + OVERLAPPING + originRCU.getGroupInfo();
+						groupInfo = rcu.getGroupInfo() + "  /  " + OVERLAPPING + originRCU.getGroupInfo();
 					}
 					
 					originRCU.setGroupInfo(groupInfo, false);
