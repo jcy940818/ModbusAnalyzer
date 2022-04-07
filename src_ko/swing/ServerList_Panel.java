@@ -816,7 +816,7 @@ public class ServerList_Panel extends JPanel {
 			return;		
 		}
 		
-		Object[][] content = new Object[6][];
+		Object[][] content = new Object[7][];
 		
 		// RCU 이름
 		content[0] = new Object[2];
@@ -828,25 +828,62 @@ public class ServerList_Panel extends JPanel {
 		content[1][0] = "RCU 인덱스";
 		content[1][1] = rcu.getIndex();
 		
-		// IP 주소
+		// IP 정보
+		
+		String ipInfo = "";
+		if(rcu.isDuplexedPort()) {
+			ipInfo += rcu.getIp();
+			ipInfo += " & ";
+			ipInfo += rcu.getAuxIP();
+		}else {
+			ipInfo += rcu.getIp();
+		}
+		
 		content[2] = new Object[2];
-		content[2][0] = IP;
-		content[2][1] = rcu.getIp();
+		content[2][0] = "IP 정보";
+		content[2][1] = ipInfo;
+		
+		// Port 정보
+		
+		String portInfo = "";			
+		if(rcu.isMultiPort()) {
+			ArrayList<MultiPortMap> portMap = rcu.getMultiPortMapList();
+			MultiPortMap start = portMap.get(0);
+			MultiPortMap end = portMap.get(portMap.size() - 1);
+			
+			portInfo += start.getCh() + " ( " + start.getPort() + " )";
+			portInfo += " ~ ";
+			portInfo += end.getCh() + " ( " + end.getPort() + " ) ";
+		}else if(rcu.isDuplexedPort()) {
+			portInfo += rcu.getPort();
+			portInfo += " & ";
+			portInfo += rcu.getAuxPort();
+		}else if(!rcu.isMultiPort() && rcu.getPort() != 0) {
+			portInfo += rcu.getPort();
+		}else if(!rcu.isMultiPort() && rcu.getPort() == 0){
+			portInfo += "Unknown";
+		}else {
+			portInfo += "Unknown";
+		}
+		
+		content[3] = new Object[2];
+		content[3][0] = "Port 정보";
+		content[3][1] = portInfo;
 		
 		// RCU 종류
-		content[3] = new Object[2];
-		content[3][0] = RCU_TYPE;
-		content[3][1] = rcu.getRcuTypeDetail();
+		content[4] = new Object[2];
+		content[4][0] = RCU_TYPE;
+		content[4][1] = rcu.getRcuTypeDetail();
 		
 		// 연결된 장비 개수
-		content[4] = new Object[2];
-		content[4][0] = "연결된 장비 개수";
-		content[4][1] = rcu.getFacList().size();
+		content[5] = new Object[2];
+		content[5][0] = "연결된 장비 개수";
+		content[5][1] = rcu.getFacList().size();
 		
 		// RCU 상태
-		content[5] = new Object[2];
-		content[5][0] = "RCU 상태";
-		content[5][1] = rcu.getState();
+		content[6] = new Object[2];
+		content[6][0] = "RCU 상태";
+		content[6][1] = rcu.getState();
 
 		serverInfoTable.setModel(new DefaultTableModel(
 			content,
