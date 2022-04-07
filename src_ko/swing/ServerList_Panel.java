@@ -948,15 +948,15 @@ public class ServerList_Panel extends JPanel {
 			}
 			
 			if(fac.isConnRCU() && fac.getRcu() != null) {
-				menu = Util.showOption(msg.toString(), new String[] { "성능 정보 보기", "RCU 정보 보기", "취 소"}, JOptionPane.INFORMATION_MESSAGE, false);
+				menu = Util.showOption(msg.toString(), new String[] { "RCU 정보 보기", "성능 정보 보기", "취 소"}, JOptionPane.INFORMATION_MESSAGE, false);
 				switch (menu) {				
-					case 0: // 성능 정보 보기
+				case 0:
+					// RCU 정보 표시
+					new RcuInfoFrame(fac.getRcu());
+					return;
+					
+					case 1: // 성능 정보 보기
 						new WatchPointListFrame(fac);
-						return;
-						
-					case 1: // 연결된 RCU 정보 보기
-						// RCU 정보 표시
-						new RcuInfoFrame(fac.getRcu());
 						return;
 						
 					default :
