@@ -140,13 +140,13 @@ public class RcuInfoFrame extends JFrame {;
 					// 왼쪽 버튼 더블 클릭			
 					int row = FacListTable.getSelectedRow();
 					Facility fac = (Facility)FacListTable.getValueAt(row, 2);
-					ServerList_Panel.showFacilityMenu(fac);	
+					ServerList_Panel.showFacilityMenu(fac, false);
 				}
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
 					int row = FacListTable.getSelectedRow();
 					Facility fac = (Facility)FacListTable.getValueAt(row, 2);
-					ServerList_Panel.showFacilityMenu(fac);	
+					ServerList_Panel.showFacilityMenu(fac, false);
 				}
 			}
 		});

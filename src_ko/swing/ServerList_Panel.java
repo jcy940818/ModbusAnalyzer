@@ -331,12 +331,12 @@ public class ServerList_Panel extends JPanel {
 				if (e.getButton() == 1 && e.getClickCount() == 2) {
 					// 왼쪽 버튼 더블 클릭
 					selectServer();
-					showFacilityMenu(selectedServer);	
+					showFacilityMenu(selectedServer, true);	
 				}
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
 					selectServer();
-					showFacilityMenu(selectedServer);
+					showFacilityMenu(selectedServer, true);
 				}
 			}
 		});
@@ -896,7 +896,7 @@ public class ServerList_Panel extends JPanel {
 		tcmSchedule.getColumn(1).setCellRenderer(findCommerRenderer); // 내 용
 	}
 		
-	public static void showFacilityMenu(Server server) {
+	public static void showFacilityMenu(Server server, boolean showRcuInfo) {
 		if(server == null) return;
 
 		int menu = -1;
@@ -939,7 +939,7 @@ public class ServerList_Panel extends JPanel {
 					msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 이름"), fac.getRcu().getName(), separator, separator));
 					msg.append(String.format("%s : %d%s%s\n", Util.colorRed("RCU 인덱스"), fac.getRcu().getIndex(), separator, separator));
 					msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU IP"), fac.getRcu().getIp(), separator, separator));
-					msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU Port"), "알 수 없음", separator, separator));
+					msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU Port"), unknown, separator, separator));
 					msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 종류"), fac.getRcu().getRcuTypeDetail(), separator, separator));
 					msg.append(String.format("%s : %d개%s%s\n\n", Util.colorRed("연결된 장비 개수"), fac.getRcu().getFacList().size(), separator, separator));
 					msg.append(String.format("%s%s%s\n", Util.colorRed("RCU") + " 장비와 " + Util.colorBlue("시설물") + "이 연결된 상태에서 " + Util.colorRed("RCU") + " 장비가 삭제 되었을 수 있습니다", separator, separator));
@@ -988,7 +988,7 @@ public class ServerList_Panel extends JPanel {
 				}
 			}
 			
-			if(fac.isConnRCU() && fac.getRcu() != null) {
+			if(fac.isConnRCU() && fac.getRcu() != null && showRcuInfo) {
 				menu = Util.showOption(msg.toString(), new String[] { "RCU 정보 보기", "성능 정보 보기", "취 소"}, JOptionPane.INFORMATION_MESSAGE, false);
 				switch (menu) {				
 				case 0:
@@ -1024,7 +1024,7 @@ public class ServerList_Panel extends JPanel {
 			msg.append(String.format("%s : %d%s%s\n", Util.colorGreen("RCU 인덱스"), rcu.getIndex(), separator, separator));
 			// ****** [ RCU 연결 정보 ] ********************************************************************************************
 			
-			String ipInfo = "";			
+			String ipInfo = "";
 			if(rcu.isDuplexedPort()) {
 				ipInfo += rcu.getIp();
 				ipInfo += Util.colorBlue(" & ");
