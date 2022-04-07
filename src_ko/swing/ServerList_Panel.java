@@ -152,7 +152,7 @@ public class ServerList_Panel extends JPanel {
 		perfInfo_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {	
 				if(selectedServer.isFacility()) {
-					new WatchPointListFrame((Facility)selectedServer);
+					new FacilityInfoFrame((Facility)selectedServer);
 				}
 			}
 		});
@@ -1034,7 +1034,7 @@ public class ServerList_Panel extends JPanel {
 					return;
 					
 					case 1: // 성능 정보 보기
-						new WatchPointListFrame(fac);
+						new FacilityInfoFrame(fac);
 						return;
 						
 					default :
@@ -1044,7 +1044,7 @@ public class ServerList_Panel extends JPanel {
 				menu = Util.showOption(msg.toString(), new String[] { "성능 정보 보기", "취 소"}, JOptionPane.INFORMATION_MESSAGE, false);
 				switch (menu) {					
 					case 0: // 성능 정보 보기
-						new WatchPointListFrame(fac);
+						new FacilityInfoFrame(fac);
 						return;					
 					default :
 						return;

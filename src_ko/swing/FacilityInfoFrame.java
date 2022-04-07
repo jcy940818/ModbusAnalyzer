@@ -38,7 +38,7 @@ import common.server.Facility;
 import src_ko.info.ONION_Info;
 import src_ko.util.Util;
 
-public class WatchPointListFrame extends JFrame {
+public class FacilityInfoFrame extends JFrame {
 			
 	private static final String PERF_NAME = "º∫¥…∏Ì";
 	private static final String PERF_INDEX = "º∫¥… ¿Œµ¶Ω∫";
@@ -107,13 +107,13 @@ public class WatchPointListFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public WatchPointListFrame(Facility fac) {		
+	public FacilityInfoFrame(Facility fac) {		
 		this.fac = fac;
 		this.isCommon = fac.isCommon();
 		this.perfs = Perf.getFaciltiyPerfList(ONION_Info.getMk119Connection(), fac);
 		
-		WatchPointListFrame.isExist = true;
-		setTitle("Watch Point List");
+		FacilityInfoFrame.isExist = true;
+		setTitle("Facility Information");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
@@ -131,13 +131,13 @@ public class WatchPointListFrame extends JFrame {
 		contentPane.add(actualPanel, BorderLayout.CENTER);		
 		actualPanel.setLayout(null);
 		
-		JLabel currentFunction = new JLabel("Watch Point List");
+		JLabel currentFunction = new JLabel("Facility Information");
 		currentFunction.setForeground(Color.BLACK);
 		currentFunction.setIcon(new Util().getSubLogoResource());
 		currentFunction.setHorizontalAlignment(SwingConstants.LEFT);
-		currentFunction.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 22));
+		currentFunction.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		currentFunction.setBackground(Color.WHITE);
-		currentFunction.setBounds(0, 0, 240, 55);
+		currentFunction.setBounds(0, 0, 250, 55);
 		actualPanel.add(currentFunction);
 		
 		MK119 = new JLabel();
@@ -519,7 +519,7 @@ public class WatchPointListFrame extends JFrame {
 	
 	@Override
 	public void dispose() {
-		WatchPointListFrame.isExist = false;
+		FacilityInfoFrame.isExist = false;
 		super.dispose();
 	}
 	
