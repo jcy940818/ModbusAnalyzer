@@ -649,9 +649,9 @@ public class RcuInfoFrame extends JFrame {;
 			msg.append(String.format("%s : %d%s%s\n", Util.colorBlue("장비 인덱스"), fac.getIndex(), separator, separator));
 			
 			String connInfo = "";
-			connInfo += Util.colorRed("IP : ") + fac.getIp();
+			connInfo += Util.colorRed("IP") + " : " + fac.getIp();
 			connInfo += "&nbsp;&nbsp;" + Util.colorBlue("/") + "&nbsp;&nbsp;";
-			connInfo += Util.colorRed("Port : ") + fac.getPort();
+			connInfo += Util.colorRed("Port") + " : "+ fac.getPort();
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 정보"), fac.isConnRCU() ? Util.colorGreen("( RCU ) ") + connInfo : connInfo, separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("시설물 종류"), fac.getTypeString(), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 방식"), fac.getConnMethod(), separator, separator));
@@ -672,17 +672,41 @@ public class RcuInfoFrame extends JFrame {;
 				msg.append(String.format("\n%s%s%s\n", Util.colorRed("──────────[ 알 수 없는 RCU 정보 ]──────────"), separator, separator));
 				msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 이름"), fac.getRcu().getName(), separator, separator));
 				msg.append(String.format("%s : %d%s%s\n", Util.colorRed("RCU 인덱스"), fac.getRcu().getIndex(), separator, separator));
-				msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU IP 주소"), fac.getRcu().getIp(), separator, separator));
+				msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU IP"), fac.getRcu().getIp(), separator, separator));
+				msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU Port"), "알 수 없음", separator, separator));
 				msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 종류"), fac.getRcu().getRcuTypeDetail(), separator, separator));
 				msg.append(String.format("%s : %d개%s%s\n\n", Util.colorRed("연결된 장비 개수"), fac.getRcu().getFacList().size(), separator, separator));
-				msg.append(String.format("%s%s%s\n", Util.colorRed("RCU") + " 장비와 " + Util.colorBlue("시설물") + "이 연결된 상태에서 " + Util.colorRed("RCU") + " 장비가 삭제되었을 수 있습니다", separator, separator));
+				msg.append(String.format("%s%s%s\n", Util.colorRed("RCU") + " 장비와 " + Util.colorBlue("시설물") + "이 연결된 상태에서 " + Util.colorRed("RCU") + " 장비가 삭제 되었을 수 있습니다", separator, separator));
 			}else {
 				msg.append(String.format("\n%s%s%s\n", Util.colorGreen("──────────[ RCU 정보 ]──────────"), separator, separator));				
 				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 이름"), fac.getRcu().getName(), separator, separator));
 				msg.append(String.format("%s : %d%s%s\n", Util.colorGreen("RCU 인덱스"), fac.getRcu().getIndex(), separator, separator));
-				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU IP 주소"), fac.getRcu().getIp(), separator, separator));
-				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 종류"), fac.getRcu().getRcuTypeDetail(), separator, separator));
-				msg.append(String.format("%s : %d개%s%s\n", Util.colorGreen("연결된 장비 개수"), fac.getRcu().getFacList().size(), separator, separator));
+				// ****** [ RCU 연결 정보 ] ********************************************************************************************
+				msg.append(String.format("%s%s : %s%s%s\n", Util.colorGreen("RCU "), Util.colorRed("IP") ,rcu.getIp(), separator, separator));					
+				String portInfo = "";			
+				if(rcu.isMultiPort()) {
+					ArrayList<MultiPortMap> portMap = rcu.getMultiPortMapList();
+					MultiPortMap start = portMap.get(0);
+					MultiPortMap end = portMap.get(portMap.size() - 1);
+					
+					portInfo += start.getCh() + " ( " + start.getPort() + " )";
+					portInfo += Util.colorBlue(" ~ ");
+					portInfo += end.getCh() + " ( " + end.getPort() + " ) ";
+				}else if(rcu.isDuplexedPort()) {
+					portInfo += rcu.getPort();
+					portInfo += Util.colorBlue(" & ");
+					portInfo += rcu.getAuxPort();
+				}else if(!rcu.isMultiPort() && rcu.getPort() != 0) {
+					portInfo += rcu.getPort();
+				}else if(!rcu.isMultiPort() && rcu.getPort() == 0){
+					portInfo += "Unknown";
+				}else {
+					portInfo += "Unknown";
+				}
+				msg.append(String.format("%s%s : %s%s%s\n", Util.colorGreen("RCU "), Util.colorRed("Port") , portInfo, separator, separator));
+				// ***********************************************************************************************************************
+				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 종류"), rcu.getRcuTypeDetail(), separator, separator));
+				msg.append(String.format("%s : %d개%s%s\n", Util.colorGreen("연결된 장비 개수"), rcu.getFacList().size(), separator, separator));
 			}
 			
 			menu = Util.showOption(msg.toString(), new String[] { "성능 정보 보기", "취 소"}, JOptionPane.INFORMATION_MESSAGE, false);
@@ -698,12 +722,12 @@ public class RcuInfoFrame extends JFrame {;
 	
 	
 	// 사용자 정의 키 이벤트 리스너
-	class CloseListener extends KeyAdapter{	
-		public void keyPressed(KeyEvent e) {			
+	class CloseListener extends KeyAdapter{
+		public void keyPressed(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				dispose();
 			}
-		}		
+		}
 		
 		public void keyReleased(KeyEvent e) {			
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
