@@ -949,7 +949,17 @@ public class ServerList_Panel extends JPanel {
 					msg.append(String.format("%s : %d%s%s\n", Util.colorGreen("RCU 인덱스"), fac.getRcu().getIndex(), separator, separator));
 					
 					// ****** [ RCU 연결 정보 ] ********************************************************************************************
-					msg.append(String.format("%s%s : %s%s%s\n", Util.colorGreen("RCU "), Util.colorRed("IP") ,rcu.getIp(), separator, separator));					
+					
+					String ipInfo = "";
+					if(rcu.isDuplexedPort()) {
+						ipInfo += rcu.getIp();
+						ipInfo += Util.colorBlue(" & ");
+						ipInfo += rcu.getAuxIP();
+					}else {
+						ipInfo += rcu.getIp();
+					}
+					msg.append(String.format("%s%s : %s%s%s\n", Util.colorGreen("RCU "), Util.colorRed("IP") ,ipInfo, separator, separator));
+					
 					String portInfo = "";			
 					if(rcu.isMultiPort()) {
 						ArrayList<MultiPortMap> portMap = rcu.getMultiPortMapList();
@@ -1013,7 +1023,17 @@ public class ServerList_Panel extends JPanel {
 			msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 이름"), rcu.getName(), separator, separator));
 			msg.append(String.format("%s : %d%s%s\n", Util.colorGreen("RCU 인덱스"), rcu.getIndex(), separator, separator));
 			// ****** [ RCU 연결 정보 ] ********************************************************************************************
-			msg.append(String.format("%s%s : %s%s%s\n", Util.colorGreen("RCU "), Util.colorRed("IP") ,rcu.getIp(), separator, separator));					
+			
+			String ipInfo = "";			
+			if(rcu.isDuplexedPort()) {
+				ipInfo += rcu.getIp();
+				ipInfo += Util.colorBlue(" & ");
+				ipInfo += rcu.getAuxIP();
+			}else {
+				ipInfo += rcu.getIp();
+			}
+			msg.append(String.format("%s%s : %s%s%s\n", Util.colorGreen("RCU "), Util.colorRed("IP") ,ipInfo, separator, separator));
+			
 			String portInfo = "";			
 			if(rcu.isMultiPort()) {
 				ArrayList<MultiPortMap> portMap = rcu.getMultiPortMapList();

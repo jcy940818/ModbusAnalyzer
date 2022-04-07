@@ -403,13 +403,13 @@ public class WatchPointListFrame extends JFrame {
 				facInfo_2 += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
 
 				facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
-				facInfo_2 += Util.colorBlue(" & ")  + fac.getRcu().getAuxIP();
+				facInfo_2 += Util.colorGreen(" & ")  + fac.getRcu().getAuxIP();
 				facInfo_2 += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
 
 				facInfo_2 += Util.colorBlue("RCU Port : ");
 				
 				if(fac.getPort() != 0) {
-					facInfo_2 += fac.getPort() + Util.colorBlue(" & ") + fac.getRcu().getAuxPort();
+					facInfo_2 += fac.getPort() + Util.colorGreen(" & ") + fac.getRcu().getAuxPort();
 				}else {
 					facInfo_2 += "Unknown";
 				}
@@ -552,13 +552,13 @@ public class WatchPointListFrame extends JFrame {
 					facInfo_2 += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
 
 					facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
-					facInfo_2 += Util.colorBlue(" & ")  + fac.getRcu().getAuxIP();
+					facInfo_2 += Util.colorGreen(" & ")  + fac.getRcu().getAuxIP();
 					facInfo_2 += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
 
 					facInfo_2 += Util.colorBlue("RCU Port : ");
 					
 					if(fac.getPort() != 0) {
-						facInfo_2 += fac.getPort() + Util.colorBlue(" & ") + fac.getRcu().getAuxPort();
+						facInfo_2 += fac.getPort() + Util.colorGreen(" & ") + fac.getRcu().getAuxPort();
 					}else {
 						facInfo_2 += "Unknown";
 					}
@@ -603,7 +603,12 @@ public class WatchPointListFrame extends JFrame {
 			sb.append(String.format("%s%s%s\n", Util.colorRed("──────────[ 기존 시설물 정보 ]──────────"), separator, separator));
 			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("장비명"), fac.getName(), separator, separator));
 			sb.append(String.format("%s : %d%s%s\n", Util.colorRed("장비 인덱스"), fac.getIndex(), separator, separator));
-			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("IP 주소"), fac.isConnRCU() ? "( RCU IP ) " + fac.getIp() : fac.getIp(), separator, separator));
+			
+			String connInfo = "";
+			connInfo += Util.colorBlue("IP") + " : " + fac.getIp();
+			connInfo += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
+			connInfo += Util.colorBlue("Port") + " : "+ fac.getPort();
+			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("연결 정보"), fac.isConnRCU() ? Util.colorGreen("( RCU ) ") + connInfo : connInfo, separator, separator));
 			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("시설물 종류"), fac.getTypeString(), separator, separator));
 			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("연결 방식"), fac.getConnMethod(), separator, separator));
 			

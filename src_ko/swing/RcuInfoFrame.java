@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -30,14 +28,10 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-import common.perf.FmsPerfItem;
-import common.perf.Perf;
 import common.server.Facility;
 import common.server.MultiPortMap;
 import common.server.RCU;
-import common.server.Server;
 import common.util.FindTextRenderer;
-import src_ko.info.ONION_Info;
 import src_ko.util.Util;
 
 public class RcuInfoFrame extends JFrame {;
@@ -146,13 +140,13 @@ public class RcuInfoFrame extends JFrame {;
 					// 왼쪽 버튼 더블 클릭			
 					int row = FacListTable.getSelectedRow();
 					Facility fac = (Facility)FacListTable.getValueAt(row, 2);
-					showFacilityMenu(fac);	
+					ServerList_Panel.showFacilityMenu(fac);	
 				}
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
 					int row = FacListTable.getSelectedRow();
 					Facility fac = (Facility)FacListTable.getValueAt(row, 2);
-					showFacilityMenu(fac);	
+					ServerList_Panel.showFacilityMenu(fac);	
 				}
 			}
 		});
@@ -371,7 +365,39 @@ public class RcuInfoFrame extends JFrame {;
 			sb.append(String.format("%s%s%s\n", Util.colorRed("──────────[ 기존 RCU 정보 ]──────────"), separator, separator));				
 			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 이름"), rcu.getName(), separator, separator));
 			sb.append(String.format("%s : %d%s%s\n", Util.colorRed("RCU 인덱스"), rcu.getIndex(), separator, separator));
-			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU IP 주소"), rcu.getIp(), separator, separator));
+			
+			String ipInfo = "";			
+			if(rcu.isDuplexedPort()) {
+				ipInfo += rcu.getIp();
+				ipInfo += Util.colorBlue(" & ");
+				ipInfo += rcu.getAuxIP();
+			}else {
+				ipInfo += rcu.getIp();
+			}
+			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU IP"), ipInfo, separator, separator));
+			
+			String portInfo = "";			
+			if(rcu.isMultiPort()) {
+				ArrayList<MultiPortMap> portMap = rcu.getMultiPortMapList();
+				MultiPortMap start = portMap.get(0);
+				MultiPortMap end = portMap.get(portMap.size() - 1);
+				
+				portInfo += start.getCh() + " ( " + start.getPort() + " )";
+				portInfo += Util.colorBlue(" ~ ");
+				portInfo += end.getCh() + " ( " + end.getPort() + " ) ";
+			}else if(rcu.isDuplexedPort()) {
+				portInfo += rcu.getPort();
+				portInfo += Util.colorBlue(" & ");
+				portInfo += rcu.getAuxPort();
+			}else if(!rcu.isMultiPort() && rcu.getPort() != 0) {
+				portInfo += rcu.getPort();
+			}else if(!rcu.isMultiPort() && rcu.getPort() == 0){
+				portInfo += "Unknown";
+			}else {
+				portInfo += "Unknown";
+			}
+			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU Port"), portInfo, separator, separator));
+			
 			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 종류"), rcu.getRcuTypeDetail(), separator, separator));
 			sb.append(String.format("%s : %d개%s%s\n", Util.colorRed("연결된 장비 개수"), rcu.getFacList().size(), separator, separator));
 			
@@ -631,95 +657,7 @@ public class RcuInfoFrame extends JFrame {;
 		});
 
 		setTableStyle(FacListTable);
-	}
-	
-	// ******************************************************************************************
-	public static void showFacilityMenu(Facility fac) {
-		if(fac == null) return;
-
-		int menu = -1;
-		String separator = Util.separator + Util.separator;
-		
-		if(fac.isFacility()) {			
-			// 시설물
-			StringBuilder msg = new StringBuilder();
-						
-			msg.append(String.format("%s%s%s\n", Util.colorBlue("──────────[ 시설물 정보 ]──────────"), separator, separator));
-			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("장비명"), fac.getName(), separator, separator));
-			msg.append(String.format("%s : %d%s%s\n", Util.colorBlue("장비 인덱스"), fac.getIndex(), separator, separator));
-			
-			String connInfo = "";
-			connInfo += Util.colorRed("IP") + " : " + fac.getIp();
-			connInfo += "&nbsp;&nbsp;" + Util.colorBlue("/") + "&nbsp;&nbsp;";
-			connInfo += Util.colorRed("Port") + " : "+ fac.getPort();
-			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 정보"), fac.isConnRCU() ? Util.colorGreen("( RCU ) ") + connInfo : connInfo, separator, separator));
-			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("시설물 종류"), fac.getTypeString(), separator, separator));
-			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 방식"), fac.getConnMethod(), separator, separator));
-			
-			RCU rcu = fac.getRcu();
-			String unknown = "알 수 없음";
-			boolean unknownRCU = false;
-			
-			if(rcu.getName().equals(unknown) 
-					&& rcu.getTypeString().equals(unknown) 
-					&& rcu.getRcuTypeDetail().equals(unknown) 
-					&& rcu.getIp().equals(unknown) 
-					&& rcu.getState().equals(unknown)) {
-				unknownRCU = true;
-			}
-			
-			if(unknownRCU) {
-				msg.append(String.format("\n%s%s%s\n", Util.colorRed("──────────[ 알 수 없는 RCU 정보 ]──────────"), separator, separator));
-				msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 이름"), fac.getRcu().getName(), separator, separator));
-				msg.append(String.format("%s : %d%s%s\n", Util.colorRed("RCU 인덱스"), fac.getRcu().getIndex(), separator, separator));
-				msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU IP"), fac.getRcu().getIp(), separator, separator));
-				msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU Port"), "알 수 없음", separator, separator));
-				msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 종류"), fac.getRcu().getRcuTypeDetail(), separator, separator));
-				msg.append(String.format("%s : %d개%s%s\n\n", Util.colorRed("연결된 장비 개수"), fac.getRcu().getFacList().size(), separator, separator));
-				msg.append(String.format("%s%s%s\n", Util.colorRed("RCU") + " 장비와 " + Util.colorBlue("시설물") + "이 연결된 상태에서 " + Util.colorRed("RCU") + " 장비가 삭제 되었을 수 있습니다", separator, separator));
-			}else {
-				msg.append(String.format("\n%s%s%s\n", Util.colorGreen("──────────[ RCU 정보 ]──────────"), separator, separator));				
-				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 이름"), fac.getRcu().getName(), separator, separator));
-				msg.append(String.format("%s : %d%s%s\n", Util.colorGreen("RCU 인덱스"), fac.getRcu().getIndex(), separator, separator));
-				// ****** [ RCU 연결 정보 ] ********************************************************************************************
-				msg.append(String.format("%s%s : %s%s%s\n", Util.colorGreen("RCU "), Util.colorRed("IP") ,rcu.getIp(), separator, separator));					
-				String portInfo = "";			
-				if(rcu.isMultiPort()) {
-					ArrayList<MultiPortMap> portMap = rcu.getMultiPortMapList();
-					MultiPortMap start = portMap.get(0);
-					MultiPortMap end = portMap.get(portMap.size() - 1);
-					
-					portInfo += start.getCh() + " ( " + start.getPort() + " )";
-					portInfo += Util.colorBlue(" ~ ");
-					portInfo += end.getCh() + " ( " + end.getPort() + " ) ";
-				}else if(rcu.isDuplexedPort()) {
-					portInfo += rcu.getPort();
-					portInfo += Util.colorBlue(" & ");
-					portInfo += rcu.getAuxPort();
-				}else if(!rcu.isMultiPort() && rcu.getPort() != 0) {
-					portInfo += rcu.getPort();
-				}else if(!rcu.isMultiPort() && rcu.getPort() == 0){
-					portInfo += "Unknown";
-				}else {
-					portInfo += "Unknown";
-				}
-				msg.append(String.format("%s%s : %s%s%s\n", Util.colorGreen("RCU "), Util.colorRed("Port") , portInfo, separator, separator));
-				// ***********************************************************************************************************************
-				msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 종류"), rcu.getRcuTypeDetail(), separator, separator));
-				msg.append(String.format("%s : %d개%s%s\n", Util.colorGreen("연결된 장비 개수"), rcu.getFacList().size(), separator, separator));
-			}
-			
-			menu = Util.showOption(msg.toString(), new String[] { "성능 정보 보기", "취 소"}, JOptionPane.INFORMATION_MESSAGE, false);
-			switch (menu) {		
-				case 0: // 성능 정보 보기
-					new WatchPointListFrame(fac);
-					return;
-				default :
-					return;
-			}
-		}
-	}
-	
+	}	
 	
 	// 사용자 정의 키 이벤트 리스너
 	class CloseListener extends KeyAdapter{
