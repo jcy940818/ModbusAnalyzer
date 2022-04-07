@@ -911,7 +911,12 @@ public class ServerList_Panel extends JPanel {
 			msg.append(String.format("%s%s%s\n", Util.colorBlue("──────────[ 시설물 정보 ]──────────"), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("장비명"), fac.getName(), separator, separator));
 			msg.append(String.format("%s : %d%s%s\n", Util.colorBlue("장비 인덱스"), fac.getIndex(), separator, separator));
-			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("IP 주소"), fac.isConnRCU() ? "( RCU IP ) " + fac.getIp() : fac.getIp(), separator, separator));
+			
+			String connInfo = "";
+			connInfo += Util.colorRed("IP : ") + fac.getIp();
+			connInfo += "&nbsp;&nbsp;" + Util.colorBlue("/") + "&nbsp;&nbsp;";
+			connInfo += Util.colorRed("Port : ") + fac.getPort();
+			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 정보"), fac.isConnRCU() ? Util.colorGreen("( RCU ) ") + connInfo : connInfo, separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("시설물 종류"), fac.getTypeString(), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 방식"), fac.getConnMethod(), separator, separator));
 			
