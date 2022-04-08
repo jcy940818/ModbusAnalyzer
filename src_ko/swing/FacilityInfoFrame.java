@@ -609,7 +609,7 @@ public class FacilityInfoFrame extends JFrame {
 			connInfo += Util.colorBlue("IP") + " : " + fac.getIp();
 			connInfo += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
 			connInfo += Util.colorBlue("Port") + " : "+ fac.getPort();
-			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("연결 정보"), fac.isConnRCU() ? Util.colorGreen("( RCU ) ") + connInfo : connInfo, separator, separator));			
+			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("연결 정보"), fac.isConnRCU() ? Util.colorRed("( RCU ) ") + connInfo : connInfo, separator, separator));			
 			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("연결 방식"), fac.getConnMethod(), separator, separator));
 			
 			sb.append(String.format("\n최신 데이터베이스 내용에서 기존 장비의 " + Util.colorRed("인덱스") + " 정보를 찾을 수 없습니다%s%s\n", Util.separator, Util.separator));	
