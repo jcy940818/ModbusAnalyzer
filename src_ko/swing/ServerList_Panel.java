@@ -918,8 +918,8 @@ public class ServerList_Panel extends JPanel {
 		table.setRowHeight(25);
 		
 		// 테이블 셀 크기 설정
-		table.getColumnModel().getColumn(0).setPreferredWidth(3); // 필 드
-		table.getColumnModel().getColumn(1).setPreferredWidth(120); // 내 용		
+		table.getColumnModel().getColumn(0).setPreferredWidth(5); // 필 드
+		table.getColumnModel().getColumn(1).setPreferredWidth(190); // 내 용
 		
 		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
 		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
