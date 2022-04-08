@@ -954,9 +954,28 @@ public class ServerList_Panel extends JPanel {
 			
 			String connInfo = "";
 			connInfo += Util.colorRed("IP") + " : " + fac.getIp();
+			
+			// TCP/IP 이중화 RCU
+			if(fac.isConnRCU() && fac.getRcu() != null) {
+				if(fac.getRcu().isDuplexedPort()) {
+					connInfo += Util.colorBlue(" & ") + fac.getRcu().getAuxIP();
+				}
+			}
+			
 			connInfo += "&nbsp;&nbsp;" + Util.colorBlue("/") + "&nbsp;&nbsp;";
 			connInfo += Util.colorRed("Port") + " : "+ fac.getPort();
-			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 정보"), fac.isConnRCU() ? Util.colorGreen("( RCU ) ") + connInfo : connInfo, separator, separator));
+			if(fac.isConnRCU()) {
+				connInfo = Util.colorRed("( RCU ) ") + connInfo;
+				
+				// TCP/IP 이중화 RCU
+				if(fac.getRcu() != null) {
+					if(fac.getRcu().isDuplexedPort()) {
+						connInfo += Util.colorBlue(" & ") + fac.getRcu().getAuxPort();
+					}
+				}
+			}
+			
+			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 정보"), connInfo, separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 방식"), fac.getConnMethod(), separator, separator));
 			
 			if(fac.getRcu() != null) {
