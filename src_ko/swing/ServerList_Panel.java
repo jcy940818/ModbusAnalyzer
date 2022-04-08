@@ -601,9 +601,9 @@ public class ServerList_Panel extends JPanel {
 								sb.append(Util.colorRed("알 수 없는 RCU 인덱스 : ") + rtuIndex + Util.separator + Util.separator + "\n\n");
 								
 								sb.append(Util.colorBlue("그룹 정보 : ") + server.getGroupInfo() + Util.separator + Util.separator + "\n");
+								sb.append(Util.colorBlue("시설물 종류 : ") + server.getTypeString() + Util.separator + Util.separator + "\n");
 								sb.append(Util.colorBlue("장비명 : ") + server.getName() + Util.separator + Util.separator + "\n");							
 								sb.append(Util.colorBlue("장비 인덱스 : ") + server.getIndex() + Util.separator + Util.separator + "\n");
-								sb.append(Util.colorBlue("시설물 종류 : ") + server.getTypeString() + Util.separator + Util.separator + "\n");
 								sb.append(Util.colorBlue("연결 방식 : ") + ((Facility)server).getConnMethod() + Util.separator + Util.separator + "\n\n");
 								
 								sb.append("위의 장비가 바라보는 " + Util.colorRed("RCU") + " 장비를 찾을 수 없습니다" + Util.separator + Util.separator +"\n\n");
@@ -946,6 +946,7 @@ public class ServerList_Panel extends JPanel {
 			StringBuilder msg = new StringBuilder();
 						
 			msg.append(String.format("%s%s%s\n", Util.colorBlue("──────────[ 시설물 정보 ]──────────"), separator, separator));
+			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("시설물 종류"), fac.getTypeString(), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("장비명"), fac.getName(), separator, separator));
 			msg.append(String.format("%s : %d%s%s\n", Util.colorBlue("장비 인덱스"), fac.getIndex(), separator, separator));
 			
@@ -954,7 +955,6 @@ public class ServerList_Panel extends JPanel {
 			connInfo += "&nbsp;&nbsp;" + Util.colorBlue("/") + "&nbsp;&nbsp;";
 			connInfo += Util.colorRed("Port") + " : "+ fac.getPort();
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 정보"), fac.isConnRCU() ? Util.colorGreen("( RCU ) ") + connInfo : connInfo, separator, separator));
-			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("시설물 종류"), fac.getTypeString(), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 방식"), fac.getConnMethod(), separator, separator));
 			
 			if(fac.getRcu() != null) {
@@ -973,15 +973,16 @@ public class ServerList_Panel extends JPanel {
 				
 				if(unknownRCU) {
 					msg.append(String.format("\n%s%s%s\n", Util.colorRed("──────────[ 알 수 없는 RCU 정보 ]──────────"), separator, separator));
+					msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 종류"), rcu.getRcuTypeDetail(), separator, separator));
 					msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 이름"), rcu.getName(), separator, separator));
 					msg.append(String.format("%s : %d%s%s\n", Util.colorRed("RCU 인덱스"), rcu.getIndex(), separator, separator));
 					msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU IP"), rcu.getIp(), separator, separator));
 					msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU Port"), unknown, separator, separator));
-					msg.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 종류"), rcu.getRcuTypeDetail(), separator, separator));
 					msg.append(String.format("%s : %d개%s%s\n\n", Util.colorRed("연결된 장비 개수"), rcu.getFacList().size(), separator, separator));
 					msg.append(String.format("%s%s%s\n", "해당 " + Util.colorBlue("시설물") + "은 " + Util.colorRed("RCU") + " 장비와 " + Util.colorBlue("시설물") + "이 연결된 상태에서 " + Util.colorRed("RCU") + " 장비가 삭제 되었을 수 있습니다", separator, separator));
 				}else {
-					msg.append(String.format("\n%s%s%s\n", Util.colorGreen("──────────[ RCU 정보 ]──────────"), separator, separator));				
+					msg.append(String.format("\n%s%s%s\n", Util.colorGreen("──────────[ RCU 정보 ]──────────"), separator, separator));		
+					msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 종류"), rcu.getRcuTypeDetail(), separator, separator));
 					msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 이름"), rcu.getName(), separator, separator));
 					msg.append(String.format("%s : %d%s%s\n", Util.colorGreen("RCU 인덱스"), rcu.getIndex(), separator, separator));
 					
@@ -1019,8 +1020,7 @@ public class ServerList_Panel extends JPanel {
 					}
 					msg.append(String.format("%s%s : %s%s%s\n", Util.colorGreen("RCU "), Util.colorRed("Port") , portInfo, separator, separator));
 					// ***********************************************************************************************************************
-					
-					msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 종류"), rcu.getRcuTypeDetail(), separator, separator));
+										
 					msg.append(String.format("%s : %d개%s%s\n", Util.colorGreen("연결된 장비 개수"), rcu.getFacList().size(), separator, separator));
 				}
 			}
@@ -1057,6 +1057,7 @@ public class ServerList_Panel extends JPanel {
 			
 			StringBuilder msg = new StringBuilder();
 			msg.append(String.format("%s%s%s\n", Util.colorGreen("──────────[ RCU 정보 ]──────────"), separator, separator));
+			msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 종류"), rcu.getRcuTypeDetail(), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 이름"), rcu.getName(), separator, separator));
 			msg.append(String.format("%s : %d%s%s\n", Util.colorGreen("RCU 인덱스"), rcu.getIndex(), separator, separator));
 			// ****** [ RCU 연결 정보 ] ********************************************************************************************
@@ -1092,8 +1093,7 @@ public class ServerList_Panel extends JPanel {
 				portInfo += "Unknown";
 			}
 			msg.append(String.format("%s%s : %s%s%s\n", Util.colorGreen("RCU "), Util.colorRed("Port") , portInfo, separator, separator));
-			// ***********************************************************************************************************************
-			msg.append(String.format("%s : %s%s%s\n", Util.colorGreen("RCU 종류"), rcu.getRcuTypeDetail(), separator, separator));
+			// ***********************************************************************************************************************			
 			msg.append(String.format("%s : %d개%s%s\n", Util.colorGreen("연결된 장비 개수"), rcu.getFacList().size(), separator, separator));
 			
 			menu = Util.showOption(msg.toString(), new String[] { "연결된 장비 목록 보기", "취 소"}, JOptionPane.INFORMATION_MESSAGE, false);		

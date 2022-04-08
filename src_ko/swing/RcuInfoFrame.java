@@ -362,7 +362,8 @@ public class RcuInfoFrame extends JFrame {;
 			StringBuilder sb = new StringBuilder();
 			sb.append(String.format("%s%s%s\n", Util.colorRed("Can Not Found RCU") , Util.separator, Util.separator));
 			
-			sb.append(String.format("%s%s%s\n", Util.colorRed("──────────[ 기존 RCU 정보 ]──────────"), separator, separator));				
+			sb.append(String.format("%s%s%s\n", Util.colorRed("──────────[ 기존 RCU 정보 ]──────────"), separator, separator));
+			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 종류"), rcu.getRcuTypeDetail(), separator, separator));
 			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 이름"), rcu.getName(), separator, separator));
 			sb.append(String.format("%s : %d%s%s\n", Util.colorRed("RCU 인덱스"), rcu.getIndex(), separator, separator));
 			
@@ -397,8 +398,6 @@ public class RcuInfoFrame extends JFrame {;
 				portInfo += "Unknown";
 			}
 			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU Port"), portInfo, separator, separator));
-			
-			sb.append(String.format("%s : %s%s%s\n", Util.colorRed("RCU 종류"), rcu.getRcuTypeDetail(), separator, separator));
 			sb.append(String.format("%s : %d개%s%s\n", Util.colorRed("연결된 장비 개수"), rcu.getFacList().size(), separator, separator));
 			
 			sb.append(String.format("\n최신 데이터베이스 내용에서 기존 RCU 장비의 " + Util.colorRed("인덱스") + " 정보를 찾을 수 없습니다%s%s\n", Util.separator, Util.separator));
