@@ -374,7 +374,7 @@ public class ProtocolList_Panel extends JPanel {
 	
 	
 	public static void doTableFilter(String text, boolean isKorean) {
-		text = text.toUpperCase();
+		text = text.toUpperCase().trim();
 		ArrayList<Protocol> filterProtocol = new ArrayList<Protocol>();
 		
 		for(int i = 0; i < selectedProtocols.size(); i++) {
