@@ -739,43 +739,44 @@ public class ServerList_Panel extends JPanel {
 			return;		
 		}
 		
+		int index = 0;
 		Object[][] content = new Object[7][];
 		
+		// 시설물 종류
+		content[index] = new Object[2];
+		content[index][0] = FACILITY_TYPE;
+		content[index++][1] = fac.getTypeString();
+		
 		// 장비명
-		content[0] = new Object[2];
-		content[0][0] = SERVER_NAME;
-		content[0][1] = fac;
+		content[index] = new Object[2];
+		content[index][0] = SERVER_NAME;
+		content[index++][1] = fac;
 		
 		// 장비 인덱스
-		content[1] = new Object[2];
-		content[1][0] = SERVER_INDEX;
-		content[1][1] = fac.getIndex();
+		content[index] = new Object[2];
+		content[index][0] = SERVER_INDEX;
+		content[index++][1] = fac.getIndex();
 		
 		// IP 주소
-		content[2] = new Object[2];
-		content[2][0] = "연결 정보";
+		content[index] = new Object[2];
+		content[index][0] = "연결 정보";
 		String connInfo = fac.getIp() + " : " + fac.getPort();
-		content[2][1] = fac.isConnRCU() ? "( RCU ) " + connInfo : connInfo ;
-		
-		// 시설물 종류
-		content[3] = new Object[2];
-		content[3][0] = FACILITY_TYPE;
-		content[3][1] = fac.getTypeString();
-		
+		content[index++][1] = fac.isConnRCU() ? "( RCU ) " + connInfo : connInfo ;
+				
 		// 연결 방식
-		content[4] = new Object[2];
-		content[4][0] = CONN_METHOD;
-		content[4][1] = fac.getConnMethod();
+		content[index] = new Object[2];
+		content[index][0] = CONN_METHOD;
+		content[index++][1] = fac.getConnMethod();
 		
 		// 프로토콜 번호
-		content[5] = new Object[2];
-		content[5][0] = PROTOCOL_NUMBER;
-		content[5][1] = fac.isCommon() ? fac.getCommProtocol() : fac.getSnmpProtocol();		
+		content[index] = new Object[2];
+		content[index][0] = PROTOCOL_NUMBER;
+		content[index++][1] = fac.isCommon() ? fac.getCommProtocol() : fac.getSnmpProtocol();
 		
 		// 장비 상태
-		content[6] = new Object[2];
-		content[6][0] = SERVER_STATE;
-		content[6][1] = fac.getState();
+		content[index] = new Object[2];
+		content[index][0] = SERVER_STATE;
+		content[index++][1] = fac.getState();
 
 		serverInfoTable.setModel(new DefaultTableModel(
 			content,
@@ -816,17 +817,23 @@ public class ServerList_Panel extends JPanel {
 			return;		
 		}
 		
+		int index = 0;
 		Object[][] content = new Object[7][];
 		
+		// RCU 종류
+		content[index] = new Object[2];
+		content[index][0] = RCU_TYPE;
+		content[index++][1] = rcu.getRcuTypeDetail();
+		
 		// RCU 이름
-		content[0] = new Object[2];
-		content[0][0] = "RCU 이름";
-		content[0][1] = rcu;
+		content[index] = new Object[2];
+		content[index][0] = "RCU 이름";
+		content[index++][1] = rcu;
 		
 		// RCU 인덱스
-		content[1] = new Object[2];
-		content[1][0] = "RCU 인덱스";
-		content[1][1] = rcu.getIndex();
+		content[index] = new Object[2];
+		content[index][0] = "RCU 인덱스";
+		content[index++][1] = rcu.getIndex();
 		
 		// IP 정보
 		
@@ -839,9 +846,9 @@ public class ServerList_Panel extends JPanel {
 			ipInfo += rcu.getIp();
 		}
 		
-		content[2] = new Object[2];
-		content[2][0] = "IP 정보";
-		content[2][1] = ipInfo;
+		content[index] = new Object[2];
+		content[index][0] = "IP 정보";
+		content[index++][1] = ipInfo;
 		
 		// Port 정보
 		
@@ -866,24 +873,19 @@ public class ServerList_Panel extends JPanel {
 			portInfo += "Unknown";
 		}
 		
-		content[3] = new Object[2];
-		content[3][0] = "Port 정보";
-		content[3][1] = portInfo;
-		
-		// RCU 종류
-		content[4] = new Object[2];
-		content[4][0] = RCU_TYPE;
-		content[4][1] = rcu.getRcuTypeDetail();
+		content[index] = new Object[2];
+		content[index][0] = "Port 정보";
+		content[index++][1] = portInfo;
 		
 		// 연결된 장비 개수
-		content[5] = new Object[2];
-		content[5][0] = "연결된 장비 개수";
-		content[5][1] = rcu.getFacList().size();
+		content[index] = new Object[2];
+		content[index][0] = "연결된 장비 개수";
+		content[index++][1] = rcu.getFacList().size();
 		
 		// RCU 상태
-		content[6] = new Object[2];
-		content[6][0] = "RCU 상태";
-		content[6][1] = rcu.getState();
+		content[index] = new Object[2];
+		content[index][0] = "RCU 상태";
+		content[index++][1] = rcu.getState();
 
 		serverInfoTable.setModel(new DefaultTableModel(
 			content,
