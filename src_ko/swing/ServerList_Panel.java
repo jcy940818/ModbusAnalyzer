@@ -163,7 +163,7 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_Label.setForeground(Color.BLACK);
 		searchFacility_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		searchFacility_Label.setBackground(Color.WHITE);
-		searchFacility_Label.setBounds(25, 146, 50, 64);
+		searchFacility_Label.setBounds(22, 146, 50, 64);
 		infoPanel.add(searchFacility_Label);
 		
 		updateDB_Button = new JButton("Database 최신화");
@@ -198,15 +198,15 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_ComboBox1.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		searchFacility_ComboBox1.setModel(new DefaultComboBoxModel(new String[] {
 				GROUP_INFO, // 그룹 정보
+				SERVER_TYPE, // 시설물 종류
 				SERVER_NAME, // 장비명
 				SERVER_INDEX, // 장비 인덱스
 				IP, // IP 주소
-				SERVER_TYPE, // 시설물 종류
 				CONN_METHOD, // 연결 방식
-				PROTOCOL_NUMBER, // 프로토콜 번호								
+				PROTOCOL_NUMBER, // 프로토콜 번호
 				SERVER_STATE, // 장비 상태
 				}));
-		searchFacility_ComboBox1.setBounds(90, 145, 150, 30);
+		searchFacility_ComboBox1.setBounds(84, 145, 156, 30);
 		searchFacility_ComboBox1.setSelectedIndex(0);
 		searchFacility_ComboBox1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -225,16 +225,16 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_ComboBox2.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		searchFacility_ComboBox2.setModel(new DefaultComboBoxModel(new String[] {
 				GROUP_INFO, // 그룹 정보
+				SERVER_TYPE, // 시설물 종류
 				SERVER_NAME, // 장비명
 				SERVER_INDEX, // 장비 인덱스
 				IP, // IP 주소
-				SERVER_TYPE, // 시설물 종류
 				CONN_METHOD, // 연결 방식
-				PROTOCOL_NUMBER, // 프로토콜 번호								
+				PROTOCOL_NUMBER, // 프로토콜 번호
 				SERVER_STATE, // 장비 상태
 				}));
-		searchFacility_ComboBox2.setBounds(90, 181, 150, 30);
-		searchFacility_ComboBox2.setSelectedIndex(1);
+		searchFacility_ComboBox2.setBounds(84, 181, 156, 30);
+		searchFacility_ComboBox2.setSelectedIndex(2);
 		searchFacility_ComboBox2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -1125,7 +1125,7 @@ public class ServerList_Panel extends JPanel {
 			if(searchFacility_textField1 != null) searchFacility_textField1.setText(null);
 			if(searchFacility_textField2 != null) searchFacility_textField2.setText(null);
 			if(searchFacility_ComboBox1 != null) searchFacility_ComboBox1.setSelectedIndex(0);
-			if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedIndex(1);	
+			if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedIndex(2);
 		}
 		
 		doTableFilter();

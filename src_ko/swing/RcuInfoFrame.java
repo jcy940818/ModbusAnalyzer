@@ -166,9 +166,9 @@ public class RcuInfoFrame extends JFrame {;
 		searchFacility_ComboBox.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		searchFacility_ComboBox.setBounds(81, 86, 142, 35);
 		searchFacility_ComboBox.setModel(new DefaultComboBoxModel(new String[] {				
+				FACILITY_TYPE, // 시설물 종류
 				SERVER_NAME, // 장비명
-				SERVER_INDEX, // 장비 인덱스				
-				FACILITY_TYPE, // 시설물 종류				
+				SERVER_INDEX, // 장비 인덱스
 				PROTOCOL_NUMBER, // 프로토콜 번호
 				SERVER_STATE, // 장비 상태
 		}));
@@ -181,7 +181,7 @@ public class RcuInfoFrame extends JFrame {;
 				}
 			}
 		});
-		searchFacility_ComboBox.setSelectedIndex(0);
+		searchFacility_ComboBox.setSelectedIndex(1);
 		actualPanel.add(searchFacility_ComboBox);
 		
 		searchFacility_textField = new JTextField();
