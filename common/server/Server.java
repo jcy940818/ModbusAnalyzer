@@ -1,5 +1,7 @@
 package common.server;
 
+import java.util.ArrayList;
+
 import common.util.AlphanumComparator;
 
 public class Server implements Comparable {
@@ -10,7 +12,7 @@ public class Server implements Comparable {
 	public static final String NO_GROUP_KO = "장비 관리 ( 그룹 없음 )";
 	public static final String NO_GROUP_EN = "Devices ( No Group )";
 
-	private Event event;
+	private ArrayList<Event> events = new ArrayList<Event>();
 	private String ip;
 	private int agentType; // 8 : RCU, 16 : 시설물
 	private String groupInfo;
@@ -30,14 +32,6 @@ public class Server implements Comparable {
 	
 	public boolean isRCU() {
 		return (this.agentType == TYPE_RTU);
-	}
-
-	public Event getEvent() {
-		return event;
-	}
-	
-	public void setEvent(Event event) {
-		this.event = event;
 	}
 	
 	public String getIp() {
@@ -118,6 +112,14 @@ public class Server implements Comparable {
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	public ArrayList<Event> getEvents() {
+		return events;
+	}
+
+	public void setEvents(ArrayList<Event> events) {
+		this.events = events;
 	}
 
 	@Override
