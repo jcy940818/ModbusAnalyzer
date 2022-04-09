@@ -737,7 +737,7 @@ public class DbUtil {
 			Connection connection = null;
 			try {
 				connection = DriverManager.getConnection(url, id, pw);			 			
-//				Util.showMessage("<span color='blue'>SQL Server 인증 성공</span>\n데이터베이스 접속에 성공하였습니다&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", JOptionPane.INFORMATION_MESSAGE);			
+							
 				System.out.printf("[ DbUtil.makeConnection() : 커넥션 생성 성공 (%s:%s 데이터베이스와 정상적으로 연동되었습니다) ]\n", MK119_Login_Panel.MK119_ip.getText(), MK119_Login_Panel.MK119_port.getText());
 				
 				ONION_Info.setSqlServerInfo(new String[]{MK119_Login_Panel.MK119_ip.getText(),MK119_Login_Panel.MK119_port.getText()});
