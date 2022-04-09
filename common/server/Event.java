@@ -4,23 +4,21 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import src_ko.database.DbUtil;
 
 public class Event {
 	
-	public static void main(String[] args) {
-		Connection conn = DbUtil.makeConnection("jdbc:sqlserver://localhost:1433;databaseName=MK119_4.2", "sa", "1");
-		int serverIndex = 28;
-		boolean isEvent = Event.isEvent(conn, serverIndex);
-		
-        if (isEvent) {
-        	Event event = Event.getEventLogServer(conn, serverIndex);
-        	printEvent(event);
-        }else {
-            String eventInfo = "정상";            
-        }
-	}
+	public static final String GET_EVENT = 
+			"SELECT a.*, b.strSeverity, b.nBkColor, b.nTextColor\r\n" + 
+			"\r\n" + 
+			"FROM EVENTS a WITH(NOLOCK), SYSTEM_SEVERITY b WITH(NOLOCK)\r\n" + 
+			"\r\n" + 
+			"WHERE a.nSeverity = b.nSeverity\r\n" + 
+			"AND ( nStatus = 0 or nStatus = 1 )\r\n" + 
+			"\r\n" + 
+			"ORDER BY a.nSeverity DESC, a.nServerIndex ASC";
 	
 	public static void printEvent(Event event) {
 		System.out.println("Event index : " + event.getIndex());
@@ -112,80 +110,29 @@ public class Event {
         return str.substring(str.length() - 6);
     }
     
-	/**
-     * 특정 장비에 발생 또는 인지 상태의 이벤트가 있는가
-     * 
-     * @param index
-     * @return
-     * @throws SQLException
-     */
-    public static boolean isEvent(Connection connection, int index){
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-
-        StringBuffer sql = new StringBuffer();
-        sql.append("SELECT nStatus ");
-        sql.append("FROM EVENTS WITH(NOLOCK) ");
-        sql.append("WHERE (nStatus = 0 or nStatus = 1) and nServerIndex = " + index);
-
-        try {
-            conn = connection;
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(sql.toString());
-            if(rs==null){
-            	return false;
-            }
-            else
-            return true;
-        } catch(Exception e) {
-        	e.printStackTrace();
-        	return false;
-        }
+    public static ArrayList<Event> getEvents(Connection connection){
+    	ArrayList<Event> eventList = new ArrayList<Event>();
+    	
+    	try {
+	    	Statement stmt = connection.createStatement();
+	    	ResultSet rs = stmt.executeQuery(Event.GET_EVENT);
+	    	
+	    	while(rs.next()) {
+	    		try {
+		    		Event event = Event.makeBean(rs);		    		
+		    		eventList.add(event);
+	    		}catch(SQLException e) {
+	    			e.printStackTrace();
+	    			continue;
+	    		}
+	    	}
+    	
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	return eventList;
     }
-    
-    
-    /**
-     * 장비에서 발생한 이벤트에서 최저 상태 중 최고 레벨 이벤트를 얻는다.
-     * @param index 장비 ID
-     * @return 최고 레벨 이벤트
-     * @throws SQLException
-     */
-	public static Event getEventLogServer(Connection connection, int index){
-		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
-		StringBuffer sql = new StringBuffer();
-
-		try {
-			conn = connection;
-			stmt = conn.createStatement();
-
-			sql.append("SELECT a.*, b.strSeverity, ");
-			sql.append("b.nBkColor, ");
-			sql.append("b.nTextColor ");
-			sql.append("FROM EVENTS a WITH(NOLOCK), SYSTEM_SEVERITY b WITH(NOLOCK) ");
-			sql.append("WHERE a.nSeverity = b.nSeverity ");
-			sql.append("AND nServerIndex = (").append(index).append(")");
-			sql.append("AND nStatus=");
-			sql.append("(SELECT MIN(nStatus) FROM EVENTS WITH(NOLOCK) WHERE nServerIndex = (").append(index)
-					.append(")) ");
-			sql.append("ORDER BY a.nSeverity DESC");
-
-			rs = stmt.executeQuery(sql.toString());
-
-			Event bean = new Event();
-			if (rs.next()) {
-				bean = Event.makeBean(rs);
-			}
-
-			 return bean;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
 	
 	/**
      * SYSTEM_SEVERITY 테이블과 JOIN해서 사용할 것
@@ -198,8 +145,7 @@ public class Event {
         temp = rs.getString("strEventContent");
         bean.eventContent = (temp == null) ? "" : temp;
         if (bean.eventContent.indexOf("$$") > -1) {
-            bean.eventContent = bean.eventContent.substring(bean.eventContent.indexOf("$$") + 2, bean.eventContent
-                    .length());
+            bean.eventContent = bean.eventContent.substring(bean.eventContent.indexOf("$$") + 2, bean.eventContent.length());
         }
         temp = rs.getString("strEventDate");
         bean.eventDate = (temp == null) ? "" : temp;
