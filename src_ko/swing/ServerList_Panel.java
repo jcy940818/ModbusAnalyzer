@@ -663,7 +663,7 @@ public class ServerList_Panel extends JPanel {
 			content[i][2] = server.getTypeString();
 			content[i][3] = server;
 			content[i][4] = server.getState();
-			content[i][5] = (server.hasEvent()) ? server.getEvents().get(0).getSeverityName() : "-";			
+			content[i][5] = (server.hasEvent()) ? server.getEvents().get(0).getSeverityName() : "";			
 		}
 
 		serverListTable.setModel(new DefaultTableModel(
