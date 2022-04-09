@@ -34,6 +34,10 @@ public class Server implements Comparable {
 		return (this.agentType == TYPE_RTU);
 	}
 	
+	public boolean hasEvent() {
+		return (events.size() > 0);
+	}
+	
 	public String getIp() {
 		return ip;
 	}

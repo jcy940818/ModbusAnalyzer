@@ -33,6 +33,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import common.server.Event;
 import common.server.Facility;
 import common.server.MultiPortMap;
 import common.server.RCU;
@@ -42,7 +43,6 @@ import common.util.FindTextRenderer;
 import src_ko.database.DbUtil;
 import src_ko.info.ONION_Info;
 import src_ko.util.Util;
-import sun.nio.ch.SelChImpl;
 
 public class ServerList_Panel extends JPanel {
 	
@@ -625,6 +625,17 @@ public class ServerList_Panel extends JPanel {
 				}
 			}
 			
+			ArrayList<Event> eventList = Event.getEvents(ONION_Info.getMk119Connection());
+			for(int i = 0; i < eventList.size(); i++) {
+				Event event = eventList.get(i);
+				int serverIndex = event.getServerIndex();
+				
+				if(serverMap.containsKey(serverIndex)) {
+					Server server = serverMap.get(serverIndex);
+					server.getEvents().add(event);
+				}
+			}
+			
 			isFirstLoad = false;
 			
 			if(selectedServer != null) {
@@ -641,29 +652,29 @@ public class ServerList_Panel extends JPanel {
 	public static void updateServerListTable(boolean databaseLoad) {		
 		if(databaseLoad) loadServerInfo();
 		if(serverList == null) return;
-		
+
 		Object[][] content = new Object[serverList.size()][];
 
 		for (int i = 0; i < serverList.size(); i++) {
-			Server fac = serverList.get(i);
+			Server server = serverList.get(i);
 			content[i] = new Object[6];
 			content[i][0] = i + 1;
-			content[i][1] = fac.getGroupInfo();
-			content[i][2] = fac.getTypeString();
-			content[i][3] = fac;
-			content[i][4] = fac.getState();
-			content[i][5] = "정상";
+			content[i][1] = server.getGroupInfo();
+			content[i][2] = server.getTypeString();
+			content[i][3] = server;
+			content[i][4] = server.getState();
+			content[i][5] = (server.hasEvent()) ? server.getEvents().get(0).getSeverityName() : "-";			
 		}
 
 		serverListTable.setModel(new DefaultTableModel(
-			content, 			
+			content,
 			new String[] { ORDER, GROUP_INFO, SERVER_TYPE, SERVER_NAME, SERVER_STATE, EVENT }) {
 			// 테이블 셀 내용 수정 금지
 			public boolean isCellEditable(int i, int c) {
 				return false;
 			}
 		});
-
+		
 		setTableStyle(serverListTable);
 	}
 	
@@ -704,7 +715,6 @@ public class ServerList_Panel extends JPanel {
 		
 		FindTextRenderer findRCURenderer = new FindTextRenderer(2, "RCU", new Color(152, 251, 152));
 		findRCURenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		
 		
 		// 정렬할 테이블의 ColumnModel을 가져옴
 		TableColumnModel tcmSchedule = table.getColumnModel();
