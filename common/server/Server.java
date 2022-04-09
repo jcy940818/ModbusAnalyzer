@@ -10,6 +10,7 @@ public class Server implements Comparable {
 	public static final String NO_GROUP_KO = "장비 관리 ( 그룹 없음 )";
 	public static final String NO_GROUP_EN = "Devices ( No Group )";
 
+	private Event event;
 	private String ip;
 	private int agentType; // 8 : RCU, 16 : 시설물
 	private String groupInfo;
@@ -31,6 +32,14 @@ public class Server implements Comparable {
 		return (this.agentType == TYPE_RTU);
 	}
 
+	public Event getEvent() {
+		return event;
+	}
+	
+	public void setEvent(Event event) {
+		this.event = event;
+	}
+	
 	public String getIp() {
 		return ip;
 	}

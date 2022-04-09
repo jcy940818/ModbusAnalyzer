@@ -56,6 +56,7 @@ public class ServerList_Panel extends JPanel {
 	public static final String FACILITY_TYPE = "시설물 종류";
 	public static final String RCU_TYPE = "RCU 종류";
 	public static final String CONN_METHOD = "연결 방식";
+	public static final String EVENT = "이벤트";
 	public static final String SERVER_STATE = "장비 상태";	
 	public static final String PROTOCOL_NUMBER = "프로토콜 번호";
 	
@@ -645,17 +646,18 @@ public class ServerList_Panel extends JPanel {
 
 		for (int i = 0; i < serverList.size(); i++) {
 			Server fac = serverList.get(i);
-			content[i] = new Object[5];
+			content[i] = new Object[6];
 			content[i][0] = i + 1;
 			content[i][1] = fac.getGroupInfo();
 			content[i][2] = fac.getTypeString();
 			content[i][3] = fac;
 			content[i][4] = fac.getState();
+			content[i][5] = "정상";
 		}
 
 		serverListTable.setModel(new DefaultTableModel(
 			content, 			
-			new String[] { ORDER, GROUP_INFO, SERVER_TYPE, SERVER_NAME, SERVER_STATE }) {
+			new String[] { ORDER, GROUP_INFO, SERVER_TYPE, SERVER_NAME, SERVER_STATE, EVENT }) {
 			// 테이블 셀 내용 수정 금지
 			public boolean isCellEditable(int i, int c) {
 				return false;
@@ -686,10 +688,11 @@ public class ServerList_Panel extends JPanel {
 		
 		// 테이블 셀 크기 설정
 		table.getColumnModel().getColumn(0).setPreferredWidth(10); // 순 서
-		table.getColumnModel().getColumn(1).setPreferredWidth(450); // 그룹 정보
+		table.getColumnModel().getColumn(1).setPreferredWidth(400); // 그룹 정보
 		table.getColumnModel().getColumn(2).setPreferredWidth(60); // 시설물 종류
 		table.getColumnModel().getColumn(3).setPreferredWidth(150); // 장비명
-		table.getColumnModel().getColumn(4).setPreferredWidth(40); // 상 태	
+		table.getColumnModel().getColumn(4).setPreferredWidth(50); // 장비 상태
+		table.getColumnModel().getColumn(5).setPreferredWidth(50); //  이벤트
 		
 		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
 		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
@@ -709,7 +712,8 @@ public class ServerList_Panel extends JPanel {
 //		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 그룹 정보
 		tcmSchedule.getColumn(2).setCellRenderer(findRCURenderer); // 시설물 종류
 		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 장비명
-		tcmSchedule.getColumn(4).setCellRenderer(findCommerRenderer); // 상 태		
+		tcmSchedule.getColumn(4).setCellRenderer(findCommerRenderer); // 장비 상태
+		tcmSchedule.getColumn(5).setCellRenderer(tScheduleCellRenderer); // 이벤트
 	}
 		
 	public static void updateFacilityInfo(Facility fac) {
