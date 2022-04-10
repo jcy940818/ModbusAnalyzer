@@ -227,6 +227,7 @@ public class MK119_Login_Panel extends JPanel {
 		ServerList_Panel.isFirstLoad = true;
 		ServerList_Panel.updateServerListTable(true);
 		ServerList_Panel.updateFacilityInfo(null);
+		ServerList_Panel.resetForm(false, true);
 		MainFrame.showServerList();
 	}
 	
