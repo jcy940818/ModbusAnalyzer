@@ -54,12 +54,12 @@ public class SeverityRenderer extends DefaultTableCellRenderer {
 					
 					if(cellValue.equalsIgnoreCase(severity.getStrSeverity())) {
 						if (isSelected) {
-							c.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
+							c.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
 							c.setBackground(new Color(0, 120, 215));
 							c.setForeground(new Color(255, 255, 255));
 							return c;
 						} else {
-							c.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
+							c.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
 							c.setBackground(new Color(severity.getnBkColor()));
 							c.setForeground(new Color(severity.getnTextColor()));
 							return c;
