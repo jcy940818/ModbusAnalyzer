@@ -4,11 +4,15 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import src_ko.database.DbUtil;
 
-public class Event {
+public class Event implements Comparable{
+	
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public static final String GET_EVENT = 
 			"SELECT a.*, b.strSeverity, b.nBkColor, b.nTextColor\r\n" + 
@@ -93,6 +97,41 @@ public class Event {
 	public Event(int index) {
         this.index = index;
     }
+	
+	@Override
+	public int compareTo(Object obj) {
+		Event event = (Event)obj;
+		
+		Date date1 = null;
+		Date date2 = null;
+		
+		try {
+			date1 = sdf.parse(this.getEventDate());
+			date2 = sdf.parse(event.getEventDate());
+		}catch(Exception e) {
+			e.printStackTrace();
+			date1 = new Date();
+			date2 = new Date();
+		}
+		
+		// 가장 최근 발생한 이벤트부터
+		if(date1.compareTo(date2) > 1) {
+			return -1;
+		}else if(date1.compareTo(date2) == 0) {
+			
+			// 이벤트 심각도가 높은 순위부터
+			if(this.getSeverity() > event.getSeverity()) {
+				return -1;
+			}else if(this.getSeverity() == event.getSeverity()) {
+				return 0;
+			}else {
+				return 1;
+			}
+			
+		}else {
+			return 1;
+		}
+	}
     
     /**
      * BkColor를 HexString으로 만들어서 리턴
@@ -176,7 +215,6 @@ public class Event {
 
         // SYSTEM_SEVERITY 테이블
         temp = rs.getString("strSeverity");
-
         bean.severityName = (temp == null) ? "" : temp;
         
         if(DbUtil.columnExists(rs, "nBkColor"))

@@ -38,8 +38,10 @@ import common.server.Facility;
 import common.server.MultiPortMap;
 import common.server.RCU;
 import common.server.Server;
+import common.server.SystemSeverity;
 import common.util.AlphanumComparator;
 import common.util.FindTextRenderer;
+import common.util.SeverityRenderer;
 import src_ko.database.DbUtil;
 import src_ko.info.ONION_Info;
 import src_ko.util.Util;
@@ -663,7 +665,7 @@ public class ServerList_Panel extends JPanel {
 			content[i][2] = server.getTypeString();
 			content[i][3] = server;
 			content[i][4] = server.getState();
-			content[i][5] = (server.hasEvent()) ? server.getEvents().get(0).getSeverityName() : "";			
+			content[i][5] = (server.hasEvent()) ? server.getEvents().get(0).getSeverityName() : "";	
 		}
 
 		serverListTable.setModel(new DefaultTableModel(
@@ -715,6 +717,17 @@ public class ServerList_Panel extends JPanel {
 		
 		FindTextRenderer findRCURenderer = new FindTextRenderer(2, "RCU", new Color(152, 251, 152));
 		findRCURenderer.setHorizontalAlignment(SwingConstants.CENTER);
+				
+		SeverityRenderer severityRenderer = null;
+		ArrayList<SystemSeverity> severityList = null;		
+		try {
+			severityList= SystemSeverity.getSystemSeverity(ONION_Info.getMk119Connection());
+		}catch(Exception e) {
+			e.printStackTrace();
+			severityList = SystemSeverity.getDefaultSystemSeverity();
+		}
+		severityRenderer = new SeverityRenderer(5, 15, severityList);
+		severityRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		// 정렬할 테이블의 ColumnModel을 가져옴
 		TableColumnModel tcmSchedule = table.getColumnModel();
@@ -723,7 +736,7 @@ public class ServerList_Panel extends JPanel {
 		tcmSchedule.getColumn(2).setCellRenderer(findRCURenderer); // 시설물 종류
 		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 장비명
 		tcmSchedule.getColumn(4).setCellRenderer(findCommerRenderer); // 장비 상태
-		tcmSchedule.getColumn(5).setCellRenderer(tScheduleCellRenderer); // 이벤트
+		tcmSchedule.getColumn(5).setCellRenderer(severityRenderer); // 이벤트
 	}
 		
 	public static void updateFacilityInfo(Facility fac) {
