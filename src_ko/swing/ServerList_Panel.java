@@ -208,6 +208,7 @@ public class ServerList_Panel extends JPanel {
 				CONN_METHOD, // 연결 방식
 				PROTOCOL_NUMBER, // 프로토콜 번호
 				SERVER_STATE, // 장비 상태
+				EVENT
 				}));
 		searchFacility_ComboBox1.setBounds(84, 145, 156, 30);
 		searchFacility_ComboBox1.setSelectedIndex(0);
@@ -235,6 +236,7 @@ public class ServerList_Panel extends JPanel {
 				CONN_METHOD, // 연결 방식
 				PROTOCOL_NUMBER, // 프로토콜 번호
 				SERVER_STATE, // 장비 상태
+				EVENT
 				}));
 		searchFacility_ComboBox2.setBounds(84, 181, 156, 30);
 		searchFacility_ComboBox2.setSelectedIndex(2);
@@ -1232,7 +1234,10 @@ public class ServerList_Panel extends JPanel {
 						searchElement_1 = String.valueOf((((Facility)server).isCommon()?((Facility)server).getCommProtocol():((Facility)server).getSnmpProtocol()));	
 					}else {
 						searchElement_1 = "";
-					}
+					}					
+					break;
+				case EVENT :
+					searchElement_1 = (server.hasEvent()) ? server.getEvents().get(0).getSeverityName() : "";
 					break;
 			}// switch - searchElement_1
 			
@@ -1268,6 +1273,9 @@ public class ServerList_Panel extends JPanel {
 					}else {
 						searchElement_2 = "";
 					}
+					break;
+				case EVENT :
+					searchElement_2 = (server.hasEvent()) ? server.getEvents().get(0).getSeverityName() : "";
 					break;
 			}// switch - searchElement_2
 			
@@ -1320,17 +1328,18 @@ public class ServerList_Panel extends JPanel {
 		
 		for (int i = 0; i < filteredServer.size(); i++) {
 			Server server = filteredServer.get(i);
-			content[i] = new Object[5];
+			content[i] = new Object[6];
 			content[i][0] = i + 1;
 			content[i][1] = server.getGroupInfo();
 			content[i][2] = server.getTypeString();
 			content[i][3] = server;
 			content[i][4] = server.getState();
+			content[i][5] = (server.hasEvent()) ? server.getEvents().get(0).getSeverityName() : "";
 		}
 
 		serverListTable.setModel(new DefaultTableModel(
 			content, 			
-			new String[] { ORDER, GROUP_INFO, SERVER_TYPE, SERVER_NAME, SERVER_STATE }) {
+			new String[] { ORDER, GROUP_INFO, SERVER_TYPE, SERVER_NAME, SERVER_STATE, EVENT }) {
 			// 테이블 셀 내용 수정 금지
 			public boolean isCellEditable(int i, int c) {
 				return false;
