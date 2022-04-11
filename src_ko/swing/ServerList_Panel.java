@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -647,6 +648,14 @@ public class ServerList_Panel extends JPanel {
 				selectedServer = serverMap.get(lastSelectedServerIndex);
 			}
 			
+		}catch(SQLException e) {
+			e.printStackTrace();
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("%s%s%s\n", Util.colorRed("SQL Exception"), Util.separator, Util.separator));
+			sb.append("데이터베이스 로드에 실패하였습니다" +  Util.separator + Util.separator + "\n\n");
+			sb.append("데이터베이스 커넥션이 끊어졌을 경우 데이터베이스 재접속으로 해당 문제가 해결 될 수 있습니다" +  Util.separator + Util.separator + "\n\n");
+			sb.append(Util.colorRed("Exception Message : ") + e.getMessage() + Util.separator + Util.separator + "\n");
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
