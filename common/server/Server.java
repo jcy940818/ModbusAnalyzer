@@ -9,14 +9,11 @@ public class Server implements Comparable {
 	public static final int TYPE_FACILITY = 16;
 	public static final int TYPE_RTU = 8;
 
-	public static final String NO_GROUP_KO = "장비 관리 ( 그룹 없음 )";
-	public static final String NO_GROUP_EN = "Devices ( No Group )";
-
 	private ArrayList<Event> events = new ArrayList<Event>();
 	private String ip;
-	private int agentType; // 8 : RCU, 16 : 시설물
-	private String groupInfo;
+	private int agentType; // 8 : RCU, 16 : 시설물	
 
+	private ServerGroup group;
 	private int index;
 	private String name;
 
@@ -54,20 +51,12 @@ public class Server implements Comparable {
 		this.agentType = agentType;
 	}
 
-	public String getGroupInfo() {
-		return groupInfo;
+	public ServerGroup getGroup() {
+		return group;
 	}
 
-	public void setGroupInfo(String groupInfo, boolean useSplit) {
-		if(useSplit) {
-			if (!groupInfo.contains(">")) {
-				this.groupInfo = groupInfo;
-			} else {
-				this.groupInfo = groupInfo.substring(groupInfo.indexOf(" > ") + 3);
-			}	
-		}else {
-			this.groupInfo = groupInfo;
-		}
+	public void setGroup(ServerGroup group) {
+		this.group = group;
 	}
 
 	public int getIndex() {
@@ -135,11 +124,15 @@ public class Server implements Comparable {
 	public int compareTo(Object obj) {
 		Server server = (Server) obj;
 
+		if(this.getGroup() == null || server.getGroup() == null) {
+			return 0;
+		}
+		
 		int compareName = AlphanumComparator.comparator.compare(this.name, server.name);
-
-		if (this.groupInfo.equals(Server.NO_GROUP_KO) || server.groupInfo.equals(Server.NO_GROUP_KO)) {
-			boolean thisNoGroup = this.groupInfo.equals(Server.NO_GROUP_KO);
-			boolean facNoGroup = server.groupInfo.equals(Server.NO_GROUP_KO);
+		
+		if (this.getGroup().getTree().equals(ServerGroup.ROOT) || server.getGroup().getTree().equals(ServerGroup.ROOT)) {
+			boolean thisNoGroup = this.getGroup().getTree().equals(ServerGroup.ROOT);
+			boolean facNoGroup = server.getGroup().getTree().equals(ServerGroup.ROOT);
 
 			if (!thisNoGroup && facNoGroup) {
 				return -1;
@@ -158,7 +151,7 @@ public class Server implements Comparable {
 			}
 		}
 
-		int compareGroup = AlphanumComparator.comparator.compare(this.groupInfo, server.groupInfo);
+		int compareGroup = AlphanumComparator.comparator.compare(this.getGroup().getTree(), server.getGroup().getTree());
 
 		if (compareGroup < 0) {
 			return -1;
