@@ -39,6 +39,7 @@ import common.server.Facility;
 import common.server.MultiPortMap;
 import common.server.RCU;
 import common.server.Server;
+import common.server.ServerGroup;
 import common.server.SystemSeverity;
 import common.util.AlphanumComparator;
 import common.util.FindTextRenderer;
@@ -65,7 +66,7 @@ public class ServerList_Panel extends JPanel {
 	
 	public static final String STATE_COMMER = "통신 오류";
 	
-	public static final String OVERLAPPING = "( 중복 ) ";
+	public static final String OVERLAPPING = "   ( 중복 장비 존재 )";
 	
 	public static JLabel sqlServerInfo_label;
 	
@@ -73,6 +74,9 @@ public class ServerList_Panel extends JPanel {
 		
 	public static ArrayList<Server> serverList;
 	public static HashMap<Integer, Server> serverMap;
+	public static HashMap<Integer, ServerGroup> serverGroupMap;
+	public static HashMap<Integer, Integer> serverGroupMappingInfo;
+	
 	private static Server selectedServer;
 	private static JTextField searchFacility_textField1;
 	private static JTextField searchFacility_textField2;
@@ -407,18 +411,21 @@ public class ServerList_Panel extends JPanel {
 	public static void loadServerInfo(){
 		if(!ONION_Info.hasMk119Connection() || ONION_Info.getMk119Connection() == null) return;
 		
+		Statement stmt = null;
+		ResultSet rs = null;
+		
 		try {
 			serverList = new ArrayList<Server>();
 			serverMap = new HashMap<Integer, Server>();
+			serverGroupMap = ServerGroup.getServerGroup(ONION_Info.getMk119Connection());
+			serverGroupMappingInfo = ServerGroup.getServerGroupMapping(ONION_Info.getMk119Connection());
 			
-			Statement stmt = ONION_Info.getMk119Connection().createStatement();
-		
+			stmt = ONION_Info.getMk119Connection().createStatement();
+			
 			/* 시설물 초기화 */
-			ResultSet rs = stmt.executeQuery(Facility.GET_FACILITY);
+			rs = stmt.executeQuery(Facility.GET_FACILITY);
 			while(rs.next()) {
 				Facility fac = new Facility();
-				
-				fac.setGroupInfo(rs.getString("groupInfo"), true);				
 				
 				fac.setIp(rs.getString("ip"));
 				fac.setPort(rs.getInt("port"));
@@ -428,6 +435,10 @@ public class ServerList_Panel extends JPanel {
 				
 				fac.setIndex(rs.getInt("index"));
 				fac.setName(rs.getString("name"));
+				
+				int groupIndex = serverGroupMappingInfo.get(fac.getIndex());
+				ServerGroup group = serverGroupMap.get(groupIndex);
+				fac.setGroup(group);
 				
 				fac.setType(rs.getInt("facType"));
 				fac.setTypeString(DbUtil.getFacilityType(fac.getType()));
@@ -450,19 +461,7 @@ public class ServerList_Panel extends JPanel {
 				// 그룹 정보를 제외하고 인덱스를 포함한 모든 정보가 중복되는 시설물이 존재한다
 				if(serverMap.containsKey(fac.getIndex())) {
 					Facility originFac = (Facility)serverMap.get(fac.getIndex());
-					String groupInfo = null;
-					
-					int compareGroup = AlphanumComparator.comparator.compare(originFac.getGroupInfo(), fac.getGroupInfo());
-					
-					if(compareGroup < 0) {
-						groupInfo = originFac.getGroupInfo() + "  /  " + OVERLAPPING + fac.getGroupInfo();
-					}else if(compareGroup == 0) {
-						groupInfo = originFac.getGroupInfo();
-					}else {
-						groupInfo = fac.getGroupInfo() + "  /  " + OVERLAPPING + originFac.getGroupInfo();
-					}
-					
-					originFac.setGroupInfo(groupInfo, false);
+					originFac.setOverlapping(true); // 해당 장비는 중복이 존재하는 장비이다
 					continue;
 				}
 				
@@ -475,8 +474,6 @@ public class ServerList_Panel extends JPanel {
 			while(rs.next()) {
 				RCU rcu = new RCU();
 				
-				rcu.setGroupInfo(rs.getString("groupInfo"), true);
-				
 				rcu.setIp(rs.getString("ip"));
 				rcu.setPort(rs.getInt("port"));				
 
@@ -484,6 +481,10 @@ public class ServerList_Panel extends JPanel {
 				
 				rcu.setIndex(rs.getInt("index"));
 				rcu.setName(rs.getString("name"));
+				
+				int groupIndex = serverGroupMappingInfo.get(rcu.getIndex());
+				ServerGroup group = serverGroupMap.get(groupIndex);
+				rcu.setGroup(group);
 				
 				rcu.setType(rs.getInt("rtuType"));
 				rcu.setTypeString("RCU");
@@ -514,19 +515,7 @@ public class ServerList_Panel extends JPanel {
 				// 그룹 정보를 제외하고 인덱스를 포함한 모든 정보가 중복되는 장비가 존재한다
 				if(serverMap.containsKey(rcu.getIndex())) {
 					RCU originRCU = (RCU)serverMap.get(rcu.getIndex());
-					String groupInfo = null;
-					
-					int compareGroup = AlphanumComparator.comparator.compare(originRCU.getGroupInfo(), rcu.getGroupInfo());
-					
-					if(compareGroup < 0) {
-						groupInfo = originRCU.getGroupInfo() + "  /  " + OVERLAPPING + rcu.getGroupInfo();
-					}else if(compareGroup == 0) {
-						groupInfo = originRCU.getGroupInfo();
-					}else {
-						groupInfo = rcu.getGroupInfo() + "  /  " + OVERLAPPING + originRCU.getGroupInfo();
-					}
-					
-					originRCU.setGroupInfo(groupInfo, false);
+					originRCU.setOverlapping(true); // 해당 RCU는 중복이 존재하는 RCU이다
 					continue;
 				}
 				
@@ -606,7 +595,7 @@ public class ServerList_Panel extends JPanel {
 								
 								sb.append(Util.colorRed("알 수 없는 RCU 인덱스 : ") + rtuIndex + Util.separator + Util.separator + "\n\n");
 								
-								sb.append(Util.colorBlue("그룹 정보 : ") + server.getGroupInfo() + Util.separator + Util.separator + "\n");
+								sb.append(Util.colorBlue("그룹 정보 : ") + server.getGroup().getTree() + Util.separator + Util.separator + "\n");
 								sb.append(Util.colorBlue("시설물 종류 : ") + server.getTypeString() + Util.separator + Util.separator + "\n");
 								sb.append(Util.colorBlue("장비명 : ") + server.getName() + Util.separator + Util.separator + "\n");							
 								sb.append(Util.colorBlue("장비 인덱스 : ") + server.getIndex() + Util.separator + Util.separator + "\n");
@@ -627,7 +616,7 @@ public class ServerList_Panel extends JPanel {
 								
 							}
 						}
-				}
+					}
 			}
 			
 			ArrayList<Event> eventList = Event.getEvents(ONION_Info.getMk119Connection());
@@ -647,6 +636,9 @@ public class ServerList_Panel extends JPanel {
 				int lastSelectedServerIndex = selectedServer.getIndex();
 				selectedServer = serverMap.get(lastSelectedServerIndex);
 			}
+			
+			if(rs != null && !rs.isClosed()) rs.close();
+			if(stmt != null && !stmt.isClosed()) stmt.close();
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
@@ -672,7 +664,7 @@ public class ServerList_Panel extends JPanel {
 			Server server = serverList.get(i);
 			content[i] = new Object[6];
 			content[i][0] = i + 1;
-			content[i][1] = server.getGroupInfo();
+			content[i][1] = (server.isOverlapping()) ? server.getGroup().getTree() + OVERLAPPING : server.getGroup().getTree();
 			content[i][2] = server.getTypeString();
 			content[i][3] = server;
 			content[i][4] = server.getState();
@@ -1169,9 +1161,6 @@ public class ServerList_Panel extends JPanel {
 	public static void resetForm(boolean databaseLoad, boolean allComponentReset) {		
 		updateServerListTable(databaseLoad);
 		
-		rcuInfo_Button.setText("RCU 정보");
-		perfInfo_Button.setText("성능 정보");
-		
 		if(selectedServer != null && selectedServer.isFacility()) {
 			updateFacilityInfo((Facility)selectedServer);
 		}else if(selectedServer != null && selectedServer.isRCU()){
@@ -1217,7 +1206,7 @@ public class ServerList_Panel extends JPanel {
 					searchElement_1 = server.getIp();
 					break;
 				case GROUP_INFO :  // 그룹 정보
-					searchElement_1 = server.getGroupInfo();
+					searchElement_1 = server.getGroup().getTree();
 					break;
 				case SERVER_INDEX : // 장비 인덱스
 					searchElement_1 = String.valueOf(server.getIndex());
@@ -1255,7 +1244,7 @@ public class ServerList_Panel extends JPanel {
 					searchElement_2 = server.getIp();
 					break;
 				case GROUP_INFO :  // 그룹 정보
-					searchElement_2 = server.getGroupInfo();
+					searchElement_2 = server.getGroup().getTree();
 					break;
 				case SERVER_INDEX : // 장비 인덱스
 					searchElement_2 = String.valueOf(server.getIndex());
@@ -1339,7 +1328,7 @@ public class ServerList_Panel extends JPanel {
 			Server server = filteredServer.get(i);
 			content[i] = new Object[6];
 			content[i][0] = i + 1;
-			content[i][1] = server.getGroupInfo();
+			content[i][1] = server.getGroup().getTree();
 			content[i][2] = server.getTypeString();
 			content[i][3] = server;
 			content[i][4] = server.getState();

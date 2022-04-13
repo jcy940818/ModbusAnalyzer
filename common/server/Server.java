@@ -9,6 +9,7 @@ public class Server implements Comparable {
 	public static final int TYPE_FACILITY = 16;
 	public static final int TYPE_RTU = 8;
 
+	private boolean overlapping = false;
 	private ArrayList<Event> events = new ArrayList<Event>();
 	private String ip;
 	private int agentType; // 8 : RCU, 16 : ½Ã¼³¹°	
@@ -119,6 +120,15 @@ public class Server implements Comparable {
 	public String toString() {
 		return this.name;
 	}
+	
+	public boolean isOverlapping() {
+		return overlapping;
+	}
+
+	public void setOverlapping(boolean overlapping) {
+		this.overlapping = overlapping;
+	}
+
 
 	@Override
 	public int compareTo(Object obj) {
@@ -170,4 +180,5 @@ public class Server implements Comparable {
 		}
 	}
 
+	
 }

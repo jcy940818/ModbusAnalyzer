@@ -25,39 +25,75 @@ public class ServerGroup {
 		this.groupName = groupName;
 	}
 	
-	public static HashMap<Integer, ServerGroup> getServerGroupMap(Connection conn) throws SQLException{
+	@Override
+	public String toString() {
+		return this.getTree();
+	}
+
+	public static HashMap<Integer, ServerGroup> getServerGroup(Connection conn) throws SQLException{
 		HashMap<Integer, ServerGroup> groupMap = new HashMap<Integer, ServerGroup>();
 		ArrayList<ServerGroup> groupList = new ArrayList<ServerGroup>();
 		
-		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(GET_SERVERGROUP);
+		Statement stmt = null;
+		ResultSet rs = null;
 		
-		boolean isRoot = true;
-		while (rs.next()) {
-			int groupIndex = rs.getInt("nGroupIndex");
-			int parentIndex = rs.getInt("nParentIndex");
-			String groupName = rs.getString("strGroupName");
+		try {		
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(GET_SERVERGROUP);
 			
-			ServerGroup group = new ServerGroup(groupIndex, parentIndex, groupName);
-			
-			groupList.add(group);
-			groupMap.put(group.getGroupIndex(), group);
-			
-			if(isRoot) ServerGroup.ROOT = group.getGroupName();
-			isRoot = false;
-		}
-		
-		for(ServerGroup group : groupList) {
-			int parentIndex = group.getParentIndex();			
-			if(groupMap.containsKey(parentIndex)) {
-				ServerGroup parentGroup = groupMap.get(parentIndex);
-				group.setParentGroup(parentGroup);
-			}else {
-				group.setParentGroup(null);
+			boolean isRoot = true;
+			while (rs.next()) {
+				int groupIndex = rs.getInt("nGroupIndex");
+				int parentIndex = rs.getInt("nParentIndex");
+				String groupName = rs.getString("strGroupName");
+				
+				ServerGroup group = new ServerGroup(groupIndex, parentIndex, groupName);
+				
+				groupList.add(group);
+				groupMap.put(group.getGroupIndex(), group);
+				
+				if(isRoot) ServerGroup.ROOT = group.getGroupName();
+				isRoot = false;
 			}
+			
+			for(ServerGroup group : groupList) {
+				int parentIndex = group.getParentIndex();			
+				if(groupMap.containsKey(parentIndex)) {
+					ServerGroup parentGroup = groupMap.get(parentIndex);
+					group.setParentGroup(parentGroup);
+				}else {
+					group.setParentGroup(null);
+				}
+			}
+	
+			return groupMap;
+		}finally {
+			if(rs != null && !rs.isClosed()) rs.close();
+			if(stmt != null && !stmt.isClosed()) stmt.close();
 		}
-
-		return groupMap;
+	}
+	
+	public static HashMap<Integer, Integer> getServerGroupMapping(Connection conn) throws SQLException{
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			HashMap<Integer, Integer> groupMap = new HashMap<Integer, Integer>();
+			
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(GET_SERVERGROUPMAP);
+			
+			while (rs.next()) {
+				int serverIndex = rs.getInt("nServerIndex");
+				int groupIndex = rs.getInt("nGroupIndex");
+				groupMap.put(serverIndex, groupIndex);
+			}
+			
+			return groupMap;
+		}finally {
+			if(rs != null && !rs.isClosed()) rs.close();
+			if(stmt != null && !stmt.isClosed()) stmt.close();
+		}
 	}
 	
 	// 재귀호출 주의!
@@ -90,7 +126,6 @@ public class ServerGroup {
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
 	}
-
 	public void setParentGroup(ServerGroup parentGroup) {
 		this.parentGroup = parentGroup;
 	}
