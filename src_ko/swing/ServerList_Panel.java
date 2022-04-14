@@ -85,6 +85,7 @@ public class ServerList_Panel extends JPanel {
 	private static JTable serverListTable;
 	private static JTable serverInfoTable;
 	
+	private static JButton eventInfo_Button;
 	private static JButton rcuInfo_Button;
 	private static JButton perfInfo_Button;
 	private static JButton updateDB_Button;
@@ -130,6 +131,26 @@ public class ServerList_Panel extends JPanel {
 		sqlServerInfo_label.setBounds(10, 0, 580, 48);
 		infoPanel.add(sqlServerInfo_label);
 		
+		eventInfo_Button = new JButton("이벤트 정상");
+		eventInfo_Button.setForeground(Color.BLACK);
+		eventInfo_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		eventInfo_Button.setFocusPainted(false);
+		eventInfo_Button.setBackground(Color.WHITE);
+		eventInfo_Button.setBounds(84, 62, 156, 37);
+		eventInfo_Button.setEnabled(false);		
+		eventInfo_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(selectedServer.isRCU()) {
+					RCU rcu = (RCU)selectedServer;
+					
+				}else if(selectedServer.isFacility()) {
+					Facility fac = (Facility)selectedServer;
+					
+				}
+			}
+		});
+		infoPanel.add(eventInfo_Button);
+		
 		rcuInfo_Button = new JButton("RCU 정보");
 		rcuInfo_Button.setForeground(Color.BLACK);
 		rcuInfo_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
@@ -147,7 +168,6 @@ public class ServerList_Panel extends JPanel {
 				}
 			}
 		});
-		
 		infoPanel.add(rcuInfo_Button);
 		
 		perfInfo_Button = new JButton("성능 정보");
@@ -371,6 +391,24 @@ public class ServerList_Panel extends JPanel {
 		try {
 			int row = serverListTable.getSelectedRow();
 			selectedServer = (Server) serverListTable.getValueAt(row, 3);
+			
+			// 선택된 장비의 종류에 상관없이 이벤트가 발생한 경우
+			if(selectedServer.hasEvent()) {
+				Event event = selectedServer.getEvents().get(0);
+				
+				eventInfo_Button.setEnabled(true);
+				eventInfo_Button.setBackground(new Color(event.getSeverityBkColor()));
+				eventInfo_Button.setForeground(new Color(event.getSeverityTextColor()));
+				
+				String status = (event.getStatus() == 0) ? "발생" : "인지";
+				status = String.format("%s ( %s )", status, event.getSeverityName());
+				eventInfo_Button.setText(status);
+			}else {
+				eventInfo_Button.setEnabled(false);
+				eventInfo_Button.setBackground(Color.WHITE);
+				eventInfo_Button.setForeground(Color.BLACK);
+				eventInfo_Button.setText("이벤트 정상");
+			}
 			
 			if(selectedServer.isFacility()) {
 				// 시설물이 선택 되었을 경우
@@ -730,7 +768,7 @@ public class ServerList_Panel extends JPanel {
 		findRCURenderer.setHorizontalAlignment(SwingConstants.CENTER);
 				
 		SeverityRenderer severityRenderer = null;
-		ArrayList<SystemSeverity> severityList = null;		
+		ArrayList<SystemSeverity> severityList = null;
 		try {
 			severityList= SystemSeverity.getSystemSeverity(ONION_Info.getMk119Connection());
 		}catch(Exception e) {
@@ -751,7 +789,12 @@ public class ServerList_Panel extends JPanel {
 	}
 		
 	public static void updateFacilityInfo(Facility fac) {
-		if(fac == null) {	
+		if(fac == null) {
+			eventInfo_Button.setText("이벤트 정상");
+			eventInfo_Button.setEnabled(false);
+			eventInfo_Button.setBackground(Color.WHITE);
+			eventInfo_Button.setForeground(Color.BLACK);
+			
 			perfInfo_Button.setEnabled(false);
 			perfInfo_Button.setBackground(Color.WHITE);			
 			rcuInfo_Button.setEnabled(false);
@@ -830,6 +873,11 @@ public class ServerList_Panel extends JPanel {
 	
 	public static void updateRCUInfo(RCU rcu) {
 		if(rcu == null) {
+			eventInfo_Button.setText("이벤트 정상");
+			eventInfo_Button.setEnabled(false);
+			eventInfo_Button.setBackground(Color.WHITE);
+			eventInfo_Button.setForeground(Color.BLACK);
+			
 			perfInfo_Button.setEnabled(false);
 			perfInfo_Button.setBackground(Color.WHITE);			
 			rcuInfo_Button.setEnabled(false);
