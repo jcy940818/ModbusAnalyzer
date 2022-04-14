@@ -87,8 +87,8 @@ public class RcuInfoFrame extends JFrame {;
 	public RcuInfoFrame(RCU  rcu) {		
 		this.rcu = rcu;
 		
-		RcuInfoFrame.isExist = true;
-		setTitle("RCU Information");
+		RcuInfoFrame.isExist = true;		
+		setTitle(String.format("RCU Information   [  Index : %d  /  Name : %s  ]", rcu.getIndex(), rcu.getName()));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());

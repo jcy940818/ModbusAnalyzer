@@ -113,7 +113,7 @@ public class FacilityInfoFrame extends JFrame {
 		this.perfs = Perf.getFaciltiyPerfList(ONION_Info.getMk119Connection(), fac);
 		
 		FacilityInfoFrame.isExist = true;
-		setTitle("Facility Information");
+		setTitle(String.format("Facility Information   [  Index : %d  /  Name : %s  ]", fac.getIndex(), fac.getName()));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
