@@ -136,7 +136,7 @@ public class ServerList_Panel extends JPanel {
 		eventInfo_Button.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		eventInfo_Button.setFocusPainted(false);
 		eventInfo_Button.setBackground(Color.WHITE);
-		eventInfo_Button.setBounds(84, 62, 156, 37);
+		eventInfo_Button.setBounds(50, 62, 190, 37);
 		eventInfo_Button.setEnabled(false);		
 		eventInfo_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
