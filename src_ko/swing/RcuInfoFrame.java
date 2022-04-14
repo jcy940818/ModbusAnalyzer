@@ -31,7 +31,10 @@ import javax.swing.table.TableColumnModel;
 import common.server.Facility;
 import common.server.MultiPortMap;
 import common.server.RCU;
+import common.server.SystemSeverity;
 import common.util.FindTextRenderer;
+import common.util.SeverityRenderer;
+import src_ko.info.ONION_Info;
 import src_ko.util.Util;
 
 public class RcuInfoFrame extends JFrame {;
@@ -45,6 +48,7 @@ public class RcuInfoFrame extends JFrame {;
 	public static final String CONN_METHOD = "연결 방식";	
 	public static final String PROTOCOL_NUMBER = "프로토콜 번호";
 	public static final String SERVER_STATE = "장비 상태";
+	public static final String EVENT = "이벤트";
 	
 	private String searchElement = SERVER_NAME;
 	
@@ -171,6 +175,7 @@ public class RcuInfoFrame extends JFrame {;
 				SERVER_INDEX, // 장비 인덱스
 				PROTOCOL_NUMBER, // 프로토콜 번호
 				SERVER_STATE, // 장비 상태
+				EVENT, // 장비 상태
 		}));
 		searchFacility_ComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -430,12 +435,13 @@ public class RcuInfoFrame extends JFrame {;
 				
 				if(ServerList_Panel.serverMap.containsKey(facIndex)) {
 					Facility fac = (Facility)ServerList_Panel.serverMap.get(facIndex);
-					content[index] = new Object[5];
+					content[index] = new Object[6];
 					content[index][0] = index + 1;
 					content[index][1] = fac.getTypeString();
 					content[index][2] = fac;
 					content[index][3] = (fac.getRcuPortCh() != 0 && fac.getPort() != 0) ? String.format("%d ( %d )",  map.getCh(), map.getPort()) : "Unknown"; 	
 					content[index][4] = fac.getState();
+					content[index][5] = (fac.hasEvent()) ? fac.getEvents().get(0).getSeverityName() : "";
 					index++;
 				}
 			}
@@ -456,12 +462,13 @@ public class RcuInfoFrame extends JFrame {;
 					continue;
 				}else {
 					// RCU와 연결은 되어있지만 멀티 포트 매핑 테이블에는 정보가 없는 시설물
-					content[index] = new Object[5];
+					content[index] = new Object[6];
 					content[index][0] = index + 1;
 					content[index][1] = fac.getTypeString();
 					content[index][2] = fac;
 					content[index][3] = (fac.getRcuPortCh() != 0 && fac.getPort() != 0) ? String.format("%d ( %d )",  fac.getRcuPortCh(), fac.getPort()) : "Unknown"; 	
 					content[index][4] = fac.getState();
+					content[index][5] = (fac.hasEvent()) ? fac.getEvents().get(0).getSeverityName() : "";
 					index++;
 				}
 			}
@@ -469,22 +476,24 @@ public class RcuInfoFrame extends JFrame {;
 		}else if(rcu.isDuplexedPort()) {
 			for (int i = 0; i < rcu.getFacList().size(); i++) {
 				Facility fac = (Facility)rcu.getFacList().get(i);
-				content[i] = new Object[5];
+				content[i] = new Object[6];
 				content[i][0] = i + 1;
 				content[i][1] = fac.getTypeString();
 				content[i][2] = fac;
 				content[i][3] = String.format("%d / %d",  rcu.getPort(), rcu.getAuxPort());
 				content[i][4] = fac.getState();
+				content[i][5] = (fac.hasEvent()) ? fac.getEvents().get(0).getSeverityName() : "";
 			}
 		}else{
 			for (int i = 0; i < rcu.getFacList().size(); i++) {
 				Facility fac = (Facility)rcu.getFacList().get(i);
-				content[i] = new Object[5];
+				content[i] = new Object[6];
 				content[i][0] = i + 1;
 				content[i][1] = fac.getTypeString();
 				content[i][2] = fac;
 				content[i][3] = (fac.getPort() != 0) ? String.format("%d ( %d )",  fac.getRcuPortCh(), fac.getPort()) : "Unknown";
 				content[i][4] = fac.getState();
+				content[i][5] = (fac.hasEvent()) ? fac.getEvents().get(0).getSeverityName() : "";
 			}
 		}
 		
@@ -496,7 +505,8 @@ public class RcuInfoFrame extends JFrame {;
 				"시설물 종류",
 				"장비명",
 				"포 트",
-				"장비 상태"
+				"장비 상태",
+				"이벤트"
 			}) {
 			// 테이블 셀 내용 수정 금지
 			public boolean isCellEditable(int i, int c) {
@@ -512,7 +522,7 @@ public class RcuInfoFrame extends JFrame {;
 		// 테이블 헤더 설정
 		table.getTableHeader().setForeground(Color.BLACK);
 		table.getTableHeader().setBackground(new Color(255, 255, 153));
-		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		
 		// 이동 불가, 셀 크기 조절 불가
 		table.getTableHeader().setReorderingAllowed(false);
@@ -527,11 +537,12 @@ public class RcuInfoFrame extends JFrame {;
 		table.setRowHeight(25);
 		
 		// 성능 리스트 테이블
-		table.getColumnModel().getColumn(0).setPreferredWidth(5); // 순 서
-		table.getColumnModel().getColumn(1).setPreferredWidth(60); // 시설물 종류		
-		table.getColumnModel().getColumn(2).setPreferredWidth(400); // 장비명
-		table.getColumnModel().getColumn(3).setPreferredWidth(50); // 포트
-		table.getColumnModel().getColumn(4).setPreferredWidth(50); // 장비 상태
+		table.getColumnModel().getColumn(0).setPreferredWidth(25); // 순 서
+		table.getColumnModel().getColumn(1).setPreferredWidth(80); // 시설물 종류		
+		table.getColumnModel().getColumn(2).setPreferredWidth(320); // 장비명
+		table.getColumnModel().getColumn(3).setPreferredWidth(80); // 포트
+		table.getColumnModel().getColumn(4).setPreferredWidth(60); // 장비 상태
+		table.getColumnModel().getColumn(5).setPreferredWidth(60); // 이벤트
 		
 		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
 		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
@@ -540,6 +551,17 @@ public class RcuInfoFrame extends JFrame {;
 		FindTextRenderer findCommerRenderer = new FindTextRenderer(4, "통신 오류", Color.RED);
 		findCommerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
+		SeverityRenderer severityRenderer = null;
+		ArrayList<SystemSeverity> severityList = null;		
+		try {
+			severityList= SystemSeverity.getSystemSeverity(ONION_Info.getMk119Connection());
+		}catch(Exception e) {
+			e.printStackTrace();
+			severityList = SystemSeverity.getDefaultSystemSeverity();
+		}
+		severityRenderer = new SeverityRenderer(5, 15, severityList);
+		severityRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		
 		// DefaultTableCellHeaderRenderer의 정렬을 가운데 정렬로 지정
 		TableColumnModel tcmSchedule = table.getColumnModel();
 		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
@@ -547,6 +569,7 @@ public class RcuInfoFrame extends JFrame {;
 //		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 장비명
 		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 포트
 		tcmSchedule.getColumn(4).setCellRenderer(findCommerRenderer); // 장비 상태
+		tcmSchedule.getColumn(5).setCellRenderer(severityRenderer); // 장비 상태
 	}
 	
 	//******************** 테이블 필터링 관련 *********************************************************************
@@ -585,6 +608,9 @@ public class RcuInfoFrame extends JFrame {;
 				case SERVER_STATE : // 장비 상태
 					searchElement = fac.getState();
 					break;
+				case EVENT : // 이벤트
+					searchElement = (fac.hasEvent()) ? fac.getEvents().get(0).getSeverityName() : "";
+					break;
 				default : 
 					searchElement = fac.getName();
 					break;
@@ -621,7 +647,7 @@ public class RcuInfoFrame extends JFrame {;
 		
 		for (int i = 0; i < filteredFac.size(); i++) {
 			Facility fac = (Facility)filteredFac.get(i);
-			content[i] = new Object[5];
+			content[i] = new Object[6];
 			content[i][0] = i + 1;
 			content[i][1] = fac.getTypeString();
 			content[i][2] = fac;
@@ -638,6 +664,7 @@ public class RcuInfoFrame extends JFrame {;
 			content[i][3] = port;
 			
 			content[i][4] = fac.getState();
+			content[i][5] = (fac.hasEvent()) ? fac.getEvents().get(0).getSeverityName() : "";
 		}
 
 		FacListTable.setModel(new DefaultTableModel(
@@ -647,7 +674,8 @@ public class RcuInfoFrame extends JFrame {;
 						"시설물 종류",
 						"장비명",
 						"포 트",
-						"장비 상태"
+						"장비 상태",
+						"이벤트"
 						}) {
 				// 테이블 셀 내용 수정 금지
 				public boolean isCellEditable(int i, int c) {
