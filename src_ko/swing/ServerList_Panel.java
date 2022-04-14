@@ -664,7 +664,15 @@ public class ServerList_Panel extends JPanel {
 			Server server = serverList.get(i);
 			content[i] = new Object[6];
 			content[i][0] = i + 1;
-			content[i][1] = (server.isOverlapping()) ? server.getGroup().getTree() + OVERLAPPING : server.getGroup().getTree();
+			
+			String groupInfo = (server.isOverlapping()) ? server.getGroup().getTree() + OVERLAPPING : server.getGroup().getTree();
+			if(groupInfo.startsWith(ServerGroup.ROOT + " > ")) {
+				groupInfo = groupInfo.replace(ServerGroup.ROOT + " > ", "");
+			}else {
+				groupInfo = groupInfo.replace(ServerGroup.ROOT, "장비 관리  ( 그룹 없음 )");
+			}
+			content[i][1] = groupInfo;
+			
 			content[i][2] = server.getTypeString();
 			content[i][3] = server;
 			content[i][4] = server.getState();
@@ -1328,7 +1336,15 @@ public class ServerList_Panel extends JPanel {
 			Server server = filteredServer.get(i);
 			content[i] = new Object[6];
 			content[i][0] = i + 1;
-			content[i][1] = server.getGroup().getTree();
+			
+			String groupInfo = (server.isOverlapping()) ? server.getGroup().getTree() + OVERLAPPING : server.getGroup().getTree();
+			if(groupInfo.startsWith(ServerGroup.ROOT + " > ")) {
+				groupInfo = groupInfo.replace(ServerGroup.ROOT + " > ", "");
+			}else {
+				groupInfo = groupInfo.replace(ServerGroup.ROOT, "장비 관리  ( 그룹 없음 )");
+			}
+			content[i][1] = groupInfo;
+			
 			content[i][2] = server.getTypeString();
 			content[i][3] = server;
 			content[i][4] = server.getState();
