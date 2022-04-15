@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import common.perf.Perf;
+import src_ko.info.Protocol;
 
 public class Facility extends Server implements Comparable{
 	
@@ -51,7 +52,7 @@ public class Facility extends Server implements Comparable{
 	private int connCode; // 연결 방식
 	private String connMethod;
 	
-	private boolean isCommon; // 프로토콜 정보
+	private boolean isProtocol; // 프로토콜 정보
 	private int commProtocol;
 	private int snmpProtocol;		
 
@@ -111,12 +112,12 @@ public class Facility extends Server implements Comparable{
 		this.connMethod = connMethod;
 	}
 
-	public boolean isCommon() {
-		return isCommon;
+	public boolean isProtocol() {
+		return isProtocol;
 	}
 
-	public void setCommon(boolean isCommon) {
-		this.isCommon = isCommon;
+	public void setIsProtocol(boolean isProtocol) {
+		this.isProtocol = isProtocol;
 	}
 	
 	public int getCommProtocol() {
@@ -150,6 +151,12 @@ public class Facility extends Server implements Comparable{
 	public void setPerfMap(HashMap<Integer, Perf> perfMap) {
 		this.perfMap = perfMap;
 	}
-	
+
+	public String getProtocolKey() {
+		int protocolType = this.isProtocol ? Protocol.PROTOCOL : Protocol.SNMP;
+		int facCode = this.getType();
+		int protocolNumber = this.isProtocol ? this.getCommProtocol() : this.getSnmpProtocol();
+		return String.format("%d-%d-%d", protocolType, facCode, protocolNumber);
+	}
 
 }

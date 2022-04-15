@@ -109,7 +109,7 @@ public class FacilityInfoFrame extends JFrame {
 	 */
 	public FacilityInfoFrame(Facility fac) {		
 		this.fac = fac;
-		this.isCommon = fac.isCommon();
+		this.isCommon = fac.isProtocol();
 		this.perfs = Perf.getFaciltiyPerfList(ONION_Info.getMk119Connection(), fac);
 		
 		FacilityInfoFrame.isExist = true;
@@ -531,7 +531,7 @@ public class FacilityInfoFrame extends JFrame {
 		
 		if(ServerList_Panel.serverMap.containsKey(fac.getIndex())) {
 			this.fac = (Facility)ServerList_Panel.serverMap.get(fac.getIndex());
-			this.isCommon = fac.isCommon();
+			this.isCommon = fac.isProtocol();
 			
 			String facInfo_1 = "";
 			facInfo_1 += "<html>";

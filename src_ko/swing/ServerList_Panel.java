@@ -41,11 +41,11 @@ import common.server.RCU;
 import common.server.Server;
 import common.server.ServerGroup;
 import common.server.SystemSeverity;
-import common.util.AlphanumComparator;
 import common.util.FindTextRenderer;
 import common.util.SeverityRenderer;
 import src_ko.database.DbUtil;
 import src_ko.info.ONION_Info;
+import src_ko.info.Protocol;
 import src_ko.util.Util;
 
 public class ServerList_Panel extends JPanel {
@@ -63,6 +63,7 @@ public class ServerList_Panel extends JPanel {
 	public static final String EVENT = "이벤트";
 	public static final String SERVER_STATE = "장비 상태";	
 	public static final String PROTOCOL_NUMBER = "프로토콜 번호";
+	public static final String PROTOCOL_NAME = "프로토콜 이름";
 	
 	public static final String STATE_COMMER = "통신 오류";
 	
@@ -72,6 +73,9 @@ public class ServerList_Panel extends JPanel {
 	
 	private JPanel infoPanel;
 		
+	public static boolean connectProtocol = false;
+	public static HashMap<String, Protocol> protocolMap = new HashMap<String, Protocol>();
+	
 	public static ArrayList<Server> serverList;
 	public static HashMap<Integer, Server> serverMap;
 	public static HashMap<Integer, ServerGroup> serverGroupMap;
@@ -88,6 +92,7 @@ public class ServerList_Panel extends JPanel {
 	private static JButton eventInfo_Button;
 	private static JButton rcuInfo_Button;
 	private static JButton perfInfo_Button;
+	public static JButton connectProtocolInfo_Button;
 	private static JButton updateDB_Button;
 	private static JButton resetForm_button;
 	
@@ -136,7 +141,7 @@ public class ServerList_Panel extends JPanel {
 		eventInfo_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		eventInfo_Button.setFocusPainted(false);
 		eventInfo_Button.setBackground(Color.WHITE);
-		eventInfo_Button.setBounds(50, 62, 190, 37);
+		eventInfo_Button.setBounds(12, 62, 228, 37);
 		eventInfo_Button.setEnabled(false);		
 		eventInfo_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -185,6 +190,24 @@ public class ServerList_Panel extends JPanel {
 			}
 		});
 		infoPanel.add(perfInfo_Button);
+		
+		connectProtocolInfo_Button = new JButton(" 프로토콜 연동");
+		connectProtocolInfo_Button.setIcon(new Util().getMK2Resource());
+		connectProtocolInfo_Button.setForeground(Color.BLACK);
+		connectProtocolInfo_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		connectProtocolInfo_Button.setFocusPainted(false);
+		connectProtocolInfo_Button.setBackground(Color.WHITE);
+		connectProtocolInfo_Button.setBounds(12, 103, 228, 37);
+		connectProtocolInfo_Button.setEnabled(true);
+		connectProtocolInfo_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				OnionDirCheck_Panel.connectServerList = true;
+				OnionDirCheck_Panel.back_button.setVisible(true);
+				MainFrame.showOnionDirCheck(false);
+			}
+		});
+		infoPanel.add(connectProtocolInfo_Button);
+		
 		
 		JLabel searchFacility_Label = new JLabel("검 색");
 		searchFacility_Label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -486,7 +509,7 @@ public class ServerList_Panel extends JPanel {
 				
 				fac.setCommProtocol(rs.getInt("commProtocol"));
 				fac.setSnmpProtocol(rs.getInt("snmpProtocol"));
-				fac.setCommon((fac.getCommProtocol() > fac.getSnmpProtocol()) ? true : false);
+				fac.setIsProtocol((fac.getCommProtocol() > fac.getSnmpProtocol()) ? true : false);
 				
 				fac.setStateCode(rs.getInt("condition"));
 				fac.setState(DbUtil.getState(fac.getStateCode()));
@@ -849,10 +872,22 @@ public class ServerList_Panel extends JPanel {
 		content[index][0] = CONN_METHOD;
 		content[index++][1] = fac.getConnMethod();
 		
-		// 프로토콜 번호
-		content[index] = new Object[2];
-		content[index][0] = PROTOCOL_NUMBER;
-		content[index++][1] = fac.isCommon() ? fac.getCommProtocol() : fac.getSnmpProtocol();
+		// 프로토콜 정보
+		if(connectProtocol) {
+			content[index] = new Object[2];
+			content[index][0] = PROTOCOL_NAME;			
+			Protocol p = protocolMap.get(fac.getProtocolKey());
+			if(p != null) {
+				content[index++][1] = p.getName();	
+			}else {
+				content[index++][1] = "Unknown ( 알 수 없음 )";
+			}
+			
+		}else {
+			content[index] = new Object[2];
+			content[index][0] = PROTOCOL_NUMBER;
+			content[index++][1] = fac.isProtocol() ? fac.getCommProtocol() : fac.getSnmpProtocol();
+		}
 		
 		// 장비 상태
 		content[index] = new Object[2];
@@ -1214,7 +1249,7 @@ public class ServerList_Panel extends JPanel {
 		}
 	}
 	
-	public static void resetForm(boolean databaseLoad, boolean allComponentReset) {		
+	public static void resetForm(boolean databaseLoad, boolean allComponentReset) {
 		updateServerListTable(databaseLoad);
 		
 		if(selectedServer != null && selectedServer.isFacility()) {
@@ -1285,10 +1320,23 @@ public class ServerList_Panel extends JPanel {
 					break;
 				case PROTOCOL_NUMBER : // 프로토콜 번호
 					if(server.isFacility()) {						
-						searchElement_1 = String.valueOf((((Facility)server).isCommon()?((Facility)server).getCommProtocol():((Facility)server).getSnmpProtocol()));	
+						searchElement_1 = String.valueOf((((Facility)server).isProtocol()?((Facility)server).getCommProtocol():((Facility)server).getSnmpProtocol()));	
 					}else {
 						searchElement_1 = "";
 					}					
+					break;
+				case PROTOCOL_NAME : // 프로토콜 이름
+					if(server.isFacility()) {
+						Facility fac = (Facility)server;
+						Protocol p = protocolMap.get(fac.getProtocolKey());
+						if(p != null) {
+							searchElement_1 = p.getName();	
+						}else {
+							searchElement_1 = "";
+						}
+					}else {
+						searchElement_1 = "";
+					}
 					break;
 				case EVENT :
 					searchElement_1 = (server.hasEvent()) ? server.getEvents().get(0).getSeverityName() : "";
@@ -1323,7 +1371,20 @@ public class ServerList_Panel extends JPanel {
 					break;
 				case PROTOCOL_NUMBER : // 프로토콜 번호
 					if(server.isFacility()) {						
-						searchElement_2 = String.valueOf((((Facility)server).isCommon()?((Facility)server).getCommProtocol():((Facility)server).getSnmpProtocol()));	
+						searchElement_2 = String.valueOf((((Facility)server).isProtocol()?((Facility)server).getCommProtocol():((Facility)server).getSnmpProtocol()));	
+					}else {
+						searchElement_2 = "";
+					}
+					break;
+				case PROTOCOL_NAME : // 프로토콜 이름
+					if(server.isFacility()) {
+						Facility fac = (Facility)server;
+						Protocol p = protocolMap.get(fac.getProtocolKey());
+						if(p != null) {
+							searchElement_2 = p.getName();	
+						}else {
+							searchElement_2 = "";
+						}
 					}else {
 						searchElement_2 = "";
 					}
@@ -1458,9 +1519,62 @@ public class ServerList_Panel extends JPanel {
 		}
 	}
 	
-	public void setFocusCell(JTable table, int row, int column) {
-		table.changeSelection(row, column, false, false);				
-		table.requestFocus();
+	public static void updateItem_searchComboBox(boolean isConnectProtocol) {
+		if(isConnectProtocol) {
+			searchFacility_ComboBox1.setModel(new DefaultComboBoxModel(new String[] {
+					GROUP_INFO, // 그룹 정보
+					SERVER_TYPE, // 시설물 종류
+					SERVER_NAME, // 장비명
+					SERVER_INDEX, // 장비 인덱스
+					IP, // IP 주소
+					CONN_METHOD, // 연결 방식
+					PROTOCOL_NUMBER, // 프로토콜 번호
+					PROTOCOL_NAME, // 프로토콜 이름
+					SERVER_STATE, // 장비 상태
+					EVENT
+					}));
+			searchFacility_ComboBox2.setModel(new DefaultComboBoxModel(new String[] {
+					GROUP_INFO, // 그룹 정보
+					SERVER_TYPE, // 시설물 종류
+					SERVER_NAME, // 장비명
+					SERVER_INDEX, // 장비 인덱스
+					IP, // IP 주소
+					CONN_METHOD, // 연결 방식
+					PROTOCOL_NUMBER, // 프로토콜 번호
+					PROTOCOL_NAME, // 프로토콜 이름
+					SERVER_STATE, // 장비 상태
+					EVENT
+					}));
+			if(searchFacility_ComboBox1 != null) searchFacility_ComboBox1.setSelectedIndex(0);
+			if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedIndex(2);
+		}else {
+			searchFacility_ComboBox1.setModel(new DefaultComboBoxModel(new String[] {
+					GROUP_INFO, // 그룹 정보
+					SERVER_TYPE, // 시설물 종류
+					SERVER_NAME, // 장비명
+					SERVER_INDEX, // 장비 인덱스
+					IP, // IP 주소
+					CONN_METHOD, // 연결 방식
+					PROTOCOL_NUMBER, // 프로토콜 번호
+					SERVER_STATE, // 장비 상태
+					EVENT
+					}));
+			searchFacility_ComboBox2.setModel(new DefaultComboBoxModel(new String[] {
+					GROUP_INFO, // 그룹 정보
+					SERVER_TYPE, // 시설물 종류
+					SERVER_NAME, // 장비명
+					SERVER_INDEX, // 장비 인덱스
+					IP, // IP 주소
+					CONN_METHOD, // 연결 방식
+					PROTOCOL_NUMBER, // 프로토콜 번호
+					SERVER_STATE, // 장비 상태
+					EVENT
+					}));
+			if(searchFacility_ComboBox1 != null) searchFacility_ComboBox1.setSelectedIndex(0);
+			if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedIndex(2);
+		}
 	}
+	
+	
 }
 

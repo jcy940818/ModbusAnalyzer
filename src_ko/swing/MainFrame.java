@@ -691,6 +691,7 @@ public class MainFrame extends JFrame {
 		OnionDirCheck_Panel.isProject = isProject;
 		OnionDirCheck_Panel.isProject_checkBox.setVisible(isProject);
 		OnionDirCheck_Panel.changeSatate();
+		OnionDirCheck_Panel.back_button.setVisible(false);
 		cardLayout.show(actualPanel, "onionDirCheck_Panel");
 	}
 	

@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -20,11 +22,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import src_ko.info.ONION_Info;
+import src_ko.info.Protocol;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
 
 public class OnionDirCheck_Panel extends JPanel {	
 	
+	public static boolean connectServerList = false;
 	public static JCheckBox isProject_checkBox;
 	
 	private static JTextField onionDirPath_TextField;
@@ -35,6 +39,7 @@ public class OnionDirCheck_Panel extends JPanel {
 	// isProject == false : OnionSoftware 디렉토리의 프로토콜 리스트를 다운로드
 	public static boolean isProject = false;
 	
+	public static JButton back_button;
 	private static JLabel mk119Icon;
 	private static JLabel mk119Icon2;
 	private static JLabel mk119Version;
@@ -118,6 +123,42 @@ public class OnionDirCheck_Panel extends JPanel {
 							showComponent(false);
 							return;
 						}
+						
+						// ****** [ 서버 리스트에 프로토콜 정보만 연동 ] ******************************************
+						if(connectServerList) {
+							ArrayList<Protocol> protocolList = FileUtil.getProtocolList(isProject);
+							HashMap<String, Protocol> protocolMap = new HashMap<String, Protocol>();
+							
+							for(Protocol p : protocolList) {
+								int protocolType = p.getProtocolType();
+								int facCode = p.getFacCode();
+								int protocolNumber = p.getNumber();
+								
+								String key = String.format("%d-%d-%d", protocolType, facCode, protocolNumber);
+								protocolMap.put(key, p);
+							}
+							
+							ServerList_Panel.protocolMap = protocolMap;
+							
+							ServerList_Panel.connectProtocol = true;							
+							ServerList_Panel.connectProtocolInfo_Button.setEnabled(false);
+							ServerList_Panel.updateItem_searchComboBox(true);
+							ServerList_Panel.resetForm(false, true);
+							
+							OnionDirCheck_Panel.connectServerList = false;
+							OnionDirCheck_Panel.back_button.setVisible(false);
+							
+							StringBuilder sb = new StringBuilder();
+							sb.append(String.format("%s ( %s )%s%s%s\n",Util.colorBlue("MK119 프로토콜 정보 연동 완료"), Util.colorRed(version), Util.separator, Util.separator, Util.separator));
+							sb.append(String.format("성공적으로 MK119 프로토콜 정보를 연동 완료하였습니다%s%s\n\n", Util.separator, Util.separator));
+							sb.append(String.format("이제부터 시설물의 프로토콜 내용이 표시됩니다%s%s%s%s%s\n\n", Util.separator, Util.separator, Util.separator, Util.separator, Util.longSeparator));
+							sb.append(String.format("%s%s%s\n", Util.colorGreen("( 프로토콜 정보를 이용하여 시설물을 검색 할 수 있습니다 )"), Util.separator, Util.separator));
+							Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+							
+							MainFrame.showServerList();
+							return;
+						}
+						// *****************************************************************************
 						
 						mk119BuildVersion.setText(version);
 						ONION_Info.setMK119Version(Double.parseDouble(version.split(" ")[1]));
@@ -343,6 +384,23 @@ public class OnionDirCheck_Panel extends JPanel {
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(ko_button);
 		buttonGroup.add(en_button);
+		
+		back_button = new JButton("돌아가기");
+		back_button.setForeground(Color.BLACK);
+		back_button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		back_button.setFocusPainted(false);
+		back_button.setBackground(Color.WHITE);
+		back_button.setBounds(437, 6, 103, 41);
+		back_button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				OnionDirCheck_Panel.connectServerList = false;
+				OnionDirCheck_Panel.back_button.setVisible(false);
+				ServerList_Panel.connectProtocol = false;
+				MainFrame.showServerList();
+			}
+		});
+		actualPanel.add(back_button);
 		
 		// 컴포넌트는 기본 설정으로 안보임
 		showComponent(false);

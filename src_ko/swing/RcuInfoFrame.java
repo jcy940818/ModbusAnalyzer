@@ -603,7 +603,7 @@ public class RcuInfoFrame extends JFrame {;
 					searchElement = fac.getTypeString();
 					break;
 				case PROTOCOL_NUMBER : // 프로토콜 번호
-					searchElement = String.valueOf(fac.isCommon() ? fac.getCommProtocol() : fac.getSnmpProtocol());
+					searchElement = String.valueOf(fac.isProtocol() ? fac.getCommProtocol() : fac.getSnmpProtocol());
 					break;
 				case SERVER_STATE : // 장비 상태
 					searchElement = fac.getState();
