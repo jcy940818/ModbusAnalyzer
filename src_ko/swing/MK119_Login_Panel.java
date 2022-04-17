@@ -230,9 +230,9 @@ public class MK119_Login_Panel extends JPanel {
 		ServerList_Panel.resetForm(false, true);
 		
 		// 이전에 연동되었던 프로토콜 정보는  사라진다
-		ServerList_Panel.connectProtocol = false;
+		ServerList_Panel.linkMK119_Protocol = false;
 		ServerList_Panel.updateItem_searchComboBox(false);		
-		ServerList_Panel.connectMK119_Button.setEnabled(true);
+		ServerList_Panel.linkMK119_Button.setEnabled(true);
 		
 		MainFrame.showServerList();
 	}

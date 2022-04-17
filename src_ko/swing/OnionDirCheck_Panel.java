@@ -140,8 +140,7 @@ public class OnionDirCheck_Panel extends JPanel {
 							
 							ServerList_Panel.protocolMap = protocolMap;
 							
-							ServerList_Panel.connectProtocol = true;
-							ServerList_Panel.connectMK119_Button.setEnabled(false);
+							ServerList_Panel.linkMK119_Protocol = true;							
 							ServerList_Panel.updateItem_searchComboBox(true);
 							ServerList_Panel.resetForm(false, true);
 							
@@ -397,7 +396,7 @@ public class OnionDirCheck_Panel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				OnionDirCheck_Panel.connectServerList = false;
 				OnionDirCheck_Panel.back_button.setVisible(false);
-				ServerList_Panel.connectProtocol = false;
+				ServerList_Panel.linkMK119_Protocol = false;
 				MainFrame.showServerList();
 			}
 		});

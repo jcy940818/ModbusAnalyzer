@@ -73,9 +73,14 @@ public class ServerList_Panel extends JPanel {
 	public static JLabel sqlServerInfo_label;
 	
 	private JPanel infoPanel;
-		
-	public static boolean connectProtocol = false;
+	
+	// ******** [ MK119 연동 데이터 ] *********************************************************
+	public static boolean linkMK119_Protocol = false;
 	public static HashMap<String, Protocol> protocolMap = new HashMap<String, Protocol>();
+
+	public static boolean linkMK119_PerfData = false;
+//	public static HashMap<String, PerfData> perfDataMap = new HashMap<String, PerfData>();
+	// ************************************************************************************
 	
 	public static ArrayList<Server> serverList;
 	public static HashMap<Integer, Server> serverMap;
@@ -93,7 +98,7 @@ public class ServerList_Panel extends JPanel {
 	private static JButton eventInfo_Button;
 	private static JButton rcuInfo_Button;
 	private static JButton perfInfo_Button;
-	public static JButton connectMK119_Button;
+	public static JButton linkMK119_Button;
 	private static JButton updateDB_Button;
 	private static JButton resetForm_button;
 	
@@ -192,22 +197,20 @@ public class ServerList_Panel extends JPanel {
 		});
 		infoPanel.add(perfInfo_Button);
 		
-		connectMK119_Button = new JButton(" 연동");
-		connectMK119_Button.setIcon(new Util().getMK2Resource());
-		connectMK119_Button.setForeground(Color.BLACK);
-		connectMK119_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
-		connectMK119_Button.setFocusPainted(false);
-		connectMK119_Button.setBackground(Color.WHITE);
-		connectMK119_Button.setBounds(84, 103, 173, 37);
-		connectMK119_Button.setEnabled(true);
-		connectMK119_Button.addActionListener(new ActionListener() {
+		linkMK119_Button = new JButton(" 연동");
+		linkMK119_Button.setIcon(new Util().getMK2Resource());
+		linkMK119_Button.setForeground(Color.BLACK);
+		linkMK119_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		linkMK119_Button.setFocusPainted(false);
+		linkMK119_Button.setBackground(Color.WHITE);
+		linkMK119_Button.setBounds(84, 103, 173, 37);
+		linkMK119_Button.setEnabled(true);
+		linkMK119_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				OnionDirCheck_Panel.connectServerList = true;
-				OnionDirCheck_Panel.back_button.setVisible(true);
-				MainFrame.showOnionDirCheck(MoonInspector.isMoon());
+				new LinkMK119Frame(linkMK119_Protocol, linkMK119_PerfData);
 			}
 		});
-		infoPanel.add(connectMK119_Button);
+		infoPanel.add(linkMK119_Button);
 		
 		
 		JLabel searchFacility_Label = new JLabel("검 색");
@@ -874,7 +877,7 @@ public class ServerList_Panel extends JPanel {
 		content[index++][1] = fac.getConnMethod();
 		
 		// 프로토콜 정보
-		if(connectProtocol) {
+		if(linkMK119_Protocol) {
 			content[index] = new Object[2];
 			content[index][0] = PROTOCOL_NAME;
 			Protocol p = protocolMap.get(fac.getProtocolKey());
