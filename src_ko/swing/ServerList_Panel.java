@@ -93,7 +93,7 @@ public class ServerList_Panel extends JPanel {
 	private static JButton eventInfo_Button;
 	private static JButton rcuInfo_Button;
 	private static JButton perfInfo_Button;
-	public static JButton connectProtocolInfo_Button;
+	public static JButton connectMK119_Button;
 	private static JButton updateDB_Button;
 	private static JButton resetForm_button;
 	
@@ -142,7 +142,7 @@ public class ServerList_Panel extends JPanel {
 		eventInfo_Button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 16));
 		eventInfo_Button.setFocusPainted(false);
 		eventInfo_Button.setBackground(Color.WHITE);
-		eventInfo_Button.setBounds(12, 62, 228, 37);
+		eventInfo_Button.setBounds(84, 62, 173, 37);
 		eventInfo_Button.setEnabled(false);		
 		eventInfo_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -162,7 +162,7 @@ public class ServerList_Panel extends JPanel {
 		rcuInfo_Button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 16));
 		rcuInfo_Button.setFocusPainted(false);
 		rcuInfo_Button.setBackground(new Color(152, 251, 152));
-		rcuInfo_Button.setBounds(245, 62, 190, 37);
+		rcuInfo_Button.setBounds(262, 62, 173, 37);
 		rcuInfo_Button.setEnabled(false);		
 		rcuInfo_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -192,22 +192,22 @@ public class ServerList_Panel extends JPanel {
 		});
 		infoPanel.add(perfInfo_Button);
 		
-		connectProtocolInfo_Button = new JButton(" «¡∑Œ≈‰ƒ› ø¨µø");
-		connectProtocolInfo_Button.setIcon(new Util().getMK2Resource());
-		connectProtocolInfo_Button.setForeground(Color.BLACK);
-		connectProtocolInfo_Button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 16));
-		connectProtocolInfo_Button.setFocusPainted(false);
-		connectProtocolInfo_Button.setBackground(Color.WHITE);
-		connectProtocolInfo_Button.setBounds(12, 103, 228, 37);
-		connectProtocolInfo_Button.setEnabled(true);
-		connectProtocolInfo_Button.addActionListener(new ActionListener() {
+		connectMK119_Button = new JButton(" ø¨µø");
+		connectMK119_Button.setIcon(new Util().getMK2Resource());
+		connectMK119_Button.setForeground(Color.BLACK);
+		connectMK119_Button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 16));
+		connectMK119_Button.setFocusPainted(false);
+		connectMK119_Button.setBackground(Color.WHITE);
+		connectMK119_Button.setBounds(84, 103, 173, 37);
+		connectMK119_Button.setEnabled(true);
+		connectMK119_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				OnionDirCheck_Panel.connectServerList = true;
 				OnionDirCheck_Panel.back_button.setVisible(true);
 				MainFrame.showOnionDirCheck(MoonInspector.isMoon());
 			}
 		});
-		infoPanel.add(connectProtocolInfo_Button);
+		infoPanel.add(connectMK119_Button);
 		
 		
 		JLabel searchFacility_Label = new JLabel("∞À ªˆ");
@@ -223,7 +223,7 @@ public class ServerList_Panel extends JPanel {
 		updateDB_Button.setBackground(Color.WHITE);
 		updateDB_Button.setForeground(Color.BLACK);
 		updateDB_Button.setFocusPainted(false);		
-		updateDB_Button.setBounds(245, 103, 190, 37);
+		updateDB_Button.setBounds(262, 103, 173, 37);
 		updateDB_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				resetForm(true, false);
@@ -259,7 +259,7 @@ public class ServerList_Panel extends JPanel {
 				SERVER_STATE, // ¿Â∫Ò ªÛ≈¬
 				EVENT
 				}));
-		searchFacility_ComboBox1.setBounds(84, 145, 156, 30);
+		searchFacility_ComboBox1.setBounds(84, 145, 173, 30);
 		searchFacility_ComboBox1.setSelectedIndex(0);
 		searchFacility_ComboBox1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -287,7 +287,7 @@ public class ServerList_Panel extends JPanel {
 				SERVER_STATE, // ¿Â∫Ò ªÛ≈¬
 				EVENT
 				}));
-		searchFacility_ComboBox2.setBounds(84, 181, 156, 30);
+		searchFacility_ComboBox2.setBounds(84, 181, 173, 30);
 		searchFacility_ComboBox2.setSelectedIndex(2);
 		searchFacility_ComboBox2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -306,7 +306,7 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_textField1.setForeground(Color.BLACK);
 		searchFacility_textField1.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 16));
 		searchFacility_textField1.setColumns(10);
-		searchFacility_textField1.setBounds(245, 145, 345, 30);
+		searchFacility_textField1.setBounds(262, 145, 328, 30);
 		searchFacility_textField1.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -332,7 +332,7 @@ public class ServerList_Panel extends JPanel {
 		searchFacility_textField2.setForeground(Color.BLACK);
 		searchFacility_textField2.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 16));
 		searchFacility_textField2.setColumns(10);
-		searchFacility_textField2.setBounds(245, 181, 345, 30);
+		searchFacility_textField2.setBounds(262, 181, 328, 30);
 		searchFacility_textField2.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {

@@ -141,7 +141,7 @@ public class OnionDirCheck_Panel extends JPanel {
 							ServerList_Panel.protocolMap = protocolMap;
 							
 							ServerList_Panel.connectProtocol = true;
-							ServerList_Panel.connectProtocolInfo_Button.setEnabled(false);
+							ServerList_Panel.connectMK119_Button.setEnabled(false);
 							ServerList_Panel.updateItem_searchComboBox(true);
 							ServerList_Panel.resetForm(false, true);
 							
