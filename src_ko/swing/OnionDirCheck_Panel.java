@@ -151,7 +151,7 @@ public class OnionDirCheck_Panel extends JPanel {
 							StringBuilder sb = new StringBuilder();
 							sb.append(String.format("%s ( %s )%s%s%s\n",Util.colorBlue("MK119 프로토콜 정보 연동 완료"), Util.colorRed(version), Util.separator, Util.separator, Util.separator));
 							sb.append(String.format("성공적으로 MK119 프로토콜 정보 연동을 완료하였습니다%s%s\n\n", Util.separator, Util.separator));
-							sb.append(String.format("이제부터 시설물의 프로토콜 내용이 표시됩니다%s%s%s%s%s\n\n", Util.separator, Util.separator, Util.separator, Util.separator, Util.longSeparator));
+							sb.append(String.format("이제부터 시설물의 프로토콜 정보를 확인 할 수 있습니다%s%s%s%s%s\n\n", Util.separator, Util.separator, Util.separator, Util.separator, Util.longSeparator));
 							sb.append(String.format("%s%s%s\n", Util.colorGreen("( 프로토콜 정보를 이용하여 시설물을 검색 할 수 있습니다 )"), Util.separator, Util.separator));
 							Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
 							
