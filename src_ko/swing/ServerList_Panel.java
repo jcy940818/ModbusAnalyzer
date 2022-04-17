@@ -46,6 +46,7 @@ import common.util.SeverityRenderer;
 import src_ko.database.DbUtil;
 import src_ko.info.ONION_Info;
 import src_ko.info.Protocol;
+import src_ko.main.MoonInspector;
 import src_ko.util.Util;
 
 public class ServerList_Panel extends JPanel {
@@ -203,7 +204,7 @@ public class ServerList_Panel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				OnionDirCheck_Panel.connectServerList = true;
 				OnionDirCheck_Panel.back_button.setVisible(true);
-				MainFrame.showOnionDirCheck(false);
+				MainFrame.showOnionDirCheck(MoonInspector.isMoon());
 			}
 		});
 		infoPanel.add(connectProtocolInfo_Button);
@@ -875,14 +876,13 @@ public class ServerList_Panel extends JPanel {
 		// 프로토콜 정보
 		if(connectProtocol) {
 			content[index] = new Object[2];
-			content[index][0] = PROTOCOL_NAME;			
+			content[index][0] = PROTOCOL_NAME;
 			Protocol p = protocolMap.get(fac.getProtocolKey());
 			if(p != null) {
-				content[index++][1] = p.getName();	
+				content[index++][1] = p.getName();
 			}else {
 				content[index++][1] = "Unknown ( 알 수 없음 )";
 			}
-			
 		}else {
 			content[index] = new Object[2];
 			content[index][0] = PROTOCOL_NUMBER;
@@ -957,7 +957,6 @@ public class ServerList_Panel extends JPanel {
 		content[index++][1] = rcu.getIndex();
 		
 		// IP 정보
-		
 		String ipInfo = "";
 		if(rcu.isDuplexedPort()) {
 			ipInfo += rcu.getIp();

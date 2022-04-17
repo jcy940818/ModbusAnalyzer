@@ -153,9 +153,9 @@ public class Facility extends Server implements Comparable{
 	}
 
 	public String getProtocolKey() {
-		int protocolType = this.isProtocol ? Protocol.PROTOCOL : Protocol.SNMP;
+		int protocolType = this.isProtocol() ? Protocol.PROTOCOL : Protocol.SNMP;
 		int facCode = this.getType();
-		int protocolNumber = this.isProtocol ? this.getCommProtocol() : this.getSnmpProtocol();
+		int protocolNumber = this.isProtocol() ? this.getCommProtocol() : this.getSnmpProtocol();
 		return String.format("%d-%d-%d", protocolType, facCode, protocolNumber);
 	}
 

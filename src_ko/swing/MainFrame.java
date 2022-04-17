@@ -690,8 +690,7 @@ public class MainFrame extends JFrame {
 		// isProject : MK119 프로젝트의 XML 편집
 		OnionDirCheck_Panel.isProject = isProject;
 		OnionDirCheck_Panel.isProject_checkBox.setVisible(isProject);
-		OnionDirCheck_Panel.changeSatate();
-		OnionDirCheck_Panel.back_button.setVisible(false);
+		OnionDirCheck_Panel.changeSatate();		
 		cardLayout.show(actualPanel, "onionDirCheck_Panel");
 	}
 	
