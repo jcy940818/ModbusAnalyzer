@@ -391,6 +391,7 @@ public class OnionDirCheck_Panel extends JPanel {
 		back_button.setFocusPainted(false);
 		back_button.setBackground(Color.WHITE);
 		back_button.setBounds(437, 6, 103, 41);
+		back_button.setVisible(false);
 		back_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
