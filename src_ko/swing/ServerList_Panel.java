@@ -1072,6 +1072,18 @@ public class ServerList_Panel extends JPanel {
 						
 			msg.append(String.format("%s%s%s\n", Util.colorBlue("──────────[ 시설물 정보 ]──────────"), separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("시설물 종류"), fac.getTypeString(), separator, separator));
+			
+			if(linkMK119_Protocol) {
+				Protocol p = protocolMap.get(fac.getProtocolKey());
+				String pName = null;
+				if(p != null) {
+					pName = p.getName();
+				}else {
+					pName = "Unknown ( 알 수 없음 )";
+				}
+				msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("프로토콜"), pName, separator, separator));
+			}
+			
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("장비명"), fac.getName(), separator, separator));
 			msg.append(String.format("%s : %d%s%s\n", Util.colorBlue("장비 인덱스"), fac.getIndex(), separator, separator));
 			
