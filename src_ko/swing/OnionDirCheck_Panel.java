@@ -140,7 +140,7 @@ public class OnionDirCheck_Panel extends JPanel {
 							
 							MK119_Lite_Panel.protocolMap = protocolMap;
 							
-							MK119_Lite_Panel.linkMK119_Protocol = true;							
+							MK119_Lite_Panel.linkMK119_Protocol = true;
 							MK119_Lite_Panel.updateItem_searchComboBox(true);
 							MK119_Lite_Panel.resetForm(false, true);
 							

@@ -103,12 +103,12 @@ public class Moon {
 	public static void showFrame(String language) {
 		cardLayout.show(mainFrame.getContentPane(), language);
 		
-		if(language.equals(KO)) {			
-			if(currentLanguage.equals(Moon.KO)) return;			
+		if(language.equals(KO)) {
+			if(currentLanguage.equals(Moon.KO)) return;
 			currentLanguage = Moon.KO;
 			mainFrame.setJMenuBar(ko_menuBar);
-		}else {			
-			if(currentLanguage.equals(Moon.EN)) return;			
+		}else {
+			if(currentLanguage.equals(Moon.EN)) return;
 			currentLanguage = Moon.EN;
 			mainFrame.setJMenuBar(en_menuBar);
 		}

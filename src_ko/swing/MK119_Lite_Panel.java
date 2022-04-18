@@ -44,9 +44,9 @@ import common.server.SystemSeverity;
 import common.util.FindTextRenderer;
 import common.util.SeverityRenderer;
 import src_ko.database.DbUtil;
+import src_ko.info.AdminConsole_Info;
 import src_ko.info.ONION_Info;
 import src_ko.info.Protocol;
-import src_ko.main.MoonInspector;
 import src_ko.util.Util;
 
 public class MK119_Lite_Panel extends JPanel {
@@ -75,6 +75,8 @@ public class MK119_Lite_Panel extends JPanel {
 	private JPanel infoPanel;
 	
 	// ******** [ MK119 연동 데이터 ] *********************************************************
+	public static AdminConsole_Info adminConsole = null;
+	
 	public static boolean linkMK119_Protocol = false;
 	public static HashMap<String, Protocol> protocolMap = new HashMap<String, Protocol>();
 

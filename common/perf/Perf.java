@@ -61,6 +61,7 @@ public abstract class Perf implements Comparable {
 	public String perfTypeString;
 	public Object lastValue;
 	public Object lastValueTime;
+	private PerfData data;
 	
 	public int getIndex() { return index; }
 	public void setIndex(int index) { this.index = index; }
@@ -71,6 +72,8 @@ public abstract class Perf implements Comparable {
 	public int getPerfType() { return perfType; }
 	public void setPerfType(int perfType) { this.perfType = perfType; }
 	public String getPerfTypeString() { return perfTypeString; }
+	public PerfData getData() { return data; }
+	public void setData(PerfData data) { this.data = data; }
 	public void setPerfTypeString(String perfTypeString) { this.perfTypeString = perfTypeString; }
 	public abstract String getDisplayName();
 	public abstract String getCounter();

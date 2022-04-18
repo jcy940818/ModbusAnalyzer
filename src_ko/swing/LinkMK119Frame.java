@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
+import src_ko.info.ONION_Info;
 import src_ko.main.MoonInspector;
 import src_ko.util.Util;
 
@@ -42,13 +43,13 @@ public class LinkMK119Frame extends JFrame{
 		actualPanel.setBackground(Color.WHITE);
 		getContentPane().add(actualPanel, BorderLayout.CENTER);
 		actualPanel.setLayout(null);
-
+		
 		JLabel mk119Link = new JLabel("MK119 Data Link");
 		mk119Link.setForeground(new Color(237, 76, 55));
 //		mk119Link.setForeground(Color.BLACK);
 		mk119Link.setBackground(Color.WHITE);
 		mk119Link.setIcon(new Util().getSubLogoResource());
-		mk119Link.setBounds(12, 10, 248, 50);
+		mk119Link.setBounds(12, 10, 450, 50);
 		mk119Link.setHorizontalAlignment(SwingConstants.LEFT);
 		mk119Link.setFont(new Font("맑은 고딕", Font.BOLD, 21));
 		actualPanel.add(mk119Link);
@@ -68,7 +69,6 @@ public class LinkMK119Frame extends JFrame{
 				OnionDirCheck_Panel.connectServerList = true;
 				OnionDirCheck_Panel.back_button.setVisible(true);
 				MainFrame.showOnionDirCheck(MoonInspector.isMoon());
-				
 				dispose();
 			}
 		});
@@ -86,12 +86,15 @@ public class LinkMK119Frame extends JFrame{
 		linkMK119PerfData_Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				AdminConsole_LoginFrame.showLoginForm(ONION_Info.getSimpleSqlServerInfo(), "MK119Lite");
 				dispose();
 			}
 		});
 		actualPanel.add(linkMK119PerfData_Button);
 		
+		if(linkProtocol && linkPerfData) {
+			mk119Link.setText("MK119 Data Link Completed");
+		}
 		if(linkProtocol) {
 			linkMK119Protocol_Button.setText("<html>&nbsp;<font color='blue'>Protocol</font> 정보 데이터 연동 완료</html>");
 			linkMK119Protocol_Button.setEnabled(false);

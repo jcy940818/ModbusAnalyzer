@@ -230,8 +230,10 @@ public class MK119_Login_Panel extends JPanel {
 		MK119_Lite_Panel.resetForm(false, true);
 		
 		// 이전에 연동되었던 프로토콜 정보는  사라진다
+		MK119_Lite_Panel.adminConsole = null;
 		MK119_Lite_Panel.linkMK119_Protocol = false;
-		MK119_Lite_Panel.updateItem_searchComboBox(false);		
+		MK119_Lite_Panel.linkMK119_PerfData = false;
+		MK119_Lite_Panel.updateItem_searchComboBox(false);	
 		MK119_Lite_Panel.linkMK119_Button.setEnabled(true);
 		
 		MainFrame.showMK119Lite();
