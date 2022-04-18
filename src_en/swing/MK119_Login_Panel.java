@@ -23,8 +23,6 @@ import javax.swing.border.EmptyBorder;
 import src_en.database.DbUtil;
 import src_en.info.ONION_Info;
 import src_en.util.Util;
-import src_en.swing.MainFrame;
-import src_en.swing.ServerList_Panel;
 
 public class MK119_Login_Panel extends JPanel {
 	
@@ -165,7 +163,7 @@ public class MK119_Login_Panel extends JPanel {
 					case "ModbusAgent" : agent_ModbusAgent(); break;
 					case "DatabaseAgent" : agent_DatabaseAgent(); break;
 					case "storedProcedure" : agent_storedProcedure(); break;
-					case "SimpleServerViewer" : agent_ServerViewer(); break;
+					case "MK119Lite" : agent_MK119Lite(); break;
 					default : agent_DatabaseAgent(); break;
 				}
 			}else {
@@ -219,15 +217,22 @@ public class MK119_Login_Panel extends JPanel {
 	}
 	
 	// Server List --------------------------------------------------
-	public static void agent_ServerViewer() {
+	public static void agent_MK119Lite() {
 		// 연동에 성공한 데이터베이스 정보 출력
-		mk119ConnSuccess();
-		// 메인 프레임 화면을 DB 로그인 성공 화면으로 변경
-//		ServerList_Panel.setSqlServerInfo(ONION_Info.getSqlServerInfo());
-//		ServerList_Panel.isFirstLoad = true;
-//		ServerList_Panel.updateServerListTable(true);
-//		ServerList_Panel.updateFacilityInfo(null);
-//		MainFrame.showServerList();
+//		mk119ConnSuccess();
+//		// 메인 프레임 화면을 DB 로그인 성공 화면으로 변경
+//		MK119_Lite_Panel.setSqlServerInfo(ONION_Info.getSqlServerInfo());
+//		MK119_Lite_Panel.isFirstLoad = true;
+//		MK119_Lite_Panel.updateServerListTable(true);
+//		MK119_Lite_Panel.updateFacilityInfo(null);
+//		MK119_Lite_Panel.resetForm(false, true);
+//		
+//		// 이전에 연동되었던 프로토콜 정보는  사라진다
+//		MK119_Lite_Panel.linkMK119_Protocol = false;
+//		MK119_Lite_Panel.updateItem_searchComboBox(false);		
+//		MK119_Lite_Panel.linkMK119_Button.setEnabled(true);
+//		
+//		MainFrame.showMK119Lite();
 	}
 	
 	public static void mk119ConnSuccess() {

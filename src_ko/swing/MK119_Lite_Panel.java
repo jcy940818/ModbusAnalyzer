@@ -49,7 +49,7 @@ import src_ko.info.Protocol;
 import src_ko.main.MoonInspector;
 import src_ko.util.Util;
 
-public class ServerList_Panel extends JPanel {
+public class MK119_Lite_Panel extends JPanel {
 	
 	public static boolean isFirstLoad;
 	public static final String ORDER = "순 서";
@@ -105,7 +105,7 @@ public class ServerList_Panel extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public ServerList_Panel() {
+	public MK119_Lite_Panel() {
 		setBorder(new EmptyBorder(0, 0, 0, 0));
 
 		// size : 1074, 628
@@ -654,13 +654,20 @@ public class ServerList_Panel extends JPanel {
 							rcu.setState("알 수 없음");
 							fac.setRcu(rcu);
 							
+							String groupInfo = (server.isOverlapping()) ? server.getGroup().getTree() + OVERLAPPING : server.getGroup().getTree();
+							if(groupInfo.startsWith(ServerGroup.ROOT + " > ")) {
+								groupInfo = groupInfo.replace(ServerGroup.ROOT + " > ", "");
+							}else {
+								groupInfo = groupInfo.replace(ServerGroup.ROOT, "장비 관리  ( 그룹 없음 )");
+							}
+							
 							if(isFirstLoad) {
 								StringBuilder sb = new StringBuilder();
 								sb.append(String.format("%s%s%s\n", Util.colorRed("Can Not Found RCU"), Util.separator, Util.separator));
 								
 								sb.append(Util.colorRed("알 수 없는 RCU 인덱스 : ") + rtuIndex + Util.separator + Util.separator + "\n\n");
 								
-								sb.append(Util.colorBlue("그룹 정보 : ") + server.getGroup().getTree() + Util.separator + Util.separator + "\n");
+								sb.append(Util.colorBlue("그룹 정보 : ") + groupInfo + Util.separator + Util.separator + "\n");
 								sb.append(Util.colorBlue("시설물 종류 : ") + server.getTypeString() + Util.separator + Util.separator + "\n");
 								sb.append(Util.colorBlue("장비명 : ") + server.getName() + Util.separator + Util.separator + "\n");							
 								sb.append(Util.colorBlue("장비 인덱스 : ") + server.getIndex() + Util.separator + Util.separator + "\n");

@@ -527,10 +527,10 @@ public class FacilityInfoFrame extends JFrame {
 	// ************ XML Reload *******************************************
 	public void refreshDB() {
 		
-		ServerList_Panel.resetForm(true, false);
+		MK119_Lite_Panel.resetForm(true, false);
 		
-		if(ServerList_Panel.serverMap.containsKey(fac.getIndex())) {
-			this.fac = (Facility)ServerList_Panel.serverMap.get(fac.getIndex());
+		if(MK119_Lite_Panel.serverMap.containsKey(fac.getIndex())) {
+			this.fac = (Facility)MK119_Lite_Panel.serverMap.get(fac.getIndex());
 			this.isCommon = fac.isProtocol();
 			
 			String facInfo_1 = "";

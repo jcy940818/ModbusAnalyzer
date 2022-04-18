@@ -283,12 +283,13 @@ public class PremiumLoginFrame extends JFrame {
 		MainFrame.activeDatabase(); // 데이터베이스 메뉴 활성화
 		MainFrame.activeUtil(); // 유틸 메뉴 활성화 ( 현재 유틸 기능 미사용 )
 		MainFrame.activeConnection(); // Connection 프리미엄 기능 활성화 (조건식 스캔, 예외 스캔)
+		MainFrame.activeMK119Lite(); // MK119 Lite 활성화
 		ModbusAgent_Panel.activationControl(); // 모드버스 제어 기능 활성화
 		ModbusAgent_Panel.activationMK119(); // MK119 연동 기능 활성화		
 		ModbusAgent_Panel.activationExpression(); // ModbusAgent 조건식 기능 활성화
 		RX_Analysis_Panel.activationExpression(); // RX_Analysis 조건식 기능 활성화
 		Multi_Analysis_Panel.activationExcpression(); // Multi_Analysis 조건식 기능 활성화
-		RealTime_Panel.activationScaleFunction(); // RealTime_Panel 조건식 기능 활성화
+		RealTime_Panel.activationScaleFunction(); // RealTime_Panel 조건식 기능 활성화		
 		if(MoonInspector.isMoon()) MainFrame.activeMoon(); // Moon 히든 메뉴 활성화
 	}
 

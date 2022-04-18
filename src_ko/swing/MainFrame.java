@@ -8,6 +8,9 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -40,6 +43,7 @@ public class MainFrame extends JFrame {
 	private static JFrame mainFrame = null;	
 	
 	private static JMenuBar menuBar;
+	private static JMenu mk119LiteMenu;
 	private static JMenu moonMenu;
 	private static JMenu connectionMenu;
 	private static JMenu DatabaseMenu;
@@ -228,38 +232,32 @@ public class MainFrame extends JFrame {
 		utilMenu.setHorizontalAlignment(SwingConstants.CENTER);
 		utilMenu.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 		
-		// Database 메뉴 - Simple Server Viewer : 간편 장비 조회
-		JMenuItem simpleServerViewer = new JMenuItem("Simple Server Viewer : 간편한 장비 조회");
-		simpleServerViewer.setForeground(Color.BLACK);
-		simpleServerViewer.setHorizontalAlignment(SwingConstants.LEFT);
-		simpleServerViewer.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
-		utilMenu.add(simpleServerViewer);
-		utilMenu.add(new JSeparator());
 		
 		// Util 메뉴 : XML 뷰어
-		JMenuItem xmlViewer = new JMenuItem("Protocol XML Viewer : 간편한 XML 조회");
+		JMenuItem xmlViewer = new JMenuItem("Protocol XML Viewer : 프로토콜 성능 XML 조회");
 		xmlViewer.setForeground(Color.BLACK);
 		xmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
 		xmlViewer.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
 		utilMenu.add(xmlViewer);
 		utilMenu.add(new JSeparator());
 		
-		// Util 메뉴 : 프로토콜 리스트 다운로드
-		JMenuItem protocolListDownload = new JMenuItem("Protocol Download : MK119 프로토콜 리스트 다운로드");
-		protocolListDownload.setForeground(Color.BLACK);
-		protocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
-		protocolListDownload.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
-		utilMenu.add(protocolListDownload);
-		utilMenu.add(new JSeparator());		
-		
 		// Util 메뉴 : XML Generator 메뉴
-		xmlGeneratorMenu = new JMenu("XML Generator : 성능 XML 생성  ");
+		xmlGeneratorMenu = new JMenu("Protocol XML Generator : 프로토콜 성능 XML 생성   ");
 		xmlGeneratorMenu.setForeground(Color.BLACK);
 		xmlGeneratorMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		xmlGeneratorMenu.setHorizontalAlignment(SwingConstants.LEFT);
 		xmlGeneratorMenu.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
 		xmlGeneratorMenu.setBorderPainted(false);
 		utilMenu.add(xmlGeneratorMenu);
+		utilMenu.add(new JSeparator());
+		
+		// Util 메뉴 : 프로토콜 리스트 다운로드
+		JMenuItem protocolListDownload = new JMenuItem("Protocol List Download : MK119 프로토콜 리스트 다운로드");
+		protocolListDownload.setForeground(Color.BLACK);
+		protocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
+		protocolListDownload.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
+		utilMenu.add(protocolListDownload);
+		
 		
 		// Util 메뉴 - XML Generator : Modbus
 		JMenuItem xmlGenerator_Modbus = new JMenuItem("XML Generator : Modbus");
@@ -408,6 +406,25 @@ public class MainFrame extends JFrame {
 		});
 		xmlGeneratorMenu.add(xmlGenerator_Control);
 		
+		// MK119 Lite 메뉴
+		mk119LiteMenu = new JMenu("  MK119 Lite  ");
+		mk119LiteMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
+		mk119LiteMenu.setForeground(Color.RED);
+		mk119LiteMenu.setHorizontalAlignment(SwingConstants.CENTER);
+		mk119LiteMenu.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+		mk119LiteMenu.setFocusPainted(false);
+		
+		// MK119 Lite 메뉴 : Admin Console 조회
+		JMenuItem mk119Lite = new JMenuItem("MK119 Lite : MK119 데이터베이스 조회");
+		mk119Lite.setHorizontalAlignment(SwingConstants.LEFT);
+		mk119Lite.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
+		mk119Lite.setForeground(Color.BLACK);
+		mk119Lite.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				showMK119Login("MK119Lite");
+			}
+		});
+		mk119LiteMenu.add(mk119Lite);
 		
 		
 		// Moon 메뉴 (히든 메뉴)
@@ -415,10 +432,10 @@ public class MainFrame extends JFrame {
 		moonMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		moonMenu.setForeground(Color.BLUE);
 		moonMenu.setHorizontalAlignment(SwingConstants.CENTER);
-		moonMenu.setFont(new Font("맑은 고딕", Font.BOLD, 14));				
+		moonMenu.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 		
 		// Moon 메뉴 : 간편한 XML 조회
-		JMenuItem moonXmlViewer = new JMenuItem("Protocol XML Viewer : 간편한 XML 조회 ");
+		JMenuItem moonXmlViewer = new JMenuItem("Protocol XML Viewer : 프로토콜 성능 XML 조회");
 		moonXmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
 		moonXmlViewer.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
 		moonXmlViewer.setForeground(Color.BLUE);
@@ -426,7 +443,7 @@ public class MainFrame extends JFrame {
 		moonMenu.add(new JSeparator());
 		
 		// Moon 메뉴 : 프로토콜 리스트 다운로드
-		JMenuItem moonProtocolListDownload = new JMenuItem("Protocol Download : MK119 프로토콜 리스트 다운로드");
+		JMenuItem moonProtocolListDownload = new JMenuItem("Protocol List Download : MK119 프로토콜 리스트 다운로드");
 		moonProtocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
 		moonProtocolListDownload.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
 		moonProtocolListDownload.setForeground(Color.BLUE);
@@ -536,14 +553,7 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				showMK119Login("storedProcedure");				
 			}
-		});	
-		
-		/**  *************************************/
-		simpleServerViewer.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				showMK119Login("SimpleServerViewer");				
-			}
-		});
+		});			
 		
 		
 		/** DatabaseAccess_Panel ***********************************/
@@ -555,9 +565,9 @@ public class MainFrame extends JFrame {
 		StoredProcedure_Panel storedProcedure_Panel = new StoredProcedure_Panel();
 		actualPanel.add(storedProcedure_Panel, "StoredProcedure_Panel");
 		
-		/** ServerList_Panel ***********************************/
-		ServerList_Panel serverList_Panel = new ServerList_Panel();
-		actualPanel.add(serverList_Panel, "ServerList_Panel");
+		/** MK119_Lite_Panel ***********************************/
+		MK119_Lite_Panel mk119_Lite_Panel = new MK119_Lite_Panel();
+		actualPanel.add(mk119_Lite_Panel, "MK119_Lite_Panel");
 		
 		/** SimpleValueScan_Panel ***********************************/
 		SimpleValueScan_Panel simpleValueScan_Panel = new SimpleValueScan_Panel();
@@ -719,7 +729,7 @@ public class MainFrame extends JFrame {
 			case "ModbusAgent" : MK119_Login_Panel.setCurrentAgent("Modbus Collection"); break;
 			case "DatabaseAgent" : MK119_Login_Panel.setCurrentAgent("DataBase Access"); break;
 			case "storedProcedure" : MK119_Login_Panel.setCurrentAgent("Stored Procedure"); break;
-			case "SimpleServerViewer" : MK119_Login_Panel.setCurrentAgent("Simple Server Viewer"); break; 
+			case "MK119Lite" : MK119_Login_Panel.setCurrentAgent("MK119 Lite"); break; 
 			default : MK119_Login_Panel.setCurrentAgent("DataBase Access"); break;
 		}
 		
@@ -736,8 +746,8 @@ public class MainFrame extends JFrame {
 		cardLayout.show(actualPanel, "StoredProcedure_Panel");		
 	}
 	
-	public static void showServerList() {		
-		cardLayout.show(actualPanel, "ServerList_Panel");		
+	public static void showMK119Lite() {		
+		cardLayout.show(actualPanel, "MK119_Lite_Panel");		
 	}
 	
 	public static void showSimpleValueScan() {
@@ -775,10 +785,16 @@ public class MainFrame extends JFrame {
 		menuBar.doLayout();
 	}
 	
-	public static void activeMoon() {
-		menuBar.add(moonMenu, 4);
+	public static void activeMK119Lite() {
+		menuBar.add(mk119LiteMenu, 4);
 		menuBar.doLayout();
 	}
+	
+	public static void activeMoon() {
+		menuBar.add(moonMenu, 5);
+		menuBar.doLayout();
+	}
+	
 	
 	public static JPanel getActualPanel() {
 		return contentPane;

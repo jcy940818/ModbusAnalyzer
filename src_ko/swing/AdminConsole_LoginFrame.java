@@ -38,6 +38,8 @@ public class AdminConsole_LoginFrame extends JFrame {
 	public static boolean isExist = false;
 	private JPanel contentPane;	
 	
+	private String agentType = null;
+	
 	private AdminConsole_Info adminConsole;
 	private String mkSqlServerInfo;
 	private String mkDatabaseIp;
@@ -55,7 +57,7 @@ public class AdminConsole_LoginFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AdminConsole_LoginFrame frame = new AdminConsole_LoginFrame("127.0.0.1:1433");
+					AdminConsole_LoginFrame frame = new AdminConsole_LoginFrame("127.0.0.1:1433", "AgentType");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -67,7 +69,7 @@ public class AdminConsole_LoginFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public AdminConsole_LoginFrame(String SqlServerInfo) {
+	public AdminConsole_LoginFrame(String SqlServerInfo, String agentType) {
 		AdminConsole_LoginFrame.isExist = true;
 		
 		this.mkSqlServerInfo = SqlServerInfo;
@@ -313,7 +315,21 @@ public class AdminConsole_LoginFrame extends JFrame {
 			this.adminConsole.setVersionInfo(DbUtil.getMK119VersionInfo());
 			this.adminConsole.setVersion(DbUtil.getMK119Version());
 			this.adminConsole.setBuild(DbUtil.getMK119Build());
-			loginSuccess();
+			
+			switch(agentType) {
+				case "ModbusAgent" : 
+					loginSuccess();
+					break;
+					
+				case "MK119Lite" :
+					break;
+					
+				default :
+					loginSuccess();
+					break;
+			}
+			
+			
 		}else {
 			// MK119 AdminConsole 로그인 실패
 			// 실패 처리 로직

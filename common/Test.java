@@ -3,13 +3,6 @@ package common;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Set;
-
-import javax.swing.JOptionPane;
-
-import common.server.ServerGroup;
-import src_ko.util.Util;
 
 public class Test {
 	

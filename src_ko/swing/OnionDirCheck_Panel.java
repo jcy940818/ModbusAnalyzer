@@ -138,11 +138,11 @@ public class OnionDirCheck_Panel extends JPanel {
 								protocolMap.put(key, p);
 							}
 							
-							ServerList_Panel.protocolMap = protocolMap;
+							MK119_Lite_Panel.protocolMap = protocolMap;
 							
-							ServerList_Panel.linkMK119_Protocol = true;							
-							ServerList_Panel.updateItem_searchComboBox(true);
-							ServerList_Panel.resetForm(false, true);
+							MK119_Lite_Panel.linkMK119_Protocol = true;							
+							MK119_Lite_Panel.updateItem_searchComboBox(true);
+							MK119_Lite_Panel.resetForm(false, true);
 							
 							OnionDirCheck_Panel.connectServerList = false;
 							OnionDirCheck_Panel.back_button.setVisible(false);
@@ -154,7 +154,7 @@ public class OnionDirCheck_Panel extends JPanel {
 							sb.append(String.format("%s%s%s\n", Util.colorGreen("( 프로토콜 정보를 이용하여 시설물을 검색 할 수 있습니다 )"), Util.separator, Util.separator));
 							Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
 							
-							MainFrame.showServerList();
+							MainFrame.showMK119Lite();
 							return;
 						}
 						// *****************************************************************************
@@ -396,8 +396,8 @@ public class OnionDirCheck_Panel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				OnionDirCheck_Panel.connectServerList = false;
 				OnionDirCheck_Panel.back_button.setVisible(false);
-				ServerList_Panel.linkMK119_Protocol = false;
-				MainFrame.showServerList();
+				MK119_Lite_Panel.linkMK119_Protocol = false;
+				MainFrame.showMK119Lite();
 			}
 		});
 		actualPanel.add(back_button);

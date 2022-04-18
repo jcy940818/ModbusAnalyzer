@@ -144,13 +144,13 @@ public class RcuInfoFrame extends JFrame {;
 					// 왼쪽 버튼 더블 클릭			
 					int row = FacListTable.getSelectedRow();
 					Facility fac = (Facility)FacListTable.getValueAt(row, 2);
-					ServerList_Panel.showFacilityMenu(fac, false);
+					MK119_Lite_Panel.showFacilityMenu(fac, false);
 				}
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
 					int row = FacListTable.getSelectedRow();
 					Facility fac = (Facility)FacListTable.getValueAt(row, 2);
-					ServerList_Panel.showFacilityMenu(fac, false);
+					MK119_Lite_Panel.showFacilityMenu(fac, false);
 				}
 			}
 		});
@@ -315,10 +315,10 @@ public class RcuInfoFrame extends JFrame {;
 	// ************ DB 최신화 *******************************************
 	public void refreshDB() {
 		
-		ServerList_Panel.resetForm(true, false);
+		MK119_Lite_Panel.resetForm(true, false);
 		
-		if(ServerList_Panel.serverMap.containsKey(rcu.getIndex())) {
-			this.rcu = (RCU)ServerList_Panel.serverMap.get(rcu.getIndex());			
+		if(MK119_Lite_Panel.serverMap.containsKey(rcu.getIndex())) {
+			this.rcu = (RCU)MK119_Lite_Panel.serverMap.get(rcu.getIndex());			
 			
 			String RcuInfo_1 = "<html>";
 			RcuInfo_1 += Util.colorBlue("RCU : ") + rcu.getName();
@@ -433,8 +433,8 @@ public class RcuInfoFrame extends JFrame {;
 				MultiPortMap map = portMappingList.get(i);							
 				int facIndex = map.getFacIndex();
 				
-				if(ServerList_Panel.serverMap.containsKey(facIndex)) {
-					Facility fac = (Facility)ServerList_Panel.serverMap.get(facIndex);
+				if(MK119_Lite_Panel.serverMap.containsKey(facIndex)) {
+					Facility fac = (Facility)MK119_Lite_Panel.serverMap.get(facIndex);
 					content[index] = new Object[6];
 					content[index][0] = index + 1;
 					content[index][1] = fac.getTypeString();
