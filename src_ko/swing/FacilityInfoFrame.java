@@ -34,6 +34,7 @@ import javax.swing.table.TableColumnModel;
 import common.perf.FmsPerfItem;
 import common.perf.Perf;
 import common.perf.PerfLabelStatusBean;
+import common.server.Event;
 import common.server.Facility;
 import src_ko.info.ONION_Info;
 import src_ko.util.Util;
@@ -83,6 +84,7 @@ public class FacilityInfoFrame extends JFrame {
 	private JLabel FacilityInfoLabel_1;
 	private JLabel FacilityInfoLabel_2;
 	private JButton dbRefreshButton;
+	private JButton eventInfo_Button;
 	
 	/**
 	 * Launch the application.
@@ -461,12 +463,11 @@ public class FacilityInfoFrame extends JFrame {
 		
 		dbRefreshButton = new JButton("Database √÷Ω≈»≠");
 		dbRefreshButton.setForeground(Color.BLACK);
-		dbRefreshButton.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 16));
-		dbRefreshButton.setFocusPainted(false);
-		dbRefreshButton.setContentAreaFilled(false);
+		dbRefreshButton.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
+		dbRefreshButton.setFocusPainted(false);		
 		dbRefreshButton.setBorder(UIManager.getBorder("Button.border"));
 		dbRefreshButton.setBackground(Color.WHITE);
-		dbRefreshButton.setBounds(560, 89, 160, 35);
+		dbRefreshButton.setBounds(560, 94, 160, 30);
 		dbRefreshButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -483,12 +484,11 @@ public class FacilityInfoFrame extends JFrame {
 		
 		JButton formReset_Button = new JButton("Form √ ±‚»≠");
 		formReset_Button.setForeground(Color.BLACK);
-		formReset_Button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 16));
-		formReset_Button.setFocusPainted(false);
-		formReset_Button.setContentAreaFilled(false);
+		formReset_Button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
+		formReset_Button.setFocusPainted(false);		
 		formReset_Button.setBorder(UIManager.getBorder("Button.border"));
 		formReset_Button.setBackground(Color.WHITE);
-		formReset_Button.setBounds(725, 89, 136, 35);
+		formReset_Button.setBounds(725, 94, 136, 30);
 		formReset_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				searchPerf_textField_1.setText(null);
@@ -498,6 +498,32 @@ public class FacilityInfoFrame extends JFrame {
 			}
 		});
 		actualPanel.add(formReset_Button);
+		
+		eventInfo_Button = new JButton("¿Ã∫•∆Æ ¡§ªÛ");
+		eventInfo_Button.setForeground(Color.BLACK);
+		eventInfo_Button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
+		eventInfo_Button.setFocusPainted(false);		
+		eventInfo_Button.setBorder(UIManager.getBorder("Button.border"));
+		eventInfo_Button.setBackground(Color.WHITE);
+		eventInfo_Button.setBounds(560, 60, 160, 30);
+		
+		if(fac.hasEvent()) {
+			Event event = fac.getEvents().get(0);
+			
+			eventInfo_Button.setEnabled(true);
+			eventInfo_Button.setBackground(new Color(event.getSeverityBkColor()));
+			eventInfo_Button.setForeground(new Color(event.getSeverityTextColor()));
+			
+			String status = (event.getStatus() == 0) ? "πﬂª˝" : "¿Œ¡ˆ";
+			status = String.format("%s ( %s )", status, event.getSeverityName());
+			eventInfo_Button.setText(status);
+		}else {
+			eventInfo_Button.setEnabled(false);
+			eventInfo_Button.setBackground(Color.WHITE);
+			eventInfo_Button.setForeground(Color.BLACK);
+			eventInfo_Button.setText("¿Ã∫•∆Æ ¡§ªÛ");
+		}
+		actualPanel.add(eventInfo_Button);
 		
 		// ESC : Close Listener
 		CloseListener close = new CloseListener();
@@ -532,6 +558,23 @@ public class FacilityInfoFrame extends JFrame {
 		if(MK119_Lite_Panel.serverMap.containsKey(fac.getIndex())) {
 			this.fac = (Facility)MK119_Lite_Panel.serverMap.get(fac.getIndex());
 			this.isCommon = fac.isProtocol();
+			
+			if(fac.hasEvent()) {
+				Event event = fac.getEvents().get(0);
+				
+				eventInfo_Button.setEnabled(true);
+				eventInfo_Button.setBackground(new Color(event.getSeverityBkColor()));
+				eventInfo_Button.setForeground(new Color(event.getSeverityTextColor()));
+				
+				String status = (event.getStatus() == 0) ? "πﬂª˝" : "¿Œ¡ˆ";
+				status = String.format("%s ( %s )", status, event.getSeverityName());
+				eventInfo_Button.setText(status);
+			}else {
+				eventInfo_Button.setEnabled(false);
+				eventInfo_Button.setBackground(Color.WHITE);
+				eventInfo_Button.setForeground(Color.BLACK);
+				eventInfo_Button.setText("¿Ã∫•∆Æ ¡§ªÛ");
+			}
 			
 			String facInfo_1 = "";
 			facInfo_1 += "<html>";
