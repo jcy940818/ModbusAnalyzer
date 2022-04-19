@@ -57,6 +57,7 @@ public class FacilityInfoFrame extends JFrame {
 	public static final int PERF_LIST_TABLE = 0;
 	public static final int PERF_INFO_TABLE = 1;
 	public static final int PERF_LABEL_TABLE = 2;
+	public static final int PERF_DATA_TABLE = 3;
 	
 	private String searchElement = PERF_NAME;
 	
@@ -76,9 +77,11 @@ public class FacilityInfoFrame extends JFrame {
 	private Perf selectedPerf;	
 	
 	private JPanel contentPane;
-	private JPanel view_Panel;
+	private JPanel perfInfo_Panel;
+	private JPanel perfData_Panel;
 	private JLabel mappingLabel;
-	private JScrollPane perfInfoPanel;
+	private JScrollPane perfInfo_ScrollPanel;
+	private JScrollPane perfData_ScrollPanel;
 	private JScrollPane perfLabelInfoPanel;
 	private JComboBox searchPerf_ComboBox_1;
 	private JComboBox searchPerf_ComboBox_2;
@@ -91,6 +94,7 @@ public class FacilityInfoFrame extends JFrame {
 	private JButton linkMK119_Button;
 	private JButton updatePerfData;
 	private JButton rcuInfo_Button;
+	private JTable perfData_Table;
 	
 	/**
 	 * Launch the application.
@@ -206,17 +210,18 @@ public class FacilityInfoFrame extends JFrame {
 		});
 		perfList_scrollPane.setViewportView(perfListTable);
 		
-		view_Panel = new JPanel();
-		view_Panel.setBackground(Color.WHITE);		
-		view_Panel.setBounds(739, 128, 483, 530);
-		view_Panel.setLayout(null);
-		actualPanel.add(view_Panel);
+		perfInfo_Panel = new JPanel();
+		perfInfo_Panel.setBackground(Color.WHITE);		
+		perfInfo_Panel.setBounds(739, 128, 483, 530);
+		perfInfo_Panel.setLayout(null);
+		perfInfo_Panel.setVisible(true);
+//		actualPanel.add(perfInfo_Panel); 테스트중
 		
-		perfInfoPanel = new JScrollPane();
-		perfInfoPanel.setBackground(Color.WHITE);
-		perfInfoPanel.setBorder(new LineBorder(Color.BLACK, 2));
-		perfInfoPanel.setBounds(0, 0, 483, 272);
-		view_Panel.add(perfInfoPanel);		
+		perfInfo_ScrollPanel = new JScrollPane();
+		perfInfo_ScrollPanel.setBackground(Color.WHITE);
+		perfInfo_ScrollPanel.setBorder(new LineBorder(Color.BLACK, 2));
+		perfInfo_ScrollPanel.setBounds(0, 0, 483, 272);
+		perfInfo_Panel.add(perfInfo_ScrollPanel);
 		
 		perfInfoTable = new JTable();
 		perfInfoTable.setModel(new DefaultTableModel(
@@ -240,7 +245,44 @@ public class FacilityInfoFrame extends JFrame {
 				}
 		});
 		setTableStyle(perfInfoTable, PERF_INFO_TABLE);
-		perfInfoPanel.setViewportView(perfInfoTable);
+		perfInfo_ScrollPanel.setViewportView(perfInfoTable);
+		
+		
+		perfData_Panel = new JPanel();
+		perfData_Panel.setBackground(Color.WHITE);		
+		perfData_Panel.setBounds(739, 128, 483, 530);
+		perfData_Panel.setLayout(null);
+		perfData_Panel.setVisible(false);
+		actualPanel.add(perfData_Panel);
+		
+		perfData_ScrollPanel = new JScrollPane();
+		perfData_ScrollPanel.setBackground(Color.WHITE);
+		perfData_ScrollPanel.setBorder(new LineBorder(Color.BLACK, 2));
+		perfData_ScrollPanel.setBounds(0, 0, 483, 530);
+		perfData_Panel.add(perfData_ScrollPanel);
+		
+		perfData_Table = new JTable();
+		perfData_Table.setModel(new DefaultTableModel(
+				new Object[][] {
+					{"2022-04-19 14:19:26", "220.1 V"},
+					{"2022-04-19 14:19:26", "380.12 V"},
+					{null, null},
+					{null, null},
+					{null, null},
+					{null, null}
+				},
+				new String[] { "수집 시간", "수집 값"}) {
+				boolean[] columnEditables = new boolean[] {
+						false, // 값 : 수정 불가
+						false, // 매핑 내용 : 수정 불가						
+				};
+				public boolean isCellEditable(int row, int column) {
+					return columnEditables[column];
+				}
+		});
+		setTableStyle(perfData_Table, PERF_DATA_TABLE);
+		perfData_ScrollPanel.setViewportView(perfData_Table);
+		
 		
 		mappingLabel = new JLabel("");
 		mappingLabel.setBackground(Color.WHITE);
@@ -248,12 +290,12 @@ public class FacilityInfoFrame extends JFrame {
 		mappingLabel.setForeground(Color.BLACK);
 		mappingLabel.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		mappingLabel.setBounds(0, 288, 483, 26);
-		view_Panel.add(mappingLabel);
+		perfInfo_Panel.add(mappingLabel);
 		
 		perfLabelInfoPanel = new JScrollPane();
 		perfLabelInfoPanel.setBounds(0, 318, 483, 212);
 		perfLabelInfoPanel.setBorder(new LineBorder(Color.BLACK, 2));
-		view_Panel.add(perfLabelInfoPanel);
+		perfInfo_Panel.add(perfLabelInfoPanel);
 		
 		perfLabelTable = new JTable();
 		perfLabelTable.setModel(new DefaultTableModel(
@@ -581,6 +623,13 @@ public class FacilityInfoFrame extends JFrame {
 		perfInfo_RadioButton.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		perfInfo_RadioButton.setBounds(746, 60, 121, 30);
 		perfInfo_RadioButton.setSelected(true);
+		perfInfo_RadioButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {				
+				perfInfo_Panel.setVisible(true);
+				perfData_Panel.setVisible(false);
+			}
+		});
 		actualPanel.add(perfInfo_RadioButton);
 		
 		JRadioButton perfValue_RadioButton = new JRadioButton("수집 데이터");
@@ -589,6 +638,13 @@ public class FacilityInfoFrame extends JFrame {
 		perfValue_RadioButton.setFocusPainted(false);
 		perfValue_RadioButton.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		perfValue_RadioButton.setBounds(746, 94, 121, 30);
+		perfValue_RadioButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				perfInfo_Panel.setVisible(false);
+				perfData_Panel.setVisible(true);
+			}
+		});
 		actualPanel.add(perfValue_RadioButton);
 		
 		ButtonGroup buttonGroup = new ButtonGroup();		
@@ -964,6 +1020,8 @@ public class FacilityInfoFrame extends JFrame {
 			table.getTableHeader().setBackground(new Color(255, 255, 153));
 			if(tableType == PERF_LIST_TABLE) {
 				table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 16));	
+			}else if(tableType == PERF_DATA_TABLE) {
+				table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 16));
 			}else {
 				table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 17));
 			}
@@ -979,6 +1037,9 @@ public class FacilityInfoFrame extends JFrame {
 			table.setBorder(new EmptyBorder(0, 3, 0, 0));
 			table.setRowMargin(3);
 			if(tableType == PERF_LIST_TABLE) {
+				table.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
+				table.setRowHeight(25); 
+			}else if(tableType == PERF_DATA_TABLE) {
 				table.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
 				table.setRowHeight(25); 
 			}else {
@@ -1001,6 +1062,10 @@ public class FacilityInfoFrame extends JFrame {
 				// 성능 레이블 테이블
 				table.getColumnModel().getColumn(0).setPreferredWidth(4); // 값	
 				table.getColumnModel().getColumn(1).setPreferredWidth(350); // 매핑 내용		
+			}else if(tableType == PERF_DATA_TABLE) {
+				// 성능 데이터 테이블
+				table.getColumnModel().getColumn(0).setPreferredWidth(200); // 수집 시간	
+				table.getColumnModel().getColumn(1).setPreferredWidth(300); // 성능 값
 			}
 			
 			// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
@@ -1016,10 +1081,10 @@ public class FacilityInfoFrame extends JFrame {
 			if(tableType == PERF_LIST_TABLE) {
 				tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 최종값
 				tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 수집 시간
-			}if(tableType == PERF_LABEL_TABLE) {
+			}else if(tableType == PERF_LABEL_TABLE) {
 				tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 성능 레이블 테이블만 가운데 정렬
 			}else {
-				// tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
+				tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
 			}
 		}
 		
