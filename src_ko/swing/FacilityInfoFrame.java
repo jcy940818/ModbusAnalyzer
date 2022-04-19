@@ -1288,14 +1288,17 @@ public class FacilityInfoFrame extends JFrame {
 		
 		
 		// 사용자 정의 키 이벤트 리스너
-		class CloseListener extends KeyAdapter{	
-			public void keyPressed(KeyEvent e) {			
+		class CloseListener extends KeyAdapter{
+			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-					dispose();
+					dispose();					
 				}
-			}		
+				if (e.getKeyCode() == KeyEvent.VK_F5) {					
+					updatePerfListTable(perfListTable);
+				}
+			}
 			
-			public void keyReleased(KeyEvent e) {			
+			public void keyReleased(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					dispose();
 				}
@@ -1304,18 +1307,21 @@ public class FacilityInfoFrame extends JFrame {
 		
 		public Object getPerfLastContent(Perf perf, PerfData data) {
 			Object content = "-";
+			boolean labelMapping = false;
 			
 			switch(perf.getDataFormat()) {
 				
 				case 1 : // 이진 성능
 					try {
-						String[] binLabel = perf.getBinLabel();							
+						String[] binLabel = perf.getBinLabel();
 						double doubleValue = Double.parseDouble(data.getValue().toString());
 						if(doubleValue == 0) {
 							content = binLabel[0];
+							labelMapping = true;
 						}else if(doubleValue == 1) {
 							content = binLabel[1];
-						}else {									
+							labelMapping = true;
+						}else {				
 							content = (Math.round(doubleValue*1000)/1000.0);
 						}
 					}catch(Exception e) {
@@ -1331,13 +1337,13 @@ public class FacilityInfoFrame extends JFrame {
 						PerfLabelStatusBean[] labels = perf.getStatusLabels();
 						content = (Math.round(doubleValue*1000)/1000.0);
 						// 다중 상태 레이블을 검사 후 일치하는 값이 있다면 내용에 적용 후 반복문 종료
-						for(int k = 0; k < labels.length; k++) {
-							int checkValue = (int)doubleValue;
-							if(checkValue == labels[k].value) {
+						for(int k = 0; k < labels.length; k++) {							
+							if(doubleValue == labels[k].value) {
 								content = labels[k].label;
+								labelMapping = true;
 								break;
 							}
-						}									
+						}								
 					}catch(Exception e) {
 						e.printStackTrace();
 						content = "-";
@@ -1366,6 +1372,22 @@ public class FacilityInfoFrame extends JFrame {
 					
 			}// end switch
 			
+			// 정수 데이터는 소숫점을 표시하지 않도록 하기 위해서 아래의 코드를 추가
+			Object temp = null;
+			try {
+				temp = content.toString();
+				if(!labelMapping) {
+					if(content.toString().contains(" ") && content.toString().split(" ")[0].endsWith(".0")) {
+						content = content.toString().replace(".0", "");
+					}else if(content.toString().endsWith(".0")) {
+						content = content.toString().replace(".0", "");
+					}
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+				content = temp;
+			}
+			
 			return content;
 		}
 		
@@ -1377,7 +1399,7 @@ public class FacilityInfoFrame extends JFrame {
 						 StringSelection data = new StringSelection(content);
 						 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 						 clipboard.setContents(data, data);
-					 } // 더블 클릭				 
+					 } // 더블 클릭
 					 if (e.getButton() == 3) { 
 						 StringSelection data = new StringSelection(content);
 						 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -1390,5 +1412,5 @@ public class FacilityInfoFrame extends JFrame {
 			if(FacilityInfoLabel_1 != null) FacilityInfoLabel_1.addMouseListener(copyAdapter);
 			if(FacilityInfoLabel_2 != null) FacilityInfoLabel_2.addMouseListener(copyAdapter);
 		}
-				
+
 }
