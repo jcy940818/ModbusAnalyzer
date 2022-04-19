@@ -64,6 +64,7 @@ public class RcuInfoFrame extends JFrame {;
 	private JLabel RCUInfoLabel_1;
 	private JLabel RCUInfoLabel_2;
 	private JButton dbRefresh_Button;
+	private JButton eventInfo_Button;
 	
 	/**
 	 * Launch the application.
@@ -116,7 +117,7 @@ public class RcuInfoFrame extends JFrame {;
 		currentFunction.setHorizontalAlignment(SwingConstants.LEFT);
 		currentFunction.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 22));
 		currentFunction.setBackground(Color.WHITE);
-		currentFunction.setBounds(0, 0, 240, 55);
+		currentFunction.setBounds(0, 0, 240, 47);
 		actualPanel.add(currentFunction);
 		
 		MK119 = new JLabel();
@@ -161,14 +162,14 @@ public class RcuInfoFrame extends JFrame {;
 		searchPerf_label.setForeground(Color.BLACK);
 		searchPerf_label.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 18));
 		searchPerf_label.setBackground(Color.WHITE);
-		searchPerf_label.setBounds(15, 86, 63, 35);
+		searchPerf_label.setBounds(15, 85, 63, 35);
 		actualPanel.add(searchPerf_label);
 		
 		searchFacility_ComboBox = new JComboBox();
 		searchFacility_ComboBox.setForeground(Color.BLACK);
 		searchFacility_ComboBox.setBackground(Color.WHITE);		
 		searchFacility_ComboBox.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 16));
-		searchFacility_ComboBox.setBounds(81, 86, 142, 35);
+		searchFacility_ComboBox.setBounds(81, 86, 185, 35);
 		searchFacility_ComboBox.setModel(new DefaultComboBoxModel(new String[] {				
 				FACILITY_TYPE, // Ω√º≥π∞ ¡æ∑˘
 				SERVER_NAME, // ¿Â∫Ò∏Ì
@@ -195,7 +196,7 @@ public class RcuInfoFrame extends JFrame {;
 		searchFacility_textField.setForeground(Color.BLACK);
 		searchFacility_textField.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 16));
 		searchFacility_textField.setColumns(10);
-		searchFacility_textField.setBounds(228, 86, 460, 35);
+		searchFacility_textField.setBounds(272, 86, 416, 35);
 		searchFacility_textField.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -259,7 +260,7 @@ public class RcuInfoFrame extends JFrame {;
 		RCUInfoLabel_1.setForeground(Color.BLACK);
 		RCUInfoLabel_1.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 18));
 		RCUInfoLabel_1.setBackground(Color.WHITE);
-		RCUInfoLabel_1.setBounds(251, 8, 623, 35);
+		RCUInfoLabel_1.setBounds(285, 6, 577, 35);
 		actualPanel.add(RCUInfoLabel_1);
 		
 		RCUInfoLabel_2 = new JLabel(RcuInfo_2);
@@ -267,7 +268,7 @@ public class RcuInfoFrame extends JFrame {;
 		RCUInfoLabel_2.setForeground(Color.BLACK);
 		RCUInfoLabel_2.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 18));
 		RCUInfoLabel_2.setBackground(Color.WHITE);
-		RCUInfoLabel_2.setBounds(271, 43, 603, 35);
+		RCUInfoLabel_2.setBounds(305, 41, 557, 35);
 		actualPanel.add(RCUInfoLabel_2);
 		
 		dbRefresh_Button = new JButton("Database √÷Ω≈»≠");
@@ -289,6 +290,15 @@ public class RcuInfoFrame extends JFrame {;
 		
 		// ≈◊¿Ã∫Ì ∑ŒµÂ
 		updateFacilityTable(FacListTable);		
+		
+		eventInfo_Button = new JButton();
+		eventInfo_Button.setForeground(Color.BLACK);
+		eventInfo_Button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
+		eventInfo_Button.setFocusPainted(false);
+		eventInfo_Button.setBackground(Color.WHITE);
+		eventInfo_Button.setBounds(81, 45, 185, 35);
+		MK119_Lite_Panel.initEventButton(eventInfo_Button, rcu);
+		actualPanel.add(eventInfo_Button);
 
 		// ESC : Close Listener
 		CloseListener close = new CloseListener();
@@ -301,7 +311,6 @@ public class RcuInfoFrame extends JFrame {;
 		// «¡∑π¿”¿Ã »≠∏È ∞°øÓµ•ø°º≠ ª˝º∫µ»¥Ÿ
 		setLocationRelativeTo(null);
 		setVisible(true);
-
 	}
 	
 	
@@ -315,10 +324,11 @@ public class RcuInfoFrame extends JFrame {;
 	// ************ DB √÷Ω≈»≠ *******************************************
 	public void refreshDB() {
 		
-		MK119_Lite_Panel.resetForm(true, false);
+		MK119_Lite_Panel.resetForm(true, false);		
 		
 		if(MK119_Lite_Panel.serverMap.containsKey(rcu.getIndex())) {
-			this.rcu = (RCU)MK119_Lite_Panel.serverMap.get(rcu.getIndex());			
+			this.rcu = (RCU)MK119_Lite_Panel.serverMap.get(rcu.getIndex());
+			MK119_Lite_Panel.initEventButton(eventInfo_Button, rcu);
 			
 			String RcuInfo_1 = "<html>";
 			RcuInfo_1 += Util.colorBlue("RCU : ") + rcu.getName();

@@ -37,6 +37,7 @@ import common.perf.PerfLabelStatusBean;
 import common.server.Event;
 import common.server.Facility;
 import src_ko.info.ONION_Info;
+import src_ko.info.Protocol;
 import src_ko.util.Util;
 
 public class FacilityInfoFrame extends JFrame {
@@ -82,9 +83,12 @@ public class FacilityInfoFrame extends JFrame {
 	private JTextField searchPerf_textField_1;	
 	private JTextField searchPerf_textField_2;
 	private JLabel FacilityInfoLabel_1;
-	private JLabel FacilityInfoLabel_2;
+	private JLabel FacilityInfoLabel_2;	
 	private JButton dbRefreshButton;
 	private JButton eventInfo_Button;
+	private JButton linkMK119_Button;
+	private JButton updatePerfData;
+	private JButton rcuInfo_Button;
 	
 	/**
 	 * Launch the application.
@@ -120,7 +124,7 @@ public class FacilityInfoFrame extends JFrame {
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
 				
-		setBounds(100, 100, 1080, 717);
+		setBounds(100, 100, 1260, 717);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new LineBorder(new Color(255, 140, 0), 10));
@@ -153,7 +157,7 @@ public class FacilityInfoFrame extends JFrame {
 		
 		JScrollPane perfList_scrollPane = new JScrollPane();
 		perfList_scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
-		perfList_scrollPane.setBounds(12, 128, 535, 530);
+		perfList_scrollPane.setBounds(12, 128, 715, 530);
 		actualPanel.add(perfList_scrollPane);
 		
 		perfListTable = new JTable();		
@@ -202,7 +206,7 @@ public class FacilityInfoFrame extends JFrame {
 		
 		view_Panel = new JPanel();
 		view_Panel.setBackground(Color.WHITE);		
-		view_Panel.setBounds(559, 128, 483, 530);
+		view_Panel.setBounds(739, 128, 483, 530);
 		view_Panel.setLayout(null);
 		actualPanel.add(view_Panel);
 		
@@ -277,13 +281,13 @@ public class FacilityInfoFrame extends JFrame {
 		searchPerf_label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		searchPerf_label.setBackground(Color.WHITE);
 		searchPerf_label.setBounds(18, 58, 63, 68);
-		actualPanel.add(searchPerf_label);		
+		actualPanel.add(searchPerf_label);
 		
 		searchPerf_ComboBox_1 = new JComboBox();
 		searchPerf_ComboBox_1.setForeground(Color.BLACK);
 		searchPerf_ComboBox_1.setBackground(Color.WHITE);		
 		searchPerf_ComboBox_1.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		searchPerf_ComboBox_1.setBounds(85, 60, 120, 30);
+		searchPerf_ComboBox_1.setBounds(85, 60, 131, 30);
 		searchPerf_ComboBox_1.setModel(new DefaultComboBoxModel(new String[] {
 				PERF_NAME,
 				PERF_INDEX,
@@ -310,7 +314,7 @@ public class FacilityInfoFrame extends JFrame {
 		searchPerf_ComboBox_2.setForeground(Color.BLACK);
 		searchPerf_ComboBox_2.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		searchPerf_ComboBox_2.setBackground(Color.WHITE);
-		searchPerf_ComboBox_2.setBounds(85, 94, 120, 30);
+		searchPerf_ComboBox_2.setBounds(85, 94, 131, 30);
 		searchPerf_ComboBox_2.setModel(new DefaultComboBoxModel(new String[] {
 				PERF_NAME,
 				PERF_INDEX,
@@ -340,7 +344,7 @@ public class FacilityInfoFrame extends JFrame {
 		searchPerf_textField_1.setForeground(Color.BLACK);
 		searchPerf_textField_1.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchPerf_textField_1.setColumns(10);
-		searchPerf_textField_1.setBounds(209, 60, 338, 30);
+		searchPerf_textField_1.setBounds(220, 60, 318, 30);
 		searchPerf_textField_1.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -366,7 +370,7 @@ public class FacilityInfoFrame extends JFrame {
 		searchPerf_textField_2.setForeground(Color.BLACK);
 		searchPerf_textField_2.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchPerf_textField_2.setColumns(10);
-		searchPerf_textField_2.setBounds(209, 94, 338, 30);
+		searchPerf_textField_2.setBounds(220, 94, 318, 30);
 		searchPerf_textField_2.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -386,12 +390,24 @@ public class FacilityInfoFrame extends JFrame {
 		});
 		actualPanel.add(searchPerf_textField_2);
 		
+		String pName = null;
+		if(MK119_Lite_Panel.linkMK119_Protocol) {
+			Protocol p = MK119_Lite_Panel.protocolMap.get(fac.getProtocolKey());
+			if(p != null) {
+				pName = p.getName();
+			}else {
+				pName = "Unknown Protocol";
+			}
+		}else {
+			pName = "프로토콜 정보 연동 전";
+		}
+		
 		String facInfo_1 = "";
 		facInfo_1 += "<html>";
-		facInfo_1 += Util.colorBlue("시설물 : ") + fac.getName();
+		facInfo_1 += Util.colorBlue("장비 정보 : ") + fac.getName();
 		facInfo_1 += "&nbsp;&nbsp;";
 		facInfo_1 += "( ";
-		facInfo_1 += Util.colorGreen(fac.getTypeString() + Util.colorRed(" / ") + fac.getConnMethod());
+		facInfo_1 += Util.colorGreen(fac.getTypeString() + Util.colorRed(" / ") + fac.getConnMethod() + Util.colorRed(" / ") + pName);
 		facInfo_1 += " )";
 		facInfo_1 += "</html>";
 		
@@ -450,7 +466,7 @@ public class FacilityInfoFrame extends JFrame {
 		FacilityInfoLabel_1.setForeground(Color.BLACK);
 		FacilityInfoLabel_1.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		FacilityInfoLabel_1.setBackground(Color.WHITE);
-		FacilityInfoLabel_1.setBounds(252, 1, 802, 30);
+		FacilityInfoLabel_1.setBounds(260, 1, 962, 30);
 		actualPanel.add(FacilityInfoLabel_1);
 		
 		FacilityInfoLabel_2 = new JLabel(facInfo_2);
@@ -458,7 +474,7 @@ public class FacilityInfoFrame extends JFrame {
 		FacilityInfoLabel_2.setForeground(Color.BLACK);
 		FacilityInfoLabel_2.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		FacilityInfoLabel_2.setBackground(Color.WHITE);
-		FacilityInfoLabel_2.setBounds(252, 28, 802, 30);		
+		FacilityInfoLabel_2.setBounds(260, 28, 962, 30);		
 		actualPanel.add(FacilityInfoLabel_2);
 		
 		dbRefreshButton = new JButton("Database 최신화");
@@ -467,7 +483,7 @@ public class FacilityInfoFrame extends JFrame {
 		dbRefreshButton.setFocusPainted(false);		
 		dbRefreshButton.setBorder(UIManager.getBorder("Button.border"));
 		dbRefreshButton.setBackground(Color.WHITE);
-		dbRefreshButton.setBounds(560, 94, 160, 30);
+		dbRefreshButton.setBounds(739, 94, 169, 30);
 		dbRefreshButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -488,7 +504,7 @@ public class FacilityInfoFrame extends JFrame {
 		formReset_Button.setFocusPainted(false);		
 		formReset_Button.setBorder(UIManager.getBorder("Button.border"));
 		formReset_Button.setBackground(Color.WHITE);
-		formReset_Button.setBounds(725, 94, 136, 30);
+		formReset_Button.setBounds(543, 60, 184, 30);
 		formReset_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				searchPerf_textField_1.setText(null);
@@ -505,25 +521,56 @@ public class FacilityInfoFrame extends JFrame {
 		eventInfo_Button.setFocusPainted(false);		
 		eventInfo_Button.setBorder(UIManager.getBorder("Button.border"));
 		eventInfo_Button.setBackground(Color.WHITE);
-		eventInfo_Button.setBounds(560, 60, 160, 30);
+		eventInfo_Button.setBounds(1037, 60, 185, 30);		
 		
-		if(fac.hasEvent()) {
-			Event event = fac.getEvents().get(0);
-			
-			eventInfo_Button.setEnabled(true);
-			eventInfo_Button.setBackground(new Color(event.getSeverityBkColor()));
-			eventInfo_Button.setForeground(new Color(event.getSeverityTextColor()));
-			
-			String status = (event.getStatus() == 0) ? "발생" : "인지";
-			status = String.format("%s ( %s )", status, event.getSeverityName());
-			eventInfo_Button.setText(status);
-		}else {
-			eventInfo_Button.setEnabled(false);
-			eventInfo_Button.setBackground(Color.WHITE);
-			eventInfo_Button.setForeground(Color.BLACK);
-			eventInfo_Button.setText("이벤트 정상");
-		}
+		// 이벤트 버튼 초기화
+		MK119_Lite_Panel.initEventButton(eventInfo_Button, fac);		
 		actualPanel.add(eventInfo_Button);
+		
+		linkMK119_Button = new JButton(" 연동");
+		linkMK119_Button.setIcon(new Util().getMK2Resource());
+		linkMK119_Button.setForeground(Color.BLACK);
+		linkMK119_Button.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		linkMK119_Button.setFocusPainted(false);
+		linkMK119_Button.setBorder(UIManager.getBorder("Button.border"));
+		linkMK119_Button.setBackground(Color.WHITE);
+		linkMK119_Button.setBounds(1037, 94, 185, 30);
+		linkMK119_Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new LinkMK119Frame(MK119_Lite_Panel.linkMK119_Protocol, MK119_Lite_Panel.linkMK119_PerfData);
+			}
+		});
+		if(MK119_Lite_Panel.linkMK119_Protocol && MK119_Lite_Panel.linkMK119_PerfData) {
+			linkMK119_Button.setText(" 연동 완료");
+			linkMK119_Button.setEnabled(false);
+		}
+		actualPanel.add(linkMK119_Button);
+		
+		updatePerfData = new JButton("성능 데이터 연동 전");
+		updatePerfData.setForeground(Color.BLACK);
+		updatePerfData.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		updatePerfData.setFocusPainted(false);
+		updatePerfData.setBorder(UIManager.getBorder("Button.border"));
+		updatePerfData.setBackground(Color.WHITE);
+		updatePerfData.setBounds(543, 94, 184, 30);
+		checkLinkMK119();
+		actualPanel.add(updatePerfData);
+		
+		rcuInfo_Button = new JButton("RCU");
+		rcuInfo_Button.setForeground(Color.BLACK);
+		rcuInfo_Button.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		rcuInfo_Button.setFocusPainted(false);
+		rcuInfo_Button.setBorder(UIManager.getBorder("Button.border"));
+		rcuInfo_Button.setBackground(Color.WHITE);
+		rcuInfo_Button.setBounds(739, 60, 169, 30);
+		rcuInfo_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(fac.isConnRCU() && fac.getRcu() != null) new RcuInfoFrame(fac.getRcu());
+			}
+		});
+		initRcuInfoButton(); 
+		actualPanel.add(rcuInfo_Button);
 		
 		// ESC : Close Listener
 		CloseListener close = new CloseListener();
@@ -549,39 +596,62 @@ public class FacilityInfoFrame extends JFrame {
 		super.dispose();
 	}
 	
+	public void initRcuInfoButton() {
+		if(fac.isConnRCU()) {
+			rcuInfo_Button.setEnabled(true);			
+			rcuInfo_Button.setText("연결된 RCU 확인");
+		}else {
+			rcuInfo_Button.setEnabled(false);			
+			rcuInfo_Button.setText("연결된 RCU 없음");
+		}
+	}
+	
+	public void checkLinkMK119() {
+		if(MK119_Lite_Panel.linkMK119_PerfData) {
+			updatePerfData.setText("성능 데이터 최신화");
+			updatePerfData.setEnabled(true);
+		}else {
+			updatePerfData.setText("성능 데이터 연동 전");
+			updatePerfData.setEnabled(false);
+		}
+	}
 	
 	// ************ XML Reload *******************************************
 	public void refreshDB() {
 		
 		MK119_Lite_Panel.resetForm(true, false);
 		
+		checkLinkMK119();
+		if(MK119_Lite_Panel.linkMK119_Protocol && MK119_Lite_Panel.linkMK119_PerfData) {
+			linkMK119_Button.setText(" 연동 완료");
+			linkMK119_Button.setEnabled(false);
+		}
+		
 		if(MK119_Lite_Panel.serverMap.containsKey(fac.getIndex())) {
+						
 			this.fac = (Facility)MK119_Lite_Panel.serverMap.get(fac.getIndex());
 			this.isCommon = fac.isProtocol();
+			MK119_Lite_Panel.initEventButton(eventInfo_Button, fac);
+			initRcuInfoButton();
 			
-			if(fac.hasEvent()) {
-				Event event = fac.getEvents().get(0);
-				
-				eventInfo_Button.setEnabled(true);
-				eventInfo_Button.setBackground(new Color(event.getSeverityBkColor()));
-				eventInfo_Button.setForeground(new Color(event.getSeverityTextColor()));
-				
-				String status = (event.getStatus() == 0) ? "발생" : "인지";
-				status = String.format("%s ( %s )", status, event.getSeverityName());
-				eventInfo_Button.setText(status);
+			String pName = null;
+			if(MK119_Lite_Panel.linkMK119_Protocol) {
+				Protocol p = MK119_Lite_Panel.protocolMap.get(fac.getProtocolKey());
+				if(p != null) {
+					pName = p.getName();
+				}else {
+					pName = "Unknown Protocol";
+				}
 			}else {
-				eventInfo_Button.setEnabled(false);
-				eventInfo_Button.setBackground(Color.WHITE);
-				eventInfo_Button.setForeground(Color.BLACK);
-				eventInfo_Button.setText("이벤트 정상");
+				pName = "프로토콜 정보 연동 전";
 			}
 			
 			String facInfo_1 = "";
 			facInfo_1 += "<html>";
-			facInfo_1 += Util.colorBlue("시설물 : ") + fac.getName();
+			facInfo_1 += Util.colorBlue("장비 정보 : ") + fac.getName();
 			facInfo_1 += "&nbsp;&nbsp;";
 			facInfo_1 += "( ";
-			facInfo_1 += Util.colorGreen(fac.getTypeString() + Util.colorRed(" / ") + fac.getConnMethod());
+			facInfo_1 += Util.colorGreen(fac.getTypeString() + Util.colorRed(" / ") + fac.getConnMethod() + Util.colorRed(" / ") + pName);
 			facInfo_1 += " )";
 			facInfo_1 += "</html>";
 			
@@ -725,14 +795,16 @@ public class FacilityInfoFrame extends JFrame {
 			Perf perf = perfs.get(i);
 //			perf.setIndex(i + 1);
 			
-			content[i] = new Object[2];
+			content[i] = new Object[4];
 			content[i][0] = i + 1; // 순 서
 			content[i][1] = perf;
+			content[i][2] = "228.8 V";
+			content[i][3] = "2022-04-19 09:49:04";
 		}
 
 		table.setModel(new DefaultTableModel(
 			content,
-			new String[] { "순 서", "성 능"}) {
+			new String[] { "순 서", "성 능", "최종값", "수집 시간"}) {
 			// 테이블 셀 내용 수정 금지
 			public boolean isCellEditable(int i, int c) {
 				return false;
@@ -867,7 +939,12 @@ public class FacilityInfoFrame extends JFrame {
 			// 테이블 헤더 설정
 			table.getTableHeader().setForeground(Color.BLACK);
 			table.getTableHeader().setBackground(new Color(255, 255, 153));
-			table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 17));
+			if(tableType == PERF_LIST_TABLE) {
+				table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 16));	
+			}else {
+				table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 17));
+			}
+			
 			
 			// 이동 불가, 셀 크기 조절 불가
 			table.getTableHeader().setReorderingAllowed(false);
@@ -889,8 +966,10 @@ public class FacilityInfoFrame extends JFrame {
 			// 테이블 셀 크기 설정
 			if(tableType == PERF_LIST_TABLE) {
 				// 성능 리스트 테이블
-				table.getColumnModel().getColumn(0).setPreferredWidth(5); // 순 서
-				table.getColumnModel().getColumn(1).setPreferredWidth(400); // 성 능		
+				table.getColumnModel().getColumn(0).setPreferredWidth(70); // 순 서
+				table.getColumnModel().getColumn(1).setPreferredWidth(400); // 성 능
+				table.getColumnModel().getColumn(2).setPreferredWidth(120); // 마지막 수집값
+				table.getColumnModel().getColumn(3).setPreferredWidth(180); // 수집 시간			
 			}else if(tableType == PERF_INFO_TABLE) {
 				// 성능 정보 테이블
 				table.getColumnModel().getColumn(0).setPreferredWidth(3); // 필 드		
@@ -911,7 +990,10 @@ public class FacilityInfoFrame extends JFrame {
 			TableColumnModel tcmSchedule = table.getColumnModel();
 			tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
 			
-			if(tableType == PERF_LABEL_TABLE) {
+			if(tableType == PERF_LIST_TABLE) {
+				tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 최종값
+				tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 수집 시간
+			}if(tableType == PERF_LABEL_TABLE) {
 				tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 성능 레이블 테이블만 가운데 정렬
 			}else {
 				// tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
@@ -1054,14 +1136,16 @@ public class FacilityInfoFrame extends JFrame {
 			
 			for (int i = 0; i < filteredPerf.size(); i++) {
 				FmsPerfItem perf = filteredPerf.get(i);
-				content[i] = new Object[2];
+				content[i] = new Object[4];
 				content[i][0] = perf.getIndex();
 				content[i][1] = perf;
+				content[i][2] = "228.8 V";
+				content[i][3] = "2022-04-19 09:49:04";
 			}
 
 			perfListTable.setModel(new DefaultTableModel(
 					content,
-					new String[] { "순 서", "성 능"}) {
+					new String[] { "순 서", "성 능", "최종값", "수집 시간"}) {
 					// 테이블 셀 내용 수정 금지
 					public boolean isCellEditable(int i, int c) {
 						return false;
@@ -1086,5 +1170,4 @@ public class FacilityInfoFrame extends JFrame {
 				}
 			}
 		}
-		
 }
