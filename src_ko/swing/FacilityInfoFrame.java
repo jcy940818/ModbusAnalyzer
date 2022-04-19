@@ -1333,7 +1333,7 @@ public class FacilityInfoFrame extends JFrame {
 					try {
 						double doubleValue = Double.parseDouble(data.getValue().toString());
 						PerfLabelStatusBean[] labels = perf.getStatusLabels();
-						content = "-";
+						content = (Math.round(doubleValue*1000)/1000.0);
 						// 다중 상태 레이블을 검사 후 일치하는 값이 있다면 내용에 적용 후 반복문 종료
 						for(int k = 0; k < labels.length; k++) {
 							int checkValue = (int)doubleValue;
