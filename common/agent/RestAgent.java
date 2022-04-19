@@ -12,16 +12,6 @@ import org.jsoup.nodes.Document;
 import src_ko.info.AdminConsole_Info;
 
 public class RestAgent {
-
-	public static void main(String[] args) {
-		AdminConsole_Info admin = new AdminConsole_Info("192.168.1.92", "8080", "admin", "1", "0");
-		admin.refreshSession(admin);
-		
-		HashMap<Integer, PerfData> map = getFacilityPerfDataMap(false ,1861, admin);
-		PerfData p = map.get(157110);
-		
-		System.out.println(map.size());
-	}
 	
 	public static HashMap<Integer, PerfData> getFacilityPerfDataMap(boolean firstTry, int serverIndex, AdminConsole_Info adminConsole){
 		HashMap<Integer, PerfData> perfDataMap = new HashMap<Integer, PerfData>();
