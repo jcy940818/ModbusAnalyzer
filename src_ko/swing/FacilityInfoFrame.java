@@ -890,8 +890,7 @@ public class FacilityInfoFrame extends JFrame {
 	
 	//*************** 성능 리스트 테이블  *********************************************************************************
 	 public void updatePerfListTable(JTable table) {
-		new Thread(()->{
-			
+		
 			if (table == null || perfs == null) return;
 			if(MK119_Lite_Panel.linkMK119_PerfData && MK119_Lite_Panel.adminConsole != null) {
 				perfRealTimeDataMap = RestAgent.getFacilityPerfDataMap(true, fac.getIndex(), MK119_Lite_Panel.adminConsole);
@@ -901,7 +900,6 @@ public class FacilityInfoFrame extends JFrame {
 	
 			for (int i = 0; i < perfs.size(); i++) {
 				Perf perf = perfs.get(i);
-	//			perf.setIndex(i + 1);
 				
 				content[i] = new Object[4];
 				content[i][0] = i + 1; // 순 서
@@ -936,8 +934,6 @@ public class FacilityInfoFrame extends JFrame {
 			});
 	
 			setTableStyle(table, PERF_LIST_TABLE);
-			
-		}).start();
 	}
 	
 	
