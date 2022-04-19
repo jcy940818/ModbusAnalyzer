@@ -3,6 +3,9 @@ package src_ko.swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -12,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -21,6 +25,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -32,15 +37,15 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import common.agent.PerfData;
+import common.agent.RestAgent;
 import common.perf.FmsPerfItem;
 import common.perf.Perf;
 import common.perf.PerfLabelStatusBean;
-import common.server.Event;
 import common.server.Facility;
 import src_ko.info.ONION_Info;
 import src_ko.info.Protocol;
 import src_ko.util.Util;
-import javax.swing.JRadioButton;
 
 public class FacilityInfoFrame extends JFrame {
 			
@@ -65,6 +70,7 @@ public class FacilityInfoFrame extends JFrame {
 	private JTable perfInfoTable;
 	private JTable perfLabelTable;
 	
+	private HashMap<Integer, PerfData> perfRealTimeDataMap = null;
 	public static boolean isExist = false;
 	private JLabel MK119;
 	 
@@ -94,7 +100,9 @@ public class FacilityInfoFrame extends JFrame {
 	private JButton linkMK119_Button;
 	private JButton updatePerfData;
 	private JButton rcuInfo_Button;
-	private JTable perfData_Table;
+	private JTable perfData_Table;	
+	
+	private JLabel currentFunction;
 	
 	/**
 	 * Launch the application.
@@ -120,9 +128,15 @@ public class FacilityInfoFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public FacilityInfoFrame(Facility fac) {		
+		
+		if(MK119_Lite_Panel.linkMK119_PerfData && MK119_Lite_Panel.adminConsole != null) {
+			perfRealTimeDataMap = RestAgent.getFacilityPerfDataMap(true, fac.getIndex(), MK119_Lite_Panel.adminConsole);
+		}
+		
 		this.fac = fac;
 		this.isCommon = fac.isProtocol();
 		this.perfs = Perf.getFaciltiyPerfList(ONION_Info.getMk119Connection(), fac);
+				
 		
 		FacilityInfoFrame.isExist = true;
 		setTitle(String.format("Facility Information   [  Index : %d  /  Name : %s  ]", fac.getIndex(), fac.getName()));
@@ -143,13 +157,13 @@ public class FacilityInfoFrame extends JFrame {
 		contentPane.add(actualPanel, BorderLayout.CENTER);		
 		actualPanel.setLayout(null);
 		
-		JLabel currentFunction = new JLabel("Facility Information");
+		currentFunction = new JLabel("Facility Information");
 		currentFunction.setForeground(Color.BLACK);
 		currentFunction.setIcon(new Util().getSubLogoResource());
 		currentFunction.setHorizontalAlignment(SwingConstants.LEFT);
 		currentFunction.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		currentFunction.setBackground(Color.WHITE);
-		currentFunction.setBounds(0, 0, 250, 55);
+		currentFunction.setBounds(0, 0, 250, 55);		
 		actualPanel.add(currentFunction);
 		
 		MK119 = new JLabel();
@@ -279,7 +293,7 @@ public class FacilityInfoFrame extends JFrame {
 				public boolean isCellEditable(int row, int column) {
 					return columnEditables[column];
 				}
-		});
+		});		
 		setTableStyle(perfData_Table, PERF_DATA_TABLE);
 		perfData_ScrollPanel.setViewportView(perfData_Table);
 		
@@ -452,6 +466,7 @@ public class FacilityInfoFrame extends JFrame {
 		facInfo_1 += "&nbsp;&nbsp;";
 		facInfo_1 += "( ";
 		facInfo_1 += Util.colorGreen(fac.getTypeString() + Util.colorRed(" / ") + fac.getConnMethod() + Util.colorRed(" / ") + pName);
+		facInfo_1 += Util.colorGreen(Util.colorRed(" / ") + fac.getState());
 		facInfo_1 += " )";
 		facInfo_1 += "</html>";
 		
@@ -510,7 +525,7 @@ public class FacilityInfoFrame extends JFrame {
 		FacilityInfoLabel_1.setForeground(Color.BLACK);
 		FacilityInfoLabel_1.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		FacilityInfoLabel_1.setBackground(Color.WHITE);
-		FacilityInfoLabel_1.setBounds(260, 1, 962, 30);
+		FacilityInfoLabel_1.setBounds(260, 1, 962, 30);		
 		actualPanel.add(FacilityInfoLabel_1);
 		
 		FacilityInfoLabel_2 = new JLabel(facInfo_2);
@@ -518,7 +533,7 @@ public class FacilityInfoFrame extends JFrame {
 		FacilityInfoLabel_2.setForeground(Color.BLACK);
 		FacilityInfoLabel_2.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		FacilityInfoLabel_2.setBackground(Color.WHITE);
-		FacilityInfoLabel_2.setBounds(260, 28, 962, 30);		
+		FacilityInfoLabel_2.setBounds(260, 28, 962, 30);			
 		actualPanel.add(FacilityInfoLabel_2);
 		
 		dbRefreshButton = new JButton("Database 최신화");
@@ -598,6 +613,11 @@ public class FacilityInfoFrame extends JFrame {
 		updatePerfData.setBorder(UIManager.getBorder("Button.border"));
 		updatePerfData.setBackground(Color.WHITE);
 		updatePerfData.setBounds(543, 94, 184, 30);
+		updatePerfData.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				updatePerfListTable(perfListTable);
+			}
+		});
 		checkLinkMK119();
 		actualPanel.add(updatePerfData);
 		
@@ -663,6 +683,8 @@ public class FacilityInfoFrame extends JFrame {
 		perfInfoTable.addKeyListener(close);
 		perfLabelTable.addKeyListener(close);
 		
+		initCopyAdapter(fac.getName().trim());
+		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -693,7 +715,7 @@ public class FacilityInfoFrame extends JFrame {
 			updatePerfData.setText("성능 데이터 연동 전");
 			updatePerfData.setEnabled(false);
 		}
-	}
+	}	
 	
 	// ************ XML Reload *******************************************
 	public void refreshDB() {
@@ -710,8 +732,10 @@ public class FacilityInfoFrame extends JFrame {
 						
 			this.fac = (Facility)MK119_Lite_Panel.serverMap.get(fac.getIndex());
 			this.isCommon = fac.isProtocol();
+			
 			MK119_Lite_Panel.initEventButton(eventInfo_Button, fac);
 			initRcuInfoButton();
+			initCopyAdapter(fac.getName().trim());			
 			
 			String pName = null;
 			if(MK119_Lite_Panel.linkMK119_Protocol) {
@@ -731,6 +755,7 @@ public class FacilityInfoFrame extends JFrame {
 			facInfo_1 += "&nbsp;&nbsp;";
 			facInfo_1 += "( ";
 			facInfo_1 += Util.colorGreen(fac.getTypeString() + Util.colorRed(" / ") + fac.getConnMethod() + Util.colorRed(" / ") + pName);
+			facInfo_1 += Util.colorGreen(Util.colorRed(" / ") + fac.getState());
 			facInfo_1 += " )";
 			facInfo_1 += "</html>";
 			
@@ -864,33 +889,55 @@ public class FacilityInfoFrame extends JFrame {
 	
 	
 	//*************** 성능 리스트 테이블  *********************************************************************************
-	public void updatePerfListTable(JTable table) {		
-
-		if (table == null || perfs == null) return;
-
-		Object[][] content = new Object[perfs.size()][];
-
-		for (int i = 0; i < perfs.size(); i++) {
-			Perf perf = perfs.get(i);
-//			perf.setIndex(i + 1);
+	 public void updatePerfListTable(JTable table) {
+		new Thread(()->{
 			
-			content[i] = new Object[4];
-			content[i][0] = i + 1; // 순 서
-			content[i][1] = perf;
-			content[i][2] = "228.8 V";
-			content[i][3] = "2022-04-19 09:49:04";
-		}
-
-		table.setModel(new DefaultTableModel(
-			content,
-			new String[] { "순 서", "성 능", "최종값", "수집 시간"}) {
-			// 테이블 셀 내용 수정 금지
-			public boolean isCellEditable(int i, int c) {
-				return false;
+			if (table == null || perfs == null) return;
+			if(MK119_Lite_Panel.linkMK119_PerfData && MK119_Lite_Panel.adminConsole != null) {
+				perfRealTimeDataMap = RestAgent.getFacilityPerfDataMap(true, fac.getIndex(), MK119_Lite_Panel.adminConsole);
 			}
-		});
-
-		setTableStyle(table, PERF_LIST_TABLE);
+			
+			Object[][] content = new Object[perfs.size()][];
+	
+			for (int i = 0; i < perfs.size(); i++) {
+				Perf perf = perfs.get(i);
+	//			perf.setIndex(i + 1);
+				
+				content[i] = new Object[4];
+				content[i][0] = i + 1; // 순 서
+				content[i][1] = perf;
+				
+				// 성능 값
+				if(MK119_Lite_Panel.linkMK119_PerfData && perfRealTimeDataMap != null) {
+					PerfData data = perfRealTimeDataMap.get(perf.getIndex());
+					
+					if(data != null && !data.getValue().equals("-")) {
+						content[i][2] = getPerfLastContent(perf, data);
+					}else {
+						content[i][2] = "-";
+					}
+					
+					content[i][3] = data.getTimeString();
+					
+				}else {
+					content[i][2] = "-";
+					content[i][3] = "-";
+				}
+				
+			}
+	
+			table.setModel(new DefaultTableModel(
+				content,
+				new String[] { "순 서", "성 능", "최종값", "수집 시간"}) {
+				// 테이블 셀 내용 수정 금지
+				public boolean isCellEditable(int i, int c) {
+					return false;
+				}
+			});
+	
+			setTableStyle(table, PERF_LIST_TABLE);
+			
+		}).start();
 	}
 	
 	
@@ -1052,7 +1099,7 @@ public class FacilityInfoFrame extends JFrame {
 				// 성능 리스트 테이블
 				table.getColumnModel().getColumn(0).setPreferredWidth(70); // 순 서
 				table.getColumnModel().getColumn(1).setPreferredWidth(400); // 성 능
-				table.getColumnModel().getColumn(2).setPreferredWidth(120); // 마지막 수집값
+				table.getColumnModel().getColumn(2).setPreferredWidth(150); // 마지막 수집값
 				table.getColumnModel().getColumn(3).setPreferredWidth(180); // 수집 시간			
 			}else if(tableType == PERF_INFO_TABLE) {
 				// 성능 정보 테이블
@@ -1064,7 +1111,7 @@ public class FacilityInfoFrame extends JFrame {
 				table.getColumnModel().getColumn(1).setPreferredWidth(350); // 매핑 내용		
 			}else if(tableType == PERF_DATA_TABLE) {
 				// 성능 데이터 테이블
-				table.getColumnModel().getColumn(0).setPreferredWidth(200); // 수집 시간	
+				table.getColumnModel().getColumn(0).setPreferredWidth(200); // 수집 시간
 				table.getColumnModel().getColumn(1).setPreferredWidth(300); // 성능 값
 			}
 			
@@ -1258,4 +1305,94 @@ public class FacilityInfoFrame extends JFrame {
 				}
 			}
 		}
+		
+		public Object getPerfLastContent(Perf perf, PerfData data) {
+			Object content = "-";
+			
+			switch(perf.getDataFormat()) {
+				
+				case 1 : // 이진 성능
+					try {
+						String[] binLabel = perf.getBinLabel();							
+						double doubleValue = Double.parseDouble(data.getValue().toString());
+						if(doubleValue == 0) {
+							content = binLabel[0];
+						}else if(doubleValue == 1) {
+							content = binLabel[1];
+						}else {									
+							content = (Math.round(doubleValue*1000)/1000.0);
+						}
+					}catch(Exception e) {
+						e.printStackTrace();
+						content = "-";
+					}
+					break;
+					
+					
+				case 2 : // 다중 성능
+					try {
+						double doubleValue = Double.parseDouble(data.getValue().toString());
+						PerfLabelStatusBean[] labels = perf.getStatusLabels();
+						content = "-";
+						// 다중 상태 레이블을 검사 후 일치하는 값이 있다면 내용에 적용 후 반복문 종료
+						for(int k = 0; k < labels.length; k++) {
+							int checkValue = (int)doubleValue;
+							if(checkValue == labels[k].value) {
+								content = labels[k].label;
+								break;
+							}
+						}									
+					}catch(Exception e) {
+						e.printStackTrace();
+						content = "-";
+					}
+					break;
+					
+					
+				case 3 : // 아날로그 성능
+					try {
+						double doubleValue = Double.parseDouble(data.getValue().toString());
+						if(perf.getMeasure().length() > 0) {
+							content = (Math.round(doubleValue*1000)/1000.0) + " " + perf.getMeasure();	
+						}else {
+							content = (Math.round(doubleValue*1000)/1000.0);
+						}
+					}catch(Exception e) {
+						e.printStackTrace();
+						content = "-";
+					}
+					break;
+					
+					
+				default :  
+					content = "-"; 
+					break;
+					
+			}// end switch
+			
+			return content;
+		}
+		
+		public void initCopyAdapter(String content) {
+			MouseAdapter copyAdapter = new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
+					 if (e.getButton() == 1) {  } // 왼쪽 클릭				 
+					 if (e.getButton() == 1 && e.getClickCount() == 2) { 
+						 StringSelection data = new StringSelection(content);
+						 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+						 clipboard.setContents(data, data);
+					 } // 더블 클릭				 
+					 if (e.getButton() == 3) { 
+						 StringSelection data = new StringSelection(content);
+						 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+						 clipboard.setContents(data, data);
+					 } // 오른쪽 클릭
+				}
+			};
+			
+			if(currentFunction != null) currentFunction.addMouseListener(copyAdapter);
+			if(FacilityInfoLabel_1 != null) FacilityInfoLabel_1.addMouseListener(copyAdapter);
+			if(FacilityInfoLabel_2 != null) FacilityInfoLabel_2.addMouseListener(copyAdapter);
+		}
+				
 }
