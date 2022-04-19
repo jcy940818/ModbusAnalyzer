@@ -421,23 +421,7 @@ public class MK119_Lite_Panel extends JPanel {
 			int row = serverListTable.getSelectedRow();
 			selectedServer = (Server) serverListTable.getValueAt(row, 3);
 			
-			// 선택된 장비의 종류에 상관없이 이벤트가 발생한 경우
-			if(selectedServer.hasEvent()) {
-				Event event = selectedServer.getEvents().get(0);
-				
-				eventInfo_Button.setEnabled(true);
-				eventInfo_Button.setBackground(new Color(event.getSeverityBkColor()));
-				eventInfo_Button.setForeground(new Color(event.getSeverityTextColor()));
-				
-				String status = (event.getStatus() == 0) ? "발생" : "인지";
-				status = String.format("%s ( %s )", status, event.getSeverityName());
-				eventInfo_Button.setText(status);
-			}else {
-				eventInfo_Button.setEnabled(false);
-				eventInfo_Button.setBackground(Color.WHITE);
-				eventInfo_Button.setForeground(Color.BLACK);
-				eventInfo_Button.setText("이벤트 정상");
-			}
+			initEventButton(eventInfo_Button, selectedServer);
 			
 			if(selectedServer.isFacility()) {
 				// 시설물이 선택 되었을 경우
@@ -1539,6 +1523,25 @@ public class MK119_Lite_Panel extends JPanel {
 
 				System.out.println();
 			}
+		}
+	}
+	
+	public static void initEventButton(JButton eventButton, Server server) {
+		if(server.hasEvent()) {
+			Event event = server.getEvents().get(0);
+			
+			eventButton.setEnabled(true);
+			eventButton.setBackground(new Color(event.getSeverityBkColor()));
+			eventButton.setForeground(new Color(event.getSeverityTextColor()));
+			
+			String status = (event.getStatus() == 0) ? "발생" : "인지";
+			status = String.format("%s ( %s )", status, event.getSeverityName());
+			eventButton.setText(status);
+		}else {
+			eventButton.setEnabled(false);
+			eventButton.setBackground(Color.WHITE);
+			eventButton.setForeground(Color.BLACK);
+			eventButton.setText("이벤트 정상");
 		}
 	}
 	
