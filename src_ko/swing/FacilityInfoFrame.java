@@ -915,7 +915,11 @@ public class FacilityInfoFrame extends JFrame {
 						content[i][2] = "-";
 					}
 					
-					content[i][3] = data.getTimeString();
+					try {
+						content[i][3] = data.getTimeString();
+					}catch(Exception e) {
+						content[i][3] = "-";
+					}
 					
 				}else {
 					content[i][2] = "-";
