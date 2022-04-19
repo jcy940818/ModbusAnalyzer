@@ -288,6 +288,11 @@ public class AdminConsole_LoginFrame extends JFrame {
 		});
 		actualPanel.add(loginButton);
 		
+		CloseListener close = new CloseListener();
+		serverIp.addKeyListener(close);
+		serverPort.addKeyListener(close);
+		loginId.addKeyListener(close);
+		loginPassword.addKeyListener(close);
 		
 		// 프레임이 화면 가운데에서 생성된다		
 		setLocationRelativeTo(null);
@@ -385,5 +390,20 @@ public class AdminConsole_LoginFrame extends JFrame {
 	public void dispose() {
 		AdminConsole_LoginFrame.isExist = false;
 		super.dispose();
+	}
+	
+	// 사용자 정의 키 이벤트 리스너
+	class CloseListener extends KeyAdapter{	
+		public void keyPressed(KeyEvent e) {			
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				dispose();
+			}
+		}		
+		
+		public void keyReleased(KeyEvent e) {			
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				dispose();
+			}
+		}
 	}
 }
