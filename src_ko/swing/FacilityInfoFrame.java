@@ -13,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -39,6 +40,7 @@ import common.server.Facility;
 import src_ko.info.ONION_Info;
 import src_ko.info.Protocol;
 import src_ko.util.Util;
+import javax.swing.JRadioButton;
 
 public class FacilityInfoFrame extends JFrame {
 			
@@ -483,7 +485,7 @@ public class FacilityInfoFrame extends JFrame {
 		dbRefreshButton.setFocusPainted(false);		
 		dbRefreshButton.setBorder(UIManager.getBorder("Button.border"));
 		dbRefreshButton.setBackground(Color.WHITE);
-		dbRefreshButton.setBounds(739, 94, 169, 30);
+		dbRefreshButton.setBounds(875, 94, 160, 30);
 		dbRefreshButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -521,7 +523,7 @@ public class FacilityInfoFrame extends JFrame {
 		eventInfo_Button.setFocusPainted(false);		
 		eventInfo_Button.setBorder(UIManager.getBorder("Button.border"));
 		eventInfo_Button.setBackground(Color.WHITE);
-		eventInfo_Button.setBounds(1037, 60, 185, 30);		
+		eventInfo_Button.setBounds(1038, 60, 184, 30);		
 		
 		// 이벤트 버튼 초기화
 		MK119_Lite_Panel.initEventButton(eventInfo_Button, fac);		
@@ -534,7 +536,7 @@ public class FacilityInfoFrame extends JFrame {
 		linkMK119_Button.setFocusPainted(false);
 		linkMK119_Button.setBorder(UIManager.getBorder("Button.border"));
 		linkMK119_Button.setBackground(Color.WHITE);
-		linkMK119_Button.setBounds(1037, 94, 185, 30);
+		linkMK119_Button.setBounds(1038, 94, 184, 30);
 		linkMK119_Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -563,7 +565,7 @@ public class FacilityInfoFrame extends JFrame {
 		rcuInfo_Button.setFocusPainted(false);
 		rcuInfo_Button.setBorder(UIManager.getBorder("Button.border"));
 		rcuInfo_Button.setBackground(Color.WHITE);
-		rcuInfo_Button.setBounds(739, 60, 169, 30);
+		rcuInfo_Button.setBounds(875, 60, 160, 30);
 		rcuInfo_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(fac.isConnRCU() && fac.getRcu() != null) new RcuInfoFrame(fac.getRcu());
@@ -571,6 +573,27 @@ public class FacilityInfoFrame extends JFrame {
 		});
 		initRcuInfoButton(); 
 		actualPanel.add(rcuInfo_Button);
+		
+		JRadioButton perfInfo_RadioButton = new JRadioButton("성능 정보");
+		perfInfo_RadioButton.setForeground(Color.BLACK);
+		perfInfo_RadioButton.setBackground(Color.WHITE);
+		perfInfo_RadioButton.setFocusPainted(false);
+		perfInfo_RadioButton.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		perfInfo_RadioButton.setBounds(746, 60, 121, 30);
+		perfInfo_RadioButton.setSelected(true);
+		actualPanel.add(perfInfo_RadioButton);
+		
+		JRadioButton perfValue_RadioButton = new JRadioButton("수집 데이터");
+		perfValue_RadioButton.setForeground(Color.BLACK);
+		perfValue_RadioButton.setBackground(Color.WHITE);
+		perfValue_RadioButton.setFocusPainted(false);
+		perfValue_RadioButton.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		perfValue_RadioButton.setBounds(746, 94, 121, 30);
+		actualPanel.add(perfValue_RadioButton);
+		
+		ButtonGroup buttonGroup = new ButtonGroup();		
+		buttonGroup.add(perfInfo_RadioButton);
+		buttonGroup.add(perfValue_RadioButton);
 		
 		// ESC : Close Listener
 		CloseListener close = new CloseListener();
