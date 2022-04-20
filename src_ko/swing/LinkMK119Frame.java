@@ -46,12 +46,14 @@ public class LinkMK119Frame extends JFrame{
 	private static JLabel mk119HttpStatusCode;	
 	
 	private static JButton refreshSession_Button;
+	private static JButton terminateSession_Button;
 	
 	public static String protocolVersion = String.format("<html>%s : </html>", Util.colorBlue("Version"));
 	
 	public static AdminConsole_Info adminConsole;
 	public static String lastReqTime = "";
 	public static String lastReqAPI = "";
+	
 	
 	/**
 	 * Create the panel.
@@ -172,7 +174,7 @@ public class LinkMK119Frame extends JFrame{
 		mk119Server.setForeground(Color.BLACK);
 		mk119Server.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		mk119Server.setBackground(Color.WHITE);
-		mk119Server.setBounds(63, 450, 617, 37);
+		mk119Server.setBounds(63, 450, 416, 37);
 		actualPanel.add(mk119Server);
 		
 		mk119SessionID = new JLabel(String.format("<html>%s : </html>", Util.colorBlue("Session ID")));
@@ -228,7 +230,7 @@ public class LinkMK119Frame extends JFrame{
 		refreshSession_Button.setFocusPainted(false);
 		refreshSession_Button.setEnabled(true);
 		refreshSession_Button.setBackground(Color.WHITE);
-		refreshSession_Button.setBounds(515, 393, 165, 37);
+		refreshSession_Button.setBounds(491, 393, 189, 37);
 		refreshSession_Button.setEnabled(false);
 		refreshSession_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -238,6 +240,41 @@ public class LinkMK119Frame extends JFrame{
 			}
 		});
 		actualPanel.add(refreshSession_Button);
+		
+		terminateSession_Button = new JButton("Terminate Session");
+		terminateSession_Button.setForeground(Color.RED);
+		terminateSession_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		terminateSession_Button.setFocusPainted(false);
+		terminateSession_Button.setEnabled(true);
+		terminateSession_Button.setBackground(Color.WHITE);
+		terminateSession_Button.setBounds(491, 440, 189, 37);
+		terminateSession_Button.setEnabled(false);
+		terminateSession_Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				lastReqAPI = "Terminate a Session";	
+				lastReqTime = sdf.format(new Date());
+					
+				linkMK119PerfData_Button.setText("<html>&nbsp;<font color='green'>REST API</font> 데이터 연동</html>");
+				linkMK119PerfData_Button.setEnabled(true);
+				refreshSession_Button.setEnabled(false);
+				terminateSession_Button.setEnabled(false);
+				
+				mk119Server.setText(String.format("<html>%s : %s:%s</html>", Util.colorBlue("MK119 Server"), Util.colorRed(adminConsole.get_IP()), Util.colorRed(adminConsole.get_PORT())));
+				mk119SessionID.setText(String.format("<html>%s : %s</html>", Util.colorBlue("Session ID"), Util.colorRed(adminConsole.get_SESSION_ID())));
+				mk119LastReqAPI.setText(String.format("<html>%s : %s</html>" ,Util.colorBlue("Last Request API"), Util.colorRed(lastReqAPI)));
+				mk119LastReqTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Request Time"), Util.colorRed(lastReqTime)));
+				mk119HttpStatusCode.setText(String.format("<html>%s : %s</html>", Util.colorBlue("HTTP Status Code"), Util.colorRed("Connection Close")));
+				
+				lastReqAPI = "";
+				lastReqTime = "";
+				
+				MK119_Lite_Panel.linkMK119_PerfData = false;
+				MK119_Lite_Panel.adminConsole = null;				
+				adminConsole = null;
+			}
+		});
+		actualPanel.add(terminateSession_Button);
 		
 		JSeparator separator = new JSeparator();
 		separator.setForeground(Color.GRAY);
@@ -264,9 +301,11 @@ public class LinkMK119Frame extends JFrame{
 				linkMK119PerfData_Button.setText("<html>&nbsp;<font color='green'>REST API</font> 데이터 연동 완료</html>");
 				linkMK119PerfData_Button.setEnabled(false);
 				refreshSession_Button.setEnabled(true);
+				terminateSession_Button.setEnabled(true);
 			}else {
 				MK119_Lite_Panel.linkMK119_PerfData = false;
 				refreshSession_Button.setEnabled(false);
+				terminateSession_Button.setEnabled(false);
 			}
 			
 			mk119Server.setText(String.format("<html>%s : %s:%s</html>", Util.colorBlue("MK119 Server"), adminConsole.get_IP(), adminConsole.get_PORT()));
@@ -285,6 +324,7 @@ public class LinkMK119Frame extends JFrame{
 		mk119ProtocolVersion.setText(protocolVersion);
 		linkMK119Protocol_Button.setText("<html>&nbsp;<font color='blue'>Protocol</font> 데이터 연동 완료</html>");		
 		linkMK119Protocol_Button.setEnabled(false);
+		terminateSession_Button.setEnabled(true);
 	}
 	
 	public static void linkRestAPI(AdminConsole_Info admin, String api) {
@@ -296,12 +336,14 @@ public class LinkMK119Frame extends JFrame{
 			linkMK119PerfData_Button.setText("<html>&nbsp;<font color='green'>REST API</font> 데이터 연동 완료</html>");
 			linkMK119PerfData_Button.setEnabled(false);
 			refreshSession_Button.setEnabled(true);
+			terminateSession_Button.setEnabled(true);
 		}else {
 			MK119_Lite_Panel.linkMK119_PerfData = false;
 			
 			linkMK119PerfData_Button.setText("<html>&nbsp;<font color='green'>REST API</font> 데이터 연동</html>");
 			linkMK119PerfData_Button.setEnabled(true);
 			refreshSession_Button.setEnabled(false);
+			terminateSession_Button.setEnabled(false);
 		}
 		
 		mk119Server.setText(String.format("<html>%s : %s:%s</html>", Util.colorBlue("MK119 Server"), adminConsole.get_IP(), adminConsole.get_PORT()));
