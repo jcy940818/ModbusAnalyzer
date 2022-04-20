@@ -4,11 +4,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import javax.swing.JOptionPane;
+
+import src_ko.util.Util;
+
 public class Test {
 	
 	public static void main(String[] args) {
-//		Connection conn = makeConnection("jdbc:sqlserver://192.168.1.12:1433;databaseName=SK", "sa", "onion2132?");
-		
 	}
 	
 	public static Connection makeConnection(String url, String id, String pw) {

@@ -466,7 +466,8 @@ public class FacilityInfoFrame extends JFrame {
 		facInfo_1 += "&nbsp;&nbsp;";
 		facInfo_1 += "( ";
 		facInfo_1 += Util.colorGreen(fac.getTypeString() + Util.colorRed(" / ") + fac.getConnMethod() + Util.colorRed(" / ") + pName);
-		facInfo_1 += Util.colorGreen(Util.colorRed(" / ") + fac.getState());
+		facInfo_1 += Util.colorGreen(Util.colorRed(" / "));
+		facInfo_1 += (fac.getState().equalsIgnoreCase("통신 오류")) ? Util.colorRed(fac.getState()) : Util.colorGreen(fac.getState()); 
 		facInfo_1 += " )";
 		facInfo_1 += "</html>";
 		
@@ -746,7 +747,8 @@ public class FacilityInfoFrame extends JFrame {
 			facInfo_1 += "&nbsp;&nbsp;";
 			facInfo_1 += "( ";
 			facInfo_1 += Util.colorGreen(fac.getTypeString() + Util.colorRed(" / ") + fac.getConnMethod() + Util.colorRed(" / ") + pName);
-			facInfo_1 += Util.colorGreen(Util.colorRed(" / ") + fac.getState());
+			facInfo_1 += Util.colorGreen(Util.colorRed(" / "));
+			facInfo_1 += (fac.getState().equalsIgnoreCase("통신 오류")) ? Util.colorRed(fac.getState()) : Util.colorGreen(fac.getState());
 			facInfo_1 += " )";
 			facInfo_1 += "</html>";
 			

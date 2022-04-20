@@ -44,7 +44,6 @@ public class HttpAgent {
 			
 			Connection.Response loginForm = Jsoup.connect(adminConsole)
 					.header("Connection", "keep-alive")
-	//				.header("Accept", "*/*")
 					.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
 					.header("Accept-Charset", "utf-8")
 					.header("Content-Type", "application/x-www-form-urlencoded")
@@ -76,9 +75,10 @@ public class HttpAgent {
 				}
 				
 				admin.set_SESSION_ID(sessionID);
-				admin.setHttpStatusCode(loginForm.statusCode());
+				admin.setHttpStatusCode(loginForm.statusCode(), false);
 				LinkMK119Frame.linkRestAPI(admin, "/midknight/adminConsole");
 				return sessionID;
+				
 			}else {
 				StringBuilder sb = new StringBuilder();
 				sb.append(String.format("%s%s\n", Util.colorRed("MK119 Login Failure"), Util.separator));
@@ -89,7 +89,7 @@ public class HttpAgent {
 				Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 				
 				admin.set_SESSION_ID(sessionID);
-				admin.setHttpStatusCode(0);
+				admin.setHttpStatusCode(0, true);
 				LinkMK119Frame.linkRestAPI(admin, "/midknight/adminConsole");
 				return null;
 			}
@@ -103,7 +103,7 @@ public class HttpAgent {
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 			
 			admin.set_SESSION_ID(sessionID);
-			admin.setHttpStatusCode(0);
+			admin.handleException(e);
 			LinkMK119Frame.linkRestAPI(admin, "/midknight/adminConsole");
 			return null;
 		}

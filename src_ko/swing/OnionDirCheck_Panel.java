@@ -397,7 +397,6 @@ public class OnionDirCheck_Panel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				OnionDirCheck_Panel.connectServerList = false;
 				OnionDirCheck_Panel.back_button.setVisible(false);
-				MK119_Lite_Panel.linkMK119_Protocol = false;
 				MainFrame.showMK119Lite();
 			}
 		});

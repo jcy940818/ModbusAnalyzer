@@ -18,6 +18,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import javax.swing.border.LineBorder;
 
+import org.jsoup.HttpStatusException;
+
 import src_ko.agent.HttpAgent;
 import src_ko.database.DbUtil;
 import src_ko.info.AdminConsole_Info;
@@ -304,7 +306,6 @@ public class AdminConsole_LoginFrame extends JFrame {
 		// trim 처리
 		// id, pw 문자 길이 체크		
 		
-		
 		String IP = serverIp.getText().trim();
 		String PORT = serverPort.getText().trim();
 		String ID = loginId.getText().trim();
@@ -315,22 +316,27 @@ public class AdminConsole_LoginFrame extends JFrame {
 		
 		try {
 			sessionId = new HttpAgent().getMK119SessionId(this.adminConsole);
+		}catch(HttpStatusException e) {
+			this.adminConsole.handleException(e);
+			
 		}catch(SocketTimeoutException e) {
 			e.printStackTrace();
 			System.out.println("응답 타임아웃 초과");
+			this.adminConsole.handleException(e);
+			
 		}catch(ConnectException e) {
 			e.printStackTrace();
 			System.out.println("서버가 실행 되어있지 않음");
+			this.adminConsole.handleException(e);
+			
 		}catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("예외 발생");
+			this.adminConsole.handleException(e);			
 		}
 		
 		if(sessionId != null) {
-			// MK119 AdminConsole 로그인 성공
-			
-			// AdminConsole 로그인 정보 인스턴스 생성
-//			this.adminConsole = new AdminConsole_Info(IP, PORT, ID, PW, sessionId);
+			// MK119 AdminConsole 로그인 성공			
 			this.adminConsole.setVersionInfo(DbUtil.getMK119VersionInfo());
 			this.adminConsole.setVersion(DbUtil.getMK119Version());
 			this.adminConsole.setBuild(DbUtil.getMK119Build());

@@ -4,8 +4,11 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
 
+import org.jsoup.HttpStatusException;
+
 import common.util.HttpUtil;
 import src_ko.agent.HttpAgent;
+import src_ko.util.Util;
 
 public class AdminConsole_Info {
 	
@@ -164,12 +167,46 @@ public class AdminConsole_Info {
 		return httpStatus;
 	}
 
-	public void setHttpStatusCode(int httpStatusCode) {
+	public void setHttpStatusCode(int httpStatusCode, boolean isException) {
+		String status = HttpUtil.getHttpStatus(httpStatusCode);
 		this.httpStatusCode = httpStatusCode;
-		this.httpStatus = HttpUtil.getHttpStatus(httpStatusCode);
+		this.httpStatus = isException ? Util.colorRed(status)  : status;
 	}
 	
-	public void setHttpStatus(String httpStatus) {
-		this.httpStatus = httpStatus;
+	public void setHttpStatus(String httpStatus, boolean isException) {
+		this.httpStatus = isException ? Util.colorRed(httpStatus)  : httpStatus;
 	}
+	
+	public void handleException(Exception exception) {
+		try {
+			throw exception;
+			
+		}catch(HttpStatusException e) {
+			int statusCode = e.getStatusCode();			
+			this.setHttpStatusCode(statusCode, true);
+						
+			if(e.getMessage() != null) {
+				this.setHttpStatus(e.getMessage(), true);
+			}else {
+				this.setHttpStatusCode(statusCode, true);
+			}
+			
+			return;
+			
+		}catch(SocketTimeoutException e) {
+			this.setHttpStatus("Response Timeout", true);
+			return;
+			
+		}catch(ConnectException e) {
+			this.setHttpStatus("MK119 Server is not Running", true);
+			return;
+			
+		}catch (Exception e) {
+			this.setHttpStatus("Exception : " + e.getMessage(), true);
+			return;
+			
+		}
+	}
+	
+	
 }

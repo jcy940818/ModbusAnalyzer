@@ -5,7 +5,7 @@ public class HttpUtil {
 	public static String getHttpStatus(int statusCode) {
 		switch(statusCode) {
 			case 0 : 
-				return "No Response from Server";
+				return "Unable to Process";
 		
 			case 100 :
 				// 진행 중임을 의미하는 응답코드입니다. 현재까지의 진행상태에 문제가 없으며, 클라이언트가 계속해서 요청을 하거나 이미 요청을 완료한 경우에는 무시해도 되는 것을 알려줍니다.
