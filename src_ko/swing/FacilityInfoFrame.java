@@ -457,7 +457,7 @@ public class FacilityInfoFrame extends JFrame {
 				pName = "Unknown Protocol";
 			}
 		}else {
-			pName = "프로토콜 정보 연동 전";
+			pName = " - ";
 		}
 		
 		String facInfo_1 = "";
@@ -600,10 +600,6 @@ public class FacilityInfoFrame extends JFrame {
 				new LinkMK119Frame(MK119_Lite_Panel.linkMK119_Protocol, MK119_Lite_Panel.linkMK119_PerfData);
 			}
 		});
-		if(MK119_Lite_Panel.linkMK119_Protocol && MK119_Lite_Panel.linkMK119_PerfData) {
-			linkMK119_Button.setText(" 연동 완료");
-			linkMK119_Button.setEnabled(false);
-		}
 		actualPanel.add(linkMK119_Button);
 		
 		updatePerfData = new JButton("성능 데이터 연동 전");
@@ -722,12 +718,7 @@ public class FacilityInfoFrame extends JFrame {
 		
 		MK119_Lite_Panel.resetForm(true, false);
 		
-		checkLinkMK119();
-		if(MK119_Lite_Panel.linkMK119_Protocol && MK119_Lite_Panel.linkMK119_PerfData) {
-			linkMK119_Button.setText(" 연동 완료");
-			linkMK119_Button.setEnabled(false);
-		}
-		
+		checkLinkMK119();				
 		if(MK119_Lite_Panel.serverMap.containsKey(fac.getIndex())) {
 						
 			this.fac = (Facility)MK119_Lite_Panel.serverMap.get(fac.getIndex());
@@ -746,7 +737,7 @@ public class FacilityInfoFrame extends JFrame {
 					pName = "Unknown Protocol";
 				}
 			}else {
-				pName = "프로토콜 정보 연동 전";
+				pName = " - ";
 			}
 			
 			String facInfo_1 = "";

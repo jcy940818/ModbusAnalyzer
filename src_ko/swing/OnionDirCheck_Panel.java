@@ -139,13 +139,14 @@ public class OnionDirCheck_Panel extends JPanel {
 							}
 							
 							MK119_Lite_Panel.protocolMap = protocolMap;
-							
 							MK119_Lite_Panel.linkMK119_Protocol = true;
 							MK119_Lite_Panel.updateItem_searchComboBox(true);
 							MK119_Lite_Panel.resetForm(false, true);
 							
 							OnionDirCheck_Panel.connectServerList = false;
 							OnionDirCheck_Panel.back_button.setVisible(false);
+							
+							LinkMK119Frame.linkProtocol(version);
 							
 							StringBuilder sb = new StringBuilder();
 							sb.append(String.format("%s ( %s )%s%s%s\n",Util.colorBlue("MK119 프로토콜 정보 연동 완료"), Util.colorRed(version), Util.separator, Util.separator, Util.separator));

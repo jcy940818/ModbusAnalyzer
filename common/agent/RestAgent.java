@@ -1,5 +1,6 @@
 package common.agent;
 
+import java.net.ConnectException;
 import java.util.HashMap;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -17,7 +18,7 @@ public class RestAgent {
 		HashMap<Integer, PerfData> perfDataMap = new HashMap<Integer, PerfData>();
 		
 		try {
-			String API_URL = String.format("http://%s:%s//midknight/api/perfdata/servers/%d/last", adminConsole.get_IP(), adminConsole.get_PORT(), serverIndex);
+			String API_URL = String.format("http://%s:%s/midknight/api/perfdata/servers/%d/last", adminConsole.get_IP(), adminConsole.get_PORT(), serverIndex);
 			
 			Connection connection = Jsoup.connect(API_URL)
 					.header("Content-Type", "application/json;charset=UTF-8")
@@ -27,6 +28,8 @@ public class RestAgent {
 					.method(Connection.Method.GET);
 			
 			Connection.Response response = connection.execute();
+			
+			adminConsole.setHttpStatusCode(response.statusCode());
 			
 			Document dom = response.parse();
 			
@@ -65,6 +68,10 @@ public class RestAgent {
 				}
 			}
 			
+		}catch(ConnectException e) {
+			// MK119 서비스 실행중 아님
+			// 한번 세션이 생성되었는데 서비스 재시작하면 안된다?
+			e.printStackTrace();
 		}catch(Exception e) {
 			e.printStackTrace();
 			return null;
@@ -72,5 +79,7 @@ public class RestAgent {
 		
 		return perfDataMap;
 	}
+	
+	
 	
 }

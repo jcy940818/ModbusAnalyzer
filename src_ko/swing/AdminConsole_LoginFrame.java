@@ -311,8 +311,10 @@ public class AdminConsole_LoginFrame extends JFrame {
 		String PW = loginPassword.getText().trim();
 		String sessionId = null;
 				
+		this.adminConsole = new AdminConsole_Info(IP, PORT, ID, PW, sessionId);
+		
 		try {
-			sessionId = new HttpAgent().getMK119SessionId(IP, PORT, ID, PW);
+			sessionId = new HttpAgent().getMK119SessionId(this.adminConsole);
 		}catch(SocketTimeoutException e) {
 			e.printStackTrace();
 			System.out.println("응답 타임아웃 초과");
@@ -328,7 +330,7 @@ public class AdminConsole_LoginFrame extends JFrame {
 			// MK119 AdminConsole 로그인 성공
 			
 			// AdminConsole 로그인 정보 인스턴스 생성
-			this.adminConsole = new AdminConsole_Info(IP, PORT, ID, PW, sessionId);
+//			this.adminConsole = new AdminConsole_Info(IP, PORT, ID, PW, sessionId);
 			this.adminConsole.setVersionInfo(DbUtil.getMK119VersionInfo());
 			this.adminConsole.setVersion(DbUtil.getMK119Version());
 			this.adminConsole.setBuild(DbUtil.getMK119Build());
@@ -339,7 +341,7 @@ public class AdminConsole_LoginFrame extends JFrame {
 					break;
 					
 				case "MK119Lite" :
-					MK119_Lite_Panel.adminConsole = this.adminConsole;					
+					MK119_Lite_Panel.adminConsole = this.adminConsole;
 					if(MK119_Lite_Panel.adminConsole != null) {
 						MK119_Lite_Panel.linkMK119_PerfData = true;
 						AdminConsole_LoginFrame.isExist = false;

@@ -18,8 +18,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import src_ko.info.AdminConsole_Info;
-import src_ko.main.ModbusAnalyzer;
-import src_ko.swing.MessageFrame;
+import src_ko.swing.LinkMK119Frame;
 import src_ko.swing.ModbusCollectionFrame;
 import src_ko.util.Util;
 
@@ -33,7 +32,12 @@ public class HttpAgent {
 	/**
 	 * MK119 AdminConsole 로그인에  성공하면 sesssionID를, 실패하면 null을 리턴
 	 */
-	public String getMK119SessionId(String IP,String PORT ,String ID, String PW) throws IOException, ConnectException, SocketTimeoutException{
+	public String getMK119SessionId(AdminConsole_Info admin) throws IOException, ConnectException, SocketTimeoutException{
+		
+		String IP = admin.get_IP();
+		String PORT = admin.get_PORT();
+		String ID = admin.get_ID();
+		String PW = admin.get_PW();
 		
 		try {
 			String adminConsole = String.format("http://%s:%s/midknight/adminConsole", IP, PORT);
@@ -58,7 +62,7 @@ public class HttpAgent {
 			if(page.title().contains("Admin Console")) {
 				System.out.println(String.format("[ %s:%s AdminConsole 로그인 성공 : ID(%s) / PW(%s) ]",IP, PORT, ID, PW));
 				
-				webCookies = loginForm.cookies();		
+				webCookies = loginForm.cookies();
 				
 				Set keys = webCookies.keySet();
 				Iterator it = keys.iterator();
@@ -71,6 +75,9 @@ public class HttpAgent {
 					}
 				}
 				
+				admin.set_SESSION_ID(sessionID);
+				admin.setHttpStatusCode(loginForm.statusCode());
+				LinkMK119Frame.linkRestAPI(admin, "/midknight/adminConsole");
 				return sessionID;
 			}else {
 				StringBuilder sb = new StringBuilder();
@@ -80,6 +87,10 @@ public class HttpAgent {
 				sb.append(String.format("1. <font color='blue'>%s:%s 서버</font> : %s%s\n", IP, PORT,Util.colorRed("MK119 서비스 실행 여부") ,Util.separator));
 				sb.append(String.format("2. <font color='blue'>AdminConsole 로그인 정보</font> : ID( %s ) / PW( %s )%s\n", Util.colorRed(ID), Util.colorRed(PW), Util.separator));	
 				Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+				
+				admin.set_SESSION_ID(sessionID);
+				admin.setHttpStatusCode(0);
+				LinkMK119Frame.linkRestAPI(admin, "/midknight/adminConsole");
 				return null;
 			}
 		}catch(Exception e) {
@@ -90,6 +101,10 @@ public class HttpAgent {
 			sb.append(String.format("1. <font color='blue'>%s:%s 서버</font> : %s%s\n", IP, PORT,Util.colorRed("MK119 서비스 실행 여부") ,Util.separator));
 			sb.append(String.format("2. <font color='blue'>AdminConsole 로그인 정보</font> : ID( %s ) / PW( %s )%s\n", Util.colorRed(ID), Util.colorRed(PW), Util.separator));	
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			
+			admin.set_SESSION_ID(sessionID);
+			admin.setHttpStatusCode(0);
+			LinkMK119Frame.linkRestAPI(admin, "/midknight/adminConsole");
 			return null;
 		}
 	}

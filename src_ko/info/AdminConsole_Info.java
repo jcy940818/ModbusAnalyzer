@@ -4,6 +4,7 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
 
+import common.util.HttpUtil;
 import src_ko.agent.HttpAgent;
 
 public class AdminConsole_Info {
@@ -23,6 +24,8 @@ public class AdminConsole_Info {
 	private String PW;
 	private String USER_NAME;
 	
+	private int httpStatusCode;
+	private String httpStatus = "";
 	
 	public AdminConsole_Info(String IP, String PORT, String ID, String PW, String JSESSIONID) {
 		this.IP = IP;
@@ -59,7 +62,7 @@ public class AdminConsole_Info {
 		String sessionId = null;
 		
 		try {
-			sessionId = new HttpAgent().getMK119SessionId(adminConsole.get_IP(), adminConsole.get_PORT(), adminConsole.get_ID(), adminConsole.get_PW());
+			sessionId = new HttpAgent().getMK119SessionId(adminConsole);
 		}catch(SocketTimeoutException e) {
 			e.printStackTrace();
 			System.out.println("응답 타임아웃 초과");
@@ -152,5 +155,21 @@ public class AdminConsole_Info {
 	public void setVersionInfo(String versionInfo) {
 		this.versionInfo = versionInfo;
 	}
+
+	public int getHttpStatusCode() {
+		return httpStatusCode;
+	}
+
+	public String getHttpStatus() {
+		return httpStatus;
+	}
+
+	public void setHttpStatusCode(int httpStatusCode) {
+		this.httpStatusCode = httpStatusCode;
+		this.httpStatus = HttpUtil.getHttpStatus(httpStatusCode);
+	}
 	
+	public void setHttpStatus(String httpStatus) {
+		this.httpStatus = httpStatus;
+	}
 }
