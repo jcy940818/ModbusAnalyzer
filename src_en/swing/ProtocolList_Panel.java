@@ -60,6 +60,7 @@ public class ProtocolList_Panel extends JPanel {
 	private static JTable table;		
 	private JButton goXmlViewer;
 	private JButton openXmlFile;
+	private static JLabel protocolVersion;
 	
 	/**
 	 * Create the panel.
@@ -169,6 +170,14 @@ public class ProtocolList_Panel extends JPanel {
 			}
 		});
 		infoPanel.add(seartFacility_textField);
+		
+		protocolVersion = new JLabel("Protocol Version");
+		protocolVersion.setHorizontalAlignment(SwingConstants.LEFT);
+		protocolVersion.setForeground(Color.BLACK);
+		protocolVersion.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
+		protocolVersion.setBackground(Color.WHITE);
+		protocolVersion.setBounds(16, 53, 1022, 41);
+		infoPanel.add(protocolVersion);
 		
 		searchProtocol_Label = new JLabel("Search");
 		searchProtocol_Label.setHorizontalAlignment(SwingConstants.LEFT);
@@ -719,6 +728,10 @@ public class ProtocolList_Panel extends JPanel {
 		}catch(Exception e) {			
 			e.printStackTrace();
 		}
+	}
+	
+	public static void setProtocolVersion(String version) {
+		if(protocolVersion != null) protocolVersion.setText(String.format("<html>Protocol Version : %s</html>", Util.colorBlue(version)));
 	}
 	
 	public static void resetForm() {

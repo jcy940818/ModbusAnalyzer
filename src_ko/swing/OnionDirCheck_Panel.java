@@ -160,7 +160,9 @@ public class OnionDirCheck_Panel extends JPanel {
 						}
 						// *****************************************************************************
 						
+						
 						mk119BuildVersion.setText(version);
+						ProtocolList_Panel.setProtocolVersion(version);
 						ONION_Info.setMK119Version(Double.parseDouble(version.split(" ")[1]));
 						showComponent(true);
 					}else {

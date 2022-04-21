@@ -22,6 +22,7 @@ import javax.swing.border.LineBorder;
 import src_en.info.ONION_Info;
 import src_en.util.FileUtil;
 import src_en.util.Util;
+import src_en.swing.ProtocolList_Panel;
 
 
 public class OnionDirCheck_Panel extends JPanel {	
@@ -121,6 +122,7 @@ public class OnionDirCheck_Panel extends JPanel {
 						}
 						
 						mk119BuildVersion.setText(version);
+						ProtocolList_Panel.setProtocolVersion(version);
 						ONION_Info.setMK119Version(Double.parseDouble(version.split(" ")[1]));
 						showComponent(true);
 					}else {
