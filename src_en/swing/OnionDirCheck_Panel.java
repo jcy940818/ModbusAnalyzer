@@ -100,11 +100,13 @@ public class OnionDirCheck_Panel extends JPanel {
 			public void actionPerformed(ActionEvent e) {	
 				
 				try {
-					String path = onionDirPath_TextField.getText().trim();
+					String path = onionDirPath_TextField.getText();
 					
 					if(path == null || path.length() < 1) {
 						showComponent(false);
 						return;
+					}else {
+						path = path.trim(); 
 					}
 									
 					boolean isOnionDir = checkOnionDir(path);
