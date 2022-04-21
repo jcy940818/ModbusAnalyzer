@@ -561,7 +561,7 @@ public class FacilityInfoFrame extends JFrame {
 		JButton formReset_Button = new JButton("Form √ ±‚»≠");
 		formReset_Button.setForeground(Color.BLACK);
 		formReset_Button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
-		formReset_Button.setFocusPainted(false);		
+		formReset_Button.setFocusPainted(false);
 		formReset_Button.setBorder(UIManager.getBorder("Button.border"));
 		formReset_Button.setBackground(Color.WHITE);
 		formReset_Button.setBounds(543, 60, 184, 30);

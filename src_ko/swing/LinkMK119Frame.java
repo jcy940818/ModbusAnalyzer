@@ -3,9 +3,6 @@ package src_ko.swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -16,15 +13,16 @@ import java.util.Date;
 import java.util.HashMap;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
-import common.util.HttpUtil;
 import src_ko.info.AdminConsole_Info;
 import src_ko.info.ONION_Info;
 import src_ko.info.Protocol;
@@ -38,27 +36,35 @@ public class LinkMK119Frame extends JFrame{
 //		new LinkMK119Frame(false, false);
 //	}
 	
-	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
-	private static JButton linkMK119Protocol_Button;
-	private static JLabel mk119ProtocolVersion;
+	public static JLabel mk119ProtocolDataLink;
+	public static JLabel mk119RestDataLink;
 	
+	public static JButton linkMK119Protocol_Button;
+	public static JLabel mk119ProtocolVersion;
+	
+	public static AdminConsole_Info adminConsole;
 	private static JButton linkMK119PerfData_Button;
 	private static JLabel mk119Server;
 	private static JLabel mk119SessionID;
 	private static JLabel mk119LastReqAPI;
 	private static JLabel mk119LastReqTime;
-	private static JLabel mk119HttpStatusCode;	
+	private static JLabel mk119HttpStatusCode;
+	public static String lastReqTime = "";
+	public static String lastReqAPI = "";
 	
 	private static JButton refreshSession_Button;
 	private static JButton terminateSession_Button;
 	
-	public static String protocolVersion = String.format("<html>%s : </html>", Util.colorBlue("Version"));
+	public static String protocolVersionInfo = String.format("<html>%s : </html>", Util.colorBlue("Version"));
 	
-	public static AdminConsole_Info adminConsole;
-	public static String lastReqTime = "";
-	public static String lastReqAPI = "";
-	
+	public static String onionDirPath = "";
+	public static JCheckBox isProject;
+	public static JTextField onionDir_Path_TextField;
+	public static JButton onionDir_Path_Button;
+	public static JButton onionDir_Check_Button;
+	public static JButton onionDir_Auto_Button;
 	
 	/**
 	 * Create the panel.
@@ -69,7 +75,7 @@ public class LinkMK119Frame extends JFrame{
 		setIconImage(new Util().getIconResource().getImage());
 		setResizable(false);
 		
-		setSize(700, 750);
+		setSize(700, 745);
 		setBackground(Color.WHITE);
 		getContentPane().setLayout(new BorderLayout(0, 0));
 
@@ -94,13 +100,22 @@ public class LinkMK119Frame extends JFrame{
 		linkMK119Protocol_Button.setBackground(Color.WHITE);
 		linkMK119Protocol_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		linkMK119Protocol_Button.setFocusPainted(false);
-		linkMK119Protocol_Button.setBounds(63, 317, 365, 37);		
-		linkMK119Protocol_Button.setEnabled(true);
+		linkMK119Protocol_Button.setBounds(63, 331, 365, 37);		
+		linkMK119Protocol_Button.setEnabled(false);		
 		linkMK119Protocol_Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				MainFrame.showOnionDirCheck(MoonInspector.isMoon());
-				dispose();
+				linkProtocol();
+				
+				mk119ProtocolDataLink.setText("2. MK119 Protocol Link Completed");
+				linkMK119Protocol_Button.setText("<html>&nbsp;<font color='blue'>Protocol</font> 데이터 연동 완료</html>");		
+				linkMK119Protocol_Button.setEnabled(false);		
+				
+				isProject.setEnabled(false);
+				onionDir_Path_TextField.setEnabled(false);
+				onionDir_Path_Button.setEnabled(false);
+				onionDir_Check_Button.setEnabled(false);
+				onionDir_Auto_Button.setEnabled(false);
 			}
 		});
 		actualPanel.add(linkMK119Protocol_Button);
@@ -111,18 +126,19 @@ public class LinkMK119Frame extends JFrame{
 		linkMK119PerfData_Button.setBackground(Color.WHITE);
 		linkMK119PerfData_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		linkMK119PerfData_Button.setFocusPainted(false);
-		linkMK119PerfData_Button.setBounds(63, 657, 365, 37);
+		linkMK119PerfData_Button.setBounds(63, 655, 365, 37);
 		linkMK119PerfData_Button.setEnabled(true);
 		linkMK119PerfData_Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
 				AdminConsole_LoginFrame.showLoginForm(ONION_Info.getSimpleSqlServerInfo(), "MK119Lite");
-				dispose();
+
 			}
 		});
 		actualPanel.add(linkMK119PerfData_Button);
 		
-		JLabel mk119DB = new JLabel("1. MK119 Database");
+		JLabel mk119DB = new JLabel("1. MK119 Database Link Completed");
 		mk119DB.setHorizontalAlignment(SwingConstants.LEFT);
 		mk119DB.setForeground(new Color(237, 76, 55));
 		mk119DB.setFont(new Font("맑은 고딕", Font.BOLD, 20));
@@ -135,7 +151,7 @@ public class LinkMK119Frame extends JFrame{
 		mk119SqlServer.setForeground(Color.BLACK);
 		mk119SqlServer.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		mk119SqlServer.setBackground(Color.WHITE);
-		mk119SqlServer.setBounds(63, 126, 489, 37);
+		mk119SqlServer.setBounds(63, 120, 489, 37);
 		actualPanel.add(mk119SqlServer);
 		
 		JLabel mk119DbName = new JLabel(String.format("<html>%s : %s</html>", Util.colorBlue("DB Name"), ONION_Info.getDataBaseName()));
@@ -143,33 +159,107 @@ public class LinkMK119Frame extends JFrame{
 		mk119DbName.setForeground(Color.BLACK);
 		mk119DbName.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		mk119DbName.setBackground(Color.WHITE);
-		mk119DbName.setBounds(63, 163, 489, 37);
+		mk119DbName.setBounds(63, 157, 489, 37);
 		actualPanel.add(mk119DbName);
 		
-		JLabel mk119ProtocolDataLink = new JLabel("2. MK119 Protocol");
+		mk119ProtocolDataLink = new JLabel("2. MK119 Protocol");
 		mk119ProtocolDataLink.setHorizontalAlignment(SwingConstants.LEFT);
 		mk119ProtocolDataLink.setForeground(new Color(237, 76, 55));
 		mk119ProtocolDataLink.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		mk119ProtocolDataLink.setBackground(Color.WHITE);
-		mk119ProtocolDataLink.setBounds(27, 223, 500, 37);
+		mk119ProtocolDataLink.setBounds(27, 204, 500, 37);
 		actualPanel.add(mk119ProtocolDataLink);
 		
-		mk119ProtocolVersion = new JLabel(protocolVersion);
+		JLabel onionDir_Label = new JLabel("ONION Directory");
+		onionDir_Label.setHorizontalAlignment(SwingConstants.LEFT);
+		onionDir_Label.setForeground(Color.BLUE);
+		onionDir_Label.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		onionDir_Label.setBackground(Color.WHITE);
+		onionDir_Label.setBounds(63, 245, 153, 37);
+		actualPanel.add(onionDir_Label);
+		
+		onionDir_Path_TextField = new JTextField(onionDirPath);
+		onionDir_Path_TextField.setForeground(Color.BLACK);
+		onionDir_Path_TextField.setHorizontalAlignment(SwingConstants.LEFT);
+		onionDir_Path_TextField.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
+		onionDir_Path_TextField.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		onionDir_Path_TextField.setBounds(214, 250, 377, 32);		
+		onionDir_Path_TextField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onionDir_Check_Button.doClick();
+			}
+		});
+		actualPanel.add(onionDir_Path_TextField);
+		
+		onionDir_Check_Button = new JButton("Check");
+		onionDir_Check_Button.setForeground(Color.BLACK);
+		onionDir_Check_Button.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		onionDir_Check_Button.setFocusPainted(false);
+		onionDir_Check_Button.setBackground(Color.WHITE);
+		onionDir_Check_Button.setBounds(595, 250, 87, 32);
+		onionDir_Check_Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				boolean isOnion = checkOnionDir(onionDir_Path_TextField.getText(), isProject.isSelected());
+				
+				if(isOnion) {
+					linkMK119Protocol_Button.setEnabled(true);
+				}else{
+					linkMK119Protocol_Button.setEnabled(false);
+				}
+				
+			}
+		});				
+		actualPanel.add(onionDir_Check_Button);
+		
+		onionDir_Path_Button = new JButton("Path");
+		onionDir_Path_Button.setForeground(Color.BLACK);
+		onionDir_Path_Button.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		onionDir_Path_Button.setFocusPainted(false);
+		onionDir_Path_Button.setBackground(Color.WHITE);
+		onionDir_Path_Button.setBounds(610, 335, 72, 32);	
+		onionDir_Path_Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String path = Util.getFilePath();
+				if(path != null) {
+					onionDir_Path_TextField.setText(path);
+				}	
+				onionDir_Check_Button.doClick();
+			}
+		});
+		actualPanel.add(onionDir_Path_Button);
+		
+		onionDir_Auto_Button = new JButton("Auto");
+		onionDir_Auto_Button.setForeground(Color.BLACK);
+		onionDir_Auto_Button.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		onionDir_Auto_Button.setFocusPainted(false);
+		onionDir_Auto_Button.setBackground(Color.WHITE);
+		onionDir_Auto_Button.setBounds(535, 335, 72, 32);
+		onionDir_Auto_Button.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setPath();
+			}
+		});
+		actualPanel.add(onionDir_Auto_Button);
+		
+		mk119ProtocolVersion = new JLabel(protocolVersionInfo);
 		mk119ProtocolVersion.setHorizontalAlignment(SwingConstants.LEFT);
 		mk119ProtocolVersion.setForeground(Color.BLACK);
 		mk119ProtocolVersion.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		mk119ProtocolVersion.setBackground(Color.WHITE);
-		mk119ProtocolVersion.setBounds(63, 271, 489, 37);
+		mk119ProtocolVersion.setBounds(63, 285, 619, 37);
 		actualPanel.add(mk119ProtocolVersion);
 		
-		JLabel mk119RestDataLink = new JLabel("3. MK119 REST API");
+		mk119RestDataLink = new JLabel("3. MK119 REST API");
 		mk119RestDataLink.setHorizontalAlignment(SwingConstants.LEFT);
 		mk119RestDataLink.setForeground(new Color(237, 76, 55));
 		mk119RestDataLink.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		mk119RestDataLink.setBackground(Color.WHITE);
-		mk119RestDataLink.setBounds(27, 397, 204, 37);
+		mk119RestDataLink.setBounds(27, 395, 452, 37);
 		actualPanel.add(mk119RestDataLink);
-		
 		
 		
 		mk119Server = new JLabel(String.format("<html>%s : </html>", Util.colorBlue("MK119 Server")));
@@ -177,7 +267,7 @@ public class LinkMK119Frame extends JFrame{
 		mk119Server.setForeground(Color.BLACK);
 		mk119Server.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		mk119Server.setBackground(Color.WHITE);
-		mk119Server.setBounds(63, 450, 416, 37);
+		mk119Server.setBounds(63, 448, 416, 37);
 		actualPanel.add(mk119Server);
 		
 		mk119SessionID = new JLabel(String.format("<html>%s : </html>", Util.colorBlue("Session ID")));
@@ -185,7 +275,7 @@ public class LinkMK119Frame extends JFrame{
 		mk119SessionID.setForeground(Color.BLACK);
 		mk119SessionID.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		mk119SessionID.setBackground(Color.WHITE);
-		mk119SessionID.setBounds(63, 490, 617, 37);
+		mk119SessionID.setBounds(63, 488, 617, 37);
 		mk119SessionID.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {
 					 if (e.getButton() == 1) {  } // 왼쪽 클릭				 
@@ -208,7 +298,7 @@ public class LinkMK119Frame extends JFrame{
 		mk119LastReqAPI.setForeground(Color.BLACK);
 		mk119LastReqAPI.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		mk119LastReqAPI.setBackground(Color.WHITE);
-		mk119LastReqAPI.setBounds(63, 530, 617, 37);
+		mk119LastReqAPI.setBounds(63, 528, 617, 37);
 		actualPanel.add(mk119LastReqAPI);
 		
 		mk119LastReqTime = new JLabel(String.format("<html>%s : </html>", Util.colorBlue("Last Request Time")));
@@ -216,7 +306,7 @@ public class LinkMK119Frame extends JFrame{
 		mk119LastReqTime.setForeground(Color.BLACK);
 		mk119LastReqTime.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		mk119LastReqTime.setBackground(Color.WHITE);
-		mk119LastReqTime.setBounds(63, 570, 617, 37);
+		mk119LastReqTime.setBounds(63, 568, 617, 37);
 		actualPanel.add(mk119LastReqTime);
 		
 		mk119HttpStatusCode = new JLabel(String.format("<html>%s : </html>", Util.colorBlue("Http Status Code")));
@@ -224,7 +314,7 @@ public class LinkMK119Frame extends JFrame{
 		mk119HttpStatusCode.setForeground(Color.BLACK);
 		mk119HttpStatusCode.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		mk119HttpStatusCode.setBackground(Color.WHITE);
-		mk119HttpStatusCode.setBounds(63, 610, 617, 37);
+		mk119HttpStatusCode.setBounds(63, 608, 617, 37);
 		actualPanel.add(mk119HttpStatusCode);
 		
 		refreshSession_Button = new JButton("Refresh Session");
@@ -233,7 +323,7 @@ public class LinkMK119Frame extends JFrame{
 		refreshSession_Button.setFocusPainted(false);
 		refreshSession_Button.setEnabled(true);
 		refreshSession_Button.setBackground(Color.WHITE);
-		refreshSession_Button.setBounds(491, 393, 189, 37);
+		refreshSession_Button.setBounds(491, 391, 189, 37);
 		refreshSession_Button.setEnabled(false);
 		refreshSession_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -250,14 +340,15 @@ public class LinkMK119Frame extends JFrame{
 		terminateSession_Button.setFocusPainted(false);
 		terminateSession_Button.setEnabled(true);
 		terminateSession_Button.setBackground(Color.WHITE);
-		terminateSession_Button.setBounds(491, 440, 189, 37);
+		terminateSession_Button.setBounds(491, 438, 189, 37);
 		terminateSession_Button.setEnabled(false);
 		terminateSession_Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				lastReqAPI = "Terminate Session";	
+				lastReqAPI = "Terminate Session";
 				lastReqTime = sdf.format(new Date());
 					
+				mk119RestDataLink.setText("3. MK119 REST API");
 				linkMK119PerfData_Button.setText("<html>&nbsp;<font color='green'>REST API</font> 데이터 연동</html>");
 				linkMK119PerfData_Button.setEnabled(true);
 				refreshSession_Button.setEnabled(false);
@@ -281,7 +372,7 @@ public class LinkMK119Frame extends JFrame{
 		
 		JSeparator separator = new JSeparator();
 		separator.setForeground(Color.GRAY);
-		separator.setBounds(5, 210, 684, 19);
+		separator.setBounds(5, 198, 684, 19);
 		actualPanel.add(separator);
 		
 		JSeparator separator_1 = new JSeparator();
@@ -289,24 +380,50 @@ public class LinkMK119Frame extends JFrame{
 		separator_1.setBounds(5, 380, 684, 19);
 		actualPanel.add(separator_1);
 		
+		isProject = new JCheckBox(" MK119 Project");
+		isProject.setHorizontalAlignment(SwingConstants.CENTER);		
+		isProject.setForeground(Color.BLACK);
+		isProject.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		isProject.setFocusPainted(false);
+		isProject.setBackground(Color.WHITE);
+		isProject.setBounds(540, 200, 147, 37);
+		if(MoonInspector.isMoon()) {
+			isProject.setVisible(true);
+		}else {
+			isProject.setSelected(false);
+			isProject.setVisible(false);			
+		}		
+		actualPanel.add(isProject);
+		
+		
+		// 생성자 마지막 부분
 		if(linkProtocol && linkPerfData) {
 			mk119Link.setText("MK119 Data Link Completed");
 		}
+		// 프로토콜 연동 여부 검사
 		if(linkProtocol) {
+			mk119ProtocolDataLink.setText("2. MK119 Protocol Link Completed");
 			linkMK119Protocol_Button.setText("<html>&nbsp;<font color='blue'>Protocol</font> 데이터 연동 완료</html>");
 			linkMK119Protocol_Button.setEnabled(false);
 			
-			mk119ProtocolVersion.setText(protocolVersion);
+			isProject.setEnabled(false);
+			onionDir_Path_TextField.setEnabled(false);
+			onionDir_Check_Button.setEnabled(false);
+			onionDir_Path_Button.setEnabled(false);
+			onionDir_Auto_Button.setEnabled(false);
 		}
+		// REST API 연동 여부 검사
 		if(linkPerfData && (this.adminConsole != null)) {
 			
 			if(this.adminConsole.get_SESSION_ID() != null && this.adminConsole.get_SESSION_ID().length() > 0) {
+				mk119RestDataLink.setText("3. MK119 REST API Link Completed");
 				linkMK119PerfData_Button.setText("<html>&nbsp;<font color='green'>REST API</font> 데이터 연동 완료</html>");
 				linkMK119PerfData_Button.setEnabled(false);
 				refreshSession_Button.setEnabled(true);
 				terminateSession_Button.setEnabled(true);
 			}else {
-				MK119_Lite_Panel.linkMK119_PerfData = false;
+				mk119RestDataLink.setText("3. MK119 REST API");
+				MK119_Lite_Panel.linkMK119_PerfData = false;				
 				refreshSession_Button.setEnabled(false);
 				terminateSession_Button.setEnabled(false);
 			}
@@ -322,12 +439,10 @@ public class LinkMK119Frame extends JFrame{
 		setVisible(true);
 	}
 	
-	public static void linkProtocol(String version) {
-		protocolVersion = String.format("<html>%s : %s</html>", Util.colorBlue("Version"), version);
-		mk119ProtocolVersion.setText(protocolVersion);
-		linkMK119Protocol_Button.setText("<html>&nbsp;<font color='blue'>Protocol</font> 데이터 연동 완료</html>");		
-		linkMK119Protocol_Button.setEnabled(false);
-		terminateSession_Button.setEnabled(true);
+	public static void linkProtocol() {
+		MK119_Lite_Panel.linkMK119_Protocol = true;
+		MK119_Lite_Panel.updateItem_searchComboBox(true);
+		MK119_Lite_Panel.resetForm(false, true);
 	}
 	
 	public static void linkRestAPI(AdminConsole_Info admin, String api) {
@@ -336,6 +451,7 @@ public class LinkMK119Frame extends JFrame{
 		lastReqTime = sdf.format(new Date());
 		
 		if(admin.get_SESSION_ID() != null && admin.get_SESSION_ID().length() > 0) {
+			mk119RestDataLink.setText("3. MK119 REST API Link Completed");
 			linkMK119PerfData_Button.setText("<html>&nbsp;<font color='green'>REST API</font> 데이터 연동 완료</html>");
 			linkMK119PerfData_Button.setEnabled(false);
 			refreshSession_Button.setEnabled(true);
@@ -343,6 +459,7 @@ public class LinkMK119Frame extends JFrame{
 		}else {
 			MK119_Lite_Panel.linkMK119_PerfData = false;
 			
+			mk119RestDataLink.setText("3. MK119 REST API");
 			linkMK119PerfData_Button.setText("<html>&nbsp;<font color='green'>REST API</font> 데이터 연동</html>");
 			linkMK119PerfData_Button.setEnabled(true);
 			refreshSession_Button.setEnabled(false);
@@ -368,14 +485,15 @@ public class LinkMK119Frame extends JFrame{
 		MK119_Lite_Panel.updateItem_searchComboBox(false);
 		MK119_Lite_Panel.linkMK119_Button.setEnabled(true);
 		
-		protocolVersion = String.format("<html>%s : </html>", Util.colorBlue("Version"));
+		onionDirPath = "";
+		protocolVersionInfo = String.format("<html>%s : </html>", Util.colorBlue("Version"));
 	}
 	
-	public static void checkOnionDir(String path, boolean isProject) {
+	public static boolean checkOnionDir(String path, boolean isProject) {
 		try {			
 			
 			if(path == null || path.length() < 1) {				
-				return;
+				return false;
 			}else {
 				path = path.trim(); 
 			}
@@ -389,11 +507,13 @@ public class LinkMK119Frame extends JFrame{
 				String version = FileUtil.getMK119BuildVersion(isProject).replace("build", "Build");
 				
 				if(version.contains("Fail")) {
-					System.out.println("MK119 VersionInfo Load Fail");					
-					return;
+					System.out.println("MK119 VersionInfo Load Fail");
+					protocolVersionInfo = String.format("<html>%s : %s</html>", Util.colorBlue("Version"), Util.colorRed("Not a OnionSoftware Directory"));
+					mk119ProtocolVersion.setText(protocolVersionInfo);
+					return false;
 				}
 				
-				// ****** [ 서버 리스트에 프로토콜 정보만 연동 ] ******************************************				
+				// ****** [ 서버 리스트에 프로토콜 정보 연동 ] ******************************************				
 				ArrayList<Protocol> protocolList = FileUtil.getProtocolList(isProject);
 				HashMap<String, Protocol> protocolMap = new HashMap<String, Protocol>();
 				
@@ -407,32 +527,61 @@ public class LinkMK119Frame extends JFrame{
 				}
 				
 				MK119_Lite_Panel.protocolMap = protocolMap;
-				MK119_Lite_Panel.linkMK119_Protocol = true;
-				MK119_Lite_Panel.updateItem_searchComboBox(true);
-				MK119_Lite_Panel.resetForm(false, true);
 				
-				LinkMK119Frame.linkProtocol(version);
-				
-				StringBuilder sb = new StringBuilder();
-				sb.append(String.format("%s ( %s )%s%s%s\n",Util.colorBlue("MK119 프로토콜 정보 연동 완료"), Util.colorRed(version), Util.separator, Util.separator, Util.separator));
-				sb.append(String.format("성공적으로 MK119 프로토콜 정보 연동을 완료하였습니다%s%s\n\n", Util.separator, Util.separator));
-				sb.append(String.format("이제부터 시설물의 프로토콜 정보를 확인 할 수 있습니다%s%s%s%s%s\n\n", Util.separator, Util.separator, Util.separator, Util.separator, Util.longSeparator));
-				sb.append(String.format("%s%s%s\n", Util.colorGreen("( 프로토콜 정보를 이용하여 시설물을 검색 할 수 있습니다 )"), Util.separator, Util.separator));
-				Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
-				
-				MainFrame.showMK119Lite();
-				return;				
+				onionDirPath = path;
+				protocolVersionInfo = String.format("<html>%s : %s</html>", Util.colorBlue("Version"), Util.colorGreen(version));
+				mk119ProtocolVersion.setText(protocolVersionInfo);
+				return true;
 				// *****************************************************************************
 				
 			}else {
-				// 어니언 디렉토리가 아님
-				
+				// 어니언 디렉토리 아님
+				protocolVersionInfo = String.format("<html>%s : %s</html>", Util.colorBlue("Version"), Util.colorRed("Not a OnionSoftware Directory"));
+				mk119ProtocolVersion.setText(protocolVersionInfo);
+				return false;
 			}
 		}catch(Exception ex) {
 			// 디렉토리 확인중 예외 발생
-			
-		}	
+			ex.printStackTrace();
+			protocolVersionInfo = String.format("<html>%s : %s</html>", Util.colorBlue("Version"), Util.colorRed("Not a OnionSoftware Directory"));
+			mk119ProtocolVersion.setText(protocolVersionInfo);
+			return false;
+		}
 	}
 	
+	public static void setPath() {
+		String C = "C:\\";
+		String D = "D:\\";
+		
+		// D 드라이브 우선
+		boolean hasOnionDir = FileUtil.hasOnionDir(D);
+		
+		if(hasOnionDir) {
+			onionDir_Path_TextField.setText(D + "OnionSoftware");
+			onionDir_Check_Button.doClick();
+			return;
+		}else {
+			mk119ProtocolVersion.setText(String.format("<html>%s : %s</html>", Util.colorBlue("Version"), Util.colorRed("Not Found OnionSoftware Directory")));			
+		}
+		
+		hasOnionDir = FileUtil.hasOnionDir(C);
+		
+		if(hasOnionDir) {
+			onionDir_Path_TextField.setText(C + "OnionSoftware");
+			onionDir_Check_Button.doClick();
+			return;
+		}else {
+			mk119ProtocolVersion.setText(String.format("<html>%s : %s</html>", Util.colorBlue("Version"), Util.colorRed("Not Found OnionSoftware Directory")));
+		}
+	}
+	
+	@Override
+	public void dispose() {
+		if(!MK119_Lite_Panel.linkMK119_Protocol) {
+			onionDirPath = "";
+			protocolVersionInfo = String.format("<html>%s : </html>", Util.colorBlue("Version"));
+		}
+		super.dispose();
+	}
 	
 }
