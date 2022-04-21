@@ -11,11 +11,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
@@ -24,7 +27,9 @@ import javax.swing.border.LineBorder;
 import common.util.HttpUtil;
 import src_ko.info.AdminConsole_Info;
 import src_ko.info.ONION_Info;
+import src_ko.info.Protocol;
 import src_ko.main.MoonInspector;
+import src_ko.util.FileUtil;
 import src_ko.util.Util;
 
 public class LinkMK119Frame extends JFrame{
@@ -94,8 +99,6 @@ public class LinkMK119Frame extends JFrame{
 		linkMK119Protocol_Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				OnionDirCheck_Panel.connectServerList = true;
-				OnionDirCheck_Panel.back_button.setVisible(true);
 				MainFrame.showOnionDirCheck(MoonInspector.isMoon());
 				dispose();
 			}
@@ -252,7 +255,7 @@ public class LinkMK119Frame extends JFrame{
 		terminateSession_Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				lastReqAPI = "Terminate a Session";	
+				lastReqAPI = "Terminate Session";	
 				lastReqTime = sdf.format(new Date());
 					
 				linkMK119PerfData_Button.setText("<html>&nbsp;<font color='green'>REST API</font> 데이터 연동</html>");
@@ -264,7 +267,7 @@ public class LinkMK119Frame extends JFrame{
 				mk119SessionID.setText(String.format("<html>%s : %s</html>", Util.colorBlue("Session ID"), Util.colorRed(adminConsole.get_SESSION_ID())));
 				mk119LastReqAPI.setText(String.format("<html>%s : %s</html>" ,Util.colorBlue("Last Request API"), Util.colorRed(lastReqAPI)));
 				mk119LastReqTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Request Time"), Util.colorRed(lastReqTime)));
-				mk119HttpStatusCode.setText(String.format("<html>%s : %s</html>", Util.colorBlue("HTTP Status Code"), Util.colorRed("Connection Close")));
+				mk119HttpStatusCode.setText(String.format("<html>%s : %s</html>", Util.colorBlue("HTTP Status Code"), Util.colorRed("0 ( Connection Close )")));
 				
 				lastReqAPI = "";
 				lastReqTime = "";
@@ -367,4 +370,69 @@ public class LinkMK119Frame extends JFrame{
 		
 		protocolVersion = String.format("<html>%s : </html>", Util.colorBlue("Version"));
 	}
+	
+	public static void checkOnionDir(String path, boolean isProject) {
+		try {			
+			
+			if(path == null || path.length() < 1) {				
+				return;
+			}else {
+				path = path.trim(); 
+			}
+							
+			boolean isOnionDir = OnionDirCheck_Panel.checkOnionDir(path, isProject);
+			
+			if(isOnionDir) {
+				ONION_Info.setOnionDirPath(path);
+				ONION_Info.setProjectDirPath(path);
+				
+				String version = FileUtil.getMK119BuildVersion(isProject).replace("build", "Build");
+				
+				if(version.contains("Fail")) {
+					System.out.println("MK119 VersionInfo Load Fail");					
+					return;
+				}
+				
+				// ****** [ 서버 리스트에 프로토콜 정보만 연동 ] ******************************************				
+				ArrayList<Protocol> protocolList = FileUtil.getProtocolList(isProject);
+				HashMap<String, Protocol> protocolMap = new HashMap<String, Protocol>();
+				
+				for(Protocol p : protocolList) {
+					int protocolType = p.getProtocolType();
+					int facCode = p.getFacCode();
+					int protocolNumber = p.getNumber();
+					
+					String key = String.format("%d-%d-%d", protocolType, facCode, protocolNumber);
+					protocolMap.put(key, p);
+				}
+				
+				MK119_Lite_Panel.protocolMap = protocolMap;
+				MK119_Lite_Panel.linkMK119_Protocol = true;
+				MK119_Lite_Panel.updateItem_searchComboBox(true);
+				MK119_Lite_Panel.resetForm(false, true);
+				
+				LinkMK119Frame.linkProtocol(version);
+				
+				StringBuilder sb = new StringBuilder();
+				sb.append(String.format("%s ( %s )%s%s%s\n",Util.colorBlue("MK119 프로토콜 정보 연동 완료"), Util.colorRed(version), Util.separator, Util.separator, Util.separator));
+				sb.append(String.format("성공적으로 MK119 프로토콜 정보 연동을 완료하였습니다%s%s\n\n", Util.separator, Util.separator));
+				sb.append(String.format("이제부터 시설물의 프로토콜 정보를 확인 할 수 있습니다%s%s%s%s%s\n\n", Util.separator, Util.separator, Util.separator, Util.separator, Util.longSeparator));
+				sb.append(String.format("%s%s%s\n", Util.colorGreen("( 프로토콜 정보를 이용하여 시설물을 검색 할 수 있습니다 )"), Util.separator, Util.separator));
+				Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+				
+				MainFrame.showMK119Lite();
+				return;				
+				// *****************************************************************************
+				
+			}else {
+				// 어니언 디렉토리가 아님
+				
+			}
+		}catch(Exception ex) {
+			// 디렉토리 확인중 예외 발생
+			
+		}	
+	}
+	
+	
 }
