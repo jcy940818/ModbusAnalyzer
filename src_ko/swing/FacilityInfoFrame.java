@@ -73,12 +73,9 @@ public class FacilityInfoFrame extends JFrame {
 	private HashMap<Integer, PerfData> perfRealTimeDataMap = null;
 	public static boolean isExist = false;
 	private JLabel MK119;
-	 
-//	private File xmlFile;
-//	private Protocol protocol;
 	
 	private Facility fac;
-	private boolean isCommon;
+	private boolean isProtocol;
 	private ArrayList<FmsPerfItem> perfs;
 	private Perf selectedPerf;	
 	
@@ -98,11 +95,14 @@ public class FacilityInfoFrame extends JFrame {
 	private JButton dbRefreshButton;
 	private JButton eventInfo_Button;
 	private JButton linkMK119_Button;
-	private JButton updatePerfData;
+	
 	private JButton rcuInfo_Button;
 	private JTable perfData_Table;	
 	
 	private JLabel currentFunction;
+	
+	public static JButton updatePerfData;
+	public static JRadioButton perfValue_RadioButton;
 	
 	/**
 	 * Launch the application.
@@ -129,14 +129,9 @@ public class FacilityInfoFrame extends JFrame {
 	 */
 	public FacilityInfoFrame(Facility fac) {		
 		
-		if(MK119_Lite_Panel.linkMK119_PerfData && MK119_Lite_Panel.adminConsole != null) {
-			perfRealTimeDataMap = RestAgent.getFacilityPerfDataMap(true, fac.getIndex(), MK119_Lite_Panel.adminConsole);
-		}
-		
 		this.fac = fac;
-		this.isCommon = fac.isProtocol();
+		this.isProtocol = fac.isProtocol();
 		this.perfs = Perf.getFaciltiyPerfList(ONION_Info.getMk119Connection(), fac);
-				
 		
 		FacilityInfoFrame.isExist = true;
 		setTitle(String.format("Facility Information   [  Index : %d  /  Name : %s  ]", fac.getIndex(), fac.getName()));
@@ -229,7 +224,7 @@ public class FacilityInfoFrame extends JFrame {
 		perfInfo_Panel.setBounds(739, 128, 483, 530);
 		perfInfo_Panel.setLayout(null);
 		perfInfo_Panel.setVisible(true);
-//		actualPanel.add(perfInfo_Panel); 테스트중
+		actualPanel.add(perfInfo_Panel);
 		
 		perfInfo_ScrollPanel = new JScrollPane();
 		perfInfo_ScrollPanel.setBackground(Color.WHITE);
@@ -278,8 +273,12 @@ public class FacilityInfoFrame extends JFrame {
 		perfData_Table = new JTable();
 		perfData_Table.setModel(new DefaultTableModel(
 				new Object[][] {
-					{"2022-04-19 14:19:26", "220.1 V"},
-					{"2022-04-19 14:19:26", "380.12 V"},
+					{"1994-08-18 08:45:00", "JCY Moon"},
+					{null, null},
+					{null, null},
+					{null, null},
+					{null, null},
+					{null, null},
 					{null, null},
 					{null, null},
 					{null, null},
@@ -350,21 +349,12 @@ public class FacilityInfoFrame extends JFrame {
 				PERF_NAME,
 				PERF_INDEX,
 				PERF_TYPE,
-				(this.isCommon) ? PERF_COUNTER : OID, 
+				(this.isProtocol) ? PERF_COUNTER : OID, 
 				INTERVAL, 
 				UNIT, 
 				SCALE, 
 				DATA_FORMAT
-		}));
-		searchPerf_ComboBox_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					doTableFilter();
-				}catch(Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		});
+		}));		
 		searchPerf_ComboBox_1.setSelectedIndex(0);
 		actualPanel.add(searchPerf_ComboBox_1);
 		
@@ -377,21 +367,12 @@ public class FacilityInfoFrame extends JFrame {
 				PERF_NAME,
 				PERF_INDEX,
 				PERF_TYPE,
-				(this.isCommon) ? PERF_COUNTER : OID, 
+				(this.isProtocol) ? PERF_COUNTER : OID, 
 				INTERVAL, 
 				UNIT, 
 				SCALE, 
 				DATA_FORMAT
 		}));
-		searchPerf_ComboBox_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					doTableFilter();
-				}catch(Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		});
 		searchPerf_ComboBox_2.setSelectedIndex(3);
 		actualPanel.add(searchPerf_ComboBox_2);
 		
@@ -402,24 +383,7 @@ public class FacilityInfoFrame extends JFrame {
 		searchPerf_textField_1.setForeground(Color.BLACK);
 		searchPerf_textField_1.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchPerf_textField_1.setColumns(10);
-		searchPerf_textField_1.setBounds(220, 60, 318, 30);
-		searchPerf_textField_1.addKeyListener(new KeyAdapter() {			
-			public void keyPressed(KeyEvent e) {
-				try {
-					doTableFilter();
-				}catch(Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-			
-			public void keyReleased(KeyEvent e) {
-				try {
-					doTableFilter();
-				}catch(Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		});
+		searchPerf_textField_1.setBounds(220, 60, 318, 30);		
 		actualPanel.add(searchPerf_textField_1);
 		
 		searchPerf_textField_2 = new JTextField();
@@ -428,100 +392,10 @@ public class FacilityInfoFrame extends JFrame {
 		searchPerf_textField_2.setForeground(Color.BLACK);
 		searchPerf_textField_2.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		searchPerf_textField_2.setColumns(10);
-		searchPerf_textField_2.setBounds(220, 94, 318, 30);
-		searchPerf_textField_2.addKeyListener(new KeyAdapter() {			
-			public void keyPressed(KeyEvent e) {
-				try {
-					doTableFilter();
-				}catch(Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-			
-			public void keyReleased(KeyEvent e) {
-				try {
-					doTableFilter();
-				}catch(Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		});
+		searchPerf_textField_2.setBounds(220, 94, 318, 30);		
 		actualPanel.add(searchPerf_textField_2);
-		
-		String pName = null;
-		if(MK119_Lite_Panel.linkMK119_Protocol) {
-			Protocol p = MK119_Lite_Panel.protocolMap.get(fac.getProtocolKey());
-			if(p != null) {
-				pName = p.getName();
-			}else {
-				pName = "Unknown Protocol";
-			}
-		}else {
-			pName = " - ";
-		}
-		
-		String facInfo_1 = "";
-		facInfo_1 += "<html>";
-		facInfo_1 += Util.colorBlue("장비 정보 : ") + fac.getName();
-		facInfo_1 += "&nbsp;&nbsp;";
-		facInfo_1 += "( ";
-		facInfo_1 += Util.colorGreen(fac.getTypeString() + Util.colorRed(" / ") + fac.getConnMethod() + Util.colorRed(" / ") + pName);
-		facInfo_1 += Util.colorGreen(Util.colorRed(" / "));
-		facInfo_1 += (fac.getState().equalsIgnoreCase("통신 오류")) ? Util.colorRed(fac.getState()) : Util.colorGreen(fac.getState()); 
-		facInfo_1 += " )";
-		facInfo_1 += "</html>";
-		
-		String facInfo_2 = "";
-		if(fac.isConnRCU() && fac.getRcu() != null) {
-			facInfo_2 += "<html>";
-			
-			// TCP/IP 이중화 RCU
-			if(fac.getRcu().isDuplexedPort()) {
-				facInfo_2 += Util.colorBlue("RCU : ") + fac.getRcu().getName();
-				facInfo_2 += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
-
-				facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
-				facInfo_2 += Util.colorGreen(" & ")  + fac.getRcu().getAuxIP();
-				facInfo_2 += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
-
-				facInfo_2 += Util.colorBlue("RCU Port : ");
 				
-				if(fac.getPort() != 0) {
-					facInfo_2 += fac.getPort() + Util.colorGreen(" & ") + fac.getRcu().getAuxPort();
-				}else {
-					facInfo_2 += "Unknown";
-				}
-			}else {
-				// 일반 RCU
-				facInfo_2 += Util.colorBlue("RCU : ") + fac.getRcu().getName();
-				facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
-
-				facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
-				facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
-
-				facInfo_2 += Util.colorBlue("RCU Port : ");
-				
-				if(fac.getPort() != 0) {
-					facInfo_2 += fac.getRcuPortCh() + " ( " + fac.getPort() + " )";
-				}else {
-					facInfo_2 += "Unknown";
-				}
-			}
-			
-			facInfo_2 += "</html>";
-		}else if(!fac.isConnRCU() && fac.getRcu() != null){
-			facInfo_2 += "<html>";
-			facInfo_2 += Util.colorRed("장비와 연결된 RCU 정보를 찾을 수 없습니다");
-			facInfo_2 += "</html>";
-		}else {
-			facInfo_2 = "<html>";
-			facInfo_2 += Util.colorBlue("IP : ") + fac.getIp();
-			facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
-			facInfo_2 += Util.colorBlue("Port : ") + fac.getPort(); 
-			facInfo_2 += "</html>";
-		}
-		
-		FacilityInfoLabel_1 = new JLabel(facInfo_1);
+		FacilityInfoLabel_1 = new JLabel();
 		FacilityInfoLabel_1.setHorizontalAlignment(SwingConstants.LEFT);
 		FacilityInfoLabel_1.setForeground(Color.BLACK);
 		FacilityInfoLabel_1.setFont(new Font("맑은 고딕", Font.BOLD, 17));
@@ -529,7 +403,7 @@ public class FacilityInfoFrame extends JFrame {
 		FacilityInfoLabel_1.setBounds(260, 1, 962, 30);		
 		actualPanel.add(FacilityInfoLabel_1);
 		
-		FacilityInfoLabel_2 = new JLabel(facInfo_2);
+		FacilityInfoLabel_2 = new JLabel();
 		FacilityInfoLabel_2.setHorizontalAlignment(SwingConstants.LEFT);
 		FacilityInfoLabel_2.setForeground(Color.BLACK);
 		FacilityInfoLabel_2.setFont(new Font("맑은 고딕", Font.BOLD, 17));
@@ -555,9 +429,6 @@ public class FacilityInfoFrame extends JFrame {
 		});
 		actualPanel.add(dbRefreshButton);
 		
-		// 테이블 로드
-		updatePerfListTable(perfListTable);
-		
 		JButton formReset_Button = new JButton("Form 초기화");
 		formReset_Button.setForeground(Color.BLACK);
 		formReset_Button.setFont(new Font("맑은 고딕", Font.BOLD, 15));
@@ -571,6 +442,7 @@ public class FacilityInfoFrame extends JFrame {
 				searchPerf_textField_2.setText(null);
 				searchPerf_ComboBox_1.setSelectedIndex(0);
 				searchPerf_ComboBox_2.setSelectedIndex(3);
+				updatePerfListTable(perfListTable, false);
 			}
 		});
 		actualPanel.add(formReset_Button);
@@ -598,7 +470,11 @@ public class FacilityInfoFrame extends JFrame {
 		linkMK119_Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new LinkMK119Frame(MK119_Lite_Panel.linkMK119_Protocol, MK119_Lite_Panel.linkMK119_PerfData);
+				
+				if(!LinkMK119Frame.isExist) {
+					new LinkMK119Frame(MK119_Lite_Panel.linkMK119_Protocol, MK119_Lite_Panel.linkMK119_PerfData);
+				}
+				
 			}
 		});
 		actualPanel.add(linkMK119_Button);
@@ -609,13 +485,12 @@ public class FacilityInfoFrame extends JFrame {
 		updatePerfData.setFocusPainted(false);
 		updatePerfData.setBorder(UIManager.getBorder("Button.border"));
 		updatePerfData.setBackground(Color.WHITE);
-		updatePerfData.setBounds(543, 94, 184, 30);
+		updatePerfData.setBounds(543, 94, 184, 30);		
 		updatePerfData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				updatePerfListTable(perfListTable);
+				doTableFilter(true);
 			}
 		});
-		checkLinkMK119();
 		actualPanel.add(updatePerfData);
 		
 		rcuInfo_Button = new JButton("RCU");
@@ -649,12 +524,12 @@ public class FacilityInfoFrame extends JFrame {
 		});
 		actualPanel.add(perfInfo_RadioButton);
 		
-		JRadioButton perfValue_RadioButton = new JRadioButton("수집 데이터");
+		perfValue_RadioButton = new JRadioButton("수집 데이터");
 		perfValue_RadioButton.setForeground(Color.BLACK);
 		perfValue_RadioButton.setBackground(Color.WHITE);
 		perfValue_RadioButton.setFocusPainted(false);
 		perfValue_RadioButton.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		perfValue_RadioButton.setBounds(746, 94, 121, 30);
+		perfValue_RadioButton.setBounds(746, 94, 121, 30);		
 		perfValue_RadioButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -664,23 +539,49 @@ public class FacilityInfoFrame extends JFrame {
 		});
 		actualPanel.add(perfValue_RadioButton);
 		
-		ButtonGroup buttonGroup = new ButtonGroup();		
+		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(perfInfo_RadioButton);
 		buttonGroup.add(perfValue_RadioButton);
 		
 		// ESC : Close Listener
-		CloseListener close = new CloseListener();
-		this.addKeyListener(close);
-		getContentPane().addKeyListener(close);
-		searchPerf_ComboBox_1.addKeyListener(close);
-		searchPerf_ComboBox_2.addKeyListener(close);
-		searchPerf_textField_1.addKeyListener(close);
-		searchPerf_textField_2.addKeyListener(close);
+		MyKeyListener myKeyListener = new MyKeyListener();
+		searchPerf_ComboBox_1.addKeyListener(myKeyListener);
+		searchPerf_ComboBox_2.addKeyListener(myKeyListener);
+		searchPerf_textField_1.addKeyListener(myKeyListener);
+		searchPerf_textField_2.addKeyListener(myKeyListener);
+		
+		KeyAdapter close = new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				try {
+					if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+						dispose();					
+					}
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			
+			public void keyReleased(KeyEvent e) {
+				try {
+					if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+						dispose();					
+					}
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		};
 		perfListTable.addKeyListener(close);
 		perfInfoTable.addKeyListener(close);
 		perfLabelTable.addKeyListener(close);
 		
 		initCopyAdapter(fac.getName().trim());
+				
+		// 장비 정보를 표시
+		updateFacilityInfo();
+		
+		// 테이블 로드
+		updatePerfListTable(perfListTable, isConnectRestAPI());
 		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
@@ -703,107 +604,22 @@ public class FacilityInfoFrame extends JFrame {
 			rcuInfo_Button.setText("연결된 RCU 없음");
 		}
 	}
-	
-	public void checkLinkMK119() {
-		if(MK119_Lite_Panel.linkMK119_PerfData) {
-			updatePerfData.setText("성능 데이터 최신화");
-			updatePerfData.setEnabled(true);
-		}else {
-			updatePerfData.setText("성능 데이터 연동 전");
-			updatePerfData.setEnabled(false);
-		}
-	}	
-	
+		
 	// ************ XML Reload *******************************************
 	public void refreshDB() {
 		
 		MK119_Lite_Panel.resetForm(true, false);
-		
-		checkLinkMK119();				
+				
 		if(MK119_Lite_Panel.serverMap.containsKey(fac.getIndex())) {
 						
 			this.fac = (Facility)MK119_Lite_Panel.serverMap.get(fac.getIndex());
-			this.isCommon = fac.isProtocol();
+			this.isProtocol = fac.isProtocol();
 			
 			MK119_Lite_Panel.initEventButton(eventInfo_Button, fac);
 			initRcuInfoButton();
-			initCopyAdapter(fac.getName().trim());			
+			initCopyAdapter(fac.getName().trim());
+			updateFacilityInfo();
 			
-			String pName = null;
-			if(MK119_Lite_Panel.linkMK119_Protocol) {
-				Protocol p = MK119_Lite_Panel.protocolMap.get(fac.getProtocolKey());
-				if(p != null) {
-					pName = p.getName();
-				}else {
-					pName = "Unknown Protocol";
-				}
-			}else {
-				pName = " - ";
-			}
-			
-			String facInfo_1 = "";
-			facInfo_1 += "<html>";
-			facInfo_1 += Util.colorBlue("장비 정보 : ") + fac.getName();
-			facInfo_1 += "&nbsp;&nbsp;";
-			facInfo_1 += "( ";
-			facInfo_1 += Util.colorGreen(fac.getTypeString() + Util.colorRed(" / ") + fac.getConnMethod() + Util.colorRed(" / ") + pName);
-			facInfo_1 += Util.colorGreen(Util.colorRed(" / "));
-			facInfo_1 += (fac.getState().equalsIgnoreCase("통신 오류")) ? Util.colorRed(fac.getState()) : Util.colorGreen(fac.getState());
-			facInfo_1 += " )";
-			facInfo_1 += "</html>";
-			
-			String facInfo_2 = "";
-			if(fac.isConnRCU() && fac.getRcu() != null) {
-				facInfo_2 += "<html>";
-				
-				// TCP/IP 이중화 RCU
-				if(fac.getRcu().isDuplexedPort()) {
-					facInfo_2 += Util.colorBlue("RCU : ") + fac.getRcu().getName();
-					facInfo_2 += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
-
-					facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
-					facInfo_2 += Util.colorGreen(" & ")  + fac.getRcu().getAuxIP();
-					facInfo_2 += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
-
-					facInfo_2 += Util.colorBlue("RCU Port : ");
-					
-					if(fac.getPort() != 0) {
-						facInfo_2 += fac.getPort() + Util.colorGreen(" & ") + fac.getRcu().getAuxPort();
-					}else {
-						facInfo_2 += "Unknown";
-					}
-				}else {
-					// 일반 RCU
-					facInfo_2 += Util.colorBlue("RCU : ") + fac.getRcu().getName();
-					facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
-
-					facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
-					facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
-
-					facInfo_2 += Util.colorBlue("RCU Port : ");
-					
-					if(fac.getPort() != 0) {
-						facInfo_2 += fac.getRcuPortCh() + " ( " + fac.getPort() + " )";
-					}else {
-						facInfo_2 += "Unknown";
-					}
-				}
-				
-				facInfo_2 += "</html>";
-			}else if(!fac.isConnRCU() && fac.getRcu() != null){
-				facInfo_2 += "<html>";
-				facInfo_2 += Util.colorRed("장비와 연결된 RCU 정보를 찾을 수 없습니다");
-				facInfo_2 += "</html>";
-			}else {
-				facInfo_2 = "<html>";
-				facInfo_2 += Util.colorBlue("IP : ") + fac.getIp();
-				facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
-				facInfo_2 += Util.colorBlue("Port : ") + fac.getPort(); 
-				facInfo_2 += "</html>";
-			}
-			
-			FacilityInfoLabel_1.setText(facInfo_1);
-			FacilityInfoLabel_2.setText(facInfo_2);
 		}else {
 			String separator = Util.separator + Util.separator;
 			
@@ -831,7 +647,8 @@ public class FacilityInfoFrame extends JFrame {
 		
 		this.perfs = Perf.getFaciltiyPerfList(ONION_Info.getMk119Connection(), this.fac);
 		
-		updatePerfListTable(perfListTable);
+		// 성능 리스트 테이블 업데이트
+		updatePerfListTable(perfListTable, false);
 		
 		perfInfoTable.setModel(new DefaultTableModel(
 				new Object[][] {
@@ -874,7 +691,7 @@ public class FacilityInfoFrame extends JFrame {
 				}
 		});
 		setTableStyle(perfLabelTable, PERF_LABEL_TABLE);
-		
+				
 		searchPerf_textField_1.setText(null);
 		searchPerf_textField_2.setText(null);
 		mappingLabel.setText(null);
@@ -882,24 +699,25 @@ public class FacilityInfoFrame extends JFrame {
 	
 	
 	//*************** 성능 리스트 테이블  *********************************************************************************
-	 public void updatePerfListTable(JTable table) {
+	public void updatePerfListTable(JTable table, boolean updatePerfData) {
 		
-			if (table == null || perfs == null) return;
-			if(MK119_Lite_Panel.linkMK119_PerfData && MK119_Lite_Panel.adminConsole != null) {
-				perfRealTimeDataMap = RestAgent.getFacilityPerfDataMap(true, fac.getIndex(), MK119_Lite_Panel.adminConsole);
-			}
-			
-			Object[][] content = new Object[perfs.size()][];
-	
+		if (table == null || perfs == null) return;
+		
+		// REST API 호출
+		if(updatePerfData && isConnectRestAPI()) {
+			perfRealTimeDataMap = RestAgent.getFacilityPerfDataMap(true, fac.getIndex(), MK119_Lite_Panel.adminConsole);
+		}
+		
+		Object[][] content = new Object[perfs.size()][];
+
+		if(isConnectRestAPI()) {
 			for (int i = 0; i < perfs.size(); i++) {
 				Perf perf = perfs.get(i);
-				
 				content[i] = new Object[4];
 				content[i][0] = i + 1; // 순 서
 				content[i][1] = perf;
-				
 				// 성능 값
-				if(MK119_Lite_Panel.linkMK119_PerfData && perfRealTimeDataMap != null) {
+				if(perfRealTimeDataMap != null) {
 					PerfData data = perfRealTimeDataMap.get(perf.getIndex());
 					
 					if(data != null && !data.getValue().equals("-")) {
@@ -913,24 +731,32 @@ public class FacilityInfoFrame extends JFrame {
 					}catch(Exception e) {
 						content[i][3] = "-";
 					}
-					
 				}else {
 					content[i][2] = "-";
 					content[i][3] = "-";
 				}
-				
 			}
-	
-			table.setModel(new DefaultTableModel(
-				content,
-				new String[] { "순 서", "성 능", "최종값", "수집 시간"}) {
-				// 테이블 셀 내용 수정 금지
-				public boolean isCellEditable(int i, int c) {
-					return false;
-				}
-			});
-	
-			setTableStyle(table, PERF_LIST_TABLE);
+		}else {
+			for (int i = 0; i < perfs.size(); i++) {
+				Perf perf = perfs.get(i);
+				content[i] = new Object[2];
+				content[i][0] = i + 1; // 순 서
+				content[i][1] = perf;
+			}
+		}
+		
+		String[] header = (isConnectRestAPI()) ? new String[] { "순 서", "성 능", "최종값", "수집 시간" } : new String[] { "순 서", "성 능" };
+		
+		table.setModel(new DefaultTableModel(
+			content, 
+			header) {
+			// 테이블 셀 내용 수정 금지
+			public boolean isCellEditable(int i, int c) {
+				return false;
+			}
+		});
+
+		setTableStyle(table, PERF_LIST_TABLE);
 	}
 	
 	
@@ -954,7 +780,7 @@ public class FacilityInfoFrame extends JFrame {
 		content[2][1] = perf.getPerfTypeString();
 		
 		content[3] = new Object[2];
-		content[3][0] = (this.isCommon) ? "성능 카운터" : "OID";
+		content[3][0] = (this.isProtocol) ? "성능 카운터" : "OID";
 		content[3][1] = perf.getCounter();
 		
 		content[4] = new Object[2];
@@ -1009,405 +835,557 @@ public class FacilityInfoFrame extends JFrame {
 	}
 	
 	//******************** 성능 레이블 매핑 정보 테이블 관련 *********************************************************************
-		public void updatePerfLabelMappingTable(JTable table, Perf perf) {		
+	public void updatePerfLabelMappingTable(JTable table, Perf perf) {		
+		
+		if (table == null || perf == null) return;
+		
+		Object[][] content;
+		String[] binLabel;
+		PerfLabelStatusBean[] labels;
+		
+		if(perf.getDataFormat() == 1) {
+			binLabel = perf.getBinLabel();
+			content = new Object[binLabel.length][];
 			
-			if (table == null || perf == null) return;
+			content[0] = new Object[2];
+			content[0][0] = 0;
+			content[0][1] = binLabel[0];
 			
-			Object[][] content;
-			String[] binLabel;
-			PerfLabelStatusBean[] labels;
-			
-			if(perf.getDataFormat() == 1) {
-				binLabel = perf.getBinLabel();
-				content = new Object[binLabel.length][];
-				
-				content[0] = new Object[2];
-				content[0][0] = 0;
-				content[0][1] = binLabel[0];
-				
-				content[1] = new Object[2];
-				content[1][0] = 1;
-				content[1][1] = binLabel[1];				
-			}else {
-				labels = perf.getStatusLabels();
-				content = new Object[labels.length][];
-				for(int i = 0; i < labels.length; i++) {
-					content[i] = new Object[2];
-					content[i][0] = labels[i].value;
-					content[i][1] = labels[i].label;
-				}
+			content[1] = new Object[2];
+			content[1][0] = 1;
+			content[1][1] = binLabel[1];				
+		}else {
+			labels = perf.getStatusLabels();
+			content = new Object[labels.length][];
+			for(int i = 0; i < labels.length; i++) {
+				content[i] = new Object[2];
+				content[i][0] = labels[i].value;
+				content[i][1] = labels[i].label;
 			}
+		}
 
-			table.setModel(new DefaultTableModel(
-					content,
-					new String[] { "값", "매핑 내용"}) {
-					boolean[] columnEditables = new boolean[] {
-							false, // 필 드 : 수정 불가
-							false, // 내 용 : 수정 가능						
-					};
-					public boolean isCellEditable(int row, int column) {
-						return columnEditables[column];
-					}
-			});
-			
-			setTableStyle(table, PERF_LABEL_TABLE);
+		table.setModel(new DefaultTableModel(
+				content,
+				new String[] { "값", "매핑 내용"}) {
+				boolean[] columnEditables = new boolean[] {
+						false, // 필 드 : 수정 불가
+						false, // 내 용 : 수정 가능						
+				};
+				public boolean isCellEditable(int row, int column) {
+					return columnEditables[column];
+				}
+		});
+		
+		setTableStyle(table, PERF_LABEL_TABLE);
+	}
+		
+	//******************** 테이블 스타일 관련 *********************************************************************
+	public void setTableStyle(JTable table, int tableType) {
+		// 테이블 헤더 설정
+		table.getTableHeader().setForeground(Color.BLACK);
+		table.getTableHeader().setBackground(new Color(255, 255, 153));
+		if(tableType == PERF_LIST_TABLE) {
+			table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 16));	
+		}else if(tableType == PERF_DATA_TABLE) {
+			table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		}else {
+			table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		}
 		
-		//******************** 테이블 스타일 관련 *********************************************************************
-		public void setTableStyle(JTable table, int tableType) {
-			// 테이블 헤더 설정
-			table.getTableHeader().setForeground(Color.BLACK);
-			table.getTableHeader().setBackground(new Color(255, 255, 153));
-			if(tableType == PERF_LIST_TABLE) {
-				table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 16));	
-			}else if(tableType == PERF_DATA_TABLE) {
-				table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 16));
-			}else {
-				table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 17));
-			}
+		// 이동 불가, 셀 크기 조절 불가
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
+		table.setRowSelectionAllowed(false);
+		table.setCellSelectionEnabled(true);
+		
+		// 테이블 셀 설정
+		table.setBorder(new EmptyBorder(0, 3, 0, 0));
+		table.setRowMargin(3);
+		if(tableType == PERF_LIST_TABLE) {
+			table.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
+			table.setRowHeight(25); 
+		}else if(tableType == PERF_DATA_TABLE) {
+			table.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
+			table.setRowHeight(25); 
+		}else {
+			table.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
+			table.setRowHeight(30); 
+		}
+		
+		// 테이블 셀 크기 설정
+		if(tableType == PERF_LIST_TABLE) {
 			
-			
-			// 이동 불가, 셀 크기 조절 불가
-			table.getTableHeader().setReorderingAllowed(false);
-			table.getTableHeader().setResizingAllowed(false);
-			table.setRowSelectionAllowed(false);
-			table.setCellSelectionEnabled(true);
-			
-			// 테이블 셀 설정
-			table.setBorder(new EmptyBorder(0, 3, 0, 0));
-			table.setRowMargin(3);
-			if(tableType == PERF_LIST_TABLE) {
-				table.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
-				table.setRowHeight(25); 
-			}else if(tableType == PERF_DATA_TABLE) {
-				table.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
-				table.setRowHeight(25); 
-			}else {
-				table.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
-				table.setRowHeight(30); 
-			}
-			
-			// 테이블 셀 크기 설정
-			if(tableType == PERF_LIST_TABLE) {
+			if(isConnectRestAPI()) {
 				// 성능 리스트 테이블
 				table.getColumnModel().getColumn(0).setPreferredWidth(70); // 순 서
 				table.getColumnModel().getColumn(1).setPreferredWidth(400); // 성 능
 				table.getColumnModel().getColumn(2).setPreferredWidth(150); // 마지막 수집값
 				table.getColumnModel().getColumn(3).setPreferredWidth(180); // 수집 시간			
-			}else if(tableType == PERF_INFO_TABLE) {
-				// 성능 정보 테이블
-				table.getColumnModel().getColumn(0).setPreferredWidth(3); // 필 드		
-				table.getColumnModel().getColumn(1).setPreferredWidth(180); // 내 용
-			}else if(tableType == PERF_LABEL_TABLE) {
-				// 성능 레이블 테이블
-				table.getColumnModel().getColumn(0).setPreferredWidth(4); // 값	
-				table.getColumnModel().getColumn(1).setPreferredWidth(350); // 매핑 내용		
-			}else if(tableType == PERF_DATA_TABLE) {
-				// 성능 데이터 테이블
-				table.getColumnModel().getColumn(0).setPreferredWidth(200); // 수집 시간
-				table.getColumnModel().getColumn(1).setPreferredWidth(300); // 성능 값
-			}
-			
-			// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
-			DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
-
-			// DefaultTableCellHeaderRenderer의 정렬을 가운데 정렬로 지정
-			tScheduleCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-
-			// 정렬할 테이블의 ColumnModel을 가져옴
-			TableColumnModel tcmSchedule = table.getColumnModel();
-			tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
-			
-			if(tableType == PERF_LIST_TABLE) {
-				tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 최종값
-				tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 수집 시간
-			}else if(tableType == PERF_LABEL_TABLE) {
-				tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 성능 레이블 테이블만 가운데 정렬
 			}else {
-				tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
+				table.getColumnModel().getColumn(0).setPreferredWidth(30); // 순 서
+				table.getColumnModel().getColumn(1).setPreferredWidth(600); // 성 능
 			}
+			
+		}else if(tableType == PERF_INFO_TABLE) {
+			// 성능 정보 테이블
+			table.getColumnModel().getColumn(0).setPreferredWidth(3); // 필 드		
+			table.getColumnModel().getColumn(1).setPreferredWidth(180); // 내 용
+		}else if(tableType == PERF_LABEL_TABLE) {
+			// 성능 레이블 테이블
+			table.getColumnModel().getColumn(0).setPreferredWidth(4); // 값	
+			table.getColumnModel().getColumn(1).setPreferredWidth(350); // 매핑 내용		
+		}else if(tableType == PERF_DATA_TABLE) {
+			// 성능 데이터 테이블
+			table.getColumnModel().getColumn(0).setPreferredWidth(200); // 수집 시간
+			table.getColumnModel().getColumn(1).setPreferredWidth(300); // 성능 값
 		}
 		
-		//******************** 테이블 필터링 관련 *********************************************************************
-		public void doTableFilter() {
-			if(searchPerf_textField_1 == null || searchPerf_textField_2 == null) return;
+		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
+		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
+
+		// DefaultTableCellHeaderRenderer의 정렬을 가운데 정렬로 지정
+		tScheduleCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+		// 정렬할 테이블의 ColumnModel을 가져옴
+		TableColumnModel tcmSchedule = table.getColumnModel();
+		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
+		
+		if(tableType == PERF_LIST_TABLE && isConnectRestAPI()) {
+			tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 최종값
+			tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 수집 시간
 			
-			ArrayList<FmsPerfItem> filteredPerf = new ArrayList<FmsPerfItem>();
-			String text_1 = searchPerf_textField_1.getText();
-			String text_2 = searchPerf_textField_2.getText();
+		}else if(tableType == PERF_LIST_TABLE && !isConnectRestAPI()) {
+			tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
 			
-			boolean noSearch_1 = (text_1 == null || text_1.length() == 0 || text_1.equals(""));
-			boolean noSearch_2 = (text_2 == null || text_2.length() == 0 || text_2.equals(""));
+		}else if(tableType == PERF_LABEL_TABLE) {
+			tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
 			
-			if(noSearch_1 && noSearch_2) {	
-				updatePerfListTable(perfListTable);
-				return;
+		}else {
+			tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
+		}
+	}
+		
+	//******************** 테이블 필터링 관련 *********************************************************************
+	public void doTableFilter(boolean updatePerfData) {
+		if(searchPerf_textField_1 == null || searchPerf_textField_2 == null) return;
+		
+		ArrayList<FmsPerfItem> filterPerf = new ArrayList<FmsPerfItem>();
+		String text_1 = searchPerf_textField_1.getText();
+		String text_2 = searchPerf_textField_2.getText();
+		
+		boolean noSearch_1 = (text_1 == null || text_1.length() == 0 || text_1.equals(""));
+		boolean noSearch_2 = (text_2 == null || text_2.length() == 0 || text_2.equals(""));
+		
+		if(noSearch_1 && noSearch_2) {
+			updatePerfListTable(perfListTable, updatePerfData);
+			return;
+		}
+		
+		text_1 = text_1.toUpperCase().trim();
+		text_2 = text_2.toUpperCase().trim();
+		
+		for(int i = 0; i < perfs.size(); i++) {
+			FmsPerfItem perf = perfs.get(i);
+			
+			String searchElement_1 = null;
+			String searchElement_2 = null;
+			
+			switch(searchPerf_ComboBox_1.getSelectedItem().toString()) {
+				case PERF_NAME :
+					searchElement_1 = perf.getDisplayName();
+					break;
+				case PERF_INDEX :
+					searchElement_1 = String.valueOf(perf.getIndex());
+					break;
+				case PERF_TYPE :
+					searchElement_1 = perf.getPerfTypeString();
+					break;
+				case PERF_COUNTER :
+				case OID :
+					searchElement_1 = perf.getCounter();
+					break;
+				case INTERVAL :
+					searchElement_1 = String.valueOf(perf.getInterval());
+					break;
+				case UNIT :
+					searchElement_1 = perf.getMeasure();
+					break;
+				case SCALE :
+					searchElement_1 = perf.getScaleFunction();
+					break;
+				case DATA_FORMAT :
+					searchElement_1 = String.valueOf(perf.getDataFormat());
+					break;
+				default : 
+					searchElement_1 = perf.getDisplayName();
+					break;
+			}// switch - searchElement_1
+			
+			switch(searchPerf_ComboBox_2.getSelectedItem().toString()) {
+				case PERF_NAME :
+					searchElement_2 = perf.getDisplayName();
+					break;
+				case PERF_INDEX :
+					searchElement_2 = String.valueOf(perf.getIndex());
+					break;
+				case PERF_TYPE :
+					searchElement_2 = perf.getPerfTypeString();
+					break;
+				case PERF_COUNTER :
+				case OID :
+					searchElement_2 = perf.getCounter();
+					break;
+				case INTERVAL :
+					searchElement_2 = String.valueOf(perf.getInterval());
+					break;
+				case UNIT :
+					searchElement_2 = perf.getMeasure();
+					break;
+				case SCALE :
+					searchElement_2 = perf.getScaleFunction();
+					break;
+				case DATA_FORMAT :
+					searchElement_2 = String.valueOf(perf.getDataFormat());
+					break;
+				default : 
+					searchElement_2 = perf.getDisplayName();
+					break;
+			}// switch - searchElement_2
+			
+			if(searchElement_1 != null) {
+				searchElement_1 = searchElement_1.toUpperCase();
+			}else {
+				searchElement_1 = "";
 			}
 			
-			text_1 = text_1.toUpperCase().trim();
-			text_2 = text_2.toUpperCase().trim();
+			if(searchElement_2 != null) {
+				searchElement_2 = searchElement_2.toUpperCase();
+			}else {
+				searchElement_2 = "";
+			}
 			
-			for(int i = 0; i < perfs.size(); i++) {
-				FmsPerfItem perf = perfs.get(i);
-				
-				String searchElement_1 = null;
-				String searchElement_2 = null;
-				
-				switch(searchPerf_ComboBox_1.getSelectedItem().toString()) {
-					case PERF_NAME :
-						searchElement_1 = perf.getDisplayName();
-						break;
-					case PERF_INDEX :
-						searchElement_1 = String.valueOf(perf.getIndex());
-						break;
-					case PERF_TYPE :
-						searchElement_1 = perf.getPerfTypeString();
-						break;
-					case PERF_COUNTER :
-					case OID :
-						searchElement_1 = perf.getCounter();
-						break;
-					case INTERVAL :
-						searchElement_1 = String.valueOf(perf.getInterval());
-						break;
-					case UNIT :
-						searchElement_1 = perf.getMeasure();
-						break;
-					case SCALE :
-						searchElement_1 = perf.getScaleFunction();
-						break;
-					case DATA_FORMAT :
-						searchElement_1 = String.valueOf(perf.getDataFormat());
-						break;
-					default : 
-						searchElement_1 = perf.getDisplayName();
-						break;
-				}// switch - searchElement_1
-				
-				switch(searchPerf_ComboBox_2.getSelectedItem().toString()) {
-					case PERF_NAME :
-						searchElement_2 = perf.getDisplayName();
-						break;
-					case PERF_INDEX :
-						searchElement_2 = String.valueOf(perf.getIndex());
-						break;
-					case PERF_TYPE :
-						searchElement_2 = perf.getPerfTypeString();
-						break;
-					case PERF_COUNTER :
-					case OID :
-						searchElement_2 = perf.getCounter();
-						break;
-					case INTERVAL :
-						searchElement_2 = String.valueOf(perf.getInterval());
-						break;
-					case UNIT :
-						searchElement_2 = perf.getMeasure();
-						break;
-					case SCALE :
-						searchElement_2 = perf.getScaleFunction();
-						break;
-					case DATA_FORMAT :
-						searchElement_2 = String.valueOf(perf.getDataFormat());
-						break;
-					default : 
-						searchElement_2 = perf.getDisplayName();
-						break;
-				}// switch - searchElement_2
-				
-				if(searchElement_1 != null) {
-					searchElement_1 = searchElement_1.toUpperCase();
-				}else {
-					searchElement_1 = "";
-				}
-				
-				if(searchElement_2 != null) {
-					searchElement_2 = searchElement_2.toUpperCase();
-				}else {
-					searchElement_2 = "";
-				}
-				
-				boolean isContain_1 = false;
-				boolean isContain_2 = false;
-				
-				if(text_1.contains(",")) {
-					String[] textToken = text_1.split(",");
-					for(int i2 = 0; i2 < textToken.length; i2++) {
-						String token = textToken[i2].trim();
-						if(searchElement_1.contains(token)) {
-							isContain_1 = true;
-						}
+			boolean isContain_1 = false;
+			boolean isContain_2 = false;
+			
+			if(text_1.contains(",")) {
+				String[] textToken = text_1.split(",");
+				for(int i2 = 0; i2 < textToken.length; i2++) {
+					String token = textToken[i2].trim();
+					if(searchElement_1.contains(token)) {
+						isContain_1 = true;
 					}
-				}else if(searchElement_1.contains(text_1)) {
-					isContain_1 = true;
-				}// set isContain_1
-				
-				if(text_2.contains(",")) {
-					String[] textToken = text_2.split(",");
-					for(int i2 = 0; i2 < textToken.length; i2++) {
-						String token = textToken[i2].trim();
-						if(searchElement_2.contains(token)) {
-							isContain_2 = true;
-						}
+				}
+			}else if(searchElement_1.contains(text_1)) {
+				isContain_1 = true;
+			}// set isContain_1
+			
+			if(text_2.contains(",")) {
+				String[] textToken = text_2.split(",");
+				for(int i2 = 0; i2 < textToken.length; i2++) {
+					String token = textToken[i2].trim();
+					if(searchElement_2.contains(token)) {
+						isContain_2 = true;
 					}
-				}else if(searchElement_2.contains(text_2)) {
-					isContain_2 = true;
-				}// set isContain_2
-				
-				if(isContain_1 && isContain_2) {
-					filteredPerf.add(perf);
-				}// AND Operation isContains 1, 2
-				
-			}// for loop
+				}
+			}else if(searchElement_2.contains(text_2)) {
+				isContain_2 = true;
+			}// set isContain_2
 			
-			Object[][] content = new Object[filteredPerf.size()][];
+			if(isContain_1 && isContain_2) {
+				filterPerf.add(perf);
+			}// AND Operation isContains 1, 2
 			
-			for (int i = 0; i < filteredPerf.size(); i++) {
-				FmsPerfItem perf = filteredPerf.get(i);
+		}// for loop
+		
+		
+		// REST API 호출
+		if(updatePerfData && isConnectRestAPI()) {
+			perfRealTimeDataMap = RestAgent.getFacilityPerfDataMap(true, fac.getIndex(), MK119_Lite_Panel.adminConsole);
+		}
+		
+		Object[][] content = new Object[filterPerf.size()][];
+		
+		if(isConnectRestAPI()) {
+			for (int i = 0; i < filterPerf.size(); i++) {
+				Perf perf = filterPerf.get(i);
 				content[i] = new Object[4];
-				content[i][0] = perf.getIndex();
+				content[i][0] = i + 1; // 순 서
 				content[i][1] = perf;
-				content[i][2] = "228.8 V";
-				content[i][3] = "2022-04-19 09:49:04";
-			}
-
-			perfListTable.setModel(new DefaultTableModel(
-					content,
-					new String[] { "순 서", "성 능", "최종값", "수집 시간"}) {
-					// 테이블 셀 내용 수정 금지
-					public boolean isCellEditable(int i, int c) {
-						return false;
+				// 성능 값
+				if(perfRealTimeDataMap != null) {
+					PerfData data = perfRealTimeDataMap.get(perf.getIndex());
+					
+					if(data != null && !data.getValue().equals("-")) {
+						content[i][2] = getPerfLastContent(perf, data);
+					}else {
+						content[i][2] = "-";
 					}
-			});
-
-			setTableStyle(perfListTable, PERF_LIST_TABLE);
+					
+					try {
+						content[i][3] = data.getTimeString();
+					}catch(Exception e) {
+						content[i][3] = "-";
+					}				
+				}else {
+					content[i][2] = "-";
+					content[i][3] = "-";
+				}
+			}
+		}else {
+			for (int i = 0; i < filterPerf.size(); i++) {
+				Perf perf = filterPerf.get(i);
+				content[i] = new Object[2];
+				content[i][0] = i + 1; // 순 서
+				content[i][1] = perf;
+			}
 		}
 		
+		String[] header = (isConnectRestAPI()) ? new String[] { "순 서", "성 능", "최종값", "수집 시간" } : new String[] { "순 서", "성 능" };
 		
-		// 사용자 정의 키 이벤트 리스너
-		class CloseListener extends KeyAdapter{
-			public void keyPressed(KeyEvent e) {
+		perfListTable.setModel(new DefaultTableModel(
+			content, 
+			header) {
+			// 테이블 셀 내용 수정 금지
+			public boolean isCellEditable(int i, int c) {
+				return false;
+			}
+		});
+
+		setTableStyle(perfListTable, PERF_LIST_TABLE);
+	}
+	
+	public Object getPerfLastContent(Perf perf, PerfData data) {
+		Object content = "-";
+		boolean labelMapping = false;
+		
+		switch(perf.getDataFormat()) {
+			
+			case 1 : // 이진 성능
+				try {
+					String[] binLabel = perf.getBinLabel();
+					double doubleValue = Double.parseDouble(data.getValue().toString());
+					if(doubleValue == 0) {
+						content = binLabel[0];
+						labelMapping = true;
+					}else if(doubleValue == 1) {
+						content = binLabel[1];
+						labelMapping = true;
+					}else {
+						content = (Math.round(doubleValue*1000)/1000.0);
+					}
+				}catch(Exception e) {
+					e.printStackTrace();
+					content = "-";
+				}
+				break;
+				
+				
+			case 2 : // 다중 성능
+				try {
+					double doubleValue = Double.parseDouble(data.getValue().toString());
+					PerfLabelStatusBean[] labels = perf.getStatusLabels();
+					content = (Math.round(doubleValue*1000)/1000.0);
+					// 다중 상태 레이블을 검사 후 일치하는 값이 있다면 내용에 적용 후 반복문 종료
+					for(int k = 0; k < labels.length; k++) {					
+						if(doubleValue == labels[k].value) {
+							content = labels[k].label;
+							labelMapping = true;
+							break;
+						}
+					}
+				}catch(Exception e) {
+					e.printStackTrace();
+					content = "-";
+				}
+				break;
+				
+				
+			case 3 : // 아날로그 성능
+				try {
+					double doubleValue = Double.parseDouble(data.getValue().toString());
+					if((perf.getMeasure() != null) && (perf.getMeasure().length() > 0)) {
+						content = (Math.round(doubleValue*1000)/1000.0) + " " + perf.getMeasure();	
+					}else {
+						content = (Math.round(doubleValue*1000)/1000.0);
+					}
+				}catch(Exception e) {
+					e.printStackTrace();
+					content = "-";
+				}
+				break;
+				
+				
+			default :  
+				content = "-"; 
+				break;
+				
+		}// end switch
+		
+		// 정수 데이터는 소숫점을 표시하지 않도록 하기 위해서 아래의 코드를 추가
+		Object temp = null;
+		try {
+			temp = content.toString();
+			if(!labelMapping) {
+				if(content.toString().contains(" ") && content.toString().split(" ")[0].endsWith(".0")) {
+					content = content.toString().replace(".0", "");
+				}else if(content.toString().endsWith(".0")) {
+					content = content.toString().replace(".0", "");
+				}
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+			content = temp;
+		}
+		
+		return content;
+	}
+	
+	
+	public void updateFacilityInfo() {
+		String pName = null;
+		if(MK119_Lite_Panel.linkMK119_Protocol) {
+			Protocol p = MK119_Lite_Panel.protocolMap.get(fac.getProtocolKey());
+			if(p != null) {
+				pName = p.getName();
+			}else {
+				pName = "Unknown Protocol";
+			}
+		}else {
+			pName = " - ";
+		}
+		
+		String facInfo_1 = "";
+		facInfo_1 += "<html>";
+		facInfo_1 += Util.colorBlue("장비 정보 : ") + fac.getName();
+		facInfo_1 += "&nbsp;&nbsp;";
+		facInfo_1 += "( ";
+		facInfo_1 += Util.colorGreen(fac.getTypeString() + Util.colorRed(" / ") + fac.getConnMethod() + Util.colorRed(" / ") + pName);
+		facInfo_1 += Util.colorGreen(Util.colorRed(" / "));
+		facInfo_1 += (fac.getState().equalsIgnoreCase("통신 오류")) ? Util.colorRed(fac.getState()) : Util.colorGreen(fac.getState());
+		facInfo_1 += " )";
+		facInfo_1 += "</html>";
+		
+		String facInfo_2 = "";
+		if(fac.isConnRCU() && fac.getRcu() != null) {
+			facInfo_2 += "<html>";
+			
+			// TCP/IP 이중화 RCU
+			if(fac.getRcu().isDuplexedPort()) {
+				facInfo_2 += Util.colorBlue("RCU : ") + fac.getRcu().getName();
+				facInfo_2 += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
+
+				facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
+				facInfo_2 += Util.colorGreen(" & ")  + fac.getRcu().getAuxIP();
+				facInfo_2 += "&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;";
+
+				facInfo_2 += Util.colorBlue("RCU Port : ");
+				
+				if(fac.getPort() != 0) {
+					facInfo_2 += fac.getPort() + Util.colorGreen(" & ") + fac.getRcu().getAuxPort();
+				}else {
+					facInfo_2 += "Unknown";
+				}
+			}else {
+				// 일반 RCU
+				facInfo_2 += Util.colorBlue("RCU : ") + fac.getRcu().getName();
+				facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
+
+				facInfo_2 += Util.colorBlue("RCU IP : ") + fac.getRcu().getIp();
+				facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
+
+				facInfo_2 += Util.colorBlue("RCU Port : ");
+				
+				if(fac.getPort() != 0) {
+					facInfo_2 += fac.getRcuPortCh() + " ( " + fac.getPort() + " )";
+				}else {
+					facInfo_2 += "Unknown";
+				}
+			}
+			
+			facInfo_2 += "</html>";
+		}else if(!fac.isConnRCU() && fac.getRcu() != null){
+			facInfo_2 += "<html>";
+			facInfo_2 += Util.colorRed("장비와 연결된 RCU 정보를 찾을 수 없습니다");
+			facInfo_2 += "</html>";
+		}else {
+			facInfo_2 = "<html>";
+			facInfo_2 += Util.colorBlue("IP : ") + fac.getIp();
+			facInfo_2 += Util.colorRed(Util.separator + "/" + Util.separator);
+			facInfo_2 += Util.colorBlue("Port : ") + fac.getPort(); 
+			facInfo_2 += "</html>";
+		}
+		
+		FacilityInfoLabel_1.setText(facInfo_1);
+		FacilityInfoLabel_2.setText(facInfo_2);
+	}
+	
+	
+	public void initCopyAdapter(String content) {
+		MouseAdapter copyAdapter = new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				 if (e.getButton() == 1) { 
+					 StringSelection data = new StringSelection(content);
+					 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					 clipboard.setContents(data, data);
+				 } // 왼쪽 클릭				 
+				 if (e.getButton() == 1 && e.getClickCount() == 2) { 
+					 StringSelection data = new StringSelection(content);
+					 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					 clipboard.setContents(data, data);
+				 } // 더블 클릭
+				 if (e.getButton() == 3) { 
+					 StringSelection data = new StringSelection(content);
+					 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					 clipboard.setContents(data, data);
+				 } // 오른쪽 클릭
+			}
+		};
+		
+		if(currentFunction != null) currentFunction.addMouseListener(copyAdapter);
+		if(FacilityInfoLabel_1 != null) FacilityInfoLabel_1.addMouseListener(copyAdapter);
+		if(FacilityInfoLabel_2 != null) FacilityInfoLabel_2.addMouseListener(copyAdapter);
+	}
+	
+	// 사용자 정의 키 이벤트 리스너
+	class MyKeyListener extends KeyAdapter{
+		public void keyPressed(KeyEvent e) {
+			try {
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					dispose();					
+				}else if(e.getKeyCode() == KeyEvent.VK_F5) {					
+					doTableFilter(true);
+				}else {
+					doTableFilter(false);
 				}
-				if (e.getKeyCode() == KeyEvent.VK_F5) {					
-					updatePerfListTable(perfListTable);
-				}
-			}
-			
-			public void keyReleased(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-					dispose();
-				}
+			}catch(Exception ex) {
+				ex.printStackTrace();
 			}
 		}
 		
-		public Object getPerfLastContent(Perf perf, PerfData data) {
-			Object content = "-";
-			boolean labelMapping = false;
-			
-			switch(perf.getDataFormat()) {
-				
-				case 1 : // 이진 성능
-					try {
-						String[] binLabel = perf.getBinLabel();
-						double doubleValue = Double.parseDouble(data.getValue().toString());
-						if(doubleValue == 0) {
-							content = binLabel[0];
-							labelMapping = true;
-						}else if(doubleValue == 1) {
-							content = binLabel[1];
-							labelMapping = true;
-						}else {				
-							content = (Math.round(doubleValue*1000)/1000.0);
-						}
-					}catch(Exception e) {
-						e.printStackTrace();
-						content = "-";
-					}
-					break;
-					
-					
-				case 2 : // 다중 성능
-					try {
-						double doubleValue = Double.parseDouble(data.getValue().toString());
-						PerfLabelStatusBean[] labels = perf.getStatusLabels();
-						content = (Math.round(doubleValue*1000)/1000.0);
-						// 다중 상태 레이블을 검사 후 일치하는 값이 있다면 내용에 적용 후 반복문 종료
-						for(int k = 0; k < labels.length; k++) {							
-							if(doubleValue == labels[k].value) {
-								content = labels[k].label;
-								labelMapping = true;
-								break;
-							}
-						}								
-					}catch(Exception e) {
-						e.printStackTrace();
-						content = "-";
-					}
-					break;
-					
-					
-				case 3 : // 아날로그 성능
-					try {
-						double doubleValue = Double.parseDouble(data.getValue().toString());
-						if(perf.getMeasure().length() > 0) {
-							content = (Math.round(doubleValue*1000)/1000.0) + " " + perf.getMeasure();	
-						}else {
-							content = (Math.round(doubleValue*1000)/1000.0);
-						}
-					}catch(Exception e) {
-						e.printStackTrace();
-						content = "-";
-					}
-					break;
-					
-					
-				default :  
-					content = "-"; 
-					break;
-					
-			}// end switch
-			
-			// 정수 데이터는 소숫점을 표시하지 않도록 하기 위해서 아래의 코드를 추가
-			Object temp = null;
+		public void keyReleased(KeyEvent e) {
 			try {
-				temp = content.toString();
-				if(!labelMapping) {
-					if(content.toString().contains(" ") && content.toString().split(" ")[0].endsWith(".0")) {
-						content = content.toString().replace(".0", "");
-					}else if(content.toString().endsWith(".0")) {
-						content = content.toString().replace(".0", "");
-					}
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					dispose();					
+				}else {
+					doTableFilter(false);
 				}
-			}catch(Exception e) {
-				e.printStackTrace();
-				content = temp;
+			}catch(Exception ex) {
+				ex.printStackTrace();
 			}
-			
-			return content;
+		}
+	}
+	
+	public static boolean isConnectRestAPI() {
+		boolean isConnect = (MK119_Lite_Panel.linkMK119_PerfData && MK119_Lite_Panel.adminConsole != null);
+		
+		if(updatePerfData != null) updatePerfData.setEnabled(isConnect);
+		if(perfValue_RadioButton != null) perfValue_RadioButton.setEnabled(isConnect);
+		if(updatePerfData != null ) {
+			updatePerfData.setEnabled(isConnect);
+			updatePerfData.setText(isConnect ? "성능 데이터 최신화" : "성능 데이터 연동 전");
 		}
 		
-		public void initCopyAdapter(String content) {
-			MouseAdapter copyAdapter = new MouseAdapter() {
-				public void mouseClicked(MouseEvent e) {
-					 if (e.getButton() == 1) {  } // 왼쪽 클릭				 
-					 if (e.getButton() == 1 && e.getClickCount() == 2) { 
-						 StringSelection data = new StringSelection(content);
-						 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-						 clipboard.setContents(data, data);
-					 } // 더블 클릭
-					 if (e.getButton() == 3) { 
-						 StringSelection data = new StringSelection(content);
-						 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-						 clipboard.setContents(data, data);
-					 } // 오른쪽 클릭
-				}
-			};
-			
-			if(currentFunction != null) currentFunction.addMouseListener(copyAdapter);
-			if(FacilityInfoLabel_1 != null) FacilityInfoLabel_1.addMouseListener(copyAdapter);
-			if(FacilityInfoLabel_2 != null) FacilityInfoLabel_2.addMouseListener(copyAdapter);
-		}
+		return isConnect;
+	}
 
 }

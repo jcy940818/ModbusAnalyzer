@@ -3,6 +3,9 @@ package src_ko.swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -61,10 +64,14 @@ public class RcuInfoFrame extends JFrame {;
 	private JPanel contentPane;
 	private JComboBox searchFacility_ComboBox;
 	private JTextField searchFacility_textField;	
-	private JLabel RCUInfoLabel_1;
-	private JLabel RCUInfoLabel_2;
+	
+	
 	private JButton dbRefresh_Button;
 	private JButton eventInfo_Button;
+	
+	private JLabel currentFunction;
+	private JLabel RCUInfoLabel_1;
+	private JLabel RCUInfoLabel_2;
 	
 	/**
 	 * Launch the application.
@@ -111,7 +118,7 @@ public class RcuInfoFrame extends JFrame {;
 		contentPane.add(actualPanel, BorderLayout.CENTER);		
 		actualPanel.setLayout(null);
 		
-		JLabel currentFunction = new JLabel("RCU Information");
+		currentFunction = new JLabel("RCU Information");
 		currentFunction.setForeground(Color.BLACK);
 		currentFunction.setIcon(new Util().getSubLogoResource());
 		currentFunction.setHorizontalAlignment(SwingConstants.LEFT);
@@ -308,6 +315,9 @@ public class RcuInfoFrame extends JFrame {;
 		searchFacility_textField.addKeyListener(close);		
 		FacListTable.addKeyListener(close);
 		
+
+		initCopyAdapter(rcu.getName().trim());
+		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -327,7 +337,10 @@ public class RcuInfoFrame extends JFrame {;
 		MK119_Lite_Panel.resetForm(true, false);		
 		
 		if(MK119_Lite_Panel.serverMap.containsKey(rcu.getIndex())) {
+			
 			this.rcu = (RCU)MK119_Lite_Panel.serverMap.get(rcu.getIndex());
+			initCopyAdapter(rcu.getName().trim());
+			
 			MK119_Lite_Panel.initEventButton(eventInfo_Button, rcu);
 			
 			String RcuInfo_1 = "<html>";
@@ -709,6 +722,32 @@ public class RcuInfoFrame extends JFrame {;
 				dispose();
 			}
 		}		
+	}
+	
+	public void initCopyAdapter(String content) {
+		MouseAdapter copyAdapter = new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				 if (e.getButton() == 1) { 
+					 StringSelection data = new StringSelection(content);
+					 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					 clipboard.setContents(data, data);
+				 } // 왼쪽 클릭				 
+				 if (e.getButton() == 1 && e.getClickCount() == 2) { 
+					 StringSelection data = new StringSelection(content);
+					 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					 clipboard.setContents(data, data);
+				 } // 더블 클릭
+				 if (e.getButton() == 3) { 
+					 StringSelection data = new StringSelection(content);
+					 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					 clipboard.setContents(data, data);
+				 } // 오른쪽 클릭
+			}
+		};
+		
+		if(currentFunction != null) currentFunction.addMouseListener(copyAdapter);
+		if(RCUInfoLabel_1 != null) RCUInfoLabel_1.addMouseListener(copyAdapter);
+		if(RCUInfoLabel_2 != null) RCUInfoLabel_2.addMouseListener(copyAdapter);
 	}
 	
 	
