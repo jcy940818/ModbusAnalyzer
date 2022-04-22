@@ -55,18 +55,18 @@ public class AdminConsole_LoginFrame extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AdminConsole_LoginFrame frame = new AdminConsole_LoginFrame("127.0.0.1:1433", "AgentType");
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					AdminConsole_LoginFrame frame = new AdminConsole_LoginFrame("127.0.0.1:1433", "AgentType");
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	public static void showLoginForm(String mk119SqlServerInfo, String agentType) {
 		if(!AdminConsole_LoginFrame.isExist) {
@@ -351,13 +351,7 @@ public class AdminConsole_LoginFrame extends JFrame {
 					if(MK119_Lite_Panel.adminConsole != null) {
 						MK119_Lite_Panel.linkMK119_PerfData = true;
 						AdminConsole_LoginFrame.isExist = false;
-						
-						StringBuilder sb = new StringBuilder();
-						sb.append(String.format("%s%s%s%s\n",Util.colorBlue("MK119 성능 데이터 연동 완료"), Util.separator, Util.separator, Util.separator));
-						sb.append(String.format("성공적으로 MK119 성능 데이터 연동을 완료하였습니다%s%s\n\n", Util.separator, Util.separator));
-						sb.append(String.format("이제부터 시설물에 등록된 성능의 실시간 수집 값을 확인 할 수 있습니다%s%s\n", Util.separator, Util.separator));						
-						Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
-						
+						FacilityInfoFrame.isConnectRestAPI();
 						dispose();
 					}
 					break;

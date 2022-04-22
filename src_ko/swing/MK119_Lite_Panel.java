@@ -209,7 +209,11 @@ public class MK119_Lite_Panel extends JPanel {
 		linkMK119_Button.setEnabled(true);
 		linkMK119_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new LinkMK119Frame(linkMK119_Protocol, linkMK119_PerfData);
+				
+				if(!LinkMK119Frame.isExist) {
+					new LinkMK119Frame(linkMK119_Protocol, linkMK119_PerfData);	
+				}
+				
 			}
 		});
 		infoPanel.add(linkMK119_Button);

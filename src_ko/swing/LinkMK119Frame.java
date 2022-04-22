@@ -36,6 +36,8 @@ public class LinkMK119Frame extends JFrame{
 //		new LinkMK119Frame(false, false);
 //	}
 	
+	public static boolean isExist = false;
+	
 	public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public static JLabel mk119ProtocolDataLink;
@@ -70,6 +72,8 @@ public class LinkMK119Frame extends JFrame{
 	 * Create the panel.
 	 */
 	public LinkMK119Frame(boolean linkProtocol, boolean linkPerfData) {
+		LinkMK119Frame.isExist = true;
+		
 		setTitle("MK119 Lite");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setIconImage(new Util().getIconResource().getImage());
@@ -366,6 +370,8 @@ public class LinkMK119Frame extends JFrame{
 				MK119_Lite_Panel.linkMK119_PerfData = false;
 				MK119_Lite_Panel.adminConsole = null;				
 				adminConsole = null;
+				
+				FacilityInfoFrame.isConnectRestAPI();
 			}
 		});
 		actualPanel.add(terminateSession_Button);
@@ -581,6 +587,8 @@ public class LinkMK119Frame extends JFrame{
 			onionDirPath = "";
 			protocolVersionInfo = String.format("<html>%s : </html>", Util.colorBlue("Version"));
 		}
+		
+		LinkMK119Frame.isExist = false;
 		super.dispose();
 	}
 	
