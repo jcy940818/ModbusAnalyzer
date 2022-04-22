@@ -3,8 +3,13 @@ package src_ko.swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
@@ -303,6 +308,37 @@ public class LinkMK119Frame extends JFrame{
 		mk119LastReqAPI.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		mk119LastReqAPI.setBackground(Color.WHITE);
 		mk119LastReqAPI.setBounds(63, 528, 617, 37);
+		mk119LastReqAPI.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				 if (e.getButton() == 1) {  
+					// 왼쪽 클릭		
+					 if(adminConsole != null) {
+						 String API = String.format("http://%s:%s%s", adminConsole.get_IP(), adminConsole.get_PORT(), lastReqAPI);
+						 StringSelection data = new StringSelection(API);
+						 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+						 clipboard.setContents(data, data);
+					 }
+				 } 		 
+				 if (e.getButton() == 1 && e.getClickCount() == 2) { 	
+					// 더블 클릭
+					 if(adminConsole != null) {
+						 String API = String.format("http://%s:%s%s", adminConsole.get_IP(), adminConsole.get_PORT(), lastReqAPI);
+						 StringSelection data = new StringSelection(API);
+						 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+						 clipboard.setContents(data, data);
+					 }
+				 } 
+				 if (e.getButton() == 3) { 
+					// 오른쪽 클릭
+					 if(adminConsole != null) {
+						 String API = String.format("http://%s:%s%s", adminConsole.get_IP(), adminConsole.get_PORT(), lastReqAPI);
+						 StringSelection data = new StringSelection(API);
+						 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+						 clipboard.setContents(data, data);
+					 }
+				 } 
+			}
+		});
 		actualPanel.add(mk119LastReqAPI);
 		
 		mk119LastReqTime = new JLabel(String.format("<html>%s : </html>", Util.colorBlue("Last Request Time")));
