@@ -955,7 +955,7 @@ public class FacilityInfoFrame extends JFrame {
 			tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 수집 시간
 			
 		}else if(tableType == PERF_LIST_TABLE && !isConnectRestAPI()) {
-			tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
+			
 			
 		}else if(tableType == PERF_LABEL_TABLE) {
 			tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
