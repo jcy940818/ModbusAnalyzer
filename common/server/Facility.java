@@ -8,37 +8,28 @@ import src_ko.info.Protocol;
 
 public class Facility extends Server implements Comparable{
 	
+	// 실제 데이터베이스의 시설물 개수와 차이가 나는 이유는
+	// 그룹에 속하지 않은 데이터베이스에만 존재하는 장비가 존재하기 때문이다
+	// 아래의 쿼리는 실제 그룹과 매핑되어 AdminConsole UI에서 확인이 가능한 시설물만 조회한다
 	public static final String GET_FACILITY = 
-			"WITH tree_query AS \r\n" + 
-			"( SELECT nGroupIndex , nParentIndex , strGroupName \r\n" + 
-			", convert(varchar(255), nGroupIndex) sort \r\n" + 
-			", convert(varchar(255), strGroupName) depth_fullname \r\n" + 
-			"FROM SERVERGROUP WHERE nParentIndex = -1\r\n" + 
-			"UNION ALL SELECT B.nGroupIndex , B.nParentIndex , B.strGroupName \r\n" + 
-			", convert(varchar(255), convert(nvarchar,C.sort) + ' > ' + convert(varchar(255), B.nGroupIndex)) sort\r\n" + 
-			", convert(varchar(255), convert(nvarchar,C.depth_fullname) + ' > ' + convert(varchar(255), B.strGroupName)) depth_fullname \r\n" + 
-			"FROM SERVERGROUP B, tree_query C \r\n" + 
-			"WHERE B.nParentIndex = C.nGroupIndex) \r\n" + 
-			"\r\n" + 
-			"select \r\n" + 
-			"	DISTINCT\r\n" + 
-			"	replace(c.depth_fullname,'<ROOT>','장비 관리 ( 그룹 없음 )') as 'groupInfo',	\r\n" + 
-			"	a.strServerIP as 'ip',\r\n" + 
-			"	f.RTU_PORT_NUM as 'port',\r\n" + 
-			"	f.RTU_INDEX as 'rtuIndex',\r\n" + 
-			"	a.nAgentType AS 'agentType',\r\n" + 
-			"	a.nServerIndex as 'index',\r\n" + 
-			"	f.FACILITY_TYPE as 'facType',\r\n" + 
-			"	a.strServerName as 'name',\r\n" + 
-			"	f.CONN_METHOD as 'connMethod',\r\n" + 
-			"	f.COMM_PROTOCOL as 'commProtocol',\r\n" + 
-			"	f.SNMP_MIB as 'snmpProtocol',\r\n" + 
-			"	a.SERVER_CONDITION as 'condition'\r\n" + 
+			"select distinct\r\n" + 
+			"	si.strServerIP as 'ip',\r\n" + 
+			"	fac.RTU_PORT_NUM as 'port',\r\n" + 
+			"	fac.RTU_INDEX as 'rtuIndex',\r\n" + 
+			"	si.nAgentType AS 'agentType',\r\n" + 
+			"	si.nServerIndex as 'index',\r\n" + 
+			"	fac.FACILITY_TYPE as 'facType',\r\n" + 
+			"	si.strServerName as 'name',\r\n" + 
+			"	fac.CONN_METHOD as 'connMethod',\r\n" + 
+			"	fac.COMM_PROTOCOL as 'commProtocol',\r\n" + 
+			"	fac.SNMP_MIB as 'snmpProtocol',\r\n" + 
+			"	si.SERVER_CONDITION as 'condition'\r\n" + 
 			" \r\n" + 
-			"from SERVERINFO a inner join SERVERGROUPMAP b on a.nServerIndex=b.nServerIndex\r\n" + 
-			"	inner join tree_query c on b.nGroupIndex = c.ngroupIndex\r\n" + 
-			"	inner join SERVERINFO_FACILITY f ON a.nServerIndex = f.NODE_INDEX\r\n" + 
-			" order by a.nServerIndex";
+			"from SERVERINFO si\r\n" + 
+			"	inner join SERVERGROUPMAP map on si.nServerIndex = map.nServerIndex\r\n" + 
+			"	inner join SERVERINFO_FACILITY fac ON si.nServerIndex = fac.NODE_INDEX\r\n" + 
+			"\r\n" + 
+			"order by si.nServerIndex";
 	
 	ArrayList<Perf> perfList = new ArrayList<Perf>();
 	HashMap<Integer, Perf> perfMap = new HashMap<Integer, Perf>();
