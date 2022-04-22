@@ -957,8 +957,12 @@ public class XmlViewerFrame extends JFrame {
 			TableColumnModel tcmSchedule = table.getColumnModel();
 			tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
 			
-			if(tableType == PERF_LABEL_TABLE) {
-				tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 성능 레이블 테이블만 가운데 정렬
+			if(tableType == PERF_INFO_TABLE) { 
+				tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 가운데 정렬
+				
+			}else if(tableType == PERF_LABEL_TABLE) {
+				tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 가운데 정렬
+				
 			}else {
 //				tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
 			}
