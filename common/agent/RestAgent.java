@@ -1,6 +1,8 @@
 package common.agent;
 
 import java.net.ConnectException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -21,7 +23,6 @@ public class RestAgent {
 		
 		try {
 			String API_URL = String.format("http://%s:%s/midknight/api/perfdata/servers/%d/last", adminConsole.get_IP(), adminConsole.get_PORT(), serverIndex);
-			
 			
 			Connection connection = Jsoup.connect(API_URL)
 					.header("Content-Type", "application/json;charset=UTF-8")
@@ -97,5 +98,84 @@ public class RestAgent {
 		return perfDataMap;
 	}
 	
+	
+	public static ArrayList<PerfData> getPerfRowData(boolean firstTry, int perfIndex, AdminConsole_Info adminConsole, String startTime, String endTime){
+		ArrayList<PerfData> rowDataList = new ArrayList<PerfData>();
+		String API = String.format("/midknight/api/perfdata/file/%d?datetime_from=%s&datetime_to=%s", perfIndex, startTime, endTime);
+		
+		try {
+			String API_URL = String.format("http://%s:%s/midknight/api/perfdata/file/%d?datetime_from=%s&datetime_to=%s", adminConsole.get_IP(), adminConsole.get_PORT(), perfIndex, startTime, endTime);
+			
+			Connection connection = Jsoup.connect(API_URL)
+					.header("Content-Type", "application/json;charset=UTF-8")
+					.header("Cookie", "JSESSIONID=" + adminConsole.get_SESSION_ID())
+					.ignoreContentType(true)
+					.timeout(0)
+					.method(Connection.Method.GET);
+			
+			Connection.Response response = connection.execute();
+			
+			adminConsole.setHttpStatusCode(response.statusCode(), false);
+			
+			Document dom = response.parse();
+			
+			// 세션이 끊어졌으므로 세션을 재생성하고 재시도한다, 단 한번만 재시도 후 실패시 null 리턴
+			if(dom.title().contains("MK119 Login") && firstTry) {
+				String newSession = AdminConsole_Info.refreshSession(adminConsole);
+				
+				if (newSession != null) {
+					// 세션 재생성 성공
+					LinkMK119Frame.linkRestAPI(adminConsole, API);
+					return getPerfRowData(false, perfIndex, adminConsole, startTime, endTime);
+					
+				}else {
+					// 세션 재생성 실패
+					LinkMK119Frame.linkRestAPI(adminConsole, API);
+					return null;					
+				}
+				
+			}else {
+				// 세션이 끊어지지 않음
+				try {
+					JSONArray jsonArray = new JSONArray(dom.body().text());
+					
+					for(int i = 0; i < jsonArray.length(); i++) {
+						JSONObject jsonOjbect = jsonArray.getJSONObject(i);
+												
+						String value = jsonOjbect.getString("value");
+						long time = jsonOjbect.getLong("time");
+						
+						PerfData perfData = new PerfData();
+						perfData.setIndex(perfIndex);
+						perfData.setTime(time);
+						perfData.setValue(value);
+						rowDataList.add(perfData);
+					}
+				}catch(JSONException e) {
+					e.printStackTrace();
+					adminConsole.handleException(e);
+					LinkMK119Frame.linkRestAPI(adminConsole, API);
+					return null;
+				}
+			}
+			
+		}catch(ConnectException e) {
+			// MK119 서비스 실행중 아님			
+			e.printStackTrace();
+			adminConsole.handleException(e);
+			LinkMK119Frame.linkRestAPI(adminConsole, API);
+			return null;
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			adminConsole.handleException(e);
+			LinkMK119Frame.linkRestAPI(adminConsole, API);
+			return null;
+		}
+		
+		LinkMK119Frame.linkRestAPI(adminConsole, API);
+		Collections.sort(rowDataList);
+		return rowDataList;
+	}
 	
 }

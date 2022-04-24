@@ -83,6 +83,7 @@ public class FacilityInfoFrame extends JFrame {
 	private JPanel perfInfo_Panel;
 	private JPanel perfData_Panel;
 	private JLabel mappingLabel;
+	private JPanel perfDataInfo_Panel;
 	private JScrollPane perfInfo_ScrollPanel;
 	private JScrollPane perfData_ScrollPanel;
 	private JScrollPane perfLabelInfoPanel;
@@ -103,6 +104,20 @@ public class FacilityInfoFrame extends JFrame {
 	
 	public static JButton updatePerfData;
 	public static JRadioButton perfValue_RadioButton;
+	private JLabel time;
+	private JLabel seprarator2;
+	private JLabel seprarator3;
+	private JLabel seprarator4;
+	private JRadioButton currently_RadioButton;
+	private JRadioButton dutation_radioButton;
+	
+	private JComboBox year_comboBox;
+	private JComboBox month_comboBox;
+	private JComboBox day_comboBox;
+	private JComboBox hour_comboBox;
+	private JComboBox minute_comboBox;
+	private JComboBox seconds_comboBox;
+	private JPanel panel;
 	
 	/**
 	 * Launch the application.
@@ -224,7 +239,7 @@ public class FacilityInfoFrame extends JFrame {
 		perfInfo_Panel.setBounds(739, 128, 483, 530);
 		perfInfo_Panel.setLayout(null);
 		perfInfo_Panel.setVisible(true);
-		actualPanel.add(perfInfo_Panel);
+//		actualPanel.add(perfInfo_Panel); Å×½ºÆ®
 		
 		perfInfo_ScrollPanel = new JScrollPane();
 		perfInfo_ScrollPanel.setBackground(Color.WHITE);
@@ -259,15 +274,166 @@ public class FacilityInfoFrame extends JFrame {
 		
 		perfData_Panel = new JPanel();
 		perfData_Panel.setBackground(Color.WHITE);		
-		perfData_Panel.setBounds(739, 128, 483, 530);
+		perfData_Panel.setBounds(739, 276, 483, 382);
 		perfData_Panel.setLayout(null);
 		perfData_Panel.setVisible(false);
 		actualPanel.add(perfData_Panel);
 		
+		perfDataInfo_Panel = new JPanel();
+		perfDataInfo_Panel.setBackground(Color.WHITE);
+		perfDataInfo_Panel.setBounds(739, 128, 483, 143);
+		perfDataInfo_Panel.setBorder(new LineBorder(Color.BLACK, 2));
+		perfDataInfo_Panel.setLayout(null);
+		perfDataInfo_Panel.setVisible(false);
+		actualPanel.add(perfDataInfo_Panel);
+		
+		JLabel perfName_label = new JLabel("¼º´É¸í : ");
+		perfName_label.setForeground(Color.BLACK);
+		perfName_label.setBackground(Color.WHITE);
+		perfName_label.setHorizontalAlignment(SwingConstants.LEFT);
+		perfName_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+		perfName_label.setBounds(12, 10, 459, 23);
+		perfDataInfo_Panel.add(perfName_label);
+		
+		time = new JLabel("\uAE30\uC900 \uC2DC\uAC04");
+		time.setForeground(Color.BLACK);
+		time.setBackground(Color.WHITE);
+		time.setHorizontalAlignment(SwingConstants.LEFT);
+		time.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+		time.setBounds(12, 40, 67, 24);
+		perfDataInfo_Panel.add(time);
+		
+		year_comboBox = new JComboBox();
+		year_comboBox.setForeground(Color.BLACK);
+		year_comboBox.setBackground(Color.WHITE);
+		year_comboBox.setModel(new DefaultComboBoxModel(new String[] {"2022", "2021"}));
+		year_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+		year_comboBox.setBounds(12, 73, 67, 24);
+		perfDataInfo_Panel.add(year_comboBox);
+		
+		ArrayList<String> month = new ArrayList<String>();
+		for(int i = 1; i <= 12; i++) {
+			month.add(String.format("%02d", i));
+		}
+		ArrayList<String> day = new ArrayList<String>();
+		for(int i = 1; i <= 31; i++) {
+			day.add(String.format("%02d", i));
+		}
+		ArrayList<String> hour = new ArrayList<String>();
+		for(int i = 0; i <= 23; i++) {
+			hour.add(String.format("%02d", i));
+		}
+		ArrayList<String> minute = new ArrayList<String>();
+		for(int i = 1; i < 60; i++) {
+			minute.add(String.format("%02d", i));
+		}
+		ArrayList<String> second = new ArrayList<String>();
+		for(int i = 1; i < 60; i++) {
+			second.add(String.format("%02d", i));
+		}
+		month_comboBox = new JComboBox();
+		month_comboBox.setForeground(Color.BLACK);
+		month_comboBox.setBackground(Color.WHITE);
+		month_comboBox.setModel(new DefaultComboBoxModel(month.toArray()));
+		month_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+		month_comboBox.setBounds(94, 73, 52, 24);
+		perfDataInfo_Panel.add(month_comboBox);
+				
+		day_comboBox = new JComboBox();
+		day_comboBox.setModel(new DefaultComboBoxModel(day.toArray()));
+		day_comboBox.setForeground(Color.BLACK);
+		day_comboBox.setBackground(Color.WHITE);
+		day_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+		day_comboBox.setBounds(162, 73, 52, 24);
+		perfDataInfo_Panel.add(day_comboBox);
+		
+		hour_comboBox = new JComboBox();
+		hour_comboBox.setModel(new DefaultComboBoxModel(hour.toArray()));
+		hour_comboBox.setForeground(Color.BLACK);
+		hour_comboBox.setBackground(Color.WHITE);
+		hour_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+		hour_comboBox.setBounds(230, 73, 52, 24);
+		perfDataInfo_Panel.add(hour_comboBox);
+		
+		minute_comboBox = new JComboBox();
+		minute_comboBox.setModel(new DefaultComboBoxModel(minute.toArray()));
+		minute_comboBox.setBackground(Color.WHITE);
+		minute_comboBox.setForeground(Color.BLACK);
+		minute_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+		minute_comboBox.setBounds(298, 73, 52, 24);
+		perfDataInfo_Panel.add(minute_comboBox);
+		
+		seconds_comboBox = new JComboBox();
+		seconds_comboBox.setModel(new DefaultComboBoxModel(second.toArray()));
+		seconds_comboBox.setForeground(Color.BLACK);
+		seconds_comboBox.setBackground(Color.WHITE);
+		seconds_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+		seconds_comboBox.setBounds(367, 73, 52, 24);
+		perfDataInfo_Panel.add(seconds_comboBox);
+		
+		JLabel seprarator1 = new JLabel("-");
+		seprarator1.setHorizontalAlignment(SwingConstants.CENTER);
+		seprarator1.setForeground(Color.BLACK);
+		seprarator1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
+		seprarator1.setBackground(Color.WHITE);
+		seprarator1.setBounds(70, 71, 34, 24);
+		perfDataInfo_Panel.add(seprarator1);
+		
+		seprarator2 = new JLabel("-");
+		seprarator2.setHorizontalAlignment(SwingConstants.CENTER);
+		seprarator2.setForeground(Color.BLACK);
+		seprarator2.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
+		seprarator2.setBackground(Color.WHITE);
+		seprarator2.setBounds(136, 71, 34, 24);
+		perfDataInfo_Panel.add(seprarator2);
+		
+		seprarator3 = new JLabel(":");
+		seprarator3.setHorizontalAlignment(SwingConstants.CENTER);
+		seprarator3.setForeground(Color.BLACK);
+		seprarator3.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
+		seprarator3.setBackground(Color.WHITE);
+		seprarator3.setBounds(272, 71, 34, 24);
+		perfDataInfo_Panel.add(seprarator3);
+		
+		seprarator4 = new JLabel(":");
+		seprarator4.setHorizontalAlignment(SwingConstants.CENTER);
+		seprarator4.setForeground(Color.BLACK);
+		seprarator4.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
+		seprarator4.setBackground(Color.WHITE);
+		seprarator4.setBounds(341, 71, 34, 24);
+		perfDataInfo_Panel.add(seprarator4);
+		
+		currently_RadioButton = new JRadioButton("ÃÖ±Ù n½Ã°£");
+		currently_RadioButton.setForeground(Color.BLACK);
+		currently_RadioButton.setBackground(Color.WHITE);
+		currently_RadioButton.setHorizontalAlignment(SwingConstants.LEFT);
+		currently_RadioButton.setFocusPainted(false);
+		currently_RadioButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+		currently_RadioButton.setBounds(90, 40, 110, 23);
+		currently_RadioButton.setSelected(true);
+		perfDataInfo_Panel.add(currently_RadioButton);
+		
+		dutation_radioButton = new JRadioButton("±âÁØ½Ã°£ ºÎÅÍ ~ ±îÁö");
+		dutation_radioButton.setHorizontalAlignment(SwingConstants.LEFT);
+		dutation_radioButton.setFocusPainted(false);
+		dutation_radioButton.setForeground(Color.BLACK);
+		dutation_radioButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
+		dutation_radioButton.setBackground(Color.WHITE);
+		dutation_radioButton.setBounds(202, 40, 179, 23);
+		perfDataInfo_Panel.add(dutation_radioButton);
+		
+		ButtonGroup group = new ButtonGroup();
+		group.add(currently_RadioButton);
+		group.add(dutation_radioButton);
+		
+		panel = new JPanel();
+		panel.setBounds(12, 100, 459, 36);
+		perfDataInfo_Panel.add(panel);
+		
 		perfData_ScrollPanel = new JScrollPane();
 		perfData_ScrollPanel.setBackground(Color.WHITE);
 		perfData_ScrollPanel.setBorder(new LineBorder(Color.BLACK, 2));
-		perfData_ScrollPanel.setBounds(0, 0, 483, 530);
+		perfData_ScrollPanel.setBounds(0, 0, 483, 382);
 		perfData_Panel.add(perfData_ScrollPanel);
 		
 		perfData_Table = new JTable();
@@ -520,6 +686,7 @@ public class FacilityInfoFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {				
 				perfInfo_Panel.setVisible(true);
 				perfData_Panel.setVisible(false);
+				perfDataInfo_Panel.setVisible(false);
 			}
 		});
 		actualPanel.add(perfInfo_RadioButton);
@@ -535,6 +702,7 @@ public class FacilityInfoFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				perfInfo_Panel.setVisible(false);
 				perfData_Panel.setVisible(true);
+				perfDataInfo_Panel.setVisible(true);
 			}
 		});
 		actualPanel.add(perfValue_RadioButton);
@@ -1387,5 +1555,4 @@ public class FacilityInfoFrame extends JFrame {
 		
 		return isConnect;
 	}
-
 }

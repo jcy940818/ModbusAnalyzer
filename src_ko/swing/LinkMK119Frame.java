@@ -314,7 +314,7 @@ public class LinkMK119Frame extends JFrame{
 					// 왼쪽 클릭		
 					 if(adminConsole != null) {
 						 String API = String.format("http://%s:%s%s", adminConsole.get_IP(), adminConsole.get_PORT(), lastReqAPI);
-						 API = API.contains(" ") ? API.split(" ")[0] : API;
+						 API = (API.contains(" ") && API.contains("Refresh Session"))? API.split(" ")[0] : API;
 						 StringSelection data = new StringSelection(API);
 						 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 						 clipboard.setContents(data, data);
@@ -324,7 +324,7 @@ public class LinkMK119Frame extends JFrame{
 					// 더블 클릭
 					 if(adminConsole != null) {
 						 String API = String.format("http://%s:%s%s", adminConsole.get_IP(), adminConsole.get_PORT(), lastReqAPI);
-						 API = API.contains(" ") ? API.split(" ")[0] : API;
+						 API = (API.contains(" ") && API.contains("Refresh Session"))? API.split(" ")[0] : API;
 						 StringSelection data = new StringSelection(API);
 						 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 						 clipboard.setContents(data, data);
@@ -334,7 +334,7 @@ public class LinkMK119Frame extends JFrame{
 					// 오른쪽 클릭
 					 if(adminConsole != null) {
 						 String API = String.format("http://%s:%s%s", adminConsole.get_IP(), adminConsole.get_PORT(), lastReqAPI);
-						 API = API.contains(" ") ? API.split(" ")[0] : API;
+						 API = (API.contains(" ") && API.contains("Refresh Session"))? API.split(" ")[0] : API;
 						 StringSelection data = new StringSelection(API);
 						 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 						 clipboard.setContents(data, data);
