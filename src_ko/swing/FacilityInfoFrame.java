@@ -12,8 +12,10 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -36,6 +38,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+
+import org.codehaus.jettison.json.JSONArray;
 
 import common.agent.PerfData;
 import common.agent.RestAgent;
@@ -109,16 +113,24 @@ public class FacilityInfoFrame extends JFrame {
 	private JLabel seprarator2;
 	private JLabel seprarator3;
 	private JLabel seprarator4;
-	private JRadioButton currently_RadioButton;
-	private JRadioButton dutation_radioButton;
+	private JRadioButton before_RadioButton;
+	private JRadioButton duration_radioButton;
 	
 	private JComboBox year_comboBox;
 	private JComboBox month_comboBox;
 	private JComboBox day_comboBox;
 	private JComboBox hour_comboBox;
 	private JComboBox minute_comboBox;
-	private JComboBox seconds_comboBox;
-	private JPanel panel;
+	private JComboBox second_comboBox;
+	private JPanel setTime_panel;
+	private JPanel after_panel;
+	private JPanel duration_panel;
+	private JRadioButton after_RadioButton;
+	private JLabel setTime_label1;
+	private JTextField setTime_textField;
+	private JLabel setTime_label2;
+	private JButton btnNewButton;
+	private JButton setTimeOk_Button;
 	
 	/**
 	 * Launch the application.
@@ -296,12 +308,18 @@ public class FacilityInfoFrame extends JFrame {
 		perfName_label.setBounds(12, 10, 459, 23);
 		perfDataInfo_Panel.add(perfName_label);
 		
-		time = new JLabel("기준 시간");
+		time = new JLabel("기준 시간부터");
 		time.setForeground(Color.BLACK);
 		time.setBackground(Color.WHITE);
 		time.setHorizontalAlignment(SwingConstants.LEFT);
 		time.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		time.setBounds(12, 40, 67, 24);
+		time.setBounds(12, 40, 105, 24);
+		time.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				MyCalendar.setTimeNow(year_comboBox, month_comboBox, day_comboBox, hour_comboBox, minute_comboBox, second_comboBox);
+			}
+		});
 		perfDataInfo_Panel.add(time);
 		
 		year_comboBox = new JComboBox();
@@ -330,14 +348,14 @@ public class FacilityInfoFrame extends JFrame {
 		});
 		perfDataInfo_Panel.add(month_comboBox);
 				
-		day_comboBox = new JComboBox();		
+		day_comboBox = new JComboBox();
 		day_comboBox.setForeground(Color.BLACK);
 		day_comboBox.setBackground(Color.WHITE);
 		day_comboBox.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		day_comboBox.setBounds(162, 73, 52, 24);
 		perfDataInfo_Panel.add(day_comboBox);
 		
-		hour_comboBox = new JComboBox();		
+		hour_comboBox = new JComboBox();
 		hour_comboBox.setForeground(Color.BLACK);
 		hour_comboBox.setBackground(Color.WHITE);
 		hour_comboBox.setFont(new Font("맑은 고딕", Font.BOLD, 15));
@@ -351,16 +369,142 @@ public class FacilityInfoFrame extends JFrame {
 		minute_comboBox.setBounds(298, 73, 52, 24);
 		perfDataInfo_Panel.add(minute_comboBox);
 		
-		seconds_comboBox = new JComboBox();		
-		seconds_comboBox.setForeground(Color.BLACK);
-		seconds_comboBox.setBackground(Color.WHITE);
-		seconds_comboBox.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		seconds_comboBox.setBounds(367, 73, 52, 24);
-		perfDataInfo_Panel.add(seconds_comboBox);
+		second_comboBox = new JComboBox();		
+		second_comboBox.setForeground(Color.BLACK);
+		second_comboBox.setBackground(Color.WHITE);
+		second_comboBox.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		second_comboBox.setBounds(366, 73, 52, 24);
+		perfDataInfo_Panel.add(second_comboBox);
 		
-		panel = new JPanel();
-		panel.setBounds(12, 100, 459, 36);
-		perfDataInfo_Panel.add(panel);
+		setTime_panel = new JPanel();
+		setTime_panel.setBackground(Color.WHITE);
+		setTime_panel.setBounds(12, 102, 465, 36);
+		setTime_panel.setLayout(null);
+		perfDataInfo_Panel.add(setTime_panel);
+		
+		setTime_label1 = new JLabel("기준 시간 이전부터");
+		setTime_label1.setBackground(Color.WHITE);
+		setTime_label1.setForeground(Color.BLACK);
+		setTime_label1.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		setTime_label1.setBounds(0, 0, 134, 36);
+		setTime_panel.add(setTime_label1);
+		
+		setTime_textField = new JTextField("1");
+		setTime_textField.setHorizontalAlignment(SwingConstants.CENTER);
+		setTime_textField.setBackground(Color.WHITE);
+		setTime_textField.setForeground(Color.BLUE);
+		setTime_textField.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		setTime_textField.setBounds(140, 7, 60, 26);
+		setTime_textField.setBorder(new LineBorder(Color.BLACK, 2));
+		setTime_textField.setColumns(10);
+		setTime_textField.addKeyListener(new KeyAdapter() {						
+			public void keyReleased(KeyEvent e) {
+				String enteredTime = setTime_textField.getText().toString();
+				
+				try {
+					int time = Integer.parseInt(enteredTime);
+					
+					if(time < 1) {
+						throw new Exception("time exception");
+					}else {
+						setTime_textField.setForeground(Color.BLUE);
+					}
+					
+				}catch(Exception ex) {
+					setTime_textField.setForeground(Color.RED);
+				}
+				
+			}
+		});
+		setTime_panel.add(setTime_textField);
+		
+		setTime_label2 = new JLabel("시간동안 수집한 데이터");
+		setTime_label2.setForeground(Color.BLACK);
+		setTime_label2.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		setTime_label2.setBackground(Color.WHITE);
+		setTime_label2.setBounds(205, 0, 165, 36);
+		setTime_panel.add(setTime_label2);
+		
+		setTimeOk_Button = new JButton("확 인");
+		setTimeOk_Button.setForeground(Color.BLACK);
+		setTimeOk_Button.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		setTimeOk_Button.setBackground(Color.WHITE);
+		setTimeOk_Button.setBounds(385, 5, 74, 28);
+		setTimeOk_Button.setFocusPainted(false);
+		setTimeOk_Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+				if(selectedPerf == null) {
+					return;
+				}
+				if(before_RadioButton.isSelected() || after_RadioButton.isSelected()) {
+					if(setTime_textField.getForeground() == Color.RED) return;
+				}
+				
+				String startTime = "";
+				String endTime = "";
+				
+				if(before_RadioButton.isSelected()) {
+					int beforeHour = Integer.parseInt(setTime_textField.getText().toString());
+					
+					long time = MyCalendar.getMilliseconds(year_comboBox, month_comboBox, day_comboBox, hour_comboBox, minute_comboBox, second_comboBox);
+					 
+					startTime = MyCalendar.sdf.format(MyCalendar.getCalcMilliseconds(time, beforeHour * -1));
+					endTime = MyCalendar.sdf.format(time);
+					
+				}else if(after_RadioButton.isSelected()) {
+					
+				}else if(duration_radioButton.isSelected()){
+					
+				}else {
+					
+				}
+				
+				ArrayList<PerfData> list = RestAgent.getPerfRowData(true, selectedPerf.getIndex(), MK119_Lite_Panel.adminConsole, startTime, endTime);
+				
+				if(list != null) {
+					Object[][] content = new Object[list.size()][];
+					
+					for(int i = 0; i < list.size(); i++) {
+						PerfData data = list.get(i);
+						content[i] = new Object[3];
+						content[i][0] = i + 1;
+						content[i][1] = data.getTimeString();
+						content[i][2] = PerfData.getPerfLastContent(selectedPerf, data);
+					}
+					
+					perfData_Table.setModel(new DefaultTableModel(
+							new Object[][]{
+								{null, null, null},
+								{null, null, null},
+								{null, null, null},
+								{null, null, null},
+								{null, null, null},
+								{null, null, null},
+							},
+							new String[] { "순 서", "수집 시간", "수집 값"}) {
+							boolean[] columnEditables = new boolean[] {
+									false, // 값 : 수정 불가
+									false, // 매핑 내용 : 수정 불가						
+							};
+							public boolean isCellEditable(int row, int column) {
+								return columnEditables[column];
+							}
+					});
+					setTableStyle(perfData_Table, PERF_DATA_TABLE);
+				}// init Row Data Table
+				
+			}
+		});
+		setTime_panel.add(setTimeOk_Button);
+				
+		
+		duration_panel = new JPanel();
+		duration_panel.setBackground(Color.WHITE);
+		duration_panel.setBounds(12, 100, 459, 36);
+		duration_panel.setLayout(null);
+//		perfDataInfo_Panel.add(duration_panel);
 		
 		JLabel seprarator1 = new JLabel("-");
 		seprarator1.setHorizontalAlignment(SwingConstants.CENTER);
@@ -391,43 +535,80 @@ public class FacilityInfoFrame extends JFrame {
 		seprarator4.setForeground(Color.BLACK);
 		seprarator4.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		seprarator4.setBackground(Color.WHITE);
-		seprarator4.setBounds(341, 71, 34, 24);
+		seprarator4.setBounds(340, 71, 34, 24);
 		perfDataInfo_Panel.add(seprarator4);
 		
-		currently_RadioButton = new JRadioButton("최근 n시간");
-		currently_RadioButton.setForeground(Color.BLACK);
-		currently_RadioButton.setBackground(Color.WHITE);
-		currently_RadioButton.setHorizontalAlignment(SwingConstants.LEFT);
-		currently_RadioButton.setFocusPainted(false);
-		currently_RadioButton.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		currently_RadioButton.setBounds(90, 40, 110, 23);
-		currently_RadioButton.setSelected(true);
-		currently_RadioButton.addActionListener(new ActionListener() {
+		before_RadioButton = new JRadioButton("최근 n시간");
+		before_RadioButton.setForeground(Color.BLUE);
+		before_RadioButton.setBackground(Color.WHITE);
+		before_RadioButton.setHorizontalAlignment(SwingConstants.LEFT);
+		before_RadioButton.setFocusPainted(false);
+		before_RadioButton.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		before_RadioButton.setBounds(125, 42, 101, 23);
+		before_RadioButton.setSelected(true);
+		before_RadioButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				MyCalendar.setTimeNow(year_comboBox, month_comboBox, day_comboBox, hour_comboBox, minute_comboBox, seconds_comboBox);
+				
+				
+				if(before_RadioButton.isSelected()) {
+					setTime_label1.setText("기준 시간 이전부터");
+					before_RadioButton.setForeground(Color.BLUE);
+					after_RadioButton.setForeground(Color.LIGHT_GRAY);
+					duration_radioButton.setForeground(Color.LIGHT_GRAY);
+				}
 			}
 		});
-		perfDataInfo_Panel.add(currently_RadioButton);
+		perfDataInfo_Panel.add(before_RadioButton);
 		
-		dutation_radioButton = new JRadioButton("기준시간 부터 ~ 까지");
-		dutation_radioButton.setHorizontalAlignment(SwingConstants.LEFT);
-		dutation_radioButton.setFocusPainted(false);
-		dutation_radioButton.setForeground(Color.BLACK);
-		dutation_radioButton.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		dutation_radioButton.setBackground(Color.WHITE);
-		dutation_radioButton.setBounds(202, 40, 179, 23);
-		dutation_radioButton.addActionListener(new ActionListener() {
+		after_RadioButton = new JRadioButton("이후 n시간");
+		after_RadioButton.setSelected(true);
+		after_RadioButton.setHorizontalAlignment(SwingConstants.LEFT);
+		after_RadioButton.setForeground(Color.LIGHT_GRAY);
+		after_RadioButton.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		after_RadioButton.setFocusPainted(false);
+		after_RadioButton.setBackground(Color.WHITE);
+		after_RadioButton.setBounds(230, 42, 101, 23);
+		after_RadioButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				MyCalendar.setTimeNow(year_comboBox, month_comboBox, day_comboBox, hour_comboBox, minute_comboBox, seconds_comboBox);
+
+				if(after_RadioButton.isSelected()) {
+					setTime_label1.setText("기준 시간 이후부터");
+					before_RadioButton.setForeground(Color.LIGHT_GRAY);
+					after_RadioButton.setForeground(Color.BLUE);
+					duration_radioButton.setForeground(Color.LIGHT_GRAY);
+				}
+				
 			}
 		});
-		perfDataInfo_Panel.add(dutation_radioButton);
+		perfDataInfo_Panel.add(after_RadioButton);
+		
+		duration_radioButton = new JRadioButton("정해진 시간까지");
+		duration_radioButton.setHorizontalAlignment(SwingConstants.LEFT);
+		duration_radioButton.setFocusPainted(false);
+		duration_radioButton.setForeground(Color.LIGHT_GRAY);
+		duration_radioButton.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		duration_radioButton.setBackground(Color.WHITE);
+		duration_radioButton.setBounds(335, 42, 140, 23);
+		duration_radioButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if(duration_radioButton.isSelected()) {
+					before_RadioButton.setForeground(Color.LIGHT_GRAY);
+					after_RadioButton.setForeground(Color.LIGHT_GRAY);
+					duration_radioButton.setForeground(Color.BLUE);
+				}
+			}
+		});
+		perfDataInfo_Panel.add(duration_radioButton);
 		
 		ButtonGroup group = new ButtonGroup();
-		group.add(currently_RadioButton);
-		group.add(dutation_radioButton);
+		group.add(before_RadioButton);
+		group.add(after_RadioButton);
+		group.add(duration_radioButton);
+		
 		
 		perfData_ScrollPanel = new JScrollPane();
 		perfData_ScrollPanel.setBackground(Color.WHITE);
@@ -437,19 +618,8 @@ public class FacilityInfoFrame extends JFrame {
 		
 		perfData_Table = new JTable();
 		perfData_Table.setModel(new DefaultTableModel(
-				new Object[][] {
-					{"1994-08-18 08:45:00", "JCY Moon"},
-					{null, null},
-					{null, null},
-					{null, null},
-					{null, null},
-					{null, null},
-					{null, null},
-					{null, null},
-					{null, null},
-					{null, null}
-				},
-				new String[] { "수집 시간", "수집 값"}) {
+				null,
+				new String[] {"순 서", "수집 시간", "수집 값"}) {
 				boolean[] columnEditables = new boolean[] {
 						false, // 값 : 수정 불가
 						false, // 매핑 내용 : 수정 불가						
@@ -745,7 +915,7 @@ public class FacilityInfoFrame extends JFrame {
 		initCopyAdapter(fac.getName().trim());
 				
 		// 수집 데이터 기준 시간 초기화
-		MyCalendar.setTimeNow(year_comboBox, month_comboBox, day_comboBox, hour_comboBox, minute_comboBox, seconds_comboBox);
+		MyCalendar.setTimeNow(year_comboBox, month_comboBox, day_comboBox, hour_comboBox, minute_comboBox, second_comboBox);				
 		
 		// 장비 정보를 표시
 		updateFacilityInfo();
@@ -891,7 +1061,7 @@ public class FacilityInfoFrame extends JFrame {
 					PerfData data = perfRealTimeDataMap.get(perf.getIndex());
 					
 					if(data != null && !data.getValue().equals("-")) {
-						content[i][2] = getPerfLastContent(perf, data);
+						content[i][2] = PerfData.getPerfLastContent(perf, data);
 					}else {
 						content[i][2] = "-";
 					}
@@ -1106,8 +1276,9 @@ public class FacilityInfoFrame extends JFrame {
 			table.getColumnModel().getColumn(1).setPreferredWidth(350); // 매핑 내용		
 		}else if(tableType == PERF_DATA_TABLE) {
 			// 성능 데이터 테이블
-			table.getColumnModel().getColumn(0).setPreferredWidth(200); // 수집 시간
-			table.getColumnModel().getColumn(1).setPreferredWidth(300); // 성능 값
+			table.getColumnModel().getColumn(0).setPreferredWidth(80); // 순 서
+			table.getColumnModel().getColumn(1).setPreferredWidth(200); // 수집 시간
+			table.getColumnModel().getColumn(2).setPreferredWidth(250); // 성능 값
 		}
 		
 		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
@@ -1125,11 +1296,14 @@ public class FacilityInfoFrame extends JFrame {
 			tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 수집 시간
 			
 		}else if(tableType == PERF_LIST_TABLE && !isConnectRestAPI()) {
-			
+			// do nothing
 			
 		}else if(tableType == PERF_LABEL_TABLE) {
 			tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
 			
+		}else if(tableType == PERF_DATA_TABLE) {
+			tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
+			tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer);
 		}else {
 			tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer);
 		}
@@ -1286,7 +1460,7 @@ public class FacilityInfoFrame extends JFrame {
 					PerfData data = perfRealTimeDataMap.get(perf.getIndex());
 					
 					if(data != null && !data.getValue().equals("-")) {
-						content[i][2] = getPerfLastContent(perf, data);
+						content[i][2] = PerfData.getPerfLastContent(perf, data);
 					}else {
 						content[i][2] = "-";
 					}
@@ -1324,91 +1498,7 @@ public class FacilityInfoFrame extends JFrame {
 		setTableStyle(perfListTable, PERF_LIST_TABLE);
 	}
 	
-	public Object getPerfLastContent(Perf perf, PerfData data) {
-		Object content = "-";
-		boolean labelMapping = false;
-		
-		switch(perf.getDataFormat()) {
-			
-			case 1 : // 이진 성능
-				try {
-					String[] binLabel = perf.getBinLabel();
-					double doubleValue = Double.parseDouble(data.getValue().toString());
-					if(doubleValue == 0) {
-						content = binLabel[0];
-						labelMapping = true;
-					}else if(doubleValue == 1) {
-						content = binLabel[1];
-						labelMapping = true;
-					}else {
-						content = (Math.round(doubleValue*1000)/1000.0);
-					}
-				}catch(Exception e) {
-					e.printStackTrace();
-					content = "-";
-				}
-				break;
-				
-				
-			case 2 : // 다중 성능
-				try {
-					double doubleValue = Double.parseDouble(data.getValue().toString());
-					PerfLabelStatusBean[] labels = perf.getStatusLabels();
-					content = (Math.round(doubleValue*1000)/1000.0);
-					// 다중 상태 레이블을 검사 후 일치하는 값이 있다면 내용에 적용 후 반복문 종료
-					for(int k = 0; k < labels.length; k++) {					
-						if(doubleValue == labels[k].value) {
-							content = labels[k].label;
-							labelMapping = true;
-							break;
-						}
-					}
-				}catch(Exception e) {
-					e.printStackTrace();
-					content = "-";
-				}
-				break;
-				
-				
-			case 3 : // 아날로그 성능
-				try {
-					double doubleValue = Double.parseDouble(data.getValue().toString());
-					if((perf.getMeasure() != null) && (perf.getMeasure().length() > 0)) {
-						content = (Math.round(doubleValue*1000)/1000.0) + " " + perf.getMeasure();	
-					}else {
-						content = (Math.round(doubleValue*1000)/1000.0);
-					}
-				}catch(Exception e) {
-					e.printStackTrace();
-					content = "-";
-				}
-				break;
-				
-				
-			default :  
-				content = "-"; 
-				break;
-				
-		}// end switch
-		
-		// 정수 데이터는 소숫점을 표시하지 않도록 하기 위해서 아래의 코드를 추가
-		Object temp = null;
-		try {
-			temp = content.toString();
-			if(!labelMapping) {
-				if(content.toString().contains(" ") && content.toString().split(" ")[0].endsWith(".0")) {
-					content = content.toString().replace(".0", "");
-				}else if(content.toString().endsWith(".0")) {
-					content = content.toString().replace(".0", "");
-				}
-			}
-		}catch(Exception e) {
-			e.printStackTrace();
-			content = temp;
-		}
-		
-		return content;
-	}
+	
 	
 	
 	public void updateFacilityInfo() {
@@ -1557,5 +1647,4 @@ public class FacilityInfoFrame extends JFrame {
 		
 		return isConnect;
 	}
-	
 }

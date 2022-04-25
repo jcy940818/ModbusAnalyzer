@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import common.perf.Perf;
+import common.perf.PerfLabelStatusBean;
 
 public class PerfData implements Comparable{
 	
@@ -134,6 +135,92 @@ public class PerfData implements Comparable{
 		}else {
 			return 1;
 		}
+	}
+	
+	public static Object getPerfLastContent(Perf perf, PerfData data) {
+		Object content = "-";
+		boolean labelMapping = false;
+		
+		switch(perf.getDataFormat()) {
+			
+			case 1 : // 이진 성능
+				try {
+					String[] binLabel = perf.getBinLabel();
+					double doubleValue = Double.parseDouble(data.getValue().toString());
+					if(doubleValue == 0) {
+						content = binLabel[0];
+						labelMapping = true;
+					}else if(doubleValue == 1) {
+						content = binLabel[1];
+						labelMapping = true;
+					}else {
+						content = (Math.round(doubleValue*1000)/1000.0);
+					}
+				}catch(Exception e) {
+					e.printStackTrace();
+					content = "-";
+				}
+				break;
+				
+				
+			case 2 : // 다중 성능
+				try {
+					double doubleValue = Double.parseDouble(data.getValue().toString());
+					PerfLabelStatusBean[] labels = perf.getStatusLabels();
+					content = (Math.round(doubleValue*1000)/1000.0);
+					// 다중 상태 레이블을 검사 후 일치하는 값이 있다면 내용에 적용 후 반복문 종료
+					for(int k = 0; k < labels.length; k++) {					
+						if(doubleValue == labels[k].value) {
+							content = labels[k].label;
+							labelMapping = true;
+							break;
+						}
+					}
+				}catch(Exception e) {
+					e.printStackTrace();
+					content = "-";
+				}
+				break;
+				
+				
+			case 3 : // 아날로그 성능
+				try {
+					double doubleValue = Double.parseDouble(data.getValue().toString());
+					if((perf.getMeasure() != null) && (perf.getMeasure().length() > 0)) {
+						content = (Math.round(doubleValue*1000)/1000.0) + " " + perf.getMeasure();	
+					}else {
+						content = (Math.round(doubleValue*1000)/1000.0);
+					}
+				}catch(Exception e) {
+					e.printStackTrace();
+					content = "-";
+				}
+				break;
+				
+				
+			default :  
+				content = "-"; 
+				break;
+				
+		}// end switch
+		
+		// 정수 데이터는 소숫점을 표시하지 않도록 하기 위해서 아래의 코드를 추가
+		Object temp = null;
+		try {
+			temp = content.toString();
+			if(!labelMapping) {
+				if(content.toString().contains(" ") && content.toString().split(" ")[0].endsWith(".0")) {
+					content = content.toString().replace(".0", "");
+				}else if(content.toString().endsWith(".0")) {
+					content = content.toString().replace(".0", "");
+				}
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+			content = temp;
+		}
+		
+		return content;
 	}
 	
 }
