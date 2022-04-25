@@ -487,7 +487,7 @@ public class LinkMK119Frame extends JFrame{
 	public static void linkProtocol() {
 		MK119_Lite_Panel.linkMK119_Protocol = true;
 		MK119_Lite_Panel.updateItem_searchComboBox(true);
-		MK119_Lite_Panel.resetForm(false, true);
+		MK119_Lite_Panel.resetForm(false, false);
 	}
 	
 	public static void linkRestAPI(AdminConsole_Info admin, String api) {
