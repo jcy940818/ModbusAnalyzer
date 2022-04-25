@@ -633,7 +633,7 @@ public class MK119_Lite_Panel extends JPanel {
 								continue;
 							}
 						}catch(NullPointerException e) {
-							e.printStackTrace();
+//							e.printStackTrace();
 							
 							RCU rcu = new RCU();
 							rcu.setIndex(rtuIndex);
@@ -762,7 +762,7 @@ public class MK119_Lite_Panel extends JPanel {
 		
 		// 이동 불가, 셀 크기 조절 불가
 		table.getTableHeader().setReorderingAllowed(false);
-		table.getTableHeader().setResizingAllowed(false);
+		table.getTableHeader().setResizingAllowed(true);
 		table.setRowSelectionAllowed(false);
 		table.setCellSelectionEnabled(true);
 		
