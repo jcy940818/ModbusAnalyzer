@@ -89,7 +89,7 @@ public class MK119_Lite_Panel extends JPanel {
 	public static HashMap<Integer, ServerGroup> serverGroupMap;
 	public static HashMap<Integer, Integer> serverGroupMappingInfo;
 	
-	private static Server selectedServer;
+	public static Server selectedServer;
 	private static JTextField searchFacility_textField1;
 	private static JTextField searchFacility_textField2;
 	private static JComboBox searchFacility_ComboBox1; 
