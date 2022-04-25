@@ -28,6 +28,7 @@ public class RestAgent {
 					.header("Content-Type", "application/json;charset=UTF-8")
 					.header("Cookie", "JSESSIONID=" + adminConsole.get_SESSION_ID())
 					.ignoreContentType(true)
+					.maxBodySize(0)
 					.timeout(0)
 					.method(Connection.Method.GET);
 			
@@ -110,6 +111,7 @@ public class RestAgent {
 					.header("Content-Type", "application/json;charset=UTF-8")
 					.header("Cookie", "JSESSIONID=" + adminConsole.get_SESSION_ID())
 					.ignoreContentType(true)
+					.maxBodySize(0)
 					.timeout(0)
 					.method(Connection.Method.GET);
 			
