@@ -382,7 +382,7 @@ public class FacilityInfoFrame extends JFrame {
 		setTime_panel.setLayout(null);
 		perfDataInfo_Panel.add(setTime_panel);
 		
-		setTime_label1 = new JLabel("기준 시간 이전부터");
+		setTime_label1 = new JLabel("기준 시간 이전까지");
 		setTime_label1.setBackground(Color.WHITE);
 		setTime_label1.setForeground(Color.BLACK);
 		setTime_label1.setFont(new Font("맑은 고딕", Font.BOLD, 15));
@@ -439,7 +439,22 @@ public class FacilityInfoFrame extends JFrame {
 					return;
 				}
 				if(before_RadioButton.isSelected() || after_RadioButton.isSelected()) {
-					if(setTime_textField.getForeground() == Color.RED) return;
+					if(setTime_textField.getForeground() == Color.RED) {
+						perfData_Table.setModel(new DefaultTableModel(
+								null,
+								new String[] { "순 서", "수집 시간", "수집 값"}) {
+								boolean[] columnEditables = new boolean[] {
+										false, // 순서
+										false, // 수집 시간		
+										false, // 수집 값
+								};
+								public boolean isCellEditable(int row, int column) {
+									return columnEditables[column];
+								}
+						});
+						setTableStyle(perfData_Table, PERF_DATA_TABLE);
+						return;
+					}
 				}
 				
 				String startTime = "";
@@ -475,18 +490,12 @@ public class FacilityInfoFrame extends JFrame {
 					}
 					
 					perfData_Table.setModel(new DefaultTableModel(
-							new Object[][]{
-								{null, null, null},
-								{null, null, null},
-								{null, null, null},
-								{null, null, null},
-								{null, null, null},
-								{null, null, null},
-							},
+							content,
 							new String[] { "순 서", "수집 시간", "수집 값"}) {
 							boolean[] columnEditables = new boolean[] {
-									false, // 값 : 수정 불가
-									false, // 매핑 내용 : 수정 불가						
+									false, // 순서
+									false, // 수집 시간		
+									false, // 수집 값
 							};
 							public boolean isCellEditable(int row, int column) {
 								return columnEditables[column];
@@ -538,7 +547,7 @@ public class FacilityInfoFrame extends JFrame {
 		seprarator4.setBounds(340, 71, 34, 24);
 		perfDataInfo_Panel.add(seprarator4);
 		
-		before_RadioButton = new JRadioButton("최근 n시간");
+		before_RadioButton = new JRadioButton("이전 n시간");
 		before_RadioButton.setForeground(Color.BLUE);
 		before_RadioButton.setBackground(Color.WHITE);
 		before_RadioButton.setHorizontalAlignment(SwingConstants.LEFT);
@@ -552,7 +561,7 @@ public class FacilityInfoFrame extends JFrame {
 				
 				
 				if(before_RadioButton.isSelected()) {
-					setTime_label1.setText("기준 시간 이전부터");
+					setTime_label1.setText("기준 시간 이전까지");
 					before_RadioButton.setForeground(Color.BLUE);
 					after_RadioButton.setForeground(Color.LIGHT_GRAY);
 					duration_radioButton.setForeground(Color.LIGHT_GRAY);
@@ -619,10 +628,11 @@ public class FacilityInfoFrame extends JFrame {
 		perfData_Table = new JTable();
 		perfData_Table.setModel(new DefaultTableModel(
 				null,
-				new String[] {"순 서", "수집 시간", "수집 값"}) {
+				new String[] { "순 서", "수집 시간", "수집 값"}) {
 				boolean[] columnEditables = new boolean[] {
-						false, // 값 : 수정 불가
-						false, // 매핑 내용 : 수정 불가						
+						false, // 순서
+						false, // 수집 시간		
+						false, // 수집 값
 				};
 				public boolean isCellEditable(int row, int column) {
 					return columnEditables[column];
