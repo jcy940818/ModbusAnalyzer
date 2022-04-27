@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import org.jsoup.HttpStatusException;
 
+import common.agent.RestAgent;
 import common.util.HttpUtil;
 import src_ko.agent.HttpAgent;
 import src_ko.util.Util;
@@ -179,10 +180,12 @@ public class AdminConsole_Info {
 	
 	public void handleException(Exception exception) {
 		try {
+			RestAgent.responseBody = exception.getMessage();
 			throw exception;
 			
 		}catch(HttpStatusException e) {
-			int statusCode = e.getStatusCode();			
+			
+			int statusCode = e.getStatusCode();
 			this.setHttpStatusCode(statusCode, true);
 						
 			if(e.getMessage() != null) {

@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -367,16 +365,7 @@ public class MK119_Lite_Panel extends JPanel {
 		infoPanel.add(serverListPane);
 		
 		serverListTable = new JTable();		
-		serverListTable.setForeground(Color.BLACK);
-		serverListTable.addFocusListener(new FocusListener() {			
-			public void focusLost(FocusEvent e) {
-				selectServer();
-			}
-			
-			public void focusGained(FocusEvent e) {
-				selectServer();
-			}
-		});
+		serverListTable.setForeground(Color.BLACK);		
 		serverListTable.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				selectServer();

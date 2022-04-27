@@ -3,13 +3,12 @@ package src_ko.swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -46,8 +45,8 @@ import common.server.Facility;
 import common.util.MyCalendar;
 import src_ko.info.ONION_Info;
 import src_ko.info.Protocol;
+import src_ko.main.MoonInspector;
 import src_ko.util.Util;
-import java.awt.Insets;
 
 public class FacilityInfoFrame extends JFrame {
 			
@@ -93,6 +92,7 @@ public class FacilityInfoFrame extends JFrame {
 	private JComboBox searchPerf_ComboBox_2;
 	private JTextField searchPerf_textField_1;	
 	private JTextField searchPerf_textField_2;
+	private JLabel perfName_label;
 	private JLabel FacilityInfoLabel_1;
 	private JLabel FacilityInfoLabel_2;	
 	private JButton dbRefreshButton;
@@ -105,6 +105,7 @@ public class FacilityInfoFrame extends JFrame {
 	private JLabel currentFunction;
 	
 	public static JButton updatePerfData;
+	public static JRadioButton perfInfo_RadioButton;
 	public static JRadioButton perfValue_RadioButton;
 	private JLabel time;
 	private JLabel seprarator2;
@@ -129,26 +130,6 @@ public class FacilityInfoFrame extends JFrame {
 	private JButton btnNewButton;
 	private JButton setTimeOk_Button;
 	private JButton notTimeButton;
-	
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					Protocol p = new Protocol();
-//					p.setFacType("Moon Facility");
-//					p.setName("Moon Protocol");
-//					
-//					PerfListFrame frame = new PerfListFrame(p.getName(), null, p);
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
 	/**
 	 * Create the frame.
@@ -202,32 +183,22 @@ public class FacilityInfoFrame extends JFrame {
 		actualPanel.add(perfList_scrollPane);
 		
 		perfListTable = new JTable();		
-		perfListTable.setForeground(Color.BLACK);
-		perfListTable.addFocusListener(new FocusListener() {			
-			public void focusLost(FocusEvent e) {
-				int row = perfListTable.getSelectedRow();
-				Perf perf = (Perf) perfListTable.getValueAt(row, 1);
-				selectedPerf = perf;
-				updatePerfInfoTable(perfInfoTable, perf);
-			}
-			public void focusGained(FocusEvent e) {
-				int row = perfListTable.getSelectedRow();
-				Perf perf = (Perf) perfListTable.getValueAt(row, 1);
-				selectedPerf = perf;
-				updatePerfInfoTable(perfInfoTable, perf);	
-			}
-		});
+		perfListTable.setForeground(Color.BLACK);		
 		perfListTable.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) { 
 				int row = perfListTable.getSelectedRow();				
 				Perf perf = (Perf) perfListTable.getValueAt(row, 1);	
 				selectedPerf = perf;
+				perfName_label.setText("<html>성능명 : " + Util.colorBlue(selectedPerf.getDisplayName()) + "</html>");
+				resetPerfDataTable();
 				updatePerfInfoTable(perfInfoTable, perf);
 			}
 			public void keyReleased(KeyEvent e) { 
 				int row = perfListTable.getSelectedRow();				
 				Perf perf = (Perf) perfListTable.getValueAt(row, 1);	
 				selectedPerf = perf;
+				perfName_label.setText("<html>성능명 : " + Util.colorBlue(selectedPerf.getDisplayName()) + "</html>");
+				resetPerfDataTable();
 				updatePerfInfoTable(perfInfoTable, perf);
 			}
 		});
@@ -237,6 +208,8 @@ public class FacilityInfoFrame extends JFrame {
 					int row = perfListTable.getSelectedRow();				
 					Perf perf = (Perf) perfListTable.getValueAt(row, 1);
 					selectedPerf = perf;
+					perfName_label.setText("<html>성능명 : " + Util.colorBlue(selectedPerf.getDisplayName()) + "</html>");
+					resetPerfDataTable();
 					updatePerfInfoTable(perfInfoTable, perf);
 				} // 왼쪽 클릭
 				if (e.getButton() == 1 && e.getClickCount() == 2) { /* Not Implement */ }
@@ -298,7 +271,7 @@ public class FacilityInfoFrame extends JFrame {
 		perfDataInfo_Panel.setVisible(false);
 		actualPanel.add(perfDataInfo_Panel);
 		
-		JLabel perfName_label = new JLabel("성능명 : ");
+		perfName_label = new JLabel("<html>성능명 : " + Util.colorRed("선택된 성능이 없습니다") + "</html>");
 		perfName_label.setForeground(Color.BLACK);
 		perfName_label.setBackground(Color.WHITE);
 		perfName_label.setHorizontalAlignment(SwingConstants.LEFT);
@@ -410,6 +383,12 @@ public class FacilityInfoFrame extends JFrame {
 		setTime_textField.setBounds(140, 7, 60, 26);
 		setTime_textField.setBorder(new LineBorder(Color.BLACK, 2));
 		setTime_textField.setColumns(10);
+		setTime_textField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setTimeOk_Button.doClick();
+			}
+		});
 		setTime_textField.addKeyListener(new KeyAdapter() {						
 			public void keyReleased(KeyEvent e) {
 				String enteredTime = setTime_textField.getText().toString();
@@ -417,8 +396,8 @@ public class FacilityInfoFrame extends JFrame {
 				try {
 					int time = Integer.parseInt(enteredTime);
 					
-					if(time < 1) {
-						throw new Exception("time exception");
+					if(time < 1 || time > 48) {
+						throw new Exception("time field validation exception");
 					}else {
 						setTime_textField.setForeground(Color.BLUE);
 					}
@@ -447,14 +426,52 @@ public class FacilityInfoFrame extends JFrame {
 		setTimeOk_Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
-				if(selectedPerf == null) {
-					return;
-				}
-				if(before_RadioButton.isSelected() || after_RadioButton.isSelected()) {
-					if(setTime_textField.getForeground() == Color.RED) {
+				try {
+					if(selectedPerf == null) {
+						throw new Exception();
+					}
+					if(before_RadioButton.isSelected() || after_RadioButton.isSelected()) {
+						if(setTime_textField.getForeground() == Color.RED && !MoonInspector.isMoon()) {
+							throw new Exception();
+						}
+					}
+					
+					long baseTime = MyCalendar.getMilliseconds(year_comboBox, month_comboBox, day_comboBox, hour_comboBox, minute_comboBox, second_comboBox);
+					String startTime = "";
+					String endTime = "";
+					
+					if(before_RadioButton.isSelected()) {
+						// 기준 시간 이전까지 n시간 동안 수집한 데이터
+						int beforeHour = Integer.parseInt(setTime_textField.getText().toString());
+						startTime = MyCalendar.sdf.format(MyCalendar.getCalcMilliseconds(baseTime, beforeHour * -1));
+						endTime = MyCalendar.sdf.format(baseTime);
+					}else if(after_RadioButton.isSelected()) {
+						// 기준 시간 이후부터 n시간 동안 수집한 데이터
+						int afterHour = Integer.parseInt(setTime_textField.getText().toString());						
+						startTime = MyCalendar.sdf.format(baseTime);
+						endTime = MyCalendar.sdf.format(MyCalendar.getCalcMilliseconds(baseTime, afterHour));
+					}else if(duration_radioButton.isSelected()){
+						// 기준 시간부터 정해진 시간까지 수집한 데이터
+						
+					}else {
+						
+					}
+					
+					ArrayList<PerfData> list = RestAgent.getPerfRowData(selectedPerf.getIndex(), MK119_Lite_Panel.adminConsole, startTime, endTime);					
+					
+					if(list != null) {
+						Object[][] content = new Object[list.size()][];
+						
+						for(int i = 0; i < list.size(); i++) {
+							PerfData data = list.get(i);
+							content[i] = new Object[3];
+							content[i][0] = i + 1;
+							content[i][1] = data.getTimeString();
+							content[i][2] = PerfData.getPerfLastContent(selectedPerf, data);
+						}
+						
 						perfData_Table.setModel(new DefaultTableModel(
-								null,
+								content,
 								new String[] { "순 서", "수집 시간", "수집 값"}) {
 								boolean[] columnEditables = new boolean[] {
 										false, // 순서
@@ -466,57 +483,15 @@ public class FacilityInfoFrame extends JFrame {
 								}
 						});
 						setTableStyle(perfData_Table, PERF_DATA_TABLE);
-						return;
-					}
-				}
-				
-				String startTime = "";
-				String endTime = "";
-				
-				if(before_RadioButton.isSelected()) {
-					int beforeHour = Integer.parseInt(setTime_textField.getText().toString());
-					
-					long time = MyCalendar.getMilliseconds(year_comboBox, month_comboBox, day_comboBox, hour_comboBox, minute_comboBox, second_comboBox);
-					 
-					startTime = MyCalendar.sdf.format(MyCalendar.getCalcMilliseconds(time, beforeHour * -1));
-					endTime = MyCalendar.sdf.format(time);
-					
-				}else if(after_RadioButton.isSelected()) {
-					
-				}else if(duration_radioButton.isSelected()){
-					
-				}else {
-					
-				}
-				
-				ArrayList<PerfData> list = RestAgent.getPerfRowData(selectedPerf.getIndex(), MK119_Lite_Panel.adminConsole, startTime, endTime);
-				
-				if(list != null) {
-					Object[][] content = new Object[list.size()][];
-					
-					for(int i = 0; i < list.size(); i++) {
-						PerfData data = list.get(i);
-						content[i] = new Object[3];
-						content[i][0] = i + 1;
-						content[i][1] = data.getTimeString();
-						content[i][2] = PerfData.getPerfLastContent(selectedPerf, data);
+					}else {
+						// REST API Agent로 부터 누적 수집 데이터를 받지 못하였을 경우
+						throw new Exception();
 					}
 					
-					perfData_Table.setModel(new DefaultTableModel(
-							content,
-							new String[] { "순 서", "수집 시간", "수집 값"}) {
-							boolean[] columnEditables = new boolean[] {
-									false, // 순서
-									false, // 수집 시간		
-									false, // 수집 값
-							};
-							public boolean isCellEditable(int row, int column) {
-								return columnEditables[column];
-							}
-					});
-					setTableStyle(perfData_Table, PERF_DATA_TABLE);
-				}// init Row Data Table
-				
+				}catch(Exception e) {
+					// 예외 발생시 테이블을 초기화
+					resetPerfDataTable();
+				}
 			}
 		});
 		setTime_panel.add(setTimeOk_Button);
@@ -561,7 +536,7 @@ public class FacilityInfoFrame extends JFrame {
 		perfDataInfo_Panel.add(seprarator4);
 		
 		before_RadioButton = new JRadioButton("최근 n시간");
-		before_RadioButton.setForeground(Color.BLUE);
+		before_RadioButton.setForeground(new Color(0, 128, 0));
 		before_RadioButton.setBackground(Color.WHITE);
 		before_RadioButton.setHorizontalAlignment(SwingConstants.LEFT);
 		before_RadioButton.setFocusPainted(false);
@@ -575,7 +550,7 @@ public class FacilityInfoFrame extends JFrame {
 				
 				if(before_RadioButton.isSelected()) {
 					setTime_label1.setText("기준 시간 이전까지");
-					before_RadioButton.setForeground(Color.BLUE);
+					before_RadioButton.setForeground(new Color(0, 128, 0));
 					after_RadioButton.setForeground(Color.LIGHT_GRAY);
 					duration_radioButton.setForeground(Color.LIGHT_GRAY);
 				}
@@ -598,7 +573,7 @@ public class FacilityInfoFrame extends JFrame {
 				if(after_RadioButton.isSelected()) {
 					setTime_label1.setText("기준 시간 이후부터");
 					before_RadioButton.setForeground(Color.LIGHT_GRAY);
-					after_RadioButton.setForeground(Color.BLUE);
+					after_RadioButton.setForeground(new Color(0, 128, 0));
 					duration_radioButton.setForeground(Color.LIGHT_GRAY);
 				}
 				
@@ -620,7 +595,7 @@ public class FacilityInfoFrame extends JFrame {
 				if(duration_radioButton.isSelected()) {
 					before_RadioButton.setForeground(Color.LIGHT_GRAY);
 					after_RadioButton.setForeground(Color.LIGHT_GRAY);
-					duration_radioButton.setForeground(Color.BLUE);
+					duration_radioButton.setForeground(new Color(0, 128, 0));
 				}
 			}
 		});
@@ -865,7 +840,7 @@ public class FacilityInfoFrame extends JFrame {
 		initRcuInfoButton(); 
 		actualPanel.add(rcuInfo_Button);
 		
-		JRadioButton perfInfo_RadioButton = new JRadioButton("성능 정보");
+		perfInfo_RadioButton = new JRadioButton("성능 정보");
 		perfInfo_RadioButton.setForeground(Color.BLACK);
 		perfInfo_RadioButton.setBackground(Color.WHITE);
 		perfInfo_RadioButton.setFocusPainted(false);
@@ -1659,10 +1634,27 @@ public class FacilityInfoFrame extends JFrame {
 		}
 	}
 	
+	public void resetPerfDataTable() {
+		perfData_Table.setModel(new DefaultTableModel(
+				null,
+				new String[] { "순 서", "수집 시간", "수집 값"}) {
+				boolean[] columnEditables = new boolean[] {
+						false, // 순서
+						false, // 수집 시간		
+						false, // 수집 값
+				};
+				public boolean isCellEditable(int row, int column) {
+					return columnEditables[column];
+				}
+		});
+		setTableStyle(perfData_Table, PERF_DATA_TABLE);
+	}
+	
 	public static boolean isConnectRestAPI() {
 		boolean isConnect = (MK119_Lite_Panel.linkMK119_PerfData && MK119_Lite_Panel.adminConsole != null);
 		
 		if(updatePerfData != null) updatePerfData.setEnabled(isConnect);
+		if(perfInfo_RadioButton != null && !isConnect) perfInfo_RadioButton.doClick();
 		if(perfValue_RadioButton != null) perfValue_RadioButton.setEnabled(isConnect);
 		if(updatePerfData != null ) {
 			updatePerfData.setEnabled(isConnect);
