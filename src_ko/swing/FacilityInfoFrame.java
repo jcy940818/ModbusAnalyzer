@@ -12,10 +12,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -39,8 +37,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-import org.codehaus.jettison.json.JSONArray;
-
 import common.agent.PerfData;
 import common.agent.RestAgent;
 import common.perf.FmsPerfItem;
@@ -51,6 +47,7 @@ import common.util.MyCalendar;
 import src_ko.info.ONION_Info;
 import src_ko.info.Protocol;
 import src_ko.util.Util;
+import java.awt.Insets;
 
 public class FacilityInfoFrame extends JFrame {
 			
@@ -131,6 +128,7 @@ public class FacilityInfoFrame extends JFrame {
 	private JLabel setTime_label2;
 	private JButton btnNewButton;
 	private JButton setTimeOk_Button;
+	private JButton notTimeButton;
 	
 	/**
 	 * Launch the application.
@@ -294,7 +292,7 @@ public class FacilityInfoFrame extends JFrame {
 		
 		perfDataInfo_Panel = new JPanel();
 		perfDataInfo_Panel.setBackground(Color.WHITE);
-		perfDataInfo_Panel.setBounds(739, 128, 483, 143);
+		perfDataInfo_Panel.setBounds(739, 128, 483, 145);
 		perfDataInfo_Panel.setBorder(new LineBorder(Color.BLACK, 2));
 		perfDataInfo_Panel.setLayout(null);
 		perfDataInfo_Panel.setVisible(false);
@@ -326,7 +324,7 @@ public class FacilityInfoFrame extends JFrame {
 		year_comboBox.setForeground(Color.BLACK);
 		year_comboBox.setBackground(Color.WHITE);		
 		year_comboBox.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
-		year_comboBox.setBounds(12, 73, 67, 24);
+		year_comboBox.setBounds(10, 73, 67, 24);
 		year_comboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -339,7 +337,7 @@ public class FacilityInfoFrame extends JFrame {
 		month_comboBox.setForeground(Color.BLACK);
 		month_comboBox.setBackground(Color.WHITE);		
 		month_comboBox.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
-		month_comboBox.setBounds(94, 73, 52, 24);
+		month_comboBox.setBounds(92, 73, 52, 24);
 		month_comboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -352,33 +350,48 @@ public class FacilityInfoFrame extends JFrame {
 		day_comboBox.setForeground(Color.BLACK);
 		day_comboBox.setBackground(Color.WHITE);
 		day_comboBox.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
-		day_comboBox.setBounds(162, 73, 52, 24);
+		day_comboBox.setBounds(160, 73, 52, 24);
 		perfDataInfo_Panel.add(day_comboBox);
 		
 		hour_comboBox = new JComboBox();
 		hour_comboBox.setForeground(Color.BLACK);
 		hour_comboBox.setBackground(Color.WHITE);
 		hour_comboBox.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
-		hour_comboBox.setBounds(230, 73, 52, 24);
+		hour_comboBox.setBounds(227, 73, 52, 24);
 		perfDataInfo_Panel.add(hour_comboBox);
 		
 		minute_comboBox = new JComboBox();		
 		minute_comboBox.setBackground(Color.WHITE);
 		minute_comboBox.setForeground(Color.BLACK);
 		minute_comboBox.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
-		minute_comboBox.setBounds(298, 73, 52, 24);
+		minute_comboBox.setBounds(295, 73, 52, 24);
 		perfDataInfo_Panel.add(minute_comboBox);
 		
 		second_comboBox = new JComboBox();		
 		second_comboBox.setForeground(Color.BLACK);
 		second_comboBox.setBackground(Color.WHITE);
 		second_comboBox.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
-		second_comboBox.setBounds(366, 73, 52, 24);
+		second_comboBox.setBounds(363, 73, 52, 24);
 		perfDataInfo_Panel.add(second_comboBox);
+		
+		notTimeButton = new JButton("Now");
+		notTimeButton.setBackground(Color.WHITE);
+		notTimeButton.setMargin(new Insets(2, 0, 2, 0));
+		notTimeButton.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
+		notTimeButton.setForeground(new Color(0, 128, 0));
+		notTimeButton.setBounds(420, 73, 56, 24);
+		notTimeButton.setFocusPainted(false);
+		notTimeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MyCalendar.setTimeNow(year_comboBox, month_comboBox, day_comboBox, hour_comboBox, minute_comboBox, second_comboBox);		
+			}
+		});
+		perfDataInfo_Panel.add(notTimeButton);
 		
 		setTime_panel = new JPanel();
 		setTime_panel.setBackground(Color.WHITE);
-		setTime_panel.setBounds(12, 102, 465, 36);
+		setTime_panel.setBounds(12, 105, 465, 36);
 		setTime_panel.setLayout(null);
 		perfDataInfo_Panel.add(setTime_panel);
 		
@@ -476,7 +489,7 @@ public class FacilityInfoFrame extends JFrame {
 					
 				}
 				
-				ArrayList<PerfData> list = RestAgent.getPerfRowData(true, selectedPerf.getIndex(), MK119_Lite_Panel.adminConsole, startTime, endTime);
+				ArrayList<PerfData> list = RestAgent.getPerfRowData(selectedPerf.getIndex(), MK119_Lite_Panel.adminConsole, startTime, endTime);
 				
 				if(list != null) {
 					Object[][] content = new Object[list.size()][];
@@ -520,7 +533,7 @@ public class FacilityInfoFrame extends JFrame {
 		seprarator1.setForeground(Color.BLACK);
 		seprarator1.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		seprarator1.setBackground(Color.WHITE);
-		seprarator1.setBounds(70, 71, 34, 24);
+		seprarator1.setBounds(68, 71, 34, 24);
 		perfDataInfo_Panel.add(seprarator1);
 		
 		seprarator2 = new JLabel("-");
@@ -528,7 +541,7 @@ public class FacilityInfoFrame extends JFrame {
 		seprarator2.setForeground(Color.BLACK);
 		seprarator2.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		seprarator2.setBackground(Color.WHITE);
-		seprarator2.setBounds(136, 71, 34, 24);
+		seprarator2.setBounds(134, 71, 34, 24);
 		perfDataInfo_Panel.add(seprarator2);
 		
 		seprarator3 = new JLabel(":");
@@ -536,7 +549,7 @@ public class FacilityInfoFrame extends JFrame {
 		seprarator3.setForeground(Color.BLACK);
 		seprarator3.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		seprarator3.setBackground(Color.WHITE);
-		seprarator3.setBounds(272, 71, 34, 24);
+		seprarator3.setBounds(269, 71, 34, 24);
 		perfDataInfo_Panel.add(seprarator3);
 		
 		seprarator4 = new JLabel(":");
@@ -544,10 +557,10 @@ public class FacilityInfoFrame extends JFrame {
 		seprarator4.setForeground(Color.BLACK);
 		seprarator4.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		seprarator4.setBackground(Color.WHITE);
-		seprarator4.setBounds(340, 71, 34, 24);
+		seprarator4.setBounds(337, 71, 34, 24);
 		perfDataInfo_Panel.add(seprarator4);
 		
-		before_RadioButton = new JRadioButton("¿Ã¿¸ nΩ√∞£");
+		before_RadioButton = new JRadioButton("√÷±Ÿ nΩ√∞£");
 		before_RadioButton.setForeground(Color.BLUE);
 		before_RadioButton.setBackground(Color.WHITE);
 		before_RadioButton.setHorizontalAlignment(SwingConstants.LEFT);
@@ -622,7 +635,7 @@ public class FacilityInfoFrame extends JFrame {
 		perfData_ScrollPanel = new JScrollPane();
 		perfData_ScrollPanel.setBackground(Color.WHITE);
 		perfData_ScrollPanel.setBorder(new LineBorder(Color.BLACK, 2));
-		perfData_ScrollPanel.setBounds(0, 0, 483, 382);
+		perfData_ScrollPanel.setBounds(0, 0, 483, 380);
 		perfData_Panel.add(perfData_ScrollPanel);
 		
 		perfData_Table = new JTable();
@@ -637,10 +650,9 @@ public class FacilityInfoFrame extends JFrame {
 				public boolean isCellEditable(int row, int column) {
 					return columnEditables[column];
 				}
-		});
+		});		
 		setTableStyle(perfData_Table, PERF_DATA_TABLE);
 		perfData_ScrollPanel.setViewportView(perfData_Table);
-		
 		
 		mappingLabel = new JLabel("");
 		mappingLabel.setBackground(Color.WHITE);
@@ -927,6 +939,8 @@ public class FacilityInfoFrame extends JFrame {
 		// ºˆ¡˝ µ•¿Ã≈Õ ±‚¡ÿ Ω√∞£ √ ±‚»≠
 		MyCalendar.setTimeNow(year_comboBox, month_comboBox, day_comboBox, hour_comboBox, minute_comboBox, second_comboBox);				
 		
+		
+		
 		// ¿Â∫Ò ¡§∫∏∏¶ «•Ω√
 		updateFacilityInfo();
 		
@@ -1055,7 +1069,7 @@ public class FacilityInfoFrame extends JFrame {
 		
 		// REST API »£√‚
 		if(updatePerfData && isConnectRestAPI()) {
-			perfRealTimeDataMap = RestAgent.getFacilityPerfDataMap(true, fac.getIndex(), MK119_Lite_Panel.adminConsole);
+			perfRealTimeDataMap = RestAgent.getFacilityPerfDataMap(fac.getIndex(), MK119_Lite_Panel.adminConsole);
 		}
 		
 		Object[][] content = new Object[perfs.size()][];
@@ -1454,7 +1468,7 @@ public class FacilityInfoFrame extends JFrame {
 		
 		// REST API »£√‚
 		if(updatePerfData && isConnectRestAPI()) {
-			perfRealTimeDataMap = RestAgent.getFacilityPerfDataMap(true, fac.getIndex(), MK119_Lite_Panel.adminConsole);
+			perfRealTimeDataMap = RestAgent.getFacilityPerfDataMap(fac.getIndex(), MK119_Lite_Panel.adminConsole);
 		}
 		
 		Object[][] content = new Object[filterPerf.size()][];

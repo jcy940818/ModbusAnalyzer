@@ -40,6 +40,7 @@ public class HttpAgent {
 		String PW = admin.get_PW();
 		
 		try {
+			LinkMK119Frame.linkRestAPI(true, admin, "MK119 AdminConsole Login", "/midknight/adminConsole");
 			String adminConsole = String.format("http://%s:%s/midknight/adminConsole", IP, PORT);
 			
 			Connection.Response loginForm = Jsoup.connect(adminConsole)
@@ -76,7 +77,7 @@ public class HttpAgent {
 				
 				admin.set_SESSION_ID(sessionID);
 				admin.setHttpStatusCode(loginForm.statusCode(), false);
-				LinkMK119Frame.linkRestAPI(admin, "/midknight/adminConsole");
+				LinkMK119Frame.linkRestAPI(false, admin,"MK119 AdminConsole Login" , "/midknight/adminConsole");
 				return sessionID;
 				
 			}else {
@@ -90,7 +91,7 @@ public class HttpAgent {
 				
 				admin.set_SESSION_ID(sessionID);
 				admin.setHttpStatusCode(0, true);
-				LinkMK119Frame.linkRestAPI(admin, "/midknight/adminConsole");
+				LinkMK119Frame.linkRestAPI(false, admin, "MK119 AdminConsole Login", "/midknight/adminConsole");
 				return null;
 			}
 		}catch(Exception e) {
@@ -104,7 +105,7 @@ public class HttpAgent {
 			
 			admin.set_SESSION_ID(sessionID);
 			admin.handleException(e);
-			LinkMK119Frame.linkRestAPI(admin, "/midknight/adminConsole");
+			LinkMK119Frame.linkRestAPI(false, admin, "MK119 AdminConsole Login", "/midknight/adminConsole");
 			return null;
 		}
 	}

@@ -8,10 +8,11 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,13 +22,13 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
+import common.agent.RestAgent;
 import src_ko.info.AdminConsole_Info;
 import src_ko.info.ONION_Info;
 import src_ko.info.Protocol;
@@ -57,9 +58,12 @@ public class LinkMK119Frame extends JFrame{
 	private static JLabel mk119SessionID;
 	private static JLabel mk119LastReqAPI;
 	private static JLabel mk119LastReqTime;
+	private static JLabel mk119LastResTime;
 	private static JLabel mk119HttpStatusCode;
-	public static String lastReqTime = "";
-	public static String lastReqAPI = "";
+	public static String lastRequestTime = "";
+	public static String lastResponseTime = "";
+	public static String lastReqApiContent = "";
+	public static String lastReqApiURL = "";
 	
 	private static JButton refreshSession_Button;
 	private static JButton terminateSession_Button;
@@ -72,6 +76,8 @@ public class LinkMK119Frame extends JFrame{
 	public static JButton onionDir_Path_Button;
 	public static JButton onionDir_Check_Button;
 	public static JButton onionDir_Auto_Button;
+	private JLabel mk119Logo;
+	
 	
 	/**
 	 * Create the panel.
@@ -84,7 +90,7 @@ public class LinkMK119Frame extends JFrame{
 		setIconImage(new Util().getIconResource().getImage());
 		setResizable(false);
 		
-		setSize(700, 745);
+		setSize(700, 761);
 		setBackground(Color.WHITE);
 		getContentPane().setLayout(new BorderLayout(0, 0));
 
@@ -127,6 +133,12 @@ public class LinkMK119Frame extends JFrame{
 				onionDir_Auto_Button.setEnabled(false);
 			}
 		});
+		
+		mk119Logo = new JLabel();
+		mk119Logo.setHorizontalAlignment(SwingConstants.RIGHT);
+		mk119Logo.setIcon(new Util().getMK2Resource());
+		mk119Logo.setBounds(595, 10, 81, 37);
+		actualPanel.add(mk119Logo);
 		actualPanel.add(linkMK119Protocol_Button);
 		
 		linkMK119PerfData_Button = new JButton("<html>&nbsp;<font color='green'>REST API</font> µ•¿Ã≈Õ ø¨µø</html>");
@@ -135,7 +147,7 @@ public class LinkMK119Frame extends JFrame{
 		linkMK119PerfData_Button.setBackground(Color.WHITE);
 		linkMK119PerfData_Button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 16));
 		linkMK119PerfData_Button.setFocusPainted(false);
-		linkMK119PerfData_Button.setBounds(63, 655, 365, 37);
+		linkMK119PerfData_Button.setBounds(63, 680, 365, 37);
 		linkMK119PerfData_Button.setEnabled(true);
 		linkMK119PerfData_Button.addActionListener(new ActionListener() {
 			@Override
@@ -268,6 +280,16 @@ public class LinkMK119Frame extends JFrame{
 		mk119RestDataLink.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		mk119RestDataLink.setBackground(Color.WHITE);
 		mk119RestDataLink.setBounds(27, 395, 452, 37);
+		mk119RestDataLink.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {				
+				if(MoonInspector.isMoon()) {
+					StringSelection data = new StringSelection(RestAgent.responseBody);
+					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					clipboard.setContents(data, data);
+				}
+			}
+		});
 		actualPanel.add(mk119RestDataLink);
 		
 		
@@ -276,7 +298,7 @@ public class LinkMK119Frame extends JFrame{
 		mk119Server.setForeground(Color.BLACK);
 		mk119Server.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
 		mk119Server.setBackground(Color.WHITE);
-		mk119Server.setBounds(63, 448, 416, 37);
+		mk119Server.setBounds(63, 445, 416, 37);
 		actualPanel.add(mk119Server);
 		
 		mk119SessionID = new JLabel(String.format("<html>%s : </html>", Util.colorBlue("Session ID")));
@@ -284,7 +306,7 @@ public class LinkMK119Frame extends JFrame{
 		mk119SessionID.setForeground(Color.BLACK);
 		mk119SessionID.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
 		mk119SessionID.setBackground(Color.WHITE);
-		mk119SessionID.setBounds(63, 488, 617, 37);
+		mk119SessionID.setBounds(63, 482, 617, 37);
 		mk119SessionID.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {
 					 if (e.getButton() == 1) {  } // øﬁ¬  ≈¨∏Ø				 
@@ -307,57 +329,64 @@ public class LinkMK119Frame extends JFrame{
 		mk119LastReqAPI.setForeground(Color.BLACK);
 		mk119LastReqAPI.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
 		mk119LastReqAPI.setBackground(Color.WHITE);
-		mk119LastReqAPI.setBounds(63, 528, 617, 37);
+		mk119LastReqAPI.setBounds(63, 519, 617, 37);
 		mk119LastReqAPI.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				 if (e.getButton() == 1) {  
-					// øﬁ¬  ≈¨∏Ø		
-					 if(adminConsole != null) {
-						 String API = String.format("http://%s:%s%s", adminConsole.get_IP(), adminConsole.get_PORT(), lastReqAPI);
-						 API = (API.contains(" ") && API.contains("Refresh Session"))? API.split(" ")[0] : API;
-						 StringSelection data = new StringSelection(API);
-						 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-						 clipboard.setContents(data, data);
+				if(MoonInspector.isMoon()) {
+					 if (e.getButton() == 1) {  
+						// øﬁ¬  ≈¨∏Ø		
+						 if(adminConsole != null) {
+							 String API = String.format("http://%s:%s%s", adminConsole.get_IP(), adminConsole.get_PORT(), lastReqApiURL);						 
+							 StringSelection data = new StringSelection(API);
+							 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+							 clipboard.setContents(data, data);
+						 }
 					 }
-				 } 
-				 if (e.getButton() == 1 && e.getClickCount() == 2) {
-					// ¥ı∫Ì ≈¨∏Ø
-					 if(adminConsole != null) {
-						 String API = String.format("http://%s:%s%s", adminConsole.get_IP(), adminConsole.get_PORT(), lastReqAPI);
-						 API = (API.contains(" ") && API.contains("Refresh Session"))? API.split(" ")[0] : API;
-						 StringSelection data = new StringSelection(API);
-						 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-						 clipboard.setContents(data, data);
+					 if (e.getButton() == 1 && e.getClickCount() == 2) {
+						// ¥ı∫Ì ≈¨∏Ø
+						 if(adminConsole != null) {
+							 String API = String.format("http://%s:%s%s", adminConsole.get_IP(), adminConsole.get_PORT(), lastReqApiURL);						 
+							 StringSelection data = new StringSelection(API);
+							 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+							 clipboard.setContents(data, data);
+						 }
 					 }
-				 }
-				 if (e.getButton() == 3) {
-					// ø¿∏•¬  ≈¨∏Ø
-					 if(adminConsole != null) {
-						 String API = String.format("http://%s:%s%s", adminConsole.get_IP(), adminConsole.get_PORT(), lastReqAPI);
-						 API = (API.contains(" ") && API.contains("Refresh Session"))? API.split(" ")[0] : API;
-						 StringSelection data = new StringSelection(API);
-						 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-						 clipboard.setContents(data, data);
-					 }
-				 } 
+					 if (e.getButton() == 3) {
+						// ø¿∏•¬  ≈¨∏Ø
+						 if(adminConsole != null) {
+							 String API = String.format("http://%s:%s%s", adminConsole.get_IP(), adminConsole.get_PORT(), lastReqApiURL);						 
+							 StringSelection data = new StringSelection(API);
+							 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+							 clipboard.setContents(data, data);
+						 }
+					 } 
+				}
 			}
 		});
 		actualPanel.add(mk119LastReqAPI);
 		
-		mk119LastReqTime = new JLabel(String.format("<html>%s : </html>", Util.colorBlue("Last Request Time")));
+		mk119LastReqTime = new JLabel("<html><font color='blue'>Last Request Time</font> : </html>");
 		mk119LastReqTime.setHorizontalAlignment(SwingConstants.LEFT);
 		mk119LastReqTime.setForeground(Color.BLACK);
 		mk119LastReqTime.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
 		mk119LastReqTime.setBackground(Color.WHITE);
-		mk119LastReqTime.setBounds(63, 568, 617, 37);
+		mk119LastReqTime.setBounds(63, 558, 617, 37);
 		actualPanel.add(mk119LastReqTime);
+		
+		mk119LastResTime = new JLabel("<html><font color='blue'>Last Response Time</font> : </html>");
+		mk119LastResTime.setHorizontalAlignment(SwingConstants.LEFT);
+		mk119LastResTime.setForeground(Color.BLACK);
+		mk119LastResTime.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
+		mk119LastResTime.setBackground(Color.WHITE);
+		mk119LastResTime.setBounds(63, 597, 617, 37);
+		actualPanel.add(mk119LastResTime);
 		
 		mk119HttpStatusCode = new JLabel(String.format("<html>%s : </html>", Util.colorBlue("Http Status Code")));
 		mk119HttpStatusCode.setHorizontalAlignment(SwingConstants.LEFT);
 		mk119HttpStatusCode.setForeground(Color.BLACK);
 		mk119HttpStatusCode.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
 		mk119HttpStatusCode.setBackground(Color.WHITE);
-		mk119HttpStatusCode.setBounds(63, 608, 617, 37);
+		mk119HttpStatusCode.setBounds(63, 636, 617, 37);
 		actualPanel.add(mk119HttpStatusCode);
 		
 		refreshSession_Button = new JButton("Refresh Session");
@@ -388,8 +417,10 @@ public class LinkMK119Frame extends JFrame{
 		terminateSession_Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				lastReqAPI = "Terminate Session";
-				lastReqTime = sdf.format(new Date());
+				lastReqApiContent = "";
+				lastReqApiURL = "";
+				lastRequestTime = "";
+				lastResponseTime = "";
 					
 				mk119RestDataLink.setText("3. MK119 REST API");
 				linkMK119PerfData_Button.setText("<html>&nbsp;<font color='green'>REST API</font> µ•¿Ã≈Õ ø¨µø</html>");
@@ -399,12 +430,10 @@ public class LinkMK119Frame extends JFrame{
 				
 				mk119Server.setText(String.format("<html>%s : %s:%s</html>", Util.colorBlue("MK119 Server"), Util.colorRed(adminConsole.get_IP()), Util.colorRed(adminConsole.get_PORT())));
 				mk119SessionID.setText(String.format("<html>%s : %s</html>", Util.colorBlue("Session ID"), Util.colorRed(adminConsole.get_SESSION_ID())));
-				mk119LastReqAPI.setText(String.format("<html>%s : %s</html>" ,Util.colorBlue("Last Request API"), Util.colorRed(lastReqAPI)));
-				mk119LastReqTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Request Time"), Util.colorRed(lastReqTime)));
-				mk119HttpStatusCode.setText(String.format("<html>%s : %s</html>", Util.colorBlue("HTTP Status Code"), Util.colorRed("0 ( Connection Close )")));
-				
-				lastReqAPI = "";
-				lastReqTime = "";
+				mk119LastReqAPI.setText(String.format("<html>%s : %s</html>" ,Util.colorBlue("Last Request API"), Util.colorRed("Terminate Session")));
+				mk119LastReqTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Request Time"), Util.colorRed(sdf.format(new Date()))));
+				mk119LastResTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Response Time"), Util.colorRed("-")));
+				mk119HttpStatusCode.setText(String.format("<html>%s : %s</html>", Util.colorBlue("HTTP Status Code"), Util.colorRed("-")));
 				
 				MK119_Lite_Panel.linkMK119_PerfData = false;
 				MK119_Lite_Panel.adminConsole = null;				
@@ -475,9 +504,20 @@ public class LinkMK119Frame extends JFrame{
 			
 			mk119Server.setText(String.format("<html>%s : %s:%s</html>", Util.colorBlue("MK119 Server"), adminConsole.get_IP(), adminConsole.get_PORT()));
 			mk119SessionID.setText(String.format("<html>%s : %s</html>", Util.colorBlue("Session ID"), adminConsole.get_SESSION_ID()));
-			mk119LastReqAPI.setText(String.format("<html>%s : %s</html>" ,Util.colorBlue("Last Request API"), lastReqAPI));
-			mk119LastReqTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Request Time"), lastReqTime));		
+			mk119LastReqAPI.setText(String.format("<html>%s : %s</html>" ,Util.colorBlue("Last Request API"), lastReqApiContent));
+			mk119LastReqTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Request Time"), lastRequestTime));
 			mk119HttpStatusCode.setText(String.format("<html>%s : %d ( %s )</html>", Util.colorBlue("HTTP Status Code"), adminConsole.getHttpStatusCode(), adminConsole.getHttpStatus()));
+			
+			try {
+				Date req = sdf.parse(lastRequestTime);
+				Date res = sdf.parse(lastResponseTime);
+				long amount = ((res.getTime() - req.getTime()) / 1000);
+				
+				mk119LastResTime.setText(String.format("<html>%s : %s ( %d seconds )</html>",Util.colorBlue("Last Response Time"), lastResponseTime, amount));
+				
+			}catch (ParseException e) {				
+				mk119LastResTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Response Time"), lastResponseTime));					
+			}
 		}
 		
 		setLocationRelativeTo(null);
@@ -490,10 +530,16 @@ public class LinkMK119Frame extends JFrame{
 		MK119_Lite_Panel.resetForm(false, false);
 	}
 	
-	public static void linkRestAPI(AdminConsole_Info admin, String api) {
+	public static void linkRestAPI(boolean isRequest, AdminConsole_Info admin, String apiContent, String apiURL) {
 		adminConsole = admin;
-		lastReqAPI = api;	
-		lastReqTime = sdf.format(new Date());
+		lastReqApiContent = apiContent;
+		lastReqApiURL = apiURL;
+		
+		if(isRequest) {
+			lastRequestTime = sdf.format(new Date());
+		}else {
+			lastResponseTime = sdf.format(new Date());
+		}
 		
 		if(admin.get_SESSION_ID() != null && admin.get_SESSION_ID().length() > 0) {
 			mk119RestDataLink.setText("3. MK119 REST API Link Completed");
@@ -512,15 +558,34 @@ public class LinkMK119Frame extends JFrame{
 		}
 		
 		mk119Server.setText(String.format("<html>%s : %s:%s</html>", Util.colorBlue("MK119 Server"), adminConsole.get_IP(), adminConsole.get_PORT()));
-		mk119SessionID.setText(String.format("<html>%s : %s</html>", Util.colorBlue("Session ID"), adminConsole.get_SESSION_ID()));
-		mk119LastReqAPI.setText(String.format("<html>%s : %s</html>" ,Util.colorBlue("Last Request API"), lastReqAPI));
-		mk119LastReqTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Request Time"), lastReqTime));		
-		mk119HttpStatusCode.setText(String.format("<html>%s : %d ( %s )</html>", Util.colorBlue("HTTP Status Code"), adminConsole.getHttpStatusCode(), adminConsole.getHttpStatus()));
+		mk119SessionID.setText(String.format("<html>%s : %s</html>", Util.colorBlue("Session ID"), adminConsole.get_SESSION_ID()));		
+		mk119LastReqAPI.setText(String.format("<html>%s : %s</html>" ,Util.colorBlue("Last Request API"), lastReqApiContent));
+		
+		
+		if(isRequest) {
+			mk119LastReqTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Request Time"), lastRequestTime));
+			mk119LastResTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Response Time"), "Waiting . . . "));
+			mk119HttpStatusCode.setText(String.format("<html>%s : %s</html>", Util.colorBlue("HTTP Status Code"), "Waiting . . . "));	
+			
+		}else {
+			try {
+				Date req = sdf.parse(lastRequestTime);
+				Date res = sdf.parse(lastResponseTime);				
+				long amount = ((res.getTime() - req.getTime()) / 1000);				
+				mk119LastResTime.setText(String.format("<html>%s : %s ( %d seconds )</html>",Util.colorBlue("Last Response Time"), lastResponseTime, amount));
+				mk119HttpStatusCode.setText(String.format("<html>%s : %d ( %s )</html>", Util.colorBlue("HTTP Status Code"), adminConsole.getHttpStatusCode(), adminConsole.getHttpStatus()));			
+			}catch (ParseException e) {			
+				mk119LastResTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Response Time"), lastResponseTime));
+				mk119HttpStatusCode.setText(String.format("<html>%s : %d ( %s )</html>", Util.colorBlue("HTTP Status Code"), adminConsole.getHttpStatusCode(), adminConsole.getHttpStatus()));				
+			}
+			
+		}
 	}
 	
 	public static void refreshSession(AdminConsole_Info admin) {
+		linkRestAPI(true, admin, Util.colorGreen("Refresh Session"), "/midknight/adminConsole");
 		AdminConsole_Info.refreshSession(admin);
-		linkRestAPI(admin, "/midknight/adminConsole " + Util.colorGreen("( Refresh Session )"));
+		linkRestAPI(false, admin, Util.colorGreen("Refresh Session"), "/midknight/adminConsole");
 	}
 	
 	public static void linkReset() {
