@@ -520,7 +520,7 @@ public class TX_Analysis_Panel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// inputTextField : 기존 입력된 패킷정보 초기화
-				inputTextField.setText(null);
+//				inputTextField.setText(null);
 				
 				JRadioButton b = (JRadioButton)e.getSource();
 				typeLabel.setText(b.getText());

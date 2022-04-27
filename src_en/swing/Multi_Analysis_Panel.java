@@ -489,8 +489,8 @@ public class Multi_Analysis_Panel extends JPanel {
 				
 				// Modbus RTU, TCP 라디오 버튼 이동 시 
 				// 텍스트 필드 초기화
-				TXinputTextField.setText(null);
-				RXinputTextField.setText(null);
+//				TXinputTextField.setText(null);
+//				RXinputTextField.setText(null);
 
 				if (b.getText().contains("RTU")) {
 					isRTU = true;
