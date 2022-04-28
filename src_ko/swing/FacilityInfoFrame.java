@@ -78,7 +78,7 @@ public class FacilityInfoFrame extends JFrame {
 	private Facility fac;
 	private boolean isProtocol;
 	private ArrayList<FmsPerfItem> perfs;
-	private Perf selectedPerf;	
+	private Perf selectedPerf;
 	
 	private JPanel contentPane;
 	private JPanel perfInfo_Panel;
@@ -277,6 +277,17 @@ public class FacilityInfoFrame extends JFrame {
 		perfName_label.setHorizontalAlignment(SwingConstants.LEFT);
 		perfName_label.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		perfName_label.setBounds(12, 10, 459, 23);
+		perfName_label.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(selectedPerf != null) {
+					StringSelection data = new StringSelection(selectedPerf.getDisplayName());
+					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					clipboard.setContents(data, data);
+				}
+			}
+			
+		});
 		perfDataInfo_Panel.add(perfName_label);
 		
 		time = new JLabel("기준 시간부터");
@@ -389,7 +400,7 @@ public class FacilityInfoFrame extends JFrame {
 				setTimeOk_Button.doClick();
 			}
 		});
-		setTime_textField.addKeyListener(new KeyAdapter() {						
+		setTime_textField.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
 				String enteredTime = setTime_textField.getText().toString();
 				
@@ -427,13 +438,13 @@ public class FacilityInfoFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					if(selectedPerf == null) {
-						throw new Exception();
-					}
+					if(selectedPerf == null) throw new Exception();
 					if(before_RadioButton.isSelected() || after_RadioButton.isSelected()) {
 						if(setTime_textField.getForeground() == Color.RED && !MoonInspector.isMoon()) {
 							throw new Exception();
 						}
+					}else {
+						throw new Exception();
 					}
 					
 					long baseTime = MyCalendar.getMilliseconds(year_comboBox, month_comboBox, day_comboBox, hour_comboBox, minute_comboBox, second_comboBox);
@@ -445,19 +456,15 @@ public class FacilityInfoFrame extends JFrame {
 						int beforeHour = Integer.parseInt(setTime_textField.getText().toString());
 						startTime = MyCalendar.sdf.format(MyCalendar.getCalcMilliseconds(baseTime, beforeHour * -1));
 						endTime = MyCalendar.sdf.format(baseTime);
+						
 					}else if(after_RadioButton.isSelected()) {
 						// 기준 시간 이후부터 n시간 동안 수집한 데이터
-						int afterHour = Integer.parseInt(setTime_textField.getText().toString());						
+						int afterHour = Integer.parseInt(setTime_textField.getText().toString());
 						startTime = MyCalendar.sdf.format(baseTime);
 						endTime = MyCalendar.sdf.format(MyCalendar.getCalcMilliseconds(baseTime, afterHour));
-					}else if(duration_radioButton.isSelected()){
-						// 기준 시간부터 정해진 시간까지 수집한 데이터
-						
-					}else {
-						
 					}
 					
-					ArrayList<PerfData> list = RestAgent.getPerfRowData(selectedPerf.getIndex(), MK119_Lite_Panel.adminConsole, startTime, endTime);					
+					ArrayList<PerfData> list = RestAgent.getPerfRowData(selectedPerf.getIndex(), MK119_Lite_Panel.adminConsole, startTime, endTime);
 					
 					if(list != null) {
 						Object[][] content = new Object[list.size()][];
@@ -475,7 +482,7 @@ public class FacilityInfoFrame extends JFrame {
 								new String[] { "순 서", "수집 시간", "수집 값"}) {
 								boolean[] columnEditables = new boolean[] {
 										false, // 순서
-										false, // 수집 시간		
+										false, // 수집 시간
 										false, // 수집 값
 								};
 								public boolean isCellEditable(int row, int column) {
