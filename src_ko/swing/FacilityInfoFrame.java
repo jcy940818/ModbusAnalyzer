@@ -1245,16 +1245,17 @@ public class FacilityInfoFrame extends JFrame {
 	//*************** 성능 리스트 테이블  *********************************************************************************
 	public void updatePerfListTable(JTable table, boolean updatePerfData) {
 		
+		boolean isConnectRestAPI = isConnectRestAPI();
 		if (table == null || perfs == null) return;
 		
 		// REST API 호출
-		if(updatePerfData && isConnectRestAPI()) {
+		if(updatePerfData && isConnectRestAPI) {
 			perfRealTimeDataMap = RestAgent.getFacilityPerfDataMap(fac.getIndex(), MK119_Lite_Panel.adminConsole);
 		}
 		
 		Object[][] content = new Object[perfs.size()][];
 
-		if(isConnectRestAPI()) {
+		if(isConnectRestAPI) {
 			for (int i = 0; i < perfs.size(); i++) {
 				Perf perf = perfs.get(i);
 				content[i] = new Object[4];
@@ -1289,7 +1290,7 @@ public class FacilityInfoFrame extends JFrame {
 			}
 		}
 		
-		String[] header = (isConnectRestAPI()) ? new String[] { "순 서", "성 능", "최종값", "수집 시간" } : new String[] { "순 서", "성 능" };
+		String[] header = (isConnectRestAPI) ? new String[] { "순 서", "성 능", "최종값", "수집 시간" } : new String[] { "순 서", "성 능" };
 		
 		table.setModel(new DefaultTableModel(
 			content, 
@@ -1459,7 +1460,7 @@ public class FacilityInfoFrame extends JFrame {
 		// 테이블 셀 크기 설정
 		if(tableType == PERF_LIST_TABLE) {
 			
-			if(isConnectRestAPI()) {
+			if(MK119_Lite_Panel.linkMK119_PerfData && MK119_Lite_Panel.adminConsole != null) {
 				// 성능 리스트 테이블
 				table.getColumnModel().getColumn(0).setPreferredWidth(70); // 순 서
 				table.getColumnModel().getColumn(1).setPreferredWidth(400); // 성 능
@@ -1495,11 +1496,11 @@ public class FacilityInfoFrame extends JFrame {
 		TableColumnModel tcmSchedule = table.getColumnModel();
 		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
 		
-		if(tableType == PERF_LIST_TABLE && isConnectRestAPI()) {
+		if(tableType == PERF_LIST_TABLE && MK119_Lite_Panel.linkMK119_PerfData && MK119_Lite_Panel.adminConsole != null) {
 			tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 최종값
 			tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 수집 시간
 			
-		}else if(tableType == PERF_LIST_TABLE && !isConnectRestAPI()) {
+		}else if(tableType == PERF_LIST_TABLE && !(MK119_Lite_Panel.linkMK119_PerfData && MK119_Lite_Panel.adminConsole != null)) {
 			// do nothing
 			
 		}else if(tableType == PERF_LABEL_TABLE) {
@@ -1647,13 +1648,13 @@ public class FacilityInfoFrame extends JFrame {
 		
 		
 		// REST API 호출
-		if(updatePerfData && isConnectRestAPI()) {
+		if(updatePerfData && MK119_Lite_Panel.linkMK119_PerfData && MK119_Lite_Panel.adminConsole != null) {
 			perfRealTimeDataMap = RestAgent.getFacilityPerfDataMap(fac.getIndex(), MK119_Lite_Panel.adminConsole);
 		}
 		
 		Object[][] content = new Object[filterPerf.size()][];
 		
-		if(isConnectRestAPI()) {
+		if(MK119_Lite_Panel.linkMK119_PerfData && MK119_Lite_Panel.adminConsole != null) {
 			for (int i = 0; i < filterPerf.size(); i++) {
 				Perf perf = filterPerf.get(i);
 				content[i] = new Object[4];
@@ -1688,7 +1689,7 @@ public class FacilityInfoFrame extends JFrame {
 			}
 		}
 		
-		String[] header = (isConnectRestAPI()) ? new String[] { "순 서", "성 능", "최종값", "수집 시간" } : new String[] { "순 서", "성 능" };
+		String[] header = (MK119_Lite_Panel.linkMK119_PerfData && MK119_Lite_Panel.adminConsole != null) ? new String[] { "순 서", "성 능", "최종값", "수집 시간" } : new String[] { "순 서", "성 능" };
 		
 		perfListTable.setModel(new DefaultTableModel(
 			content, 
