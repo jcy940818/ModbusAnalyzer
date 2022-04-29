@@ -1594,8 +1594,8 @@ public class MK119_Lite_Panel extends JPanel {
 					SERVER_STATE, // 장비 상태
 					EVENT
 					}));
-			if(searchFacility_ComboBox1 != null) searchFacility_ComboBox1.setSelectedIndex(0);
-			if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedIndex(2);
+			if(searchFacility_ComboBox1 != null) searchFacility_ComboBox1.setSelectedItem(GROUP_INFO);
+			if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedItem(SERVER_NAME);
 		}
 	}
 	
