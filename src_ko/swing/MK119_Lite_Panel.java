@@ -97,7 +97,7 @@ public class MK119_Lite_Panel extends JPanel {
 	
 	private static JButton eventInfo_Button;
 	private static JButton rcuInfo_Button;
-	private static JButton perfInfo_Button;
+	private static JButton facilityInfo_Button;
 	public static JButton linkMK119_Button;
 	private static JButton updateDB_Button;
 	private static JButton resetForm_button;
@@ -181,21 +181,21 @@ public class MK119_Lite_Panel extends JPanel {
 		});
 		infoPanel.add(rcuInfo_Button);
 		
-		perfInfo_Button = new JButton("성능 정보");
-		perfInfo_Button.setForeground(Color.BLACK);
-		perfInfo_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
-		perfInfo_Button.setFocusPainted(false);
-		perfInfo_Button.setBackground(Color.ORANGE);
-		perfInfo_Button.setBounds(440, 62, 150, 37);
-		perfInfo_Button.setEnabled(false);
-		perfInfo_Button.addActionListener(new ActionListener() {
+		facilityInfo_Button = new JButton("시설물 정보");
+		facilityInfo_Button.setForeground(Color.BLACK);
+		facilityInfo_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		facilityInfo_Button.setFocusPainted(false);
+		facilityInfo_Button.setBackground(Color.ORANGE);
+		facilityInfo_Button.setBounds(440, 62, 150, 37);
+		facilityInfo_Button.setEnabled(false);
+		facilityInfo_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {	
 				if(selectedServer.isFacility()) {
 					new FacilityInfoFrame((Facility)selectedServer);
 				}
 			}
 		});
-		infoPanel.add(perfInfo_Button);
+		infoPanel.add(facilityInfo_Button);
 		
 		linkMK119_Button = new JButton(" 연동");
 		linkMK119_Button.setIcon(new Util().getMK2Resource());
@@ -429,16 +429,16 @@ public class MK119_Lite_Panel extends JPanel {
 					rcuInfo_Button.setText("연결된 RCU 없음");
 				}
 				
-				perfInfo_Button.setText("성능 정보");
-				perfInfo_Button.setBackground(Color.ORANGE);
-				perfInfo_Button.setEnabled(true);
+				facilityInfo_Button.setText("시설물 정보");
+				facilityInfo_Button.setBackground(Color.ORANGE);
+				facilityInfo_Button.setEnabled(true);
 				
 				updateFacilityInfo((Facility)selectedServer); // <- 시설물 정보 테이블 업데이트
 			}else {
-				// RCU가 선택 되었을 경우				
-				perfInfo_Button.setText("성능 정보 없음");
-				perfInfo_Button.setBackground(Color.WHITE);
-				perfInfo_Button.setEnabled(false);
+				// RCU가 선택 되었을 경우
+				facilityInfo_Button.setText("시설물 정보");
+				facilityInfo_Button.setBackground(Color.WHITE);
+				facilityInfo_Button.setEnabled(false);
 								
 				rcuInfo_Button.setEnabled(true);
 				rcuInfo_Button.setBackground(new Color(152, 251, 152));
@@ -808,8 +808,8 @@ public class MK119_Lite_Panel extends JPanel {
 			eventInfo_Button.setBackground(Color.WHITE);
 			eventInfo_Button.setForeground(Color.BLACK);
 			
-			perfInfo_Button.setEnabled(false);
-			perfInfo_Button.setBackground(Color.WHITE);			
+			facilityInfo_Button.setEnabled(false);
+			facilityInfo_Button.setBackground(Color.WHITE);			
 			rcuInfo_Button.setEnabled(false);
 			rcuInfo_Button.setBackground(Color.WHITE);
 			
@@ -902,8 +902,8 @@ public class MK119_Lite_Panel extends JPanel {
 			eventInfo_Button.setBackground(Color.WHITE);
 			eventInfo_Button.setForeground(Color.BLACK);
 			
-			perfInfo_Button.setEnabled(false);
-			perfInfo_Button.setBackground(Color.WHITE);			
+			facilityInfo_Button.setEnabled(false);
+			facilityInfo_Button.setBackground(Color.WHITE);			
 			rcuInfo_Button.setEnabled(false);
 			rcuInfo_Button.setBackground(Color.WHITE);
 			
@@ -1540,6 +1540,11 @@ public class MK119_Lite_Panel extends JPanel {
 	
 	public static void updateItem_searchComboBox(boolean isConnectProtocol) {
 		if(isConnectProtocol) {
+			String item_1 = GROUP_INFO;
+			String item_2 = SERVER_NAME;
+			if(searchFacility_ComboBox1 != null) item_1 = searchFacility_ComboBox1.getSelectedItem().toString();
+			if(searchFacility_ComboBox2 != null) item_2 = searchFacility_ComboBox2.getSelectedItem().toString();
+			
 			searchFacility_ComboBox1.setModel(new DefaultComboBoxModel(new String[] {
 					GROUP_INFO, // 그룹 정보
 					SERVER_TYPE, // 시설물 종류
@@ -1564,8 +1569,8 @@ public class MK119_Lite_Panel extends JPanel {
 					SERVER_STATE, // 장비 상태
 					EVENT
 					}));
-			if(searchFacility_ComboBox1 != null) searchFacility_ComboBox1.setSelectedIndex(0);
-			if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedIndex(2);
+			if(searchFacility_ComboBox1 != null) searchFacility_ComboBox1.setSelectedItem(item_1);
+			if(searchFacility_ComboBox2 != null) searchFacility_ComboBox2.setSelectedItem(item_2);
 		}else {
 			searchFacility_ComboBox1.setModel(new DefaultComboBoxModel(new String[] {
 					GROUP_INFO, // 그룹 정보
