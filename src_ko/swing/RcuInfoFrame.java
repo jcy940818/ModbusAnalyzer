@@ -38,6 +38,7 @@ import common.server.SystemSeverity;
 import common.util.FindTextRenderer;
 import common.util.SeverityRenderer;
 import src_ko.info.ONION_Info;
+import src_ko.info.Protocol;
 import src_ko.util.Util;
 
 public class RcuInfoFrame extends JFrame {;
@@ -50,6 +51,7 @@ public class RcuInfoFrame extends JFrame {;
 	public static final String RCU_TYPE = "RCU 종류";
 	public static final String CONN_METHOD = "연결 방식";	
 	public static final String PROTOCOL_NUMBER = "프로토콜 번호";
+	public static final String PROTOCOL_NAME = "프로토콜 이름";
 	public static final String SERVER_STATE = "장비 상태";
 	public static final String EVENT = "이벤트";
 	
@@ -177,14 +179,26 @@ public class RcuInfoFrame extends JFrame {;
 		searchFacility_ComboBox.setBackground(Color.WHITE);		
 		searchFacility_ComboBox.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		searchFacility_ComboBox.setBounds(81, 86, 185, 35);
-		searchFacility_ComboBox.setModel(new DefaultComboBoxModel(new String[] {				
-				FACILITY_TYPE, // 시설물 종류
-				SERVER_NAME, // 장비명
-				SERVER_INDEX, // 장비 인덱스
-				PROTOCOL_NUMBER, // 프로토콜 번호
-				SERVER_STATE, // 장비 상태
-				EVENT, // 장비 상태
-		}));
+		if(MK119_Lite_Panel.linkMK119_Protocol) {
+			searchFacility_ComboBox.setModel(new DefaultComboBoxModel(new String[] {				
+					FACILITY_TYPE, // 시설물 종류
+					SERVER_NAME, // 장비명
+					SERVER_INDEX, // 장비 인덱스
+					PROTOCOL_NUMBER, // 프로토콜 번호
+					PROTOCOL_NAME, // 프로토콜 이름
+					SERVER_STATE, // 장비 상태
+					EVENT, // 장비 상태
+			}));
+		}else {
+			searchFacility_ComboBox.setModel(new DefaultComboBoxModel(new String[] {				
+					FACILITY_TYPE, // 시설물 종류
+					SERVER_NAME, // 장비명
+					SERVER_INDEX, // 장비 인덱스
+					PROTOCOL_NUMBER, // 프로토콜 번호
+					SERVER_STATE, // 장비 상태
+					EVENT, // 장비 상태
+			}));
+		}
 		searchFacility_ComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -628,6 +642,10 @@ public class RcuInfoFrame extends JFrame {;
 				case PROTOCOL_NUMBER : // 프로토콜 번호
 					searchElement = String.valueOf(fac.isProtocol() ? fac.getCommProtocol() : fac.getSnmpProtocol());
 					break;
+				case PROTOCOL_NAME : // 프로토콜 이름
+					Protocol p = MK119_Lite_Panel.protocolMap.get(fac.getProtocolKey());
+					searchElement = (p != null) ?  p.getName() : "";
+					break;
 				case SERVER_STATE : // 장비 상태
 					searchElement = fac.getState();
 					break;
@@ -707,7 +725,7 @@ public class RcuInfoFrame extends JFrame {;
 		});
 
 		setTableStyle(FacListTable);
-	}	
+	}
 	
 	// 사용자 정의 키 이벤트 리스너
 	class CloseListener extends KeyAdapter{
@@ -717,11 +735,11 @@ public class RcuInfoFrame extends JFrame {;
 			}
 		}
 		
-		public void keyReleased(KeyEvent e) {			
+		public void keyReleased(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				dispose();
 			}
-		}		
+		}
 	}
 	
 	public void initCopyAdapter(String content) {
