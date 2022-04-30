@@ -2,7 +2,7 @@ package common.util;
 
 public class TextUtil {
 	
-	public static String setEventColor(String text, int front, int back) {
+	public static String setTextStyle(String text, int front, int back) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<span style=\"background-color:#" + getColorHexString(back) + ";\">");
 		sb.append("<font color='#" + getColorHexString(front) + "'>");
