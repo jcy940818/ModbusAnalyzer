@@ -79,7 +79,6 @@ public class MK119_Lite_Panel extends JPanel {
 	public static HashMap<String, Protocol> protocolMap = new HashMap<String, Protocol>();
 
 	public static boolean linkMK119_PerfData = false;
-//	public static HashMap<String, PerfData> perfDataMap = new HashMap<String, PerfData>();
 	// ************************************************************************************
 	
 	public static ArrayList<Server> serverList;
