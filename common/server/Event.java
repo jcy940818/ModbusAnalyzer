@@ -8,7 +8,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
+import common.util.TextUtil;
 import src_ko.database.DbUtil;
+import src_ko.info.ONION_Info;
+import src_ko.util.Util;
 
 public class Event implements Comparable{
 	
@@ -48,6 +53,32 @@ public class Event implements Comparable{
     	System.out.println("strSeverity : " + event.getSeverityName());
     	System.out.println("nBkColor : " + event.getSeverityBkColor() + " (" + event.getSeverityBkColorHexString() + ")");
     	System.out.println("nTextColor : " + event.getSeverityTextColor() + " (" + event.getSeverityTextColorHexString() + ")");
+	}
+	
+	public static void showEventInfo(Server server) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("%s%s%s\n", Util.colorBlue("이벤트 발생 내역"),Util.separator, Util.separator));
+		sb.append(String.format("%s : %s%s%s\n", Util.colorBlue("장비명"), server.getName(),Util.separator, Util.separator));
+		
+		String type = "";
+		if(server.isFacility()) {
+			type = ((Facility)server).getTypeString();
+		}else {
+			type = ((RCU)server).getRcuTypeDetail();
+		}		
+		sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("장비 종류"), type,Util.separator, Util.separator));
+		
+		try {
+			ArrayList<SystemSeverity> seve = SystemSeverity.getSystemSeverity(ONION_Info.getMk119Connection());
+			for(int i = 0; i < seve.size(); i++) {
+				SystemSeverity s = seve.get(i);
+				sb.append(String.format("%s : %d%s%s\n", TextUtil.setTextStyle(s.getStrSeverity(), s.getnTextColor(), s.getnBkColor()), 0,Util.separator, Util.separator));
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	/** EVENTS 테이블 */

@@ -150,12 +150,8 @@ public class MK119_Lite_Panel extends JPanel {
 		eventInfo_Button.setEnabled(false);		
 		eventInfo_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(selectedServer.isRCU()) {
-					RCU rcu = (RCU)selectedServer;
-					
-				}else if(selectedServer.isFacility()) {
-					Facility fac = (Facility)selectedServer;
-					
+				if(selectedServer.hasEvent()) {
+					Event.showEventInfo(selectedServer);
 				}
 			}
 		});

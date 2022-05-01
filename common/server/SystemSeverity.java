@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class SystemSeverity {
 	
-	public static final String GET_SYSTEM_SEVERITY = "SELECT * FROM SYSTEM_SEVERITY";
+	public static final String GET_SYSTEM_SEVERITY = "SELECT * FROM SYSTEM_SEVERITY ORDER BY nSeverity ASC";
 	
 	private int nSeverity;
 	private String strSeverity;
