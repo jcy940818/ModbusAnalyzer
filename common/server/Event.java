@@ -56,24 +56,117 @@ public class Event implements Comparable{
 	}
 	
 	public static void showEventInfo(Server server) {
+		int normal_0 = 0;
+		int normal_1 = 0;
+		
+		int warning_0 = 0;
+		int warning_1 = 0;
+		
+		int minor_0 = 0;
+		int minor_1 = 0;
+		
+		int critical_0 = 0;
+		int critical_1 = 0;
+		
+		int fatal_0 = 0;
+		int fatal_1 = 0;
+		
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("%s%s%s\n", Util.colorBlue("이벤트 발생 내역"),Util.separator, Util.separator));
+		sb.append(String.format("%s%s%s\n", Util.colorBlue("이벤트 발생 상태"),Util.separator, Util.separator));
 		sb.append(String.format("%s : %s%s%s\n", Util.colorBlue("장비명"), server.getName(),Util.separator, Util.separator));
 		
-		String type = "";
-		if(server.isFacility()) {
-			type = ((Facility)server).getTypeString();
-		}else {
-			type = ((RCU)server).getRcuTypeDetail();
-		}		
+		String type = server.isFacility() ? ((Facility)server).getTypeString() : ((RCU)server).getRcuTypeDetail();
 		sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("장비 종류"), type,Util.separator, Util.separator));
 		
 		try {
+			ArrayList<Event> events = server.getEvents();
+			
+			for(int i = 0; i < events.size(); i++) {
+				Event e = events.get(i);
+				
+				switch(e.getSeverity()) {
+					case 10:
+						if(e.getStatus() == 0) {
+							normal_0++;
+						}else if(e.getStatus() == 1){
+							normal_1++;
+						}
+						break;
+						
+					case 20:
+						if(e.getStatus() == 0) {
+							warning_0++;
+						}else if(e.getStatus() == 1){
+							warning_1++;
+						}
+						break;
+						
+					case 30:
+						if(e.getStatus() == 0) {
+							minor_0++;
+						}else if(e.getStatus() == 1){
+							minor_1++;
+						}
+						break;
+						
+					case 40:
+						if(e.getStatus() == 0) {
+							critical_0++;
+						}else if(e.getStatus() == 1){
+							critical_1++;
+						}
+						break;
+						
+					case 50:
+						if(e.getStatus() == 0) {
+							fatal_0++;
+						}else if(e.getStatus() == 1){
+							fatal_1++;
+						}
+						break;
+				}
+			}
+		
 			ArrayList<SystemSeverity> seve = SystemSeverity.getSystemSeverity(ONION_Info.getMk119Connection());
 			for(int i = 0; i < seve.size(); i++) {
 				SystemSeverity s = seve.get(i);
-				sb.append(String.format("%s : %d%s%s\n", TextUtil.setTextStyle(s.getStrSeverity(), s.getnTextColor(), s.getnBkColor()), 0,Util.separator, Util.separator));
+				
+				int _0 = 0;
+				int _1 = 0;
+				
+				switch(s.getnSeverity()) {
+					case 10 :
+						_0 = normal_0;
+						_1 = normal_1;
+						break;
+					case 20 :
+						_0 = warning_0;
+						_1 = warning_1;
+						break;
+					case 30 :
+						_0 = minor_0;
+						_1 = minor_1;
+						break;
+					case 40 :
+						_0 = critical_0;
+						_1 = critical_1;
+						break;
+					case 50 :
+						_0 = fatal_0;
+						_1 = fatal_1;
+						break;
+				}
+				
+				sb.append(String.format("%s ", TextUtil.setTextStyle(s.getStrSeverity(), s.getnTextColor(), s.getnBkColor())));
+				sb.append((_0 > 0) ? "발생 : " + Util.colorRed(String.valueOf(_0)) : "발생 : " + _0);
+				sb.append(" / ");
+				sb.append((_1 > 0) ? "인지 : " + Util.colorRed(String.valueOf(_1)) : "인지 : " + _1);
+				sb.append(Util.separator + Util.separator + "\n\n");	
 			}
+			
+			int lastLineSeparator = sb.lastIndexOf("\n");
+			sb.replace(lastLineSeparator, lastLineSeparator+1, "");
+			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

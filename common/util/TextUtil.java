@@ -6,9 +6,9 @@ public class TextUtil {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<span style=\"background-color:#" + getColorHexString(back) + ";\">");
 		sb.append("<font color='#" + getColorHexString(front) + "'>");
-		sb.append("&nbsp;");
+		sb.append("&nbsp;&nbsp;");
 		sb.append(text);
-		sb.append("&nbsp;");
+		sb.append("&nbsp;&nbsp;");
 		sb.append("</font>");
 		sb.append("</span>");
 		return sb.toString();
