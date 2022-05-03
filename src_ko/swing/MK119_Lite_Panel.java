@@ -41,6 +41,7 @@ import common.server.ServerGroup;
 import common.server.SystemSeverity;
 import common.util.FindTextRenderer;
 import common.util.SeverityRenderer;
+import common.util.TextUtil;
 import src_ko.database.DbUtil;
 import src_ko.info.AdminConsole_Info;
 import src_ko.info.ONION_Info;
@@ -1094,6 +1095,13 @@ public class MK119_Lite_Panel extends JPanel {
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 정보"), connInfo, separator, separator));
 			msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("연결 방식"), fac.getConnMethod(), separator, separator));
 			
+			if(fac.hasEvent()) {
+				Event e = fac.getEvents().get(0);
+				String status = (e.getStatus() == 0) ? Util.colorRed("이벤트 발생 상태") : Util.colorRed("이벤트 인지 상태");
+				String eventInfo = TextUtil.setTextStyle(e.getSeverityName(), e.getSeverityTextColor(), e.getSeverityBkColor());
+				msg.append(String.format("%s : %s %s%s%s\n", Util.colorBlue("이벤트 상태"), eventInfo, status,separator, separator));
+			}
+			
 			if(fac.getRcu() != null) {
 				
 				RCU rcu = fac.getRcu();
@@ -1159,30 +1167,65 @@ public class MK119_Lite_Panel extends JPanel {
 					// ***********************************************************************************************************************
 										
 					msg.append(String.format("%s : %d개%s%s\n", Util.colorGreen("연결된 장비 개수"), rcu.getFacList().size(), separator, separator));
+					
+					if(rcu.hasEvent()) {
+						Event e = rcu.getEvents().get(0);
+						String status = (e.getStatus() == 0) ? Util.colorRed("이벤트 발생 상태") : Util.colorRed("이벤트 인지 상태");
+						String eventInfo = TextUtil.setTextStyle(e.getSeverityName(), e.getSeverityTextColor(), e.getSeverityBkColor());
+						msg.append(String.format("%s : %s %s%s%s\n", Util.colorGreen("이벤트 상태"), eventInfo, status,separator, separator));
+					}
+					
 				}
 			}
 			
 			if(fac.isConnRCU() && fac.getRcu() != null && showRcuInfo) {
-				menu = Util.showOption(msg.toString(), new String[] { "RCU 정보 보기", "성능 정보 보기", "취 소"}, JOptionPane.INFORMATION_MESSAGE, false);
-				switch (menu) {				
-					case 0:
+				
+				if(fac.hasEvent()) {
+					menu = Util.showOption(msg.toString(), new String[] { "성능 정보 보기", "RCU 정보 보기",  "이벤트 내용 보기", " 취 소 "}, JOptionPane.INFORMATION_MESSAGE, false);
+				}else {
+					menu = Util.showOption(msg.toString(), new String[] { "성능 정보 보기", "RCU 정보 보기",  " 취 소 "}, JOptionPane.INFORMATION_MESSAGE, false);	
+				}
+				
+				switch (menu) {
+					case 0:// 성능 정보 보기
+						new FacilityInfoFrame(fac);
+						return;
+						
+					case 1:
 						// RCU 정보 보기
 						new RcuInfoFrame(fac.getRcu());
 						return;
 						
-					case 1: // 성능 정보 보기
-						new FacilityInfoFrame(fac);
+					case 2:
+						// 이벤트 내용 보기
+						if(fac.hasEvent()) {
+							Event.showDetailEventInfo(fac);
+						}
 						return;
 						
 					default :
 						return;
 				}
 			}else {
-				menu = Util.showOption(msg.toString(), new String[] { "성능 정보 보기", "취 소"}, JOptionPane.INFORMATION_MESSAGE, false);
-				switch (menu) {					
+				
+				if(fac.hasEvent()) {
+					menu = Util.showOption(msg.toString(), new String[] { "성능 정보 보기", "이벤트 내용 보기", " 취 소 "}, JOptionPane.INFORMATION_MESSAGE, false);
+				}else {
+					menu = Util.showOption(msg.toString(), new String[] { "성능 정보 보기", " 취 소 "}, JOptionPane.INFORMATION_MESSAGE, false);	
+				}
+				
+				switch (menu) {
 					case 0: // 성능 정보 보기
 						new FacilityInfoFrame(fac);
-						return;					
+						return;			
+						
+					case 1:
+						// 이벤트 내용 보기
+						if(fac.hasEvent()) {
+							Event.showDetailEventInfo(fac);
+						}
+						return;
+						
 					default :
 						return;
 				}
@@ -1209,7 +1252,7 @@ public class MK119_Lite_Panel extends JPanel {
 			}
 			msg.append(String.format("%s%s : %s%s%s\n", Util.colorGreen("RCU "), Util.colorRed("IP") ,ipInfo, separator, separator));
 			
-			String portInfo = "";			
+			String portInfo = "";
 			if(rcu.isMultiPort()) {
 				ArrayList<MultiPortMap> portMap = rcu.getMultiPortMapList();
 				MultiPortMap start = portMap.get(0);
@@ -1233,11 +1276,30 @@ public class MK119_Lite_Panel extends JPanel {
 			// ***********************************************************************************************************************			
 			msg.append(String.format("%s : %d개%s%s\n", Util.colorGreen("연결된 장비 개수"), rcu.getFacList().size(), separator, separator));
 			
-			menu = Util.showOption(msg.toString(), new String[] { "연결된 장비 목록 보기", "취 소"}, JOptionPane.INFORMATION_MESSAGE, false);		
-			switch (menu) {				
+			if(rcu.hasEvent()) {
+				Event e = rcu.getEvents().get(0);
+				String status = (e.getStatus() == 0) ? Util.colorRed("이벤트 발생 상태") : Util.colorRed("이벤트 인지 상태");
+				String eventInfo = TextUtil.setTextStyle(e.getSeverityName(), e.getSeverityTextColor(), e.getSeverityBkColor());
+				msg.append(String.format("%s : %s %s%s%s\n", Util.colorGreen("이벤트 상태"), eventInfo, status,separator, separator));
+			}
+			
+			if(rcu.hasEvent()) {
+				menu = Util.showOption(msg.toString(), new String[] { "연결된 장비 목록 보기", "이벤트 내용 보기"," 취 소 "}, JOptionPane.INFORMATION_MESSAGE, false);
+			}else {
+				menu = Util.showOption(msg.toString(), new String[] { "연결된 장비 목록 보기", " 취 소 "}, JOptionPane.INFORMATION_MESSAGE, false);	
+			}
+			
+			switch (menu) {
 				case 0: // 연결된 장비 목록 보기
 					new RcuInfoFrame(rcu);
-					return;									
+					return;
+					
+				case 1 : // 이벤트 내용 보기
+					if(rcu.hasEvent()) {
+						Event.showDetailEventInfo(rcu);
+					}
+					return;
+					
 				default :
 					return;
 			}

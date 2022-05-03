@@ -41,6 +41,7 @@ import common.agent.RestAgent;
 import common.perf.FmsPerfItem;
 import common.perf.Perf;
 import common.perf.PerfLabelStatusBean;
+import common.server.Event;
 import common.server.Facility;
 import common.util.MyCalendar;
 import src_ko.info.ONION_Info;
@@ -960,6 +961,17 @@ public class FacilityInfoFrame extends JFrame {
 		eventInfo_Button.setBorder(UIManager.getBorder("Button.border"));
 		eventInfo_Button.setBackground(Color.WHITE);
 		eventInfo_Button.setBounds(1038, 60, 184, 30);		
+		eventInfo_Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(getFac() != null) {
+					if(getFac().hasEvent()) {
+						Event.showSimpleEventInfo(getFac());
+					}
+				}
+			}
+		});
+		
 		
 		// 이벤트 버튼 초기화
 		MK119_Lite_Panel.initEventButton(eventInfo_Button, fac);		
@@ -1868,5 +1880,9 @@ public class FacilityInfoFrame extends JFrame {
 		}
 		
 		return isConnect;
+	}
+	
+	public Facility getFac() {
+		return this.fac;
 	}
 }

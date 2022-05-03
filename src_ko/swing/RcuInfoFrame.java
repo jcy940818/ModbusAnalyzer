@@ -31,6 +31,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import common.server.Event;
 import common.server.Facility;
 import common.server.MultiPortMap;
 import common.server.RCU;
@@ -319,6 +320,16 @@ public class RcuInfoFrame extends JFrame {;
 		eventInfo_Button.setBackground(Color.WHITE);
 		eventInfo_Button.setBounds(81, 45, 185, 35);
 		MK119_Lite_Panel.initEventButton(eventInfo_Button, rcu);
+		eventInfo_Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(getRCU() != null) {
+					if(getRCU().hasEvent()) {
+						Event.showSimpleEventInfo(getRCU());
+					}
+				}
+			}
+		});
 		actualPanel.add(eventInfo_Button);
 
 		// ESC : Close Listener
@@ -768,5 +779,8 @@ public class RcuInfoFrame extends JFrame {;
 		if(RCUInfoLabel_2 != null) RCUInfoLabel_2.addMouseListener(copyAdapter);
 	}
 	
+	public RCU getRCU() {
+		return this.rcu;
+	}
 	
 }

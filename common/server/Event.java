@@ -177,7 +177,7 @@ public class Event implements Comparable{
 				sb.append(String.format(" %s ", TextUtil.setTextStyle(e.getSeverityName(), e.getSeverityTextColor(), e.getSeverityBkColor())));
 				sb.append("&nbsp;" + Util.colorBlue("-") + "&nbsp;");
 				
-				String status = e.getStatus() == 0 ? "발 생" : "인 지";
+				String status = e.getStatus() == 0 ? "발생 상태" : "인지 상태";
 				sb.append(String.format("%s : %s", Util.colorBlue("상 태"), status));
 				sb.append("&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;");
 				
