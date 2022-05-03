@@ -288,7 +288,7 @@ public class FacilityInfoFrame extends JFrame {
 		perfName_label.setBackground(Color.WHITE);
 		perfName_label.setHorizontalAlignment(SwingConstants.LEFT);
 		perfName_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
-		perfName_label.setBounds(12, 10, 464, 23);
+		perfName_label.setBounds(12, 10, 2000, 23);		
 		perfName_label.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
