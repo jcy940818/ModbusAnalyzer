@@ -46,7 +46,7 @@ public class MainFrame extends JFrame {
 	private static JMenu mk119LiteMenu;
 	private static JMenu moonMenu;
 	private static JMenu connectionMenu;
-	private static JMenu DatabaseMenu;
+	private static JMenu mk119Menu;
 	private static JMenu utilMenu;
 	private static JMenu xmlGeneratorMenu;
 	
@@ -99,43 +99,43 @@ public class MainFrame extends JFrame {
 		menuBar = new JMenuBar();
 		menuBar.setBorder(null);
 		menuBar.setAlignmentY(Component.CENTER_ALIGNMENT);
-		menuBar.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		menuBar.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 15));
 		menuBar.setMargin(new Insets(5, 5, 5, 5));
 		setJMenuBar(menuBar);
 
 		
 		
 		// Analysis ∏ﬁ¥∫
-		JMenu analysisMenu = new JMenu("  Analysis  ");
+		JMenu analysisMenu = new JMenu("   Analysis   ");
 		analysisMenu.setForeground(Color.BLACK);
 		analysisMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		analysisMenu.setHorizontalAlignment(SwingConstants.CENTER);
-		analysisMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));
+		analysisMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
 		menuBar.add(analysisMenu);
 		
 		// Analysis ∏ﬁ¥∫ - TX Analysis : TX ∫–ºÆ
-		JMenuItem TX_Analysis = new JMenuItem("TX Analysis : \uC694\uCCAD \uD328\uD0B7 \uBD84\uC11D");
+		JMenuItem TX_Analysis = new JMenuItem("TX Analysis : ø‰√ª ∆–≈∂ ∫–ºÆ");
 		TX_Analysis.setForeground(Color.BLACK);
 		TX_Analysis.setHorizontalAlignment(SwingConstants.LEFT);
-		TX_Analysis.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		TX_Analysis.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));
 		analysisMenu.add(TX_Analysis);
 				
 		analysisMenu.add(new JSeparator());
 		
 		// Analysis ∏ﬁ¥∫ - RX Analysis : RX ∫–ºÆ
-		JMenuItem RX_Analysis = new JMenuItem("RX Analysis : \uC751\uB2F5 \uD328\uD0B7 \uBD84\uC11D");
+		JMenuItem RX_Analysis = new JMenuItem("RX Analysis : ¿¿¥‰ ∆–≈∂ ∫–ºÆ");
 		RX_Analysis.setForeground(Color.BLACK);
 		RX_Analysis.setHorizontalAlignment(SwingConstants.LEFT);
-		RX_Analysis.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		RX_Analysis.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));
 		analysisMenu.add(RX_Analysis);
 				
 		analysisMenu.add(new JSeparator());
 		
 		// Analysis ∏ﬁ¥∫ - TX-RX Analysis : TX-RX ∫–ºÆ
-		JMenuItem Multi_Analysis = new JMenuItem("TX-RX Analysis : \uC694\uCCAD, \uC751\uB2F5 \uD328\uD0B7 \uBD84\uC11D");
+		JMenuItem Multi_Analysis = new JMenuItem("TX-RX Analysis : ø‰√ª, ¿¿¥‰ ∆–≈∂ ∫–ºÆ");
 		Multi_Analysis.setForeground(Color.BLACK);
 		Multi_Analysis.setHorizontalAlignment(SwingConstants.LEFT);
-		Multi_Analysis.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		Multi_Analysis.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));
 		analysisMenu.add(Multi_Analysis);
 
 		
@@ -143,63 +143,74 @@ public class MainFrame extends JFrame {
 		
 		
 		// Connection ∏ﬁ¥∫
-		connectionMenu = new JMenu("  Connection  ");
+		connectionMenu = new JMenu("   Connection   ");
 		connectionMenu.setForeground(Color.BLACK);
 		connectionMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		connectionMenu.setHorizontalAlignment(SwingConstants.CENTER);
-		connectionMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));
+		connectionMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
 		menuBar.add(connectionMenu);
 
 		// Connection ∏ﬁ¥∫ - ModbusAgent : TCP/IP Client ≈ÎΩ≈
 		JMenuItem modbusAgent = new JMenuItem("Modbus Agent : TCP/IP Client ≈ÎΩ≈");
 		modbusAgent.setForeground(Color.BLACK);
 		modbusAgent.setHorizontalAlignment(SwingConstants.LEFT);
-		modbusAgent.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		modbusAgent.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));
 		connectionMenu.add(modbusAgent);
 		
 		
 		// Connection ∏ﬁ¥∫ - Expression Value Scan (¡∂∞«Ωƒ Ω∫ƒµ)
 		simpleValueScan = new JMenuItem("Simple Value Scan : ∑π¡ˆΩ∫≈Õ ∞™ Ω∫ƒµ");
 		simpleValueScan.setForeground(Color.BLACK);
-		simpleValueScan.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));		
+		simpleValueScan.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));		
 		
 		
 		// Connection ∏ﬁ¥∫ - Exception Scan (øπø‹ Ω∫ƒµ)
 		exceptionScan = new JMenuItem("Exception Scan : øπø‹ Ω∫ƒµ");
 		exceptionScan.setForeground(Color.BLACK);
-		exceptionScan.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));		
+		exceptionScan.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));		
 		
 		
 		// Connection ∏ﬁ¥∫ - Real Time Monitoring (Ω«Ω√∞£ ∏¥œ≈Õ∏µ)
 		realTime = new JMenuItem("Real-Time Monitoring : Ω«Ω√∞£ ∏¥œ≈Õ∏µ");
 		realTime.setForeground(Color.BLACK);
-		realTime.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		realTime.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));
 		
 		
 		
-		
-		
-		// Database ∏ﬁ¥∫
-		DatabaseMenu = new JMenu("  Database  ");
-		DatabaseMenu.setForeground(Color.BLACK);
-		DatabaseMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
-		DatabaseMenu.setHorizontalAlignment(SwingConstants.CENTER);
-		DatabaseMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));
+		// MK119 ∏ﬁ¥∫
+		mk119Menu = new JMenu("   MK119   ");
+		mk119Menu.setForeground(Color.RED);
+		mk119Menu.setBorder(new LineBorder(new Color(0, 0, 0)));
+		mk119Menu.setHorizontalAlignment(SwingConstants.CENTER);
+		mk119Menu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
 								
-		// Database ∏ﬁ¥∫ - MK119 : µ•¿Ã≈Õ∫£¿ÃΩ∫ ¡∂»∏
+		// MK119 ∏ﬁ¥∫ : Admin Console ¡∂»∏
+		JMenuItem mk119Lite = new JMenuItem("MK119 Lite : Admin Console");
+		mk119Lite.setHorizontalAlignment(SwingConstants.LEFT);
+		mk119Lite.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));
+		mk119Lite.setForeground(Color.RED);
+		mk119Lite.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				showMK119Login("MK119Lite");
+			}
+		});
+		mk119Menu.add(mk119Lite);
+		mk119Menu.add(new JSeparator());
+		
+		// MK119 ∏ﬁ¥∫ - MK119 : µ•¿Ã≈Õ∫£¿ÃΩ∫ ¡∂»∏
 		JMenuItem mk119Link = new JMenuItem("Database : MK119 µ•¿Ã≈Õ∫£¿ÃΩ∫ ¡∂»∏");
 		mk119Link.setForeground(Color.BLACK);
 		mk119Link.setHorizontalAlignment(SwingConstants.LEFT);
-		mk119Link.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));		
-		DatabaseMenu.add(mk119Link);				
-		DatabaseMenu.add(new JSeparator());
+		mk119Link.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));		
+		mk119Menu.add(mk119Link);
+		mk119Menu.add(new JSeparator());
 		
-		// Database ∏ﬁ¥∫ - Stored Procedure : ¿˙¿Â «¡∑ŒΩ√¿˙
+		// MK119 ∏ﬁ¥∫ - Stored Procedure : ¿˙¿Â «¡∑ŒΩ√¿˙
 		JMenuItem storedProcedure = new JMenuItem("Stored Procedure : ¿˙¿Â «¡∑ŒΩ√¿˙ ºˆ«‡");
 		storedProcedure.setForeground(Color.BLACK);
 		storedProcedure.setHorizontalAlignment(SwingConstants.LEFT);
-		storedProcedure.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));		
-		DatabaseMenu.add(storedProcedure);
+		storedProcedure.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));
+		mk119Menu.add(storedProcedure);
 //		DatabaseMenu.add(new JSeparator());
 		
 //		
@@ -230,14 +241,14 @@ public class MainFrame extends JFrame {
 		utilMenu.setForeground(Color.BLACK);
 		utilMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		utilMenu.setHorizontalAlignment(SwingConstants.CENTER);
-		utilMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));
+		utilMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
 		
 		
 		// Util ∏ﬁ¥∫ : XML ∫‰æÓ
 		JMenuItem xmlViewer = new JMenuItem("Protocol XML Viewer : «¡∑Œ≈‰ƒ› º∫¥… XML ¡∂»∏");
 		xmlViewer.setForeground(Color.BLACK);
 		xmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlViewer.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));		
+		xmlViewer.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));		
 		utilMenu.add(xmlViewer);
 		utilMenu.add(new JSeparator());
 		
@@ -246,7 +257,7 @@ public class MainFrame extends JFrame {
 		xmlGeneratorMenu.setForeground(Color.BLACK);
 		xmlGeneratorMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		xmlGeneratorMenu.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlGeneratorMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		xmlGeneratorMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));
 		xmlGeneratorMenu.setBorderPainted(false);
 		utilMenu.add(xmlGeneratorMenu);
 		utilMenu.add(new JSeparator());
@@ -255,7 +266,7 @@ public class MainFrame extends JFrame {
 		JMenuItem protocolListDownload = new JMenuItem("Protocol List Download : MK119 «¡∑Œ≈‰ƒ› ∏ÆΩ∫∆Æ ¥ŸøÓ∑ŒµÂ");
 		protocolListDownload.setForeground(Color.BLACK);
 		protocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
-		protocolListDownload.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));		
+		protocolListDownload.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));		
 		utilMenu.add(protocolListDownload);
 		
 		
@@ -263,7 +274,7 @@ public class MainFrame extends JFrame {
 		JMenuItem xmlGenerator_Modbus = new JMenuItem("XML Generator : Modbus");
 		xmlGenerator_Modbus.setForeground(Color.BLACK);
 		xmlGenerator_Modbus.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlGenerator_Modbus.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		xmlGenerator_Modbus.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));
 		xmlGenerator_Modbus.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -288,7 +299,7 @@ public class MainFrame extends JFrame {
 		JMenuItem xmlGenerator_CustomModbus = new JMenuItem("XML Generator : Custom Modbus");
 		xmlGenerator_CustomModbus.setForeground(Color.BLACK);
 		xmlGenerator_CustomModbus.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlGenerator_CustomModbus.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		xmlGenerator_CustomModbus.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));
 		xmlGenerator_CustomModbus.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -314,7 +325,7 @@ public class MainFrame extends JFrame {
 		JMenuItem xmlGenerator_Common = new JMenuItem("XML Generator : Common");
 		xmlGenerator_Common.setForeground(Color.BLACK);
 		xmlGenerator_Common.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlGenerator_Common.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		xmlGenerator_Common.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));
 		xmlGenerator_Common.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -338,7 +349,7 @@ public class MainFrame extends JFrame {
 		JMenuItem xmlGenerator_SNMP = new JMenuItem("XML Generator : SNMP");
 		xmlGenerator_SNMP.setForeground(Color.BLACK);
 		xmlGenerator_SNMP.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlGenerator_SNMP.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		xmlGenerator_SNMP.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));
 		xmlGenerator_SNMP.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -362,7 +373,7 @@ public class MainFrame extends JFrame {
 		JMenuItem xmlGenerator_Agent = new JMenuItem("XML Generator : Agent");
 		xmlGenerator_Agent.setForeground(Color.BLACK);
 		xmlGenerator_Agent.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlGenerator_Agent.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		xmlGenerator_Agent.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));
 		xmlGenerator_Agent.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -387,7 +398,7 @@ public class MainFrame extends JFrame {
 		JMenuItem xmlGenerator_Control = new JMenuItem("XML Generator : Control");
 		xmlGenerator_Control.setForeground(Color.BLACK);
 		xmlGenerator_Control.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlGenerator_Control.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		xmlGenerator_Control.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));
 		xmlGenerator_Control.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -405,39 +416,19 @@ public class MainFrame extends JFrame {
 			}
 		});
 		xmlGeneratorMenu.add(xmlGenerator_Control);
-		
-		// MK119 Lite ∏ﬁ¥∫
-		mk119LiteMenu = new JMenu("  MK119 Lite  ");
-		mk119LiteMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
-		mk119LiteMenu.setForeground(Color.RED);
-		mk119LiteMenu.setHorizontalAlignment(SwingConstants.CENTER);
-		mk119LiteMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));
-		mk119LiteMenu.setFocusPainted(false);
-		
-		// MK119 Lite ∏ﬁ¥∫ : Admin Console ¡∂»∏
-		JMenuItem mk119Lite = new JMenuItem("MK119 Lite : MK119 µ•¿Ã≈Õ∫£¿ÃΩ∫ ¡∂»∏");
-		mk119Lite.setHorizontalAlignment(SwingConstants.LEFT);
-		mk119Lite.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
-		mk119Lite.setForeground(Color.BLACK);
-		mk119Lite.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				showMK119Login("MK119Lite");
-			}
-		});
-		mk119LiteMenu.add(mk119Lite);
-		
+				
 		
 		// Moon ∏ﬁ¥∫ (»˜µÁ ∏ﬁ¥∫)
-		moonMenu = new JMenu("  Moon  ");
+		moonMenu = new JMenu("   Moon   ");
 		moonMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		moonMenu.setForeground(Color.BLUE);
 		moonMenu.setHorizontalAlignment(SwingConstants.CENTER);
-		moonMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));
+		moonMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
 		
 		// Moon ∏ﬁ¥∫ : ∞£∆Ì«— XML ¡∂»∏
 		JMenuItem moonXmlViewer = new JMenuItem("Protocol XML Viewer : «¡∑Œ≈‰ƒ› º∫¥… XML ¡∂»∏");
 		moonXmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
-		moonXmlViewer.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		moonXmlViewer.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));
 		moonXmlViewer.setForeground(Color.BLUE);
 		moonMenu.add(moonXmlViewer);
 		moonMenu.add(new JSeparator());
@@ -445,24 +436,24 @@ public class MainFrame extends JFrame {
 		// Moon ∏ﬁ¥∫ : «¡∑Œ≈‰ƒ› ∏ÆΩ∫∆Æ ¥ŸøÓ∑ŒµÂ
 		JMenuItem moonProtocolListDownload = new JMenuItem("Protocol List Download : MK119 «¡∑Œ≈‰ƒ› ∏ÆΩ∫∆Æ ¥ŸøÓ∑ŒµÂ");
 		moonProtocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
-		moonProtocolListDownload.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		moonProtocolListDownload.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));
 		moonProtocolListDownload.setForeground(Color.BLUE);
 		moonMenu.add(moonProtocolListDownload);
 		
 		
 		// Information ∏ﬁ¥∫
-		JMenu informationMenu = new JMenu("  Information  ");
+		JMenu informationMenu = new JMenu("   Information   ");
 		informationMenu.setForeground(Color.BLACK);
 		informationMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		informationMenu.setHorizontalAlignment(SwingConstants.CENTER);
-		informationMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));
+		informationMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
 		menuBar.add(informationMenu);
 		
 		// Information ∏ﬁ¥∫ - Application («¡∑Œ±◊∑• ¡§∫∏)
 		JMenuItem information = new JMenuItem("Information : «¡∑Œ±◊∑• ¡§∫∏");
-		information.setForeground(Color.BLACK);
+		information.setForeground(Color.BLACK);		
 		information.setHorizontalAlignment(SwingConstants.LEFT);
-		information.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 13));
+		information.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));
 		informationMenu.add(information);
 		
 		
@@ -729,7 +720,7 @@ public class MainFrame extends JFrame {
 			case "ModbusAgent" : MK119_Login_Panel.setCurrentAgent("Modbus Collection"); break;
 			case "DatabaseAgent" : MK119_Login_Panel.setCurrentAgent("DataBase Access"); break;
 			case "storedProcedure" : MK119_Login_Panel.setCurrentAgent("Stored Procedure"); break;
-			case "MK119Lite" : MK119_Login_Panel.setCurrentAgent("MK119 Lite"); break; 
+			case "MK119Lite" : MK119_Login_Panel.setCurrentAgent("MK119 V4 Lite"); break;
 			default : MK119_Login_Panel.setCurrentAgent("DataBase Access"); break;
 		}
 		
@@ -775,23 +766,20 @@ public class MainFrame extends JFrame {
 		connectionMenu.add(realTime);
 	}
 	
-	public static void activeDatabase() {
-		menuBar.add(DatabaseMenu, 2);
-		menuBar.doLayout();
-	}
 	
 	public static void activeUtil() {
-		menuBar.add(utilMenu, 3);
+		menuBar.add(utilMenu, 2);
 		menuBar.doLayout();
 	}
 	
-	public static void activeMK119Lite() {
-		menuBar.add(mk119LiteMenu, 4);
+	public static void activeMK119() {
+		menuBar.add(mk119Menu, 3);
 		menuBar.doLayout();
 	}
+	
 	
 	public static void activeMoon() {
-		menuBar.add(moonMenu, 5);
+		menuBar.add(moonMenu, 4);
 		menuBar.doLayout();
 	}
 	
