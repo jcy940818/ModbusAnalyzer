@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import javax.swing.JOptionPane;
@@ -29,33 +30,7 @@ public class Event implements Comparable{
 			"\r\n" + 
 			"ORDER BY a.nSeverity DESC, a.nServerIndex ASC";
 	
-	public static void printEvent(Event event) {
-		System.out.println("Event index : " + event.getIndex());
-    	System.out.println("strEventName : " + event.getEventName());
-    	System.out.println("strEventContent : " + event.getEventContent());
-    	System.out.println("strEventDate : " + event.getEventDate());
-    	System.out.println("strSystemName : " + event.getSystemName());
-    	System.out.println("strSystemIndex : " + event.getSystemIndex());
-    	System.out.println("nServerIndex : " + event.getServerIndex());
-    	System.out.println("strHostName : " + event.getHostName());
-    	System.out.println("strHostIP : " + event.getHostIP());
-    	System.out.println("nServerity : " + event.getSeverity());
-    	System.out.println("strProcessUser : " + event.getProcessUser());
-    	System.out.println("strProcessDate : " + event.getProcessDate());
-    	System.out.println("strProcessContent : " + event.getProcessContent());
-    	System.out.println("strCompleateDate : " + event.getCompleteDate());
-    	System.out.println("nStatue : " + event.getStatus());
-    	System.out.println("strSessionID : " + event.getSessionID());
-    	System.out.println("nAlarmIndex : " + "필드 없음");
-    	System.out.println("nRepeatCount : " + "필드 없음");
-    	System.out.println("strLastOccurTime : " + "필드 없음");
-    	System.out.println("AUTO_CLOSE : " + "필드 없음");
-    	System.out.println("strSeverity : " + event.getSeverityName());
-    	System.out.println("nBkColor : " + event.getSeverityBkColor() + " (" + event.getSeverityBkColorHexString() + ")");
-    	System.out.println("nTextColor : " + event.getSeverityTextColor() + " (" + event.getSeverityTextColorHexString() + ")");
-	}
-	
-	public static void showEventInfo(Server server) {
+	public static void showSimpleEventInfo(Server server) {
 		int normal_0 = 0;
 		int normal_1 = 0;
 		
@@ -72,7 +47,7 @@ public class Event implements Comparable{
 		int fatal_1 = 0;
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("%s%s%s\n", Util.colorBlue("이벤트 발생 상태"),Util.separator, Util.separator));
+		sb.append(String.format("%s%s%s\n", Util.colorBlue("이벤트 내역"),Util.separator, Util.separator));
 		sb.append(String.format("%s : %s%s%s\n", Util.colorBlue("장비명"), server.getName(),Util.separator, Util.separator));
 		
 		String type = server.isFacility() ? ((Facility)server).getTypeString() : ((RCU)server).getRcuTypeDetail();
@@ -157,15 +132,66 @@ public class Event implements Comparable{
 						break;
 				}
 				
-				sb.append(String.format("%s ", TextUtil.setTextStyle(s.getStrSeverity(), s.getnTextColor(), s.getnBkColor())));
-				sb.append((_0 > 0) ? "발생 : " + Util.colorRed(String.valueOf(_0)) : "발생 : " + _0);
-				sb.append(" / ");
-				sb.append((_1 > 0) ? "인지 : " + Util.colorRed(String.valueOf(_1)) : "인지 : " + _1);
-				sb.append(Util.separator + Util.separator + "\n\n");	
+				sb.append(String.format("%s", TextUtil.setTextStyle(s.getStrSeverity(), s.getnTextColor(), s.getnBkColor())));
+				sb.append("&nbsp;&nbsp;");
+				sb.append((_0 > 0) ? Util.colorRed("발 생 : " + _0) : "발 생 : " + _0);
+				sb.append("&nbsp;&nbsp;/&nbsp;&nbsp;");
+				sb.append((_1 > 0) ? Util.colorRed("인 지 : " + _1) : "인 지 : " + _1);
+				sb.append(Util.separator + Util.separator + Util.separator + Util.separator + Util.separator + "\n\n");
 			}
 			
 			int lastLineSeparator = sb.lastIndexOf("\n");
 			sb.replace(lastLineSeparator, lastLineSeparator+1, "");
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+				
+		int menu = Util.showOption(sb.toString(), new String[] { "이벤트 내용 보기", " 확 인 "}, JOptionPane.INFORMATION_MESSAGE);
+		switch (menu) {					
+			case 0: // 이벤트 내용 보기
+				showDetailEventInfo(server);
+				return;
+			default :
+				return;
+		}
+	}
+	
+	public static void showDetailEventInfo(Server server) {
+	
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("%s%s%s\n", Util.colorBlue("이벤트 내역"),Util.separator, Util.separator));
+		sb.append(String.format("%s : %s%s%s\n", Util.colorBlue("장비명"), server.getName(),Util.separator, Util.separator));
+		
+		String type = server.isFacility() ? ((Facility)server).getTypeString() : ((RCU)server).getRcuTypeDetail();
+		sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("장비 종류"), type,Util.separator, Util.separator));
+		
+		try {
+			ArrayList<Event> events = server.getEvents();
+			Collections.sort(events);
+			
+			for(int i = 0; i < events.size(); i++) {
+				Event e = events.get(i);
+				
+				sb.append(String.format("%d. ", i + 1));
+				sb.append(String.format(" %s ", TextUtil.setTextStyle(e.getSeverityName(), e.getSeverityTextColor(), e.getSeverityBkColor())));
+				sb.append("&nbsp;" + Util.colorBlue("-") + "&nbsp;");
+				
+				String status = e.getStatus() == 0 ? "발 생" : "인 지";
+				sb.append(String.format("%s : %s", Util.colorBlue("상 태"), status));
+				sb.append("&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;");
+				
+				sb.append(String.format("%s : %s", Util.colorBlue("발생 시각"), e.getEventDate()));
+				sb.append("&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;");
+				
+				sb.append(String.format("%s : %s",Util.colorBlue("이벤트명"), e.getEventName()));
+				sb.append("&nbsp;&nbsp;" + Util.colorRed("/") + "&nbsp;&nbsp;");
+				
+				sb.append(String.format("%s : %s", Util.colorBlue("내 용") ,e.getEventContent()));
+				
+				sb.append(Util.separator + Util.separator + Util.separator + Util.separator);
+				sb.append("\n");
+			}
 			
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -238,10 +264,13 @@ public class Event implements Comparable{
 			date2 = new Date();
 		}
 		
+		long dateMs1 = date1.getTime();
+		long dateMs2 = date2.getTime();
+				
 		// 가장 최근 발생한 이벤트부터
-		if(date1.compareTo(date2) > 1) {
+		if(dateMs1 > dateMs2) {
 			return -1;
-		}else if(date1.compareTo(date2) == 0) {
+		}else if(dateMs1 == dateMs2) {
 			
 			// 이벤트 심각도가 높은 순위부터
 			if(this.getSeverity() > event.getSeverity()) {

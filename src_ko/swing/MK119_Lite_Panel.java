@@ -151,7 +151,7 @@ public class MK119_Lite_Panel extends JPanel {
 		eventInfo_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(selectedServer.hasEvent()) {
-					Event.showEventInfo(selectedServer);
+					Event.showSimpleEventInfo(selectedServer);
 				}
 			}
 		});
