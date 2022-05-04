@@ -171,54 +171,7 @@ public class MainFrame extends JFrame {
 		realTime = new JMenuItem("Real-Time Monitoring : Check the Real-time Data");
 		realTime.setForeground(Color.BLACK);
 		realTime.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
-		
-		
-		
-		
-		
-		// MK119 메뉴
-		mk119Menu = new JMenu("   MK119   ");
-		mk119Menu.setForeground(Color.RED);
-		mk119Menu.setBorder(new LineBorder(new Color(0, 0, 0)));
-		mk119Menu.setHorizontalAlignment(SwingConstants.CENTER);
-		mk119Menu.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-								
-		// Database 메뉴 - MK119 : 데이터베이스 조회
-		JMenuItem mk119Link = new JMenuItem("Database : MK119 Database inquiry");
-		mk119Link.setForeground(Color.BLACK);
-		mk119Link.setHorizontalAlignment(SwingConstants.LEFT);
-		mk119Link.setFont(new Font("맑은 고딕", Font.PLAIN, 14));		
-		mk119Menu.add(mk119Link);
-		mk119Menu.add(new JSeparator());
-		
-		// Database 메뉴 - Stored Procedure : 저장 프로시저
-		JMenuItem storedProcedure = new JMenuItem("Stored Procedure : Execute Procedure");
-		storedProcedure.setForeground(Color.BLACK);
-		storedProcedure.setHorizontalAlignment(SwingConstants.LEFT);
-		storedProcedure.setFont(new Font("맑은 고딕", Font.PLAIN, 14));		
-		mk119Menu.add(storedProcedure);		
-		
-//		
-//		// Database 메뉴 - Procedure Generator : 저장 프로시저 생성
-//		JMenuItem procedureGenerator = new JMenuItem("Procedure Generator : Create a new procedure");
-//		procedureGenerator.setHorizontalAlignment(SwingConstants.LEFT);
-//		procedureGenerator.setFont(new Font("맑은 고딕", Font.PLAIN, 13));		
-//		procedureGenerator.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				
-//				if(!ProcedureGeneratorFrame.isExist) {
-//					new ProcedureGeneratorFrame();							
-//				 }else {
-//					 StringBuilder sb = new StringBuilder();
-//					 sb.append(Util.colorRed("Procedure Generator Frame Already Exists") + Util.separator + "\n");
-//					 sb.append("The Procedure Generator Frame is already open" + Util.separator + "\n");
-//					 Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-//					 return;
-//				 }
-//			}
-//		});
-//		DatabaseMenu.add(procedureGenerator);
+				
 		
 		
 		// Util 메뉴
@@ -227,18 +180,10 @@ public class MainFrame extends JFrame {
 		utilMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		utilMenu.setHorizontalAlignment(SwingConstants.CENTER);
 		utilMenu.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		
-		
-		// Util 메뉴 : XML 뷰어
-		JMenuItem xmlViewer = new JMenuItem("Protocol XML Viewer : Watch Point XML inquiry");
-		xmlViewer.setForeground(Color.BLACK);
-		xmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlViewer.setFont(new Font("맑은 고딕", Font.PLAIN, 14));		
-		utilMenu.add(xmlViewer);
-		utilMenu.add(new JSeparator());
+
 		
 		// Util 메뉴 : XML Generator 메뉴
-		xmlGeneratorMenu = new JMenu("Protocol XML Generator : Create Watch Point XML File   ");
+		xmlGeneratorMenu = new JMenu("MK119 : Create Watch Point XML File   ");
 		xmlGeneratorMenu.setForeground(Color.BLACK);
 		xmlGeneratorMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		xmlGeneratorMenu.setHorizontalAlignment(SwingConstants.LEFT);
@@ -248,7 +193,7 @@ public class MainFrame extends JFrame {
 		utilMenu.add(new JSeparator());
 		
 		// Util 메뉴 : 프로토콜 리스트 다운로드
-		JMenuItem protocolListDownload = new JMenuItem("Protocol List Download : MK119 Protocol List Download");
+		JMenuItem protocolListDownload = new JMenuItem("MK119 : Protocol List Download");
 		protocolListDownload.setForeground(Color.BLACK);
 		protocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
 		protocolListDownload.setFont(new Font("맑은 고딕", Font.PLAIN, 14));		
@@ -403,6 +348,35 @@ public class MainFrame extends JFrame {
 		});
 //		xmlGeneratorMenu.add(xmlGenerator_Control);
 		
+		// MK119 메뉴
+		mk119Menu = new JMenu("   MK119   ");
+		mk119Menu.setForeground(Color.RED);
+		mk119Menu.setBorder(new LineBorder(new Color(0, 0, 0)));
+		mk119Menu.setHorizontalAlignment(SwingConstants.CENTER);
+		mk119Menu.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		
+		// MK119 메뉴 : XML 뷰어
+		JMenuItem xmlViewer = new JMenuItem("MK119 : Protocol & XML Viewer");
+		xmlViewer.setForeground(Color.RED);
+		xmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
+		xmlViewer.setFont(new Font("맑은 고딕", Font.BOLD, 14));		
+		mk119Menu.add(xmlViewer);
+		mk119Menu.add(new JSeparator());
+								
+		// Database 메뉴 - MK119 : 데이터베이스 조회
+		JMenuItem mk119Link = new JMenuItem("MK119 : Database inquiry");
+		mk119Link.setForeground(Color.BLACK);
+		mk119Link.setHorizontalAlignment(SwingConstants.LEFT);
+		mk119Link.setFont(new Font("맑은 고딕", Font.PLAIN, 14));		
+		mk119Menu.add(mk119Link);
+		mk119Menu.add(new JSeparator());
+		
+		// Database 메뉴 - Stored Procedure : 저장 프로시저
+		JMenuItem storedProcedure = new JMenuItem("MK119 : Execute Stored Procedure");
+		storedProcedure.setForeground(Color.BLACK);
+		storedProcedure.setHorizontalAlignment(SwingConstants.LEFT);
+		storedProcedure.setFont(new Font("맑은 고딕", Font.PLAIN, 14));		
+		mk119Menu.add(storedProcedure);
 		
 		
 		// Moon 메뉴 (히든 메뉴)
@@ -413,7 +387,7 @@ public class MainFrame extends JFrame {
 		moonMenu.setFont(new Font("맑은 고딕", Font.BOLD, 15));				
 		
 		// Moon 메뉴 : 간편한 XML 조회
-		JMenuItem moonXmlViewer = new JMenuItem("Protocol XML Viewer : Watch Point XML inquiry");
+		JMenuItem moonXmlViewer = new JMenuItem("MK119 : Protocol & XML Viewer");
 		moonXmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
 		moonXmlViewer.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 		moonXmlViewer.setForeground(Color.BLUE);
@@ -421,7 +395,7 @@ public class MainFrame extends JFrame {
 		moonMenu.add(new JSeparator());
 		
 		// Moon 메뉴 : 프로토콜 리스트 다운로드
-		JMenuItem moonProtocolListDownload = new JMenuItem("Protocol List Download : MK119 Protocol List Download");
+		JMenuItem moonProtocolListDownload = new JMenuItem("MK119 : Protocol List Download");
 		moonProtocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
 		moonProtocolListDownload.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 		moonProtocolListDownload.setForeground(Color.BLUE);
