@@ -1354,7 +1354,13 @@ public class MK119_Lite_Panel extends JPanel {
 					searchElement_1 = server.getIp();
 					break;
 				case GROUP_INFO :  // 그룹 정보
-					searchElement_1 = server.getGroup().getTree();
+					String groupInfo = (server.isOverlapping()) ? server.getGroup().getTree() + OVERLAPPING : server.getGroup().getTree();
+					if(groupInfo.startsWith(ServerGroup.ROOT + " > ")) {
+						groupInfo = groupInfo.replace(ServerGroup.ROOT + " > ", "");
+					}else {
+						groupInfo = groupInfo.replace(ServerGroup.ROOT, "장비 관리  ( 그룹 없음 )");
+					}
+					searchElement_1 = groupInfo;
 					break;
 				case SERVER_INDEX : // 장비 인덱스
 					searchElement_1 = String.valueOf(server.getIndex());
@@ -1405,7 +1411,13 @@ public class MK119_Lite_Panel extends JPanel {
 					searchElement_2 = server.getIp();
 					break;
 				case GROUP_INFO :  // 그룹 정보
-					searchElement_2 = server.getGroup().getTree();
+					String groupInfo = (server.isOverlapping()) ? server.getGroup().getTree() + OVERLAPPING : server.getGroup().getTree();
+					if(groupInfo.startsWith(ServerGroup.ROOT + " > ")) {
+						groupInfo = groupInfo.replace(ServerGroup.ROOT + " > ", "");
+					}else {
+						groupInfo = groupInfo.replace(ServerGroup.ROOT, "장비 관리  ( 그룹 없음 )");
+					}
+					searchElement_2 = groupInfo;
 					break;
 				case SERVER_INDEX : // 장비 인덱스
 					searchElement_2 = String.valueOf(server.getIndex());

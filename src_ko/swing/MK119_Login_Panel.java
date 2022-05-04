@@ -225,9 +225,8 @@ public class MK119_Login_Panel extends JPanel {
 		// 메인 프레임 화면을 DB 로그인 성공 화면으로 변경
 		MK119_Lite_Panel.setSqlServerInfo(ONION_Info.getSqlServerInfo());
 		MK119_Lite_Panel.isFirstLoad = true;
-		MK119_Lite_Panel.updateServerListTable(true);
-		MK119_Lite_Panel.updateFacilityInfo(null);
-		MK119_Lite_Panel.resetForm(false, true);
+		MK119_Lite_Panel.selectedServer = null;
+		MK119_Lite_Panel.resetForm(true, true);
 		
 		// 이전에 연동되었던 프로토콜 정보는  사라진다
 		LinkMK119Frame.linkReset();
