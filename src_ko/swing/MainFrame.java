@@ -366,7 +366,7 @@ public class MainFrame extends JFrame {
 		mk119Menu.add(new JSeparator());
 		
 		// MK119 ¸Þ´º : : XML ºä¾î
-		JMenuItem xmlViewer = new JMenuItem("MK119 : ÇÁ·ÎÅäÄÝ & XML ºä¾î");
+		JMenuItem xmlViewer = new JMenuItem("MK119 : ÇÁ·ÎÅäÄÝ & XML ºä¾î     ");
 		xmlViewer.setForeground(Color.RED);
 		xmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
 		xmlViewer.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 14));

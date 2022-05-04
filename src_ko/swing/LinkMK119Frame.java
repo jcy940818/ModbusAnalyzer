@@ -531,54 +531,58 @@ public class LinkMK119Frame extends JFrame{
 	}
 	
 	public static void linkRestAPI(boolean isRequest, AdminConsole_Info admin, String apiContent, String apiURL) {
-		adminConsole = admin;
-		lastReqApiContent = apiContent;
-		lastReqApiURL = apiURL;
-		
-		if(isRequest) {
-			lastRequestTime = sdf.format(new Date());
-		}else {
-			lastResponseTime = sdf.format(new Date());
-		}
-		
-		if(admin.get_SESSION_ID() != null && admin.get_SESSION_ID().length() > 0) {
-			mk119RestDataLink.setText("3. MK119 REST API Link Completed");
-			linkMK119PerfData_Button.setText("<html>&nbsp;<font color='green'>REST API</font> 데이터 연동 완료</html>");
-			linkMK119PerfData_Button.setEnabled(false);
-			refreshSession_Button.setEnabled(true);
-			terminateSession_Button.setEnabled(true);
-		}else {
-			MK119_Lite_Panel.linkMK119_PerfData = false;
+		try {
+			adminConsole = admin;
+			lastReqApiContent = apiContent;
+			lastReqApiURL = apiURL;
 			
-			mk119RestDataLink.setText("3. MK119 REST API");
-			linkMK119PerfData_Button.setText("<html>&nbsp;<font color='green'>REST API</font> 데이터 연동</html>");
-			linkMK119PerfData_Button.setEnabled(true);
-			refreshSession_Button.setEnabled(false);
-			terminateSession_Button.setEnabled(false);
-		}
-		
-		mk119Server.setText(String.format("<html>%s : %s:%s</html>", Util.colorBlue("MK119 Server"), adminConsole.get_IP(), adminConsole.get_PORT()));
-		mk119SessionID.setText(String.format("<html>%s : %s</html>", Util.colorBlue("Session ID"), adminConsole.get_SESSION_ID()));		
-		mk119LastReqAPI.setText(String.format("<html>%s : %s</html>" ,Util.colorBlue("Last Request API"), lastReqApiContent));
-		
-		
-		if(isRequest) {
-			mk119LastReqTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Request Time"), lastRequestTime));
-			mk119LastResTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Response Time"), "Waiting . . . "));
-			mk119HttpStatusCode.setText(String.format("<html>%s : %s</html>", Util.colorBlue("HTTP Status Code"), "Waiting . . . "));	
-			
-		}else {
-			try {
-				Date req = sdf.parse(lastRequestTime);
-				Date res = sdf.parse(lastResponseTime);				
-				long amount = ((res.getTime() - req.getTime()) / 1000);				
-				mk119LastResTime.setText(String.format("<html>%s : %s ( %d seconds )</html>",Util.colorBlue("Last Response Time"), lastResponseTime, amount));
-				mk119HttpStatusCode.setText(String.format("<html>%s : %d ( %s )</html>", Util.colorBlue("HTTP Status Code"), adminConsole.getHttpStatusCode(), adminConsole.getHttpStatus()));			
-			}catch (ParseException e) {			
-				mk119LastResTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Response Time"), lastResponseTime));
-				mk119HttpStatusCode.setText(String.format("<html>%s : %d ( %s )</html>", Util.colorBlue("HTTP Status Code"), adminConsole.getHttpStatusCode(), adminConsole.getHttpStatus()));				
+			if(isRequest) {
+				lastRequestTime = sdf.format(new Date());
+			}else {
+				lastResponseTime = sdf.format(new Date());
 			}
 			
+			if(admin.get_SESSION_ID() != null && admin.get_SESSION_ID().length() > 0) {
+				mk119RestDataLink.setText("3. MK119 REST API Link Completed");
+				linkMK119PerfData_Button.setText("<html>&nbsp;<font color='green'>REST API</font> 데이터 연동 완료</html>");
+				linkMK119PerfData_Button.setEnabled(false);
+				refreshSession_Button.setEnabled(true);
+				terminateSession_Button.setEnabled(true);
+			}else {
+				MK119_Lite_Panel.linkMK119_PerfData = false;
+				
+				mk119RestDataLink.setText("3. MK119 REST API");
+				linkMK119PerfData_Button.setText("<html>&nbsp;<font color='green'>REST API</font> 데이터 연동</html>");
+				linkMK119PerfData_Button.setEnabled(true);
+				refreshSession_Button.setEnabled(false);
+				terminateSession_Button.setEnabled(false);
+			}
+			
+			mk119Server.setText(String.format("<html>%s : %s:%s</html>", Util.colorBlue("MK119 Server"), adminConsole.get_IP(), adminConsole.get_PORT()));
+			mk119SessionID.setText(String.format("<html>%s : %s</html>", Util.colorBlue("Session ID"), adminConsole.get_SESSION_ID()));		
+			mk119LastReqAPI.setText(String.format("<html>%s : %s</html>" ,Util.colorBlue("Last Request API"), lastReqApiContent));
+			
+			
+			if(isRequest) {
+				mk119LastReqTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Request Time"), lastRequestTime));
+				mk119LastResTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Response Time"), "Waiting . . . "));
+				mk119HttpStatusCode.setText(String.format("<html>%s : %s</html>", Util.colorBlue("HTTP Status Code"), "Waiting . . . "));	
+				
+			}else {
+				try {
+					Date req = sdf.parse(lastRequestTime);
+					Date res = sdf.parse(lastResponseTime);				
+					long amount = ((res.getTime() - req.getTime()) / 1000);				
+					mk119LastResTime.setText(String.format("<html>%s : %s ( %d seconds )</html>",Util.colorBlue("Last Response Time"), lastResponseTime, amount));
+					mk119HttpStatusCode.setText(String.format("<html>%s : %d ( %s )</html>", Util.colorBlue("HTTP Status Code"), adminConsole.getHttpStatusCode(), adminConsole.getHttpStatus()));			
+				}catch (ParseException e) {			
+					mk119LastResTime.setText(String.format("<html>%s : %s</html>",Util.colorBlue("Last Response Time"), lastResponseTime));
+					mk119HttpStatusCode.setText(String.format("<html>%s : %d ( %s )</html>", Util.colorBlue("HTTP Status Code"), adminConsole.getHttpStatusCode(), adminConsole.getHttpStatus()));				
+				}
+				
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
