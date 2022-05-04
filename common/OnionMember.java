@@ -67,7 +67,8 @@ public class OnionMember {
 		new OnionMember("¿µ¾÷ÆÀ", "ÃÖÇüÁ¾", "Chris");
 		new OnionMember("¿µ¾÷ÆÀ", "¿À»óÃ¶", "Scot");
 		new OnionMember("¿µ¾÷ÆÀ", "±èÅÂ¹Î", "Harry");
-		new OnionMember("¿µ¾÷ÆÀ", "¹Ú¼Ò¶ó", "Zoe");		
+		new OnionMember("¿µ¾÷ÆÀ", "¹Ú¼Ò¶ó", "Zoe");
+		new OnionMember("¿µ¾÷ÆÀ", "°­±â¿ë", "Kai");
 		
 		new OnionMember("PSÆÀ", "³ª±¤È£", "Dan");
 		new OnionMember("PSÆÀ", "ÀÓ°æÁø", "Jin");
@@ -93,7 +94,6 @@ public class OnionMember {
 		new OnionMember("PSÆÀ", "ÀÌÀç¼º", "Woody");
 		new OnionMember("PSÆÀ", "ÀÌÇüÂù", "Rick");
 		new OnionMember("PSÆÀ", "±è¿ø±â", "Dustin");
-		new OnionMember("PSÆÀ", "¼ÕÁØ¸¸", "Joon");
 		
 		new OnionMember("½Ì°¡ÆúÆÀ", "Kelvin", "Kelvin");
 		new OnionMember("½Ì°¡ÆúÆÀ", "Jia Hui", "Jia");
