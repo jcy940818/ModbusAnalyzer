@@ -229,23 +229,23 @@ public class ItemUploadFrame extends JFrame {
 				
 				if(agentType.equalsIgnoreCase("control")) {
 					sb.append(Util.colorBlue("Item Property Information") + Util.separator + Util.separator + "\n");
-					sb.append(String.format("01. 제어 이름 : controlname 또는 name%s%s\n\n", Util.separator, Util.separator));
-					sb.append(String.format("02. 제어 명령어 : command 또는 cmd%s%s\n\n", Util.separator, Util.separator));
-					sb.append(String.format("03. 제어 내용 : description 또는 desc%s%s\n\n", Util.separator, Util.separator));
-					sb.append(String.format("04. 제어 파라미터 사용여부 : useParam 또는 param%s%s\n\n", Util.separator, Util.separator));
-					sb.append(String.format("05. 제어 타임아웃 : waitTime 또는 timeout 또는 time%s%s\n", Util.separator, Util.separator));
+					sb.append(String.format("01. <font color='blue'>제어 이름</font> : controlname <font color='red'>또는</font> name%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("02. <font color='blue'>제어 명령어</font> : command <font color='red'>또는</font> cmd%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("03. <font color='blue'>제어 내용</font> : description <font color='red'>또는</font> desc%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("04. <font color='blue'>제어 파라미터 사용여부</font> : useParam <font color='red'>또는</font> param%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("05. <font color='blue'>제어 타임아웃</font> : waitTime <font color='red'>또는</font> timeout <font color='red'>또는</font> time%s%s\n", Util.separator, Util.separator));
 				}else {
 					sb.append(Util.colorBlue("Item Property Information") + Util.separator + Util.separator + "\n");
-					sb.append(String.format("01. 성능명 : displayname 또는 name%s%s\n\n", Util.separator, Util.separator));
-					sb.append(String.format("02. 성능 카운터 : perfcounter 또는 counter%s%s\n\n", Util.separator, Util.separator));
-					sb.append(String.format("03. OID (SNMP) : oid%s%s\n\n", Util.separator, Util.separator));
-					sb.append(String.format("04. 슬 롯 : slot%s%s\n\n", Util.separator, Util.separator));
-					sb.append(String.format("05. 수집주기 : interval%s%s\n\n", Util.separator, Util.separator));
-					sb.append(String.format("06. 단 위 : measure 또는 units%s%s\n\n", Util.separator, Util.separator));
-					sb.append(String.format("07. 보정식 : scalefunction 또는 scale 또는 expression%s%s\n\n", Util.separator, Util.separator));
-					sb.append(String.format("08. 이진 상태 (0) : label0 또는 0%s%s\n\n", Util.separator, Util.separator));
-					sb.append(String.format("09. 이진 상태 (1) : label1 또는 1%s%s\n\n", Util.separator, Util.separator));
-					sb.append(String.format("10. 다중 상태 : multistatus 또는 status%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("01. <font color='blue'>성능명</font> : displayname <font color='red'>또는</font> name%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("02. <font color='blue'>성능 카운터</font> : perfcounter <font color='red'>또는</font> counter%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("03. <font color='blue'>OID (SNMP)</font> : oid%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("04. <font color='blue'>슬 롯</font> : slot%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("05. <font color='blue'>수집주기</font> : interval%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("06. <font color='blue'>단 위</font> : measure <font color='red'>또는</font> units%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("07. <font color='blue'>보정식</font> : scalefunction <font color='red'>또는</font> scale <font color='red'>또는</font> expression%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("08. <font color='blue'>이진 상태 (0)</font> : label0 <font color='red'>또는</font> 0%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("09. <font color='blue'>이진 상태 (1)</font> : label1 <font color='red'>또는</font> 1%s%s\n\n", Util.separator, Util.separator));
+					sb.append(String.format("10. <font color='blue'>다중 상태</font> : multistatus <font color='red'>또는</font> status%s%s\n\n", Util.separator, Util.separator));
 					
 					sb.append("─────────────────────────────────────────\n");
 					sb.append(Util.colorGreen("Item Property 업로드 예시") + Util.separator + Util.separator + "\n\n");
