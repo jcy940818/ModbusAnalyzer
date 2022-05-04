@@ -574,7 +574,7 @@ public class RcuInfoFrame extends JFrame {;
 		
 		// 이동 불가, 셀 크기 조절 불가
 		table.getTableHeader().setReorderingAllowed(false);
-		table.getTableHeader().setResizingAllowed(false);
+		table.getTableHeader().setResizingAllowed(true);
 		table.setRowSelectionAllowed(false);
 		table.setCellSelectionEnabled(true);
 		
