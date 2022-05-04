@@ -245,16 +245,19 @@ public class ItemUploadFrame extends JFrame {
 					sb.append(String.format("07. 보정식 : scalefunction 또는 scale 또는 expression%s%s\n\n", Util.separator, Util.separator));
 					sb.append(String.format("08. 이진 상태 (0) : label0 또는 0%s%s\n\n", Util.separator, Util.separator));
 					sb.append(String.format("09. 이진 상태 (1) : label1 또는 1%s%s\n\n", Util.separator, Util.separator));
-					sb.append(String.format("10. 다중 상태 : multistatus 또는 status%s%s\n", Util.separator, Util.separator));
+					sb.append(String.format("10. 다중 상태 : multistatus 또는 status%s%s\n\n", Util.separator, Util.separator));
 					
-//					sb.append("입력 예시 1 : displayname=Voltage, interval=30, measure=V, scalefunction=x/10"  + Util.separator + Util.separator + "\n");
-//					sb.append("예시 1 내용 : 성능명=Voltage, 수집주기=30(초), 단위=V, 보정식=x/10"  + Util.separator + Util.separator + "\n\n");
-//					
-//					sb.append("입력 예시 2 : displayname=Alarm, label0=Alarm OFF, label1=Alarm ON"  + Util.separator + Util.separator + "\n");
-//					sb.append("예시 2 내용 : 성능명=Alarm, 이진상태(0)=Alarm OFF, 이진상태(1)=Alarm ON"  + Util.separator + Util.separator + "\n\n");
-//					
-//					sb.append("입력 예시 3 : displayname=Unit Status, multistatus=0; Normal; 1; Run; 2; Stop;"  + Util.separator + Util.separator + "\n");
-//					sb.append("예시 3 내용 : 성능명=Unit Status, 다중 상태=(0:Normal),(1:Run),(2:Stop)"  + Util.separator + Util.separator + "\n");
+					sb.append("─────────────────────────────────────────\n");
+					sb.append(Util.colorGreen("Item Property 업로드 예시") + Util.separator + Util.separator + "\n\n");
+					
+					sb.append("입력 예시 1 : displayname=Voltage, interval=30, measure=V, scalefunction=x/10"  + Util.separator + Util.separator + "\n");
+					sb.append("예시 1 내용 : 성능명=Voltage, 수집주기=30(초), 단위=V, 보정식=x/10"  + Util.separator + Util.separator + "\n\n");
+					
+					sb.append("입력 예시 2 : displayname=Alarm, label0=Alarm OFF, label1=Alarm ON"  + Util.separator + Util.separator + "\n");
+					sb.append("예시 2 내용 : 성능명=Alarm, 이진상태(0)=Alarm OFF, 이진상태(1)=Alarm ON"  + Util.separator + Util.separator + "\n\n");
+					
+					sb.append("입력 예시 3 : displayname=Unit Status, multistatus=0; Normal; 1; Run; 2; Stop;"  + Util.separator + Util.separator + "\n");
+					sb.append("예시 3 내용 : 성능명=Unit Status, 다중 상태=(0:Normal),(1:Run),(2:Stop)"  + Util.separator + Util.separator + "\n");
 				}				
 				
 				Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
