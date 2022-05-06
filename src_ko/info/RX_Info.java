@@ -91,11 +91,11 @@ public class RX_Info {
 	}
 
 	public int getTransactionId() {
-		return transactionId;
+		return transactionId & 0xffff;
 	}
 
 	public void setTransactionId(int transactionId) {
-		this.transactionId = transactionId;
+		this.transactionId = transactionId & 0xffff;
 	}
 
 	public int getProtocolId() {
@@ -168,19 +168,19 @@ public class RX_Info {
 	}
 
 	public int getCrc() {
-		return crc;
+		return crc & 0xffff;
 	}
 
 	public void setCrc(int crc) {
-		this.crc = crc;
+		this.crc = crc & 0xffff;
 	}
 	
 	public int getExpectedCrc() {
-		return expectedCrc;
+		return expectedCrc & 0xffff;
 	}
 
 	public void setExpectedCrc(int expectedCrc) {
-		this.expectedCrc = expectedCrc;
+		this.expectedCrc = expectedCrc & 0xffff;
 	}
 
 	public int getExceptionCode() {
@@ -192,11 +192,11 @@ public class RX_Info {
 	}
 
 	public int getControlAddress() {
-		return controlAddress;
+		return controlAddress & 0xffff;
 	}
 
 	public void setControlAddress(int controlAddress) {
-		this.controlAddress = controlAddress;
+		this.controlAddress = controlAddress & 0xffff;
 	}
 
 	public int getControlValue() {
@@ -216,11 +216,11 @@ public class RX_Info {
 	}
 
 	public int getStartAddress() {
-		return startAddress;
+		return startAddress & 0xffff;
 	}
 
 	public void setStartAddress(int startAddress) {
-		this.startAddress = startAddress;
+		this.startAddress = startAddress & 0xffff;
 	}
 
 	public int getRequestCount() {
@@ -232,11 +232,11 @@ public class RX_Info {
 	}
 
 	public int getEndAddress() {
-		return endAddress;
+		return endAddress & 0xffff;
 	}
 
 	public void setEndAddress(int endAddress) {
-		this.endAddress = endAddress;
+		this.endAddress = endAddress & 0xffff;
 	}
 
 	public String getCommandType() {
