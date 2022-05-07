@@ -47,6 +47,7 @@ public class MainFrame extends JFrame {
 	private static JMenu utilMenu;
 	private static JMenu xmlGeneratorMenu;
 	
+	private static JMenuItem modbusMonitor;
 	private static JMenuItem exceptionScan;
 	private static JMenuItem simpleValueScan;
 	private static JMenuItem realTime;
@@ -152,12 +153,15 @@ public class MainFrame extends JFrame {
 		modbusAgent.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 14));
 		connectionMenu.add(modbusAgent);
 		
+		// Connection ¸Þ´º - Modbus Monitor (¸ðµå¹ö½º ¸ð´ÏÅÍ)
+		modbusMonitor = new JMenuItem("Modbus Monitor : ¸ðµå¹ö½º ¸ð´ÏÅÍ");
+		modbusMonitor.setForeground(Color.BLACK);
+		modbusMonitor.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 14));	
 		
-		// Connection ¸Þ´º - Expression Value Scan (Á¶°Ç½Ä ½ºÄµ)
+		// Connection ¸Þ´º - Simple Value Scan (Á¶°Ç½Ä ½ºÄµ)
 		simpleValueScan = new JMenuItem("Simple Value Scan : ·¹Áö½ºÅÍ °ª ½ºÄµ");
 		simpleValueScan.setForeground(Color.BLACK);
-		simpleValueScan.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 14));		
-		
+		simpleValueScan.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 14));	
 		
 		// Connection ¸Þ´º - Exception Scan (¿¹¿Ü ½ºÄµ)
 		exceptionScan = new JMenuItem("Exception Scan : ¿¹¿Ü ½ºÄµ");
@@ -532,14 +536,23 @@ public class MainFrame extends JFrame {
 		MK119_Lite_Panel mk119_Lite_Panel = new MK119_Lite_Panel();
 		actualPanel.add(mk119_Lite_Panel, "MK119_Lite_Panel");
 		
+		/** ModbusMonitor_Panel ***********************************/
+		ModbusMonitor_Panel modbusMonitor_Panel = new ModbusMonitor_Panel();
+		actualPanel.add(modbusMonitor_Panel, "ModbusMonitor_Panel");
+		modbusMonitor.addActionListener(new ActionListener() {		
+			public void actionPerformed(ActionEvent e) {
+				showModbusMonitor();
+			}
+		});
+		
 		/** SimpleValueScan_Panel ***********************************/
 		SimpleValueScan_Panel simpleValueScan_Panel = new SimpleValueScan_Panel();
-		actualPanel.add(simpleValueScan_Panel, "SimpleValueScan_Panel");			
-		simpleValueScan.addActionListener(new ActionListener() {			
+		actualPanel.add(simpleValueScan_Panel, "SimpleValueScan_Panel");
+		simpleValueScan.addActionListener(new ActionListener() {	
 			public void actionPerformed(ActionEvent e) {
 				showSimpleValueScan();
 			}
-		});		
+		});	
 		
 		/** ExceptionDetection_Panel ***********************************/
 		ExceptionScan_Panel exceptionScan_Panel = new ExceptionScan_Panel();
@@ -713,6 +726,10 @@ public class MainFrame extends JFrame {
 		cardLayout.show(actualPanel, "MK119_Lite_Panel");		
 	}
 	
+	public static void showModbusMonitor() {
+		cardLayout.show(actualPanel, "ModbusMonitor_Panel");
+	}
+	
 	public static void showSimpleValueScan() {
 		cardLayout.show(actualPanel, "SimpleValueScan_Panel");		
 	}
@@ -727,17 +744,18 @@ public class MainFrame extends JFrame {
 	
 	public static void showInformation() {
 		cardLayout.show(actualPanel, "Information_panel");
-	}	
+	}
 	
 	public static void activeConnection() {
 		connectionMenu.add(new JSeparator());
+		connectionMenu.add(modbusMonitor);
+		connectionMenu.add(new JSeparator());
 		connectionMenu.add(simpleValueScan);
 		connectionMenu.add(new JSeparator());
-		connectionMenu.add(exceptionScan);								
+		connectionMenu.add(exceptionScan);							
 		connectionMenu.add(new JSeparator());
 		connectionMenu.add(realTime);
 	}
-	
 	
 	public static void activeUtil() {
 		menuBar.add(utilMenu, 2);
