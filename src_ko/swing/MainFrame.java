@@ -147,7 +147,7 @@ public class MainFrame extends JFrame {
 		menuBar.add(connectionMenu);
 
 		// Connection 메뉴 - ModbusAgent : TCP/IP Client 통신
-		JMenuItem modbusAgent = new JMenuItem("Modbus Agent : TCP/IP Client 통신");
+		JMenuItem modbusAgent = new JMenuItem("Modbus Client : TCP/IP Client 통신");
 		modbusAgent.setForeground(Color.BLACK);
 		modbusAgent.setHorizontalAlignment(SwingConstants.LEFT);
 		modbusAgent.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
@@ -156,7 +156,7 @@ public class MainFrame extends JFrame {
 		// Connection 메뉴 - Modbus Monitor (모드버스 모니터)
 		modbusMonitor = new JMenuItem("Modbus Monitor : 모드버스 모니터");
 		modbusMonitor.setForeground(Color.BLACK);
-		modbusMonitor.setFont(new Font("맑은 고딕", Font.PLAIN, 14));	
+		modbusMonitor.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
 		
 		// Connection 메뉴 - Simple Value Scan (조건식 스캔)
 		simpleValueScan = new JMenuItem("Simple Value Scan : 레지스터 값 스캔");

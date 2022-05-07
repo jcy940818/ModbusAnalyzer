@@ -310,10 +310,10 @@ public class Perf implements Comparable{
 			data = (Vector)vector.get(index[index.length - 1]);
 		}catch(ArrayIndexOutOfBoundsException e) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("<font color='red'>Modbus Agent Exception</font>\n");
+			sb.append("<font color='red'>Modbus Client Exception</font>\n");
 			sb.append(String.format("Please select what you want to add as performance"
 					+ Util.separator + Util.separator 
-					+ "\n\nin the Modbus-Agent result table%s\n", Util.separator));			
+					+ "\n\nin the Modbus-Client result table%s\n", Util.separator));			
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);						
 			return null;
 		}

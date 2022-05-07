@@ -183,7 +183,7 @@ public class MK119_Login_Panel extends JPanel {
 		agentType_Label.setText(currentAgent);
 	}
 	
-	// Modbus Agent ----------------------------------------------------
+	// Modbus Client ----------------------------------------------------
 	public static void agent_ModbusAgent() {
 		if(!AdminConsole_LoginFrame.isExist) {
 			new AdminConsole_LoginFrame(ONION_Info.getSimpleSqlServerInfo());			

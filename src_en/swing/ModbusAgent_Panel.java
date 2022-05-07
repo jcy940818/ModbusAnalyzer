@@ -141,7 +141,7 @@ public class ModbusAgent_Panel extends JPanel {
 		infoPanel.setBackground(Color.WHITE);
 		infoPanel.setLayout(null);
 		
-		JLabel currentFunction = new JLabel("Modbus Agent");
+		JLabel currentFunction = new JLabel("Modbus Client");
 		currentFunction.setForeground(Color.BLACK);
 		currentFunction.setBackground(Color.WHITE);
 		// 이미지 사용 시 클래스 경로로 사용하여 배포하여서도 이미지가 유지되도록 하자				
@@ -2163,11 +2163,11 @@ public class ModbusAgent_Panel extends JPanel {
 			if (e.getButton() == 3) {
 				if (packetlog_Frame != null) {
 					// 기존에 생성 된 패킷로그 프레임이 존재한다면 리턴
-					Util.showMessage("<font color='blue'>Modbus Agent</font>\nAn existing packet log frame exists" + Util.longSeparator + "\n", JOptionPane.INFORMATION_MESSAGE);
+					Util.showMessage("<font color='blue'>Modbus Client</font>\nAn existing packet log frame exists" + Util.longSeparator + "\n", JOptionPane.INFORMATION_MESSAGE);
 					return;
 				} else {
 					// 기존 생성 된 패킷로그 프레임이 없다면 새로 생성
-					String title = String.format("<html>Modbus Agent : <font color='blue'>%s</font></html>",
+					String title = String.format("<html>Modbus Client : <font color='blue'>%s</font></html>",
 							ClientSocket.getSimpleConnectedInfo());
 					
 					// MessageFrame.dispose() 오버라이딩

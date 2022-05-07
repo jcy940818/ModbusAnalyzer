@@ -311,7 +311,7 @@ public class Perf implements Comparable{
 		}catch(ArrayIndexOutOfBoundsException e) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("<font color='red'>Modbus Collection Exception</font>\n");
-			sb.append(String.format("Modbus Agent 결과 테이블에서\n\n성능으로 추가할 레지스터를 선택해주세요%s\n", Util.separator));			
+			sb.append(String.format("Modbus Client 결과 테이블에서\n\n성능으로 추가할 레지스터를 선택해주세요%s\n", Util.separator));			
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);						
 			return null;
 		}
@@ -432,7 +432,7 @@ public class Perf implements Comparable{
 		}catch(ArrayIndexOutOfBoundsException e) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("<font color='red'>Custom Modbus XML Exception</font>\n");
-			sb.append(String.format("Modbus Agent 결과 테이블에서\n\n성능으로 추가할 레지스터를 선택해주세요%s\n", Util.separator));			
+			sb.append(String.format("Modbus Client 결과 테이블에서\n\n성능으로 추가할 레지스터를 선택해주세요%s\n", Util.separator));			
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);						
 			return null;
 		}
@@ -621,7 +621,7 @@ public class Perf implements Comparable{
 		}catch(ArrayIndexOutOfBoundsException e) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("<font color='red'>Modbus Collection Exception</font>\n");
-			sb.append(String.format("Modbus Agent 결과 테이블에서\n\nBit Structure 내용을 확인할 레지스터를 선택해주세요%s\n", Util.separator));			
+			sb.append(String.format("Modbus Client 결과 테이블에서\n\nBit Structure 내용을 확인할 레지스터를 선택해주세요%s\n", Util.separator));			
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);						
 			return null;
 		}

@@ -148,7 +148,7 @@ public class MainFrame extends JFrame {
 		menuBar.add(connectionMenu);
 
 		// Connection ∏ﬁ¥∫ - ModbusAgent : TCP/IP Client ≈ÎΩ≈
-		JMenuItem modbusAgent = new JMenuItem("Modbus Agent : TCP/IP Client Communication");
+		JMenuItem modbusAgent = new JMenuItem("Modbus Client : TCP/IP Client Communication");
 		modbusAgent.setForeground(Color.BLACK);
 		modbusAgent.setHorizontalAlignment(SwingConstants.LEFT);
 		modbusAgent.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));
