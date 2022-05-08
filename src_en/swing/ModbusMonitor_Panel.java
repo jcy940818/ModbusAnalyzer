@@ -1,4 +1,4 @@
-package src_ko.swing;
+package src_en.swing;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -33,18 +33,18 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-import src_ko.agent.ClientSocket;
-import src_ko.agent.ModbusAgent;
-import src_ko.agent.Perf;
-import src_ko.info.RX_Info;
-import src_ko.info.TX_Info;
-import src_ko.util.ExceptionProvider;
-import src_ko.util.Util;
+import src_en.agent.ClientSocket;
+import src_en.agent.ModbusAgent;
+import src_en.agent.Perf;
+import src_en.info.RX_Info;
+import src_en.info.TX_Info;
+import src_en.util.ExceptionProvider;
+import src_en.util.Util;
 
 public class ModbusMonitor_Panel extends JPanel {
 
 	// 클라이언트 소켓
-	public static Socket socket_ko = ModbusAgent.clientSocket;
+	public static Socket socket_en = ModbusAgent.clientSocket;
 	public static String IP;
 	public static int PORT;	
 	
@@ -104,7 +104,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		currentFunction.setForeground(Color.BLACK);
 		currentFunction.setBackground(Color.WHITE);
 		currentFunction.setIcon(new Util().getSubLogoResource());
-		currentFunction.setBounds(0, 0, 243, 55);
+		currentFunction.setBounds(0, 0, 255, 55);
 		currentFunction.setHorizontalAlignment(SwingConstants.LEFT);
 		currentFunction.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		infoPanel.add(currentFunction);
@@ -324,7 +324,7 @@ public class ModbusMonitor_Panel extends JPanel {
 						@Override
 						public void run() {
 							try {
-								rx = ModbusAgent.communicate(socket_ko, tx, isRTU, 5000);
+								rx = ModbusAgent.communicate(socket_en, tx, isRTU, 5000);
 								
 								// 유효하지 않은 응답은 패스한다
 								if(rx == null) return;
@@ -376,7 +376,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		currentState.setHorizontalAlignment(SwingConstants.CENTER);
 		currentState.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		currentState.setBackground(Color.WHITE);
-		currentState.setBounds(250, 5, 145, 45);
+		currentState.setBounds(265, 5, 145, 45);
 		infoPanel.add(currentState);
 		
 		connectButton = new JButton("연결 정보 입력");
@@ -386,7 +386,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		connectButton.setBorder(UIManager.getBorder("Button.border"));		
 		connectButton.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		connectButton.setBackground(Color.WHITE);
-		connectButton.setBounds(400, 11, 160, 36);
+		connectButton.setBounds(415, 11, 160, 36);
 		connectButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {							
 				
@@ -394,10 +394,10 @@ public class ModbusMonitor_Panel extends JPanel {
 				String lastConnectionInfo = ClientSocket.getSimpleConnectedInfo();
 				
 				try {
-					socket_ko = ModbusAgent.clientSocket;
-					src_en.swing.ModbusMonitor_Panel.socket_en = socket_ko;
+					socket_en = ModbusAgent.clientSocket;
+					src_en.swing.ModbusMonitor_Panel.socket_en = socket_en;
 					
-					if( (socket_ko == null || socket_ko.isClosed()) && ClientSocket.getIsFirst()) {				
+					if( (socket_en == null || socket_en.isClosed()) && ClientSocket.getIsFirst()) {						
 						String[] connectionInfo = ClientSocket.getConnectionInfo();
 						IP = connectionInfo[0];
 						PORT = Integer.parseInt(connectionInfo[1]);
@@ -405,7 +405,7 @@ public class ModbusMonitor_Panel extends JPanel {
 						src_en.swing.ModbusMonitor_Panel.IP = IP;
 						src_en.swing.ModbusMonitor_Panel.PORT = PORT;
 						
-					}else if(socket_ko == null) {
+					}else if(socket_en == null) {
 						String[] connectionInfo = ClientSocket.getConnectionInfo();
 						IP = connectionInfo[0];
 						PORT = Integer.parseInt(connectionInfo[1]);
@@ -415,7 +415,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					}else {
 						// 기존 연결되어있는 소켓일 경우 연결을 끊고 재접속을 시도한다.						
 						// 클라이언트 소켓 : 접속 끊김
-						socket_ko.close();						
+						socket_en.close();						
 						ClientSocket.setState(ClientSocket.NODE_CONDITION_DISCONNECTED);
 					}
 				}catch(IOException exception) {
@@ -423,8 +423,8 @@ public class ModbusMonitor_Panel extends JPanel {
 				}
 				
 				try {
-					socket_ko = ClientSocket.getClientSocket(IP, PORT);
-					src_en.swing.ModbusMonitor_Panel.socket_en = socket_ko;
+					socket_en = ClientSocket.getClientSocket(IP, PORT);
+					src_en.swing.ModbusMonitor_Panel.socket_en = socket_en;
 					
 				}catch(Exception exception) {
 					StringBuilder msg = new StringBuilder();
@@ -433,10 +433,10 @@ public class ModbusMonitor_Panel extends JPanel {
 					Util.showMessage(msg.toString(), JOptionPane.ERROR_MESSAGE);
 				}				
 				
-				if(socket_ko != null || ClientSocket.isCurrentConnected(socket_ko)) {
+				if(socket_en != null || ClientSocket.isCurrentConnected(socket_en)) {
 					// 접속 성공 : 컴포넌트 내용들을 모두 초기화한다	
-					ModbusAgent.clientSocket = socket_ko;
-					src_en.agent.ModbusAgent.clientSocket = socket_ko;
+					ModbusAgent.clientSocket = socket_en;
+					src_en.agent.ModbusAgent.clientSocket = socket_en;
 					
 					panel_ON();
 					
@@ -524,7 +524,7 @@ public class ModbusMonitor_Panel extends JPanel {
 						}
 						
 						// ModbusAgent <=> ExceptionScan : Socket 동기화
-						socket_ko = ModbusAgent.clientSocket;
+						socket_en = ModbusAgent.clientSocket;
 						
 					} catch (InterruptedException e) {
 						return;
