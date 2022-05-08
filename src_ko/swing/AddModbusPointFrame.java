@@ -156,7 +156,7 @@ public class AddModbusPointFrame extends JFrame {
 		
 		JPanel uploadMethod_Panel = new JPanel();
 		uploadMethod_Panel.setBackground(Color.WHITE);
-		uploadMethod_Panel.setBounds(224, 10, 504, 106);
+		uploadMethod_Panel.setBounds(224, 10, 729, 106);
 		backGround_Panel.add(uploadMethod_Panel);
 		uploadMethod_Panel.setLayout(null);
 		
@@ -166,7 +166,7 @@ public class AddModbusPointFrame extends JFrame {
 		upload_protocol.setFocusPainted(false);
 		upload_protocol.setIcon(new Util().getFolder2Image());
 		upload_protocol.setBackground(Color.WHITE);
-		upload_protocol.setBounds(12, 10, 163, 86);
+		upload_protocol.setBounds(12, 10, 177, 86);
 		uploadMethod_Panel.add(upload_protocol);
 		
 		upload_xml = new JButton( " XML");
@@ -175,7 +175,7 @@ public class AddModbusPointFrame extends JFrame {
 		upload_xml.setFocusPainted(false);
 		upload_xml.setIcon(new Util().getXMLImage());
 		upload_xml.setBackground(Color.WHITE);
-		upload_xml.setBounds(187, 10, 146, 86);
+		upload_xml.setBounds(201, 10, 145, 86);
 		uploadMethod_Panel.add(upload_xml);
 		
 		upload_excel = new JButton(" Excel");
@@ -184,14 +184,8 @@ public class AddModbusPointFrame extends JFrame {
 		upload_excel.setFocusPainted(false);
 		upload_excel.setIcon(new Util().getExcelImage());
 		upload_excel.setBackground(Color.WHITE);
-		upload_excel.setBounds(345, 10, 146, 86);
+		upload_excel.setBounds(358, 10, 158, 86);
 		uploadMethod_Panel.add(upload_excel);
-		
-		JPanel downloadTemp_Panel = new JPanel();
-		downloadTemp_Panel.setBackground(Color.WHITE);
-		downloadTemp_Panel.setBounds(740, 10, 213, 106);
-		backGround_Panel.add(downloadTemp_Panel);
-		downloadTemp_Panel.setLayout(null);
 		
 		download_template = new JButton("<html>&nbsp;Template<br>&nbsp;Download</html>");
 		download_template.setIcon(new Util().getExcelImage());
@@ -199,7 +193,7 @@ public class AddModbusPointFrame extends JFrame {
 		download_template.setForeground(Color.BLUE);
 		download_template.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		download_template.setBackground(Color.WHITE);
-		download_template.setBounds(12, 10, 189, 86);
+		download_template.setBounds(528, 10, 189, 86);
 		download_template.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -215,7 +209,7 @@ public class AddModbusPointFrame extends JFrame {
 				}
 			}
 		});
-		downloadTemp_Panel.add(download_template);
+		uploadMethod_Panel.add(download_template);
 			
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
