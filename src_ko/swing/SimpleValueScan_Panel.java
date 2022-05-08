@@ -3,7 +3,6 @@ package src_ko.swing;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -1071,31 +1070,31 @@ public class SimpleValueScan_Panel extends JPanel {
 							
 						if(lastState.equalsIgnoreCase(ClientSocket.getCurrentState())) {
 							switch(lastState) {
-								case "접속 전" : panel_OFF(); break;
-								case "접속성공" : panel_ON(); break;
-								case "접속중" : panel_OFF(); break;
-								case "통신중" : panel_ON(); break;
-								case "통신오류" : panel_ON(); break;
-								case "접속종료" : panel_OFF(); break;
-								case "접속실패" : panel_OFF(); break;
-								case "ping 실패" : panel_OFF(); break;
-								case "응답 대기중" : panel_ON(); break;
-								case "접속끊김" : panel_OFF(); break;
+								case ClientSocket.SOCKET_STATUS_BEFORE_CONNECTING : panel_OFF(); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTED : panel_ON(); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTING : panel_OFF(); break;
+								case ClientSocket.SOCKET_STATUS_COMMUNICATING : panel_ON(); break;
+								case ClientSocket.SOCKET_STATUS_COMMUNICATION_ERROR : panel_ON(); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTION_CLOSED : panel_OFF(); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTION_FAILED : panel_OFF(); break;
+								case ClientSocket.SOCKET_STATUS_PING_FAILED : panel_OFF(); break;
+								case ClientSocket.SOCKET_STATUS_WAITING_RESPONSE : panel_ON(); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTION_IS_CUT_OFF : panel_OFF(); break;
 								default : panel_OFF();  break;
 							}
 						}
 						
 						switch(ClientSocket.getCurrentState()) {
-							case "접속 전" : lastState = ClientSocket.getCurrentState(); break;
-							case "접속성공" : lastState = ClientSocket.getCurrentState(); break;
-							case "접속중" : lastState = ClientSocket.getCurrentState(); break;
-							case "통신중" : lastState = ClientSocket.getCurrentState(); break;
-							case "통신오류" : lastState = ClientSocket.getCurrentState(); break;
-							case "접속종료" : lastState = ClientSocket.getCurrentState(); break;
-							case "접속실패" : lastState = ClientSocket.getCurrentState(); break;
-							case "ping 실패" : lastState = ClientSocket.getCurrentState(); break;
-							case "응답 대기중" : lastState = ClientSocket.getCurrentState(); break;
-							case "접속끊김" : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_BEFORE_CONNECTING : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTED : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTING : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_COMMUNICATING : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_COMMUNICATION_ERROR : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTION_CLOSED : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTION_FAILED : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_PING_FAILED : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_WAITING_RESPONSE : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTION_IS_CUT_OFF : lastState = ClientSocket.getCurrentState(); break;
 							default : lastState = ClientSocket.getCurrentState(); break;
 						}
 																
@@ -1106,16 +1105,16 @@ public class SimpleValueScan_Panel extends JPanel {
 						}
 						
 						switch(currentState.getText()) {
-							case "접속 전" : currentState.setForeground(Color.BLACK); break;
-							case "접속성공" : currentState.setForeground(Color.BLUE); break;
-							case "접속중" : currentState.setForeground(Color.BLACK); break;
-							case "통신중" : currentState.setForeground(Color.BLUE); break;
-							case "통신오류" : currentState.setForeground(Color.RED); break;
-							case "접속종료" : currentState.setForeground(Color.BLACK); break;
-							case "접속실패" : currentState.setForeground(Color.RED); break;
-							case "ping 실패" : currentState.setForeground(Color.RED); break;
-							case "응답 대기중" : currentState.setForeground(Color.BLUE); break;
-							case "접속끊김" : currentState.setForeground(Color.RED); break;
+							case ClientSocket.SOCKET_STATUS_BEFORE_CONNECTING : currentState.setForeground(Color.BLACK); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTED : currentState.setForeground(Color.BLUE); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTING : currentState.setForeground(Color.BLACK); break;
+							case ClientSocket.SOCKET_STATUS_COMMUNICATING : currentState.setForeground(Color.BLUE); break;
+							case ClientSocket.SOCKET_STATUS_COMMUNICATION_ERROR : currentState.setForeground(Color.RED); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTION_CLOSED : currentState.setForeground(Color.BLACK); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTION_FAILED : currentState.setForeground(Color.RED); break;
+							case ClientSocket.SOCKET_STATUS_PING_FAILED : currentState.setForeground(Color.RED); break;
+							case ClientSocket.SOCKET_STATUS_WAITING_RESPONSE : currentState.setForeground(Color.BLUE); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTION_IS_CUT_OFF : currentState.setForeground(Color.RED); break;
 							default : currentState.setForeground(Color.BLACK); break;
 						}
 						
