@@ -66,6 +66,7 @@ public class ModbusMonitor_Panel extends JPanel {
 	
 	private JButton form_sendPacketButton;
 	private static JButton form_resetButton;
+	private static ButtonGroup radioGroup;
 	private static JRadioButton radio_modbusTCP;
 	private static JRadioButton radio_modbusRTU;
 	
@@ -88,20 +89,19 @@ public class ModbusMonitor_Panel extends JPanel {
 		setLayout(new BorderLayout(0, 0));
 		
 		JPanel actualPanel = new JPanel();
-		actualPanel.setBackground(new Color(255, 140, 0));
+		actualPanel.setBackground(Color.DARK_GRAY);
 		add(actualPanel, BorderLayout.CENTER);
 		actualPanel.setLayout(null);
 		
 		infoPanel = new JPanel();
-		infoPanel.setBounds(12, 10, 1050, 606);
-		actualPanel.add(infoPanel);
+		infoPanel.setBounds(12, 10, 1050, 608);
 		infoPanel.setBackground(Color.WHITE);
 		infoPanel.setLayout(null);
+		actualPanel.add(infoPanel);
 		
 		JLabel currentFunction = new JLabel("Modbus Monitor");
 		currentFunction.setForeground(Color.BLACK);
 		currentFunction.setBackground(Color.WHITE);
-		// 이미지 사용 시 클래스 경로로 사용하여 배포하여서도 이미지가 유지되도록 하자				
 		currentFunction.setIcon(new Util().getSubLogoResource());
 		currentFunction.setBounds(0, 0, 255, 55);
 		currentFunction.setHorizontalAlignment(SwingConstants.LEFT);
@@ -112,7 +112,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		imagePanel.setBackground(Color.WHITE);
 		imagePanel.setBounds(0, 55, 1050, 551);
 		imagePanel.setLayout(new BorderLayout(0, 0));
-//		infoPanel.add(imagePanel); 테스트
+//		infoPanel.add(imagePanel); // 테스트
 		
 		JLabel imageLabel = new JLabel();
 		imagePanel.add(imageLabel, BorderLayout.CENTER);
@@ -121,16 +121,16 @@ public class ModbusMonitor_Panel extends JPanel {
 		imageLabel.setIcon(new Util().getOnionScreenResource());
 		
 		resultPanel = new JPanel();
-		resultPanel.setBounds(10, 56, 1028, 425);
-		infoPanel.add(resultPanel);
+		resultPanel.setBounds(10, 56, 1028, 542);
 		resultPanel.setBackground(Color.LIGHT_GRAY);
 		resultPanel.setLayout(null);
+		infoPanel.add(resultPanel);
 		
 		JScrollPane resultTable_ScrollPane = new JScrollPane();
 		resultTable_ScrollPane.setBorder(new LineBorder(Color.BLACK, 3));
 		resultTable_ScrollPane.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
 		resultTable_ScrollPane.setBackground(Color.WHITE);
-		resultTable_ScrollPane.setBounds(578, 10, 438, 405);
+		resultTable_ScrollPane.setBounds(578, 127, 438, 405);
 		resultPanel.add(resultTable_ScrollPane);
 		
 		// 테이블 생성 부분
@@ -157,13 +157,218 @@ public class ModbusMonitor_Panel extends JPanel {
 		
 		packetLog_scrollPane = new JScrollPane();
 		packetLog_scrollPane.setBorder(new LineBorder(Color.BLACK, 3));
-		packetLog_scrollPane.setBounds(12, 10, 553, 405);
+		packetLog_scrollPane.setBounds(12, 127, 553, 405);
 		resultPanel.add(packetLog_scrollPane);
 		
 		
 		packetLog = new JTextArea();		
 		packetLog.setFont(new Font("맑은 고딕", Font.PLAIN, 16));				
 		packetLog_scrollPane.setViewportView(packetLog);				
+		
+		typePanel = new JPanel();
+		typePanel.setBounds(12, 10, 141, 107);
+		resultPanel.add(typePanel);
+		typePanel.setBackground(Color.WHITE);
+		typePanel.setLayout(null);
+		
+		JLabel modbusType = new JLabel("Modbus Type");
+		modbusType.setForeground(Color.BLACK);
+		modbusType.setHorizontalAlignment(SwingConstants.LEFT);
+		modbusType.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		modbusType.setBounds(12, 10, 129, 31);
+		typePanel.add(modbusType);
+		
+		radio_modbusTCP = new JRadioButton("Modbus TCP");
+		radio_modbusTCP.setForeground(Color.BLACK);
+		radio_modbusTCP.setBackground(Color.WHITE);
+		radio_modbusTCP.setHorizontalAlignment(SwingConstants.LEFT);
+		radio_modbusTCP.setSelected(true);
+		radio_modbusTCP.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		radio_modbusTCP.setBounds(8, 43, 125, 30);
+		typePanel.add(radio_modbusTCP);
+		
+		radio_modbusRTU = new JRadioButton("Modbus RTU");
+		radio_modbusRTU.setForeground(Color.BLACK);
+		radio_modbusRTU.setBackground(Color.WHITE);
+		radio_modbusRTU.setHorizontalAlignment(SwingConstants.LEFT);
+		radio_modbusRTU.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		radio_modbusRTU.setBounds(8, 72, 125, 30);
+		typePanel.add(radio_modbusRTU);
+		
+		radioGroup = new ButtonGroup();
+		radioGroup.add(radio_modbusTCP);
+		radioGroup.add(radio_modbusRTU);
+		
+		inputPanel_layout = new CardLayout(0, 0);		
+		inputFormPanel = new JPanel();
+		inputFormPanel.setBounds(165, 10, 851, 107);
+		resultPanel.add(inputFormPanel);
+		inputFormPanel.setBackground(Color.WHITE);
+		inputFormPanel.setLayout(inputPanel_layout);
+		
+		JPanel form_InputPanel = new JPanel();
+		form_InputPanel.setLayout(null);
+		form_InputPanel.setBackground(Color.WHITE);
+		inputFormPanel.add(form_InputPanel, "form_InputPanel");
+		
+		transactionId_text = new JTextField();
+		transactionId_text.setText("1");
+		transactionId_text.setHorizontalAlignment(SwingConstants.LEFT);
+		transactionId_text.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		transactionId_text.setColumns(10);
+		transactionId_text.setBorder(UIManager.getBorder("TextField.border"));
+		transactionId_text.setBounds(164, 31, 85, 31);
+		transactionId_text.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e) {
+				int transactionId = 0;
+				
+				if(transactionId_text.getText().startsWith("0x")||transactionId_text.getText().startsWith("0X")) {
+					// 16진수 표기법 (0x0000)
+					try {
+						if(transactionId_text.getText().startsWith("0x")) transactionId = Integer.parseInt(transactionId_text.getText().replaceAll("0x", ""),16); 
+						if(transactionId_text.getText().startsWith("0X")) transactionId = Integer.parseInt(transactionId_text.getText().replaceAll("0X", ""),16);
+					}catch(NumberFormatException exception) {
+						transactionId_text.setForeground(Color.RED);
+						return;
+					}
+				}else {
+					// 10진수 표기법
+					try {
+						transactionId = Integer.parseInt(transactionId_text.getText());
+					}catch(NumberFormatException exception) {
+						transactionId_text.setForeground(Color.RED);
+						return;
+					}
+				}
+				
+				if(transactionId > Short.MAX_VALUE) {
+					transactionId_text.setForeground(Color.RED);
+				}else {
+					transactionId_text.setForeground(Color.BLUE);
+				}
+			}
+		});
+		transactionId_text.addKeyListener(new KeyAdapter() {						
+			public void keyReleased(KeyEvent e) {
+				int transactionId = 0;
+			
+				if(transactionId_text.getText().startsWith("0x")||transactionId_text.getText().startsWith("0X")) {
+					// 16진수 표기법 (0x0000)
+					try {
+						if(transactionId_text.getText().startsWith("0x")) transactionId = Integer.parseInt(transactionId_text.getText().replaceAll("0x", ""),16); 
+						if(transactionId_text.getText().startsWith("0X")) transactionId = Integer.parseInt(transactionId_text.getText().replaceAll("0X", ""),16);
+					}catch(NumberFormatException exception) {
+						transactionId_text.setForeground(Color.RED);
+						return;
+					}
+				}else {
+					// 10진수 표기법
+					try {
+						transactionId = Integer.parseInt(transactionId_text.getText());
+					}catch(NumberFormatException exception) {
+						transactionId_text.setForeground(Color.RED);
+						return;
+					}
+				}
+				
+				if(transactionId > Short.MAX_VALUE) {
+					transactionId_text.setForeground(Color.RED);
+				}else {
+					transactionId_text.setForeground(Color.BLUE);
+				}				
+			}
+		});
+		
+		form_InputPanel.add(transactionId_text);
+		
+		form_resetButton = new JButton("초기화");
+		form_resetButton.setForeground(Color.BLACK);
+		form_resetButton.setFont(new Font("맑은 고딕", Font.BOLD, 13));
+		form_resetButton.setBackground(Color.WHITE);
+		form_resetButton.setBounds(751, 50, 88, 31);
+		form_resetButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {			
+				global_rx = null;
+				packetLog.setText(null);
+				resetTable(table);
+								
+				transactionId_text.setText("1");
+				transactionId_text.setForeground(Color.BLUE);				
+			}						
+		});
+		
+		// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+		// TX Form 전송 버튼
+		form_sendPacketButton = new JButton("\uC2DC \uC791");
+		// 전송 버튼 클릭시 발생하는 이벤트
+		form_sendPacketButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {								
+				
+				// 수집 요청 TX 생성에 필요한 Form 에 정보가 모두 입력되어 있는지 체크
+				if(!checkReadRequestForm(isRTU)) return;
+				
+				
+				try {						
+					
+					// 한번 초기화된 TX 내용으로 계속해서 수집
+					tx = null;
+					tx.setAgentType("ModbusMonitor"); // 패킷로그 에이전트 확인용
+					
+					
+					/**
+					 * Monitoring Start ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+					 */
+					
+					new Thread(new Runnable() {							
+						@Override
+						public void run() {
+							try {
+								rx = ModbusAgent.communicate(socket_ko, tx, isRTU, 5000);
+								
+								// 유효하지 않은 응답은 패스한다
+								if(rx == null) return;
+								if(rx.isException()) return;
+								if(rx.isCRCError()) return;							
+								if(rx.getScanResult() == null) return;
+								if(ExceptionProvider.CompareTxRx(tx, rx) != null) return;																																																			
+																																													
+								// updataTable() 에 넘겨줄 RX_Info 인스턴스 먼저 초기화를 해줘야한다.
+								global_rx = rx;
+								updateTable(table, rx);
+								ModbusAgent.isRTU = isRTU;
+								ModbusAgent.lastFunctionCode = rx.getFunctionCode();
+									
+							}catch(Exception e) {
+								e.printStackTrace();
+								StringBuilder sb = new StringBuilder();
+								sb.append(Util.colorRed("Real-Time Monitoring Error\n"));
+								sb.append(Util.colorBlue("Real-Time Monitoring") + " 기능 수행중 처리 할 수 없는 예외가 발생하였습니다" + Util.separator + "\n\n");
+								sb.append(String.format("Exception Message : %s\n", e.getMessage()));
+								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+							}
+							
+						}
+					}).start();
+					
+				}catch(Exception exception) {
+					resetTable(table);
+					exception.printStackTrace();
+				}
+				
+			}			
+		});
+		// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+		form_sendPacketButton.setForeground(Color.BLACK);
+		form_sendPacketButton.setFont(new Font("맑은 고딕", Font.BOLD, 13));
+		form_sendPacketButton.setBackground(Color.WHITE);
+		form_sendPacketButton.setBounds(751, 10, 88, 31);		
+		form_InputPanel.add(form_sendPacketButton);
+		form_InputPanel.add(form_resetButton);
+		
+		// 라디오 버튼(TCP/RTU)에 리스너 추가
+		radio_modbusTCP.addActionListener(radioListener);
+		radio_modbusRTU.addActionListener(radioListener);
+		radio_modbusRTU.doClick();
 			
 		currentState = new JLabel();		
 		currentState.setOpaque(true);
@@ -250,236 +455,15 @@ public class ModbusMonitor_Panel extends JPanel {
 		});
 		
 		infoPanel.add(connectButton);
-		
-		inputFormPanel = new JPanel();
-		inputFormPanel.setBackground(Color.WHITE);
-		inputFormPanel.setBounds(165, 509, 897, 107);
-		actualPanel.add(inputFormPanel);
-		inputPanel_layout = new CardLayout(0, 0);
-		inputFormPanel.setLayout(inputPanel_layout);
-		
-		JPanel form_InputPanel = new JPanel();
-		form_InputPanel.setLayout(null);
-		form_InputPanel.setBackground(Color.WHITE);
-		inputFormPanel.add(form_InputPanel, "form_InputPanel");
-		
-		transactionId_text = new JTextField();
-		transactionId_text.setText("1");
-		transactionId_text.setHorizontalAlignment(SwingConstants.LEFT);
-		transactionId_text.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		transactionId_text.setColumns(10);
-		transactionId_text.setBorder(UIManager.getBorder("TextField.border"));
-		transactionId_text.setBounds(164, 31, 85, 31);
-		transactionId_text.addFocusListener(new FocusAdapter() {
-			public void focusLost(FocusEvent e) {
-				int transactionId = 0;
-				
-				if(transactionId_text.getText().startsWith("0x")||transactionId_text.getText().startsWith("0X")) {
-					// 16진수 표기법 (0x0000)
-					try {
-						if(transactionId_text.getText().startsWith("0x")) transactionId = Integer.parseInt(transactionId_text.getText().replaceAll("0x", ""),16); 
-						if(transactionId_text.getText().startsWith("0X")) transactionId = Integer.parseInt(transactionId_text.getText().replaceAll("0X", ""),16);
-					}catch(NumberFormatException exception) {
-						transactionId_text.setForeground(Color.RED);
-						return;
-					}
-				}else {
-					// 10진수 표기법
-					try {
-						transactionId = Integer.parseInt(transactionId_text.getText());
-					}catch(NumberFormatException exception) {
-						transactionId_text.setForeground(Color.RED);
-						return;
-					}
-				}
-				
-				if(transactionId > Short.MAX_VALUE) {
-					transactionId_text.setForeground(Color.RED);
-				}else {
-					transactionId_text.setForeground(Color.BLUE);
-				}	
-			}			
-		});
-		transactionId_text.addKeyListener(new KeyAdapter() {						
-			public void keyReleased(KeyEvent e) {
-				int transactionId = 0;
-			
-				if(transactionId_text.getText().startsWith("0x")||transactionId_text.getText().startsWith("0X")) {
-					// 16진수 표기법 (0x0000)
-					try {
-						if(transactionId_text.getText().startsWith("0x")) transactionId = Integer.parseInt(transactionId_text.getText().replaceAll("0x", ""),16); 
-						if(transactionId_text.getText().startsWith("0X")) transactionId = Integer.parseInt(transactionId_text.getText().replaceAll("0X", ""),16);
-					}catch(NumberFormatException exception) {
-						transactionId_text.setForeground(Color.RED);
-						return;
-					}
-				}else {
-					// 10진수 표기법
-					try {
-						transactionId = Integer.parseInt(transactionId_text.getText());
-					}catch(NumberFormatException exception) {
-						transactionId_text.setForeground(Color.RED);
-						return;
-					}
-				}
-				
-				if(transactionId > Short.MAX_VALUE) {
-					transactionId_text.setForeground(Color.RED);
-				}else {
-					transactionId_text.setForeground(Color.BLUE);
-				}				
-			}
-		});
-		
-		form_InputPanel.add(transactionId_text);
 		String[] unitIdValue = new String[255];
 		for(int i = 0; i < 255; i++) {
 			unitIdValue[i] = String.valueOf(i+1) + "번";
 		}
-		
-		form_resetButton = new JButton("초기화");
-		form_resetButton.setForeground(Color.BLACK);
-		form_resetButton.setFont(new Font("맑은 고딕", Font.BOLD, 13));
-		form_resetButton.setBackground(Color.WHITE);
-		form_resetButton.setBounds(797, 71, 88, 31);
-		form_resetButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {			
-				global_rx = null;
-				packetLog.setText(null);
-				resetTable(table);
-								
-				transactionId_text.setText("1");
-				transactionId_text.setForeground(Color.BLUE);				
-			}						
-		});
-		
-		// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-		// TX Form 전송 버튼
-		form_sendPacketButton = new JButton("\uC2DC \uC791");
-		// 전송 버튼 클릭시 발생하는 이벤트
-		form_sendPacketButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {								
-				
-				// 수집 요청 TX 생성에 필요한 Form 에 정보가 모두 입력되어 있는지 체크
-				if(!checkReadRequestForm(isRTU)) return;
-				
-				
-				try {						
-					
-					// 한번 초기화된 TX 내용으로 계속해서 수집
-					tx = null;
-					tx.setAgentType("ModbusMonitor"); // 패킷로그 에이전트 확인용
-					
-					
-					/**
-					 * Monitoring Start ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-					 */
-					
-					new Thread(new Runnable() {							
-						@Override
-						public void run() {
-							try {
-								rx = ModbusAgent.communicate(socket_ko, tx, isRTU, 5000);
-								
-								// 유효하지 않은 응답은 패스한다
-								if(rx == null) return;
-								if(rx.isException()) return;
-								if(rx.isCRCError()) return;							
-								if(rx.getScanResult() == null) return;
-								if(ExceptionProvider.CompareTxRx(tx, rx) != null) return;																																																			
-																																													
-								// updataTable() 에 넘겨줄 RX_Info 인스턴스 먼저 초기화를 해줘야한다.
-								global_rx = rx;
-								updateTable(table, rx);
-								ModbusAgent.isRTU = isRTU;
-								ModbusAgent.lastFunctionCode = rx.getFunctionCode();
-									
-							}catch(Exception e) {
-								e.printStackTrace();
-								StringBuilder sb = new StringBuilder();
-								sb.append(Util.colorRed("Real-Time Monitoring Error\n"));
-								sb.append(Util.colorBlue("Real-Time Monitoring") + " 기능 수행중 처리 할 수 없는 예외가 발생하였습니다" + Util.separator + "\n\n");
-								sb.append(String.format("Exception Message : %s\n", e.getMessage()));
-								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-							}
-							
-						}
-					}).start();
-					
-				}catch(Exception exception) {
-					resetTable(table);
-					exception.printStackTrace();
-				}
-				
-			}			
-		});
-		// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-		form_sendPacketButton.setForeground(Color.BLACK);
-		form_sendPacketButton.setFont(new Font("맑은 고딕", Font.BOLD, 13));
-		form_sendPacketButton.setBackground(Color.WHITE);
-		form_sendPacketButton.setBounds(797, 31, 88, 31);		
-		form_InputPanel.add(form_sendPacketButton);
-		form_InputPanel.add(form_resetButton);
-				
-		typePanel = new JPanel();
-		typePanel.setBackground(Color.WHITE);
-		typePanel.setBounds(12, 509, 141, 107);
-		actualPanel.add(typePanel);
-		typePanel.setLayout(null);
-		
-		JLabel modbusType = new JLabel("Modbus Type");
-		modbusType.setHorizontalAlignment(SwingConstants.LEFT);
-		modbusType.setFont(new Font("맑은 고딕", Font.BOLD, 16));
-		modbusType.setBounds(12, 10, 129, 31);
-		typePanel.add(modbusType);
-		
-		radio_modbusTCP = new JRadioButton("Modbus TCP");
-		radio_modbusTCP.setBackground(Color.WHITE);
-		radio_modbusTCP.setHorizontalAlignment(SwingConstants.LEFT);
-		radio_modbusTCP.setSelected(true);
-		radio_modbusTCP.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		radio_modbusTCP.setBounds(8, 43, 125, 30);
-		typePanel.add(radio_modbusTCP);
-		
-		radio_modbusRTU = new JRadioButton("Modbus RTU");
-		radio_modbusRTU.setBackground(Color.WHITE);
-		radio_modbusRTU.setHorizontalAlignment(SwingConstants.LEFT);
-		radio_modbusRTU.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		radio_modbusRTU.setBounds(8, 72, 125, 30);
-		typePanel.add(radio_modbusRTU);
 
-		ButtonGroup radioGroup = new ButtonGroup();
-		radioGroup.add(radio_modbusTCP);
-		radioGroup.add(radio_modbusRTU);
 		
 		
-		// Modbus 타입이 TCP인지 RTU인지를 결정하는 라디오 버튼 이벤트
-		ActionListener radioListener = new ActionListener() {			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				JRadioButton b = (JRadioButton)e.getSource();	
-				
-				// Modbus RTU, TCP 라디오 버튼 이동 시 
-				global_rx = null;
-				transactionId_text.setText(null);
-				resetTable(table);
-
-				if (b.getText().contains("RTU")) {
-					isRTU = true;					
-					transactionId_text.setVisible(false);
-				} else {
-					isRTU = false;					
-					transactionId_text.setVisible(true);
-					transactionId_text.setText("1");
-					transactionId_text.setForeground(Color.BLUE);
-				}								
-			}						
-		};
 		
-		// 라디오 버튼(TCP/RTU)에 리스너 추가
-		radio_modbusTCP.addActionListener(radioListener);
-		radio_modbusRTU.addActionListener(radioListener);
+		
 		
 		panel_OFF();
 		
@@ -549,7 +533,7 @@ public class ModbusMonitor_Panel extends JPanel {
 			}
 		}.start();
 		
-		radio_modbusRTU.doClick();
+		panel_ON(); // 테스트
 		
 	}// end ModbusMonitor_Panel()
 	
@@ -564,7 +548,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		resultPanel.setEnabled(true);							
 		imagePanel.setVisible(false);
 		imagePanel.setEnabled(false);
-		infoPanel.setBounds(12, 10, 1050, 489); // 인포메이션 판넬 크기 정상화
+		
 		if (MainFrame.getMainFrame() != null) {
 			MainFrame.getMainFrame().setTitle(String.format("ModbusAnalyzer : %s", ClientSocket.getSimpleConnectedInfo()));
 		}
@@ -580,8 +564,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		resultPanel.setVisible(false);
 		resultPanel.setEnabled(false);
 		imagePanel.setVisible(true);
-		imagePanel.setEnabled(true);
-		infoPanel.setBounds(12, 10, 1050, 606); // 인포메이션 판넬 전체모드
+		imagePanel.setEnabled(true);		
 		
 		if(packetlog_Frame != null) {
 			packetlog_Frame.dispose();
@@ -769,6 +752,31 @@ public class ModbusMonitor_Panel extends JPanel {
 		
 		return isValid;
 	}	
+	
+	// Modbus 타입이 TCP인지 RTU인지를 결정하는 라디오 버튼 이벤트
+	ActionListener radioListener = new ActionListener() {			
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			JRadioButton b = (JRadioButton)e.getSource();	
+			
+			// Modbus RTU, TCP 라디오 버튼 이동 시 
+			global_rx = null;
+			transactionId_text.setText(null);
+			resetTable(table);
+
+			if (b.getText().contains("RTU")) {
+				isRTU = true;					
+				transactionId_text.setVisible(false);
+			} else {
+				isRTU = false;					
+				transactionId_text.setVisible(true);
+				transactionId_text.setText("1");
+				transactionId_text.setForeground(Color.BLUE);
+			}								
+		}						
+	};
+	
 	
 	public static void setTableStyle(JTable table) {
 		// 이동 불가, 셀 크기 조절 불가
