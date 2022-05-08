@@ -199,12 +199,14 @@ public class RealTime_Panel extends JPanel {
 		
 		
 		JLabel lblNewLabel = new JLabel("Data Type");
+		lblNewLabel.setForeground(Color.BLACK);
 		lblNewLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setBounds(0, 0, 89, 39);
 		dataTypePanel.add(lblNewLabel);
 		
 		dataTypeComboBox = new JComboBox();
+		dataTypeComboBox.setForeground(Color.BLACK);
 		dataTypeComboBox.setBackground(Color.WHITE);
 		dataTypeComboBox.setModel(new DefaultComboBoxModel(new String[] {"ASCII CODE", "UNI CODE", "", "BINARY", "HEX", "", "TWO BYTE INT SIGNED", "TWO BYTE INT UNSIGNED", "", "FOUR BYTE INT SIGNED (A B C D)", "FOUR BYTE INT SIGNED (D C B A)", "FOUR BYTE INT SIGNED (B A D C)", "FOUR BYTE INT SIGNED (C D A B)", "", "FOUR BYTE INT UNSIGNED (A B C D)", "FOUR BYTE INT UNSIGNED (D C B A)", "FOUR BYTE INT UNSIGNED (B A D C)", "FOUR BYTE INT UNSIGNED (C D A B)", "", "FOUR BYTE FLOAT (A B C D)", "FOUR BYTE FLOAT (D C B A)", "FOUR BYTE FLOAT (B A D C)", "FOUR BYTE FLOAT (C D A B)", "", "EIGHT BYTE INT SIGNED (A B C D)", "EIGHT BYTE INT SIGNED (D C B A)", "EIGHT BYTE INT SIGNED (B A D C)", "EIGHT BYTE INT SIGNED (C D A B)", "", "EIGHT BYTE INT UNSIGNED (A B C D)", "EIGHT BYTE INT UNSIGNED (D C B A)", "EIGHT BYTE INT UNSIGNED (B A D C)", "EIGHT BYTE INT UNSIGNED (C D A B)", "", "EIGHT BYTE DOUBLE (A B C D)", "EIGHT BYTE DOUBLE (D C B A)", "EIGHT BYTE DOUBLE (B A D C)", "EIGHT BYTE DOUBLE (C D A B)"}));
 		dataTypeComboBox.setSelectedIndex(6);
@@ -318,12 +320,14 @@ public class RealTime_Panel extends JPanel {
 		inputFormPanel.add(form_InputPanel, "form_InputPanel");
 		
 		JLabel typeLabel2 = new JLabel("Modbus TCP");
+		typeLabel2.setForeground(Color.BLACK);
 		typeLabel2.setHorizontalAlignment(SwingConstants.LEFT);
 		typeLabel2.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		typeLabel2.setBounds(12, 10, 129, 31);
 		form_InputPanel.add(typeLabel2);
 		
 		JLabel transactionId_label = new JLabel("TID");
+		transactionId_label.setForeground(Color.BLACK);
 		transactionId_label.setHorizontalAlignment(SwingConstants.LEFT);
 		transactionId_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		transactionId_label.setBounds(132, 31, 26, 31);
@@ -400,12 +404,14 @@ public class RealTime_Panel extends JPanel {
 		form_InputPanel.add(transactionId_text);
 		
 		JLabel unitId_label = new JLabel("\uC7A5\uBE44\uBC88\uD638");
+		unitId_label.setForeground(Color.BLACK);
 		unitId_label.setHorizontalAlignment(SwingConstants.LEFT);
 		unitId_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		unitId_label.setBounds(266, 31, 77, 31);
 		form_InputPanel.add(unitId_label);
 		
 		unitId_comboBox = new JComboBox();
+		unitId_comboBox.setForeground(Color.BLACK);
 		String[] unitIdValue = new String[255];
 		for(int i = 0; i < 255; i++) {
 			unitIdValue[i] = String.valueOf(i+1) + "¹ø";
@@ -418,6 +424,7 @@ public class RealTime_Panel extends JPanel {
 		form_InputPanel.add(unitId_comboBox);
 		
 		JLabel startAddress_label = new JLabel("\uBAA8\uB2C8\uD130\uB9C1 \uC2DC\uC791\uC8FC\uC18C");
+		startAddress_label.setForeground(Color.BLACK);
 		startAddress_label.setHorizontalAlignment(SwingConstants.RIGHT);
 		startAddress_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		startAddress_label.setBounds(17, 71, 141, 31);
@@ -538,12 +545,14 @@ public class RealTime_Panel extends JPanel {
 		form_InputPanel.add(startAddress_text);
 		
 		JLabel functionCode_label = new JLabel("\uAE30\uB2A5\uCF54\uB4DC");
+		functionCode_label.setForeground(Color.BLACK);
 		functionCode_label.setHorizontalAlignment(SwingConstants.LEFT);
 		functionCode_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		functionCode_label.setBounds(435, 31, 77, 31);
 		form_InputPanel.add(functionCode_label);
 		
 		functionCode_comboBox = new JComboBox();
+		functionCode_comboBox.setForeground(Color.BLACK);
 		functionCode_comboBox.setBackground(Color.WHITE);		
 		functionCode_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		functionCode_comboBox.setModel(new DefaultComboBoxModel(new String[] {"01", "02", "03", "04"}));
@@ -564,12 +573,14 @@ public class RealTime_Panel extends JPanel {
 		
 		
 		JLabel requestCount_label = new JLabel("\uC694\uCCAD\uAC1C\uC218");
+		requestCount_label.setForeground(Color.BLACK);
 		requestCount_label.setHorizontalAlignment(SwingConstants.LEFT);
 		requestCount_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		requestCount_label.setBounds(435, 71, 77, 31);
 		form_InputPanel.add(requestCount_label);
 		
 		requestCount_comboBox = new JComboBox();		
+		requestCount_comboBox.setForeground(Color.BLACK);
 		String[] requestValue = new String[125];
 		for(int i = 0; i < 125; i++) {
 			requestValue[i] = String.valueOf(i+1) + "°³";
@@ -804,6 +815,7 @@ public class RealTime_Panel extends JPanel {
 		form_InputPanel.add(form_scale_label);
 		
 		form_scale_textField = new JTextField();
+		form_scale_textField.setForeground(Color.BLACK);
 		form_scale_textField.setText("");		
 		form_scale_textField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 14));
 		form_scale_textField.setBackground(Color.WHITE);
@@ -814,6 +826,7 @@ public class RealTime_Panel extends JPanel {
 		form_InputPanel.add(form_scale_textField);
 		
 		JLabel timeout_Label = new JLabel("\uD0C0\uC784\uC544\uC6C3");
+		timeout_Label.setForeground(Color.BLACK);
 		timeout_Label.setHorizontalAlignment(SwingConstants.LEFT);
 		timeout_Label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		timeout_Label.setBounds(604, 31, 77, 31);
@@ -890,6 +903,7 @@ public class RealTime_Panel extends JPanel {
 		form_InputPanel.add(timeout_text);
 		
 		JLabel interval_Label = new JLabel("\uC218\uC9D1\uC8FC\uAE30");
+		interval_Label.setForeground(Color.BLACK);
 		interval_Label.setHorizontalAlignment(SwingConstants.LEFT);
 		interval_Label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		interval_Label.setBounds(604, 71, 77, 31);
@@ -966,18 +980,21 @@ public class RealTime_Panel extends JPanel {
 		form_InputPanel.add(interval_text);
 		
 		JLabel timeoutMeasure_Label = new JLabel("ms");
+		timeoutMeasure_Label.setForeground(Color.BLACK);
 		timeoutMeasure_Label.setHorizontalAlignment(SwingConstants.LEFT);
 		timeoutMeasure_Label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		timeoutMeasure_Label.setBounds(755, 31, 35, 31);
 		form_InputPanel.add(timeoutMeasure_Label);
 		
 		JLabel intervalMeasure_Label = new JLabel("ms");
+		intervalMeasure_Label.setForeground(Color.BLACK);
 		intervalMeasure_Label.setHorizontalAlignment(SwingConstants.LEFT);
 		intervalMeasure_Label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		intervalMeasure_Label.setBounds(755, 71, 35, 31);
 		form_InputPanel.add(intervalMeasure_Label);
 		
 		autoTid_CheckBox = new JCheckBox("Auto TID OFF");
+		autoTid_CheckBox.setForeground(Color.BLACK);
 		autoTid_CheckBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 14));
 		autoTid_CheckBox.setFocusPainted(false);
 		autoTid_CheckBox.setBackground(Color.WHITE);
@@ -1016,12 +1033,14 @@ public class RealTime_Panel extends JPanel {
 		typePanel.setLayout(null);
 		
 		JLabel modbusType = new JLabel("Modbus Type");
+		modbusType.setForeground(Color.BLACK);
 		modbusType.setHorizontalAlignment(SwingConstants.LEFT);
 		modbusType.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		modbusType.setBounds(12, 10, 129, 31);
 		typePanel.add(modbusType);
 		
 		radio_modbusTCP = new JRadioButton("Modbus TCP");
+		radio_modbusTCP.setForeground(Color.BLACK);
 		radio_modbusTCP.setBackground(Color.WHITE);
 		radio_modbusTCP.setHorizontalAlignment(SwingConstants.LEFT);
 		radio_modbusTCP.setSelected(true);
@@ -1030,6 +1049,7 @@ public class RealTime_Panel extends JPanel {
 		typePanel.add(radio_modbusTCP);
 		
 		radio_modbusRTU = new JRadioButton("Modbus RTU");
+		radio_modbusRTU.setForeground(Color.BLACK);
 		radio_modbusRTU.setBackground(Color.WHITE);
 		radio_modbusRTU.setHorizontalAlignment(SwingConstants.LEFT);
 		radio_modbusRTU.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
@@ -1232,6 +1252,7 @@ public class RealTime_Panel extends JPanel {
 	
 	public static void resetTable(JTable table){
 		// Å×ÀÌºí Çì´õ ¼³Á¤
+		table.getTableHeader().setForeground(Color.BLACK);
 		table.getTableHeader().setBackground(new Color(255, 255, 153));
 		table.getTableHeader().setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		

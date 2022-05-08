@@ -28,7 +28,7 @@ public class Moon {
 	private static JPanel en_panel = en.getActualPanel();
 	
 	private static JMenuBar ko_menuBar = ko.getJMenuBar();
-	private static JMenuBar en_menuBar = en.getJMenuBar();	
+	private static JMenuBar en_menuBar = en.getJMenuBar();
 		
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {

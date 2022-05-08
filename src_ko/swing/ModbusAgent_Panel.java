@@ -137,9 +137,9 @@ public class ModbusAgent_Panel extends JPanel {
 		
 		infoPanel = new JPanel();
 		infoPanel.setBounds(12, 10, 1050, 606);
-		actualPanel.add(infoPanel);
 		infoPanel.setBackground(Color.WHITE);
 		infoPanel.setLayout(null);
+		actualPanel.add(infoPanel);
 		
 		JLabel currentFunction = new JLabel("Modbus Client");
 		currentFunction.setForeground(Color.BLACK);
@@ -154,8 +154,8 @@ public class ModbusAgent_Panel extends JPanel {
 		imagePanel = new JPanel();
 		imagePanel.setBackground(Color.WHITE);
 		imagePanel.setBounds(0, 55, 1050, 551);
-		infoPanel.add(imagePanel);
 		imagePanel.setLayout(new BorderLayout(0, 0));
+		infoPanel.add(imagePanel);
 		
 		JLabel imageLabel = new JLabel();
 		imagePanel.add(imageLabel, BorderLayout.CENTER);
@@ -372,18 +372,21 @@ public class ModbusAgent_Panel extends JPanel {
 		user_InputPanel.setLayout(null);
 		
 		JLabel typeLabel = new JLabel("Modbus TCP");
+		typeLabel.setForeground(Color.BLACK);
 		typeLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		typeLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		typeLabel.setBounds(12, 10, 129, 31);
 		user_InputPanel.add(typeLabel);
 		
 		JLabel TX = new JLabel("TX");
+		TX.setForeground(Color.BLACK);
 		TX.setHorizontalAlignment(SwingConstants.LEFT);
 		TX.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		TX.setBounds(12, 58, 26, 31);
 		user_InputPanel.add(TX);
 		
 		TXinputTextField = new JTextField();
+		TXinputTextField.setForeground(Color.BLACK);
 		TXinputTextField.setBorder(UIManager.getBorder("TextField.border"));		
 		TXinputTextField.setHorizontalAlignment(SwingConstants.LEFT);
 		TXinputTextField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
@@ -589,6 +592,7 @@ public class ModbusAgent_Panel extends JPanel {
 		user_InputPanel.add(user_expression_label);
 		
 		user_expression_textField = new JTextField();
+		user_expression_textField.setForeground(Color.BLACK);
 		user_expression_textField.setHorizontalAlignment(SwingConstants.LEFT);
 		user_expression_textField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		user_expression_textField.setBounds(450, 12, 282, 31);
@@ -607,12 +611,14 @@ public class ModbusAgent_Panel extends JPanel {
 		inputFormPanel.add(form_InputPanel, "form_InputPanel");
 		
 		JLabel typeLabel2 = new JLabel("Modbus TCP");
+		typeLabel2.setForeground(Color.BLACK);
 		typeLabel2.setHorizontalAlignment(SwingConstants.LEFT);
 		typeLabel2.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		typeLabel2.setBounds(12, 10, 129, 31);
 		form_InputPanel.add(typeLabel2);
 		
 		JLabel transactionId_label = new JLabel("TID");
+		transactionId_label.setForeground(Color.BLACK);
 		transactionId_label.setHorizontalAlignment(SwingConstants.LEFT);
 		transactionId_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		transactionId_label.setBounds(132, 31, 26, 31);
@@ -689,12 +695,14 @@ public class ModbusAgent_Panel extends JPanel {
 		form_InputPanel.add(transactionId_text);
 		
 		JLabel unitId_label = new JLabel("\uC7A5\uBE44\uBC88\uD638");
+		unitId_label.setForeground(Color.BLACK);
 		unitId_label.setHorizontalAlignment(SwingConstants.LEFT);
 		unitId_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		unitId_label.setBounds(279, 31, 77, 31);
 		form_InputPanel.add(unitId_label);
 		
 		unitId_comboBox = new JComboBox();
+		unitId_comboBox.setForeground(Color.BLACK);
 		String[] unitIdValue = new String[255];
 		for(int i = 0; i < 255; i++) {
 			unitIdValue[i] = String.valueOf(i+1) + "¹ø";
@@ -707,6 +715,7 @@ public class ModbusAgent_Panel extends JPanel {
 		form_InputPanel.add(unitId_comboBox);
 		
 		JLabel startAddress_label = new JLabel("\uC2DC\uC791\uC8FC\uC18C");
+		startAddress_label.setForeground(Color.BLACK);
 		startAddress_label.setHorizontalAlignment(SwingConstants.LEFT);
 		startAddress_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		startAddress_label.setBounds(92, 72, 77, 31);
@@ -827,12 +836,14 @@ public class ModbusAgent_Panel extends JPanel {
 		form_InputPanel.add(startAddress_text);
 		
 		JLabel functionCode_label = new JLabel("\uAE30\uB2A5\uCF54\uB4DC");
+		functionCode_label.setForeground(Color.BLACK);
 		functionCode_label.setHorizontalAlignment(SwingConstants.LEFT);
 		functionCode_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		functionCode_label.setBounds(465, 31, 77, 31);
 		form_InputPanel.add(functionCode_label);
 		
 		functionCode_comboBox = new JComboBox();
+		functionCode_comboBox.setForeground(Color.BLACK);
 		functionCode_comboBox.setBackground(Color.WHITE);		
 		functionCode_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		functionCode_comboBox.setModel(new DefaultComboBoxModel(new String[] {"01", "02", "03", "04"}));
@@ -864,12 +875,14 @@ public class ModbusAgent_Panel extends JPanel {
 		
 		
 		JLabel requestCount_label = new JLabel("\uC694\uCCAD\uAC1C\uC218");
+		requestCount_label.setForeground(Color.BLACK);
 		requestCount_label.setHorizontalAlignment(SwingConstants.LEFT);
 		requestCount_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		requestCount_label.setBounds(465, 71, 77, 31);
 		form_InputPanel.add(requestCount_label);
 		
 		requestCount_comboBox = new JComboBox();		
+		requestCount_comboBox.setForeground(Color.BLACK);
 		String[] requestValue = new String[125];
 		for(int i = 0; i < 125; i++) {
 			requestValue[i] = String.valueOf(i+1) + "°³";
@@ -1029,6 +1042,7 @@ public class ModbusAgent_Panel extends JPanel {
 		
 		// ¼öÁý ¸í·É¾î ¶óµð¿À ¹öÆ°
 		readCommand_radioButton = new JRadioButton("\uC218\uC9D1");
+		readCommand_radioButton.setForeground(Color.BLACK);
 		readCommand_radioButton.setSelected(true);
 		readCommand_radioButton.setBackground(Color.WHITE);
 		readCommand_radioButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 13));
@@ -1037,6 +1051,7 @@ public class ModbusAgent_Panel extends JPanel {
 		
 		// Á¦¾î ¸í·É¾î ¶óµð¿À ¹öÆ°
 		writeCommand_radioButton = new JRadioButton("\uC81C\uC5B4");
+		writeCommand_radioButton.setForeground(Color.BLACK);
 		writeCommand_radioButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 13));
 		writeCommand_radioButton.setBackground(Color.WHITE);
 		writeCommand_radioButton.setBounds(8, 73, 61, 23);
@@ -1054,7 +1069,7 @@ public class ModbusAgent_Panel extends JPanel {
 		
 		modbusAddress_label = new JLabel("\uBAA8\uB4DC\uBC84\uC2A4 \uC8FC\uC18C");		
 		modbusAddress_label.setBackground(Color.WHITE);
-		modbusAddress_label.setForeground(Color.DARK_GRAY);
+		modbusAddress_label.setForeground(Color.BLACK);
 		modbusAddress_label.setHorizontalAlignment(SwingConstants.LEFT);
 		modbusAddress_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		modbusAddress_label.setBounds(279, 72, 175, 31);
@@ -1137,6 +1152,7 @@ public class ModbusAgent_Panel extends JPanel {
 		form_InputPanel.add(form_expression_label);
 		
 		form_expression_textField = new JTextField();
+		form_expression_textField.setForeground(Color.BLACK);
 		form_expression_textField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 14));
 		form_expression_textField.setBackground(Color.WHITE);
 		form_expression_textField.setHorizontalAlignment(SwingConstants.LEFT);		
@@ -1193,12 +1209,14 @@ public class ModbusAgent_Panel extends JPanel {
 		typePanel.setLayout(null);
 		
 		JLabel modbusType = new JLabel("Modbus Type");
+		modbusType.setForeground(Color.BLACK);
 		modbusType.setHorizontalAlignment(SwingConstants.LEFT);
 		modbusType.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		modbusType.setBounds(12, 10, 129, 31);
 		typePanel.add(modbusType);
 		
 		JRadioButton radio_modbusTCP = new JRadioButton("Modbus TCP");
+		radio_modbusTCP.setForeground(Color.BLACK);
 		radio_modbusTCP.setBackground(Color.WHITE);
 		radio_modbusTCP.setHorizontalAlignment(SwingConstants.LEFT);
 		radio_modbusTCP.setSelected(true);
@@ -1207,6 +1225,7 @@ public class ModbusAgent_Panel extends JPanel {
 		typePanel.add(radio_modbusTCP);
 		
 		JRadioButton radio_modbusRTU = new JRadioButton("Modbus RTU");
+		radio_modbusRTU.setForeground(Color.BLACK);
 		radio_modbusRTU.setBackground(Color.WHITE);
 		radio_modbusRTU.setHorizontalAlignment(SwingConstants.LEFT);
 		radio_modbusRTU.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
@@ -1224,12 +1243,14 @@ public class ModbusAgent_Panel extends JPanel {
 		actualPanel.add(inputTypePanel);
 		
 		JLabel sendType = new JLabel("TX \uC804\uC1A1 \uBC29\uBC95");
+		sendType.setForeground(Color.BLACK);
 		sendType.setHorizontalAlignment(SwingConstants.LEFT);
 		sendType.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		sendType.setBounds(8, 10, 129, 31);
 		inputTypePanel.add(sendType);
 		
 		JRadioButton userInput_radioButton = new JRadioButton("\uC9C1\uC811 \uC785\uB825");
+		userInput_radioButton.setForeground(Color.BLACK);
 		userInput_radioButton.setSelected(true);
 		userInput_radioButton.setHorizontalAlignment(SwingConstants.LEFT);
 		userInput_radioButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
@@ -1238,6 +1259,7 @@ public class ModbusAgent_Panel extends JPanel {
 		inputTypePanel.add(userInput_radioButton);
 		
 		formInput_radioButton = new JRadioButton("\uC591\uC2DD \uC785\uB825");
+		formInput_radioButton.setForeground(Color.BLACK);
 		formInput_radioButton.setHorizontalAlignment(SwingConstants.LEFT);
 		formInput_radioButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		formInput_radioButton.setBackground(Color.WHITE);
@@ -1440,6 +1462,7 @@ public class ModbusAgent_Panel extends JPanel {
 	
 	public static void resetTable(JTable table){		
 		// Å×ÀÌºí Çì´õ ¼³Á¤
+		table.getTableHeader().setForeground(Color.BLACK);
 		table.getTableHeader().setBackground(new Color(255, 255, 153));
 		table.getTableHeader().setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		

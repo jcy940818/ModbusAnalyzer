@@ -129,8 +129,8 @@ public class ExceptionScan_Panel extends JPanel {
 		imagePanel = new JPanel();
 		imagePanel.setBackground(Color.WHITE);
 		imagePanel.setBounds(0, 55, 1050, 551);
-		infoPanel.add(imagePanel);
 		imagePanel.setLayout(new BorderLayout(0, 0));
+		infoPanel.add(imagePanel);
 		
 		JLabel imageLabel = new JLabel();
 		imagePanel.add(imageLabel, BorderLayout.CENTER);
@@ -296,12 +296,14 @@ public class ExceptionScan_Panel extends JPanel {
 		inputFormPanel.add(form_InputPanel, "form_InputPanel");
 		
 		JLabel typeLabel2 = new JLabel("Modbus TCP");
+		typeLabel2.setForeground(Color.BLACK);
 		typeLabel2.setHorizontalAlignment(SwingConstants.LEFT);
 		typeLabel2.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		typeLabel2.setBounds(12, 10, 129, 31);
 		form_InputPanel.add(typeLabel2);
 		
 		JLabel transactionId_label = new JLabel("TID");
+		transactionId_label.setForeground(Color.BLACK);
 		transactionId_label.setHorizontalAlignment(SwingConstants.LEFT);
 		transactionId_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		transactionId_label.setBounds(131, 28, 26, 31);
@@ -378,12 +380,14 @@ public class ExceptionScan_Panel extends JPanel {
 		form_InputPanel.add(transactionId_text);
 		
 		JLabel unitId_label = new JLabel("\uC7A5\uBE44\uBC88\uD638");
+		unitId_label.setForeground(Color.BLACK);
 		unitId_label.setHorizontalAlignment(SwingConstants.LEFT);
 		unitId_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		unitId_label.setBounds(260, 28, 77, 31);
 		form_InputPanel.add(unitId_label);
 		
 		unitId_comboBox = new JComboBox();
+		unitId_comboBox.setForeground(Color.BLACK);
 		String[] unitIdValue = new String[255];
 		for(int i = 0; i < 255; i++) {
 			unitIdValue[i] = String.valueOf(i+1) + "¹ø";
@@ -396,6 +400,7 @@ public class ExceptionScan_Panel extends JPanel {
 		form_InputPanel.add(unitId_comboBox);
 		
 		JLabel startAddress_label = new JLabel("\uAC80\uC0AC \uC2DC\uC791\uC8FC\uC18C");
+		startAddress_label.setForeground(Color.BLACK);
 		startAddress_label.setHorizontalAlignment(SwingConstants.LEFT);
 		startAddress_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		startAddress_label.setBounds(55, 69, 107, 31);
@@ -516,12 +521,14 @@ public class ExceptionScan_Panel extends JPanel {
 		form_InputPanel.add(startAddress_text);
 		
 		JLabel functionCode_label = new JLabel("\uAE30\uB2A5\uCF54\uB4DC");
+		functionCode_label.setForeground(Color.BLACK);
 		functionCode_label.setHorizontalAlignment(SwingConstants.LEFT);
 		functionCode_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		functionCode_label.setBounds(432, 28, 77, 31);
 		form_InputPanel.add(functionCode_label);
 		
 		functionCode_comboBox = new JComboBox();
+		functionCode_comboBox.setForeground(Color.BLACK);
 		functionCode_comboBox.setBackground(Color.WHITE);		
 		functionCode_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		functionCode_comboBox.setModel(new DefaultComboBoxModel(new String[] {"01", "02", "03", "04"}));
@@ -548,12 +555,14 @@ public class ExceptionScan_Panel extends JPanel {
 		
 		
 		JLabel requestCount_label = new JLabel("\uAC80\uC0AC\uAC1C\uC218");
+		requestCount_label.setForeground(Color.BLACK);
 		requestCount_label.setHorizontalAlignment(SwingConstants.LEFT);
 		requestCount_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		requestCount_label.setBounds(432, 69, 77, 31);
 		form_InputPanel.add(requestCount_label);
 		
 		requestCount_comboBox = new JComboBox();		
+		requestCount_comboBox.setForeground(Color.BLACK);
 		String[] requestValue = new String[1000];
 		for(int i = 0; i < requestValue.length; i++) {
 			requestValue[i] = String.valueOf(i+1) + "°³";
@@ -771,6 +780,7 @@ public class ExceptionScan_Panel extends JPanel {
 		form_InputPanel.add(modbusAddress_label);
 		
 		JLabel timeout_label = new JLabel("\uD0C0\uC784\uC544\uC6C3");
+		timeout_label.setForeground(Color.BLACK);
 		timeout_label.setHorizontalAlignment(SwingConstants.LEFT);
 		timeout_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		timeout_label.setBounds(608, 28, 77, 31);
@@ -847,6 +857,7 @@ public class ExceptionScan_Panel extends JPanel {
 		form_InputPanel.add(timeout_text);
 		
 		JLabel interval_label = new JLabel("\uAC80\uC0AC\uAC04\uACA9");
+		interval_label.setForeground(Color.BLACK);
 		interval_label.setHorizontalAlignment(SwingConstants.LEFT);
 		interval_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		interval_label.setBounds(608, 69, 77, 31);
@@ -923,18 +934,21 @@ public class ExceptionScan_Panel extends JPanel {
 		form_InputPanel.add(interval_text);
 		
 		JLabel measureLabel = new JLabel("ms");
+		measureLabel.setForeground(Color.BLACK);
 		measureLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		measureLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		measureLabel.setBounds(759, 28, 35, 31);
 		form_InputPanel.add(measureLabel);
 		
 		JLabel measureLable2 = new JLabel("ms");
+		measureLable2.setForeground(Color.BLACK);
 		measureLable2.setHorizontalAlignment(SwingConstants.LEFT);
 		measureLable2.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		measureLable2.setBounds(759, 69, 35, 31);
 		form_InputPanel.add(measureLable2);
 		
 		autoTid_CheckBox = new JCheckBox("Auto TID OFF");
+		autoTid_CheckBox.setForeground(Color.BLACK);
 		autoTid_CheckBox.setFocusPainted(false);
 		autoTid_CheckBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 14));
 		autoTid_CheckBox.setBackground(Color.WHITE);
@@ -972,12 +986,14 @@ public class ExceptionScan_Panel extends JPanel {
 		typePanel.setLayout(null);
 		
 		JLabel modbusType = new JLabel("Modbus Type");
+		modbusType.setForeground(Color.BLACK);
 		modbusType.setHorizontalAlignment(SwingConstants.LEFT);
 		modbusType.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		modbusType.setBounds(12, 10, 129, 31);
 		typePanel.add(modbusType);
 		
 		radio_modbusTCP = new JRadioButton("Modbus TCP");
+		radio_modbusTCP.setForeground(Color.BLACK);
 		radio_modbusTCP.setBackground(Color.WHITE);
 		radio_modbusTCP.setHorizontalAlignment(SwingConstants.LEFT);
 		radio_modbusTCP.setSelected(true);
@@ -986,6 +1002,7 @@ public class ExceptionScan_Panel extends JPanel {
 		typePanel.add(radio_modbusTCP);
 		
 		radio_modbusRTU = new JRadioButton("Modbus RTU");
+		radio_modbusRTU.setForeground(Color.BLACK);
 		radio_modbusRTU.setBackground(Color.WHITE);
 		radio_modbusRTU.setHorizontalAlignment(SwingConstants.LEFT);
 		radio_modbusRTU.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
@@ -1160,6 +1177,7 @@ public class ExceptionScan_Panel extends JPanel {
 	
 	public static void resetTable(JTable table){
 		// Å×ÀÌºí Çì´õ ¼³Á¤
+		table.getTableHeader().setForeground(Color.BLACK);
 		table.getTableHeader().setBackground(new Color(255, 255, 153));
 		table.getTableHeader().setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		

@@ -101,6 +101,7 @@ public class RX_Analysis_Panel extends JPanel {
 		Info_panel.setLayout(null);
 		
 		JLabel info_label0 = new JLabel("Exception(\uC608\uC678 \uD328\uD0B7 \uC5EC\uBD80)");
+		info_label0.setForeground(Color.BLACK);
 		info_label0.setHorizontalAlignment(SwingConstants.LEFT);
 		info_label0.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		info_label0.setBorder(new EmptyBorder(0, 10, 0, 0));
@@ -108,12 +109,14 @@ public class RX_Analysis_Panel extends JPanel {
 		Info_panel.add(info_label0);
 		
 		JLabel info_value_label0 = new JLabel();		
+		info_value_label0.setForeground(Color.BLACK);
 		info_value_label0.setHorizontalAlignment(SwingConstants.CENTER);
 		info_value_label0.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		info_value_label0.setBounds(322, 0, 237, 40);
 		Info_panel.add(info_value_label0);
 		
 		JLabel info_label1 = new JLabel("Modbus Type(\uBAA8\uB4DC\uBC84\uC2A4 \uD0C0\uC785)");
+		info_label1.setForeground(Color.BLACK);
 		info_label1.setHorizontalAlignment(SwingConstants.LEFT);
 		info_label1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		info_label1.setBorder(new EmptyBorder(0, 10, 0, 0));
@@ -121,11 +124,13 @@ public class RX_Analysis_Panel extends JPanel {
 		Info_panel.add(info_label1);
 		
 		JLabel info_value_label1 = new JLabel();
+		info_value_label1.setForeground(Color.BLACK);
 		info_value_label1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		info_value_label1.setBounds(322, 42, 237, 40);
 		Info_panel.add(info_value_label1);
 		
 		JLabel info_label2 = new JLabel("Response Content(\uC751\uB2F5 \uB0B4\uC6A9)");
+		info_label2.setForeground(Color.BLACK);
 		info_label2.setBounds(0, 84, 322, 40);
 		info_label2.setBorder(new EmptyBorder(0, 10, 0, 0));
 		info_label2.setHorizontalAlignment(SwingConstants.LEFT);
@@ -133,11 +138,13 @@ public class RX_Analysis_Panel extends JPanel {
 		Info_panel.add(info_label2);
 		
 		JLabel info_value_label2 = new JLabel();
+		info_value_label2.setForeground(Color.BLACK);
 		info_value_label2.setBounds(322, 84, 237, 40);
 		info_value_label2.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		Info_panel.add(info_value_label2);
 		
 		JLabel info_label3 = new JLabel("Transaction ID(\uD2B8\uB79C\uC7AD\uC158 ID)");
+		info_label3.setForeground(Color.BLACK);
 		info_label3.setBounds(0, 124, 322, 40);
 		info_label3.setBorder(new EmptyBorder(0, 10, 0, 0));
 		info_label3.setHorizontalAlignment(SwingConstants.LEFT);
@@ -145,11 +152,13 @@ public class RX_Analysis_Panel extends JPanel {
 		Info_panel.add(info_label3);
 		
 		JLabel info_value_label3 = new JLabel();
+		info_value_label3.setForeground(Color.BLACK);
 		info_value_label3.setBounds(322, 124, 237, 40);
 		info_value_label3.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		Info_panel.add(info_value_label3);
 		
 		JLabel info_label4 = new JLabel("Unit ID(\uC7A5\uBE44\uBC88\uD638)");
+		info_label4.setForeground(Color.BLACK);
 		info_label4.setBounds(0, 164, 322, 40);
 		info_label4.setBorder(new EmptyBorder(0, 10, 0, 0));
 		info_label4.setHorizontalAlignment(SwingConstants.LEFT);
@@ -157,11 +166,13 @@ public class RX_Analysis_Panel extends JPanel {
 		Info_panel.add(info_label4);
 		
 		JLabel info_value_label4 = new JLabel();
+		info_value_label4.setForeground(Color.BLACK);
 		info_value_label4.setBounds(322, 164, 237, 40);
 		info_value_label4.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		Info_panel.add(info_value_label4);
 		
 		JLabel info_label5 = new JLabel("Function Code(\uAE30\uB2A5\uCF54\uB4DC)");
+		info_label5.setForeground(Color.BLACK);
 		info_label5.setBounds(0, 205, 322, 40);
 		info_label5.setBorder(new EmptyBorder(0, 10, 0, 0));
 		info_label5.setHorizontalAlignment(SwingConstants.LEFT);
@@ -169,11 +180,13 @@ public class RX_Analysis_Panel extends JPanel {
 		Info_panel.add(info_label5);
 		
 		JLabel info_value_label5 = new JLabel();
+		info_value_label5.setForeground(Color.BLACK);
 		info_value_label5.setBounds(322, 205, 237, 40);
 		info_value_label5.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		Info_panel.add(info_value_label5);
 		
 		JLabel info_label6 = new JLabel("Read Register Count(\uC77D\uC740 \uB808\uC9C0\uC2A4\uD130 \uAC1C\uC218)");
+		info_label6.setForeground(Color.BLACK);
 		info_label6.setBounds(0, 245, 322, 40);
 		info_label6.setBorder(new EmptyBorder(0, 10, 0, 0));
 		info_label6.setHorizontalAlignment(SwingConstants.LEFT);
@@ -181,11 +194,13 @@ public class RX_Analysis_Panel extends JPanel {
 		Info_panel.add(info_label6);
 		
 		JLabel info_value_label6 = new JLabel();
+		info_value_label6.setForeground(Color.BLACK);
 		info_value_label6.setBounds(322, 245, 237, 40);
 		info_value_label6.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		Info_panel.add(info_value_label6);
 		
 		JLabel info_label7 = new JLabel("Read Register Length(\uC77D\uC740 \uB808\uC9C0\uC2A4\uD130 \uAE38\uC774)");
+		info_label7.setForeground(Color.BLACK);
 		info_label7.setBounds(0, 280, 322, 44);
 		info_label7.setBorder(new EmptyBorder(0, 10, 0, 0));
 		info_label7.setHorizontalAlignment(SwingConstants.LEFT);
@@ -193,6 +208,7 @@ public class RX_Analysis_Panel extends JPanel {
 		Info_panel.add(info_label7);
 		
 		JLabel info_value_label7 = new JLabel();		
+		info_value_label7.setForeground(Color.BLACK);
 		info_value_label7.setHorizontalAlignment(SwingConstants.LEFT);
 		info_value_label7.setBounds(322, 280, 237, 44);
 		info_value_label7.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
@@ -211,12 +227,14 @@ public class RX_Analysis_Panel extends JPanel {
 		summary_panel.setLayout(null);
 		
 		JLabel summary_label0 = new JLabel("");
+		summary_label0.setForeground(Color.BLACK);
 		summary_label0.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		summary_label0.setBorder(new EmptyBorder(0, 10, 0, 0));
 		summary_label0.setBounds(0, 0, 998, 28);
 		summary_panel.add(summary_label0);
 		
 		JLabel summary_label1 = new JLabel("");
+		summary_label1.setForeground(Color.BLACK);
 		summary_label1.setBorder(new EmptyBorder(0, 10, 0, 0));
 		summary_label1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		summary_label1.setBounds(0, 30, 998, 28);
@@ -278,18 +296,21 @@ public class RX_Analysis_Panel extends JPanel {
 		inputPanel.setLayout(null);
 		
 		JLabel typeLabel = new JLabel("Modbus TCP");
+		typeLabel.setForeground(Color.BLACK);
 		typeLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		typeLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		typeLabel.setBounds(12, 10, 129, 31);
 		inputPanel.add(typeLabel);
 		
 		JLabel RX = new JLabel("RX");
+		RX.setForeground(Color.BLACK);
 		RX.setHorizontalAlignment(SwingConstants.LEFT);
 		RX.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		RX.setBounds(11, 53, 26, 31);
 		inputPanel.add(RX);
 		
 		inputTextField = new JTextField();
+		inputTextField.setForeground(Color.BLACK);
 		inputTextField.setBorder(UIManager.getBorder("TextField.border"));		
 		inputTextField.setHorizontalAlignment(SwingConstants.LEFT);
 		inputTextField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
@@ -765,6 +786,7 @@ public class RX_Analysis_Panel extends JPanel {
 		inputPanel.add(expression_label);
 		
 		expression_textField = new JTextField();		
+		expression_textField.setForeground(Color.BLACK);
 		expression_textField.setBackground(Color.WHITE);
 		expression_textField.setHorizontalAlignment(SwingConstants.LEFT);
 		expression_textField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
@@ -786,12 +808,14 @@ public class RX_Analysis_Panel extends JPanel {
 		typePanel.setLayout(null);
 		
 		JLabel modbusType = new JLabel("Modbus Type");
+		modbusType.setForeground(Color.BLACK);
 		modbusType.setHorizontalAlignment(SwingConstants.LEFT);
 		modbusType.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		modbusType.setBounds(12, 10, 129, 31);
 		typePanel.add(modbusType);
 		
 		JRadioButton radio_modbusTCP = new JRadioButton("Modbus TCP");
+		radio_modbusTCP.setForeground(Color.BLACK);
 		radio_modbusTCP.setBackground(Color.WHITE);
 		radio_modbusTCP.setHorizontalAlignment(SwingConstants.LEFT);
 		radio_modbusTCP.setSelected(true);
@@ -800,6 +824,7 @@ public class RX_Analysis_Panel extends JPanel {
 		typePanel.add(radio_modbusTCP);
 		
 		JRadioButton radio_modbusRTU = new JRadioButton("Modbus RTU");
+		radio_modbusRTU.setForeground(Color.BLACK);
 		radio_modbusRTU.setBackground(Color.WHITE);
 		radio_modbusRTU.setHorizontalAlignment(SwingConstants.LEFT);
 		radio_modbusRTU.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
@@ -874,6 +899,7 @@ public class RX_Analysis_Panel extends JPanel {
 	
 	public static void resetTable(JTable table){
 		// Å×ÀÌºí Çì´õ ¼³Á¤
+		table.getTableHeader().setForeground(Color.BLACK);
 		table.getTableHeader().setBackground(new Color(255, 255, 153));
 		table.getTableHeader().setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		

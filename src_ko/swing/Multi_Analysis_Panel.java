@@ -162,18 +162,21 @@ public class Multi_Analysis_Panel extends JPanel {
 		inputPanel.setLayout(null);
 		
 		JLabel typeLabel = new JLabel("Modbus TCP");
+		typeLabel.setForeground(Color.BLACK);
 		typeLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		typeLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		typeLabel.setBounds(12, 0, 129, 31);
 		inputPanel.add(typeLabel);
 		
 		JLabel TX = new JLabel("TX");
+		TX.setForeground(Color.BLACK);
 		TX.setHorizontalAlignment(SwingConstants.LEFT);
 		TX.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		TX.setBounds(12, 30, 26, 31);
 		inputPanel.add(TX);
 		
 		TXinputTextField = new JTextField();
+		TXinputTextField.setForeground(Color.BLACK);
 		TXinputTextField.setBorder(UIManager.getBorder("TextField.border"));		
 		TXinputTextField.setHorizontalAlignment(SwingConstants.LEFT);
 		TXinputTextField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
@@ -390,12 +393,14 @@ public class Multi_Analysis_Panel extends JPanel {
 		inputPanel.add(analysisButton);
 		
 		JLabel RX = new JLabel("RX");
+		RX.setForeground(Color.BLACK);
 		RX.setHorizontalAlignment(SwingConstants.LEFT);
 		RX.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		RX.setBounds(12, 68, 26, 31);
 		inputPanel.add(RX);
 		
 		RXinputTextField = new JTextField();
+		RXinputTextField.setForeground(Color.BLACK);
 		RXinputTextField.setHorizontalAlignment(SwingConstants.LEFT);
 		RXinputTextField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		RXinputTextField.setColumns(10);
@@ -429,6 +434,7 @@ public class Multi_Analysis_Panel extends JPanel {
 		inputPanel.add(expression_label);
 		
 		expression_textField = new JTextField();
+		expression_textField.setForeground(Color.BLACK);
 		expression_textField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 13));
 		expression_textField.setHorizontalAlignment(SwingConstants.LEFT);
 		expression_textField.setBackground(Color.WHITE);
@@ -449,12 +455,14 @@ public class Multi_Analysis_Panel extends JPanel {
 		typePanel.setLayout(null);
 		
 		JLabel modbusType = new JLabel("Modbus Type");
+		modbusType.setForeground(Color.BLACK);
 		modbusType.setHorizontalAlignment(SwingConstants.LEFT);
 		modbusType.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		modbusType.setBounds(12, 10, 129, 31);
 		typePanel.add(modbusType);
 		
 		JRadioButton radio_modbusTCP = new JRadioButton("Modbus TCP");
+		radio_modbusTCP.setForeground(Color.BLACK);
 		radio_modbusTCP.setBackground(Color.WHITE);
 		radio_modbusTCP.setHorizontalAlignment(SwingConstants.LEFT);
 		radio_modbusTCP.setSelected(true);
@@ -463,6 +471,7 @@ public class Multi_Analysis_Panel extends JPanel {
 		typePanel.add(radio_modbusTCP);
 		
 		JRadioButton radio_modbusRTU = new JRadioButton("Modbus RTU");
+		radio_modbusRTU.setForeground(Color.BLACK);
 		radio_modbusRTU.setBackground(Color.WHITE);
 		radio_modbusRTU.setHorizontalAlignment(SwingConstants.LEFT);
 		radio_modbusRTU.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
@@ -512,6 +521,7 @@ public class Multi_Analysis_Panel extends JPanel {
 	
 	public static void resetTable(JTable table){
 		// Å×ÀÌºí Çì´õ ¼³Á¤
+		table.getTableHeader().setForeground(Color.BLACK);
 		table.getTableHeader().setBackground(new Color(255, 255, 153));
 		table.getTableHeader().setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		
