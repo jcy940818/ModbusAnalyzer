@@ -12,7 +12,18 @@ import src_ko.swing.ModbusAgent_Panel;
 import src_ko.util.Util;
 
 public class ClientSocket extends Socket {
-			
+	
+	public static final String SOCKET_STATUS_BEFORE_CONNECTING = "접속 전";
+	public static final String SOCKET_STATUS_CONNECTED = "접속성공";
+	public static final String SOCKET_STATUS_CONNECTING = "접속중";
+	public static final String SOCKET_STATUS_COMMUNICATING = "통신중";
+	public static final String SOCKET_STATUS_COMMUNICATION_ERROR = "통신오류";
+	public static final String SOCKET_STATUS_CONNECTION_CLOSED = "접속종료";
+	public static final String SOCKET_STATUS_CONNECTION_FAILED = "접속실패";
+	public static final String SOCKET_STATUS_PING_FAILED = "ping 실패";
+	public static final String SOCKET_STATUS_WAITING_RESPONSE = "응답 대기중";
+	public static final String SOCKET_STATUS_CONNECTION_IS_CUT_OFF = "접속끊김";
+	
 	private static Font boldfont = new Font("맑은 고딕", Font.BOLD, 17);
 	
 	private static Socket clientSocket = null; 
@@ -53,18 +64,18 @@ public class ClientSocket extends Socket {
 	public static String getStringState(int state) {
 		String currentState = "";		
 		switch(state) {
-		case 0 : currentState = "접속 전"; break;
-		case 1 : currentState = "접속성공"; break;
-		case 2 : currentState = "접속중"; break;
-		case 3 : currentState = "통신중"; break;
-		case 4 : currentState = "통신오류"; break;
-		case 5 : currentState = "접속종료"; break;
-		case 6 : currentState = "접속실패"; break;
-		case 7 : currentState = "ping 실패"; break;
-		case 8 : currentState = "응답 대기중"; break;
-		case 9 : currentState = "접속끊김"; break;
+			case 0 : currentState = ClientSocket.SOCKET_STATUS_BEFORE_CONNECTING; break;
+			case 1 : currentState = ClientSocket.SOCKET_STATUS_CONNECTED; break;
+			case 2 : currentState = ClientSocket.SOCKET_STATUS_CONNECTING; break;
+			case 3 : currentState = ClientSocket.SOCKET_STATUS_COMMUNICATING; break;
+			case 4 : currentState = ClientSocket.SOCKET_STATUS_COMMUNICATION_ERROR; break;
+			case 5 : currentState = ClientSocket.SOCKET_STATUS_CONNECTION_CLOSED; break;
+			case 6 : currentState = ClientSocket.SOCKET_STATUS_CONNECTION_FAILED; break;
+			case 7 : currentState = ClientSocket.SOCKET_STATUS_PING_FAILED; break;
+			case 8 : currentState = ClientSocket.SOCKET_STATUS_WAITING_RESPONSE; break;
+			case 9 : currentState = ClientSocket.SOCKET_STATUS_CONNECTION_IS_CUT_OFF; break;
 		}
-		return currentState;		
+		return currentState;
 	}
 	
 	public static Socket getClientSocket(String ip, int port) {		
