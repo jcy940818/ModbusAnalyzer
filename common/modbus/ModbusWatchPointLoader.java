@@ -3,6 +3,7 @@ package common.modbus;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -11,7 +12,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import common.perf.FmsPerfConf;
 import common.perf.FmsPerfItem.EventInfo;
+import common.perf.Perf;
 import common.perf.PerfConf;
 import common.perf.PerfLabelStatusBean;
 
@@ -19,12 +22,12 @@ public class ModbusWatchPointLoader {
 	
 	public static void main(String[] args) {
 		try {
-			File file = new File("C:\\Users\\Moon\\Desktop\\moon file.xlsx");
-			ModbusWatchPoint[] items = loadModbusWatchPointXlsx(file);
+			File file = new File("C:\\OnionSoftware\\midknight\\conf\\ko\\fms\\GIMAC1000.xml");
+			ModbusWatchPoint[] items = loadModbusWatchPointXML(file, "euc-kr");
 			
 			for (int i = 0; i < items.length; i++) {
 
-				System.out.println(i + ". " + items[i].getDisplayName() + " === >" + items[i].getDecCounter() + " ==> " + items[i].getModbusAddr());
+				System.out.println(i + ". " + items[i].getDisplayName() + "  === >  " + items[i].getHexCounter() + "  ==>  " + items[i].getModbusAddr());
 
 			}
 			
@@ -119,6 +122,19 @@ public class ModbusWatchPointLoader {
 		}
 		
 		return modbusWps;
+    }
+    
+    
+    public static ModbusWatchPoint[] loadModbusWatchPointXML(File xmlFile, String encoding) throws IOException, ModbusWatchPointInitException{
+    	ArrayList<Perf> perfs = FmsPerfConf.getFmsPerfList(xmlFile, encoding);
+    	ModbusWatchPoint[] modbusWps = new ModbusWatchPoint[perfs.size()];
+    	
+    	for(int i = 0; i < perfs.size(); i++) {
+    		modbusWps[i] = new ModbusWatchPoint(perfs.get(i));
+    		modbusWps[i].init();
+    	}
+    	
+    	return modbusWps;
     }
    
     

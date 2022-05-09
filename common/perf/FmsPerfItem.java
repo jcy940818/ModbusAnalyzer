@@ -236,6 +236,8 @@ public class FmsPerfItem extends Perf {
 	}
 	
 	public PerfLabelStatusBean[] getStatusLabels() {
+		if(this.labels == null) return null;
+		
 		Arrays.sort(this.labels);
 		return this.labels;
 	}

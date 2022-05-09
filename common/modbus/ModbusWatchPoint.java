@@ -1,13 +1,11 @@
 package common.modbus;
 
-import com.serotonin.modbus4j.code.DataType;
-
 import common.agent.PerfData;
 import common.perf.FmsPerfItem;
+import common.perf.Perf;
 
 public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
-	
-	private int unitId;
+		
 	private int functionCode = 3;
 	private int registerAddr;
 	private int modbusAddr;
@@ -16,6 +14,23 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	
 	private String decCounter;
 	private String hexCounter;
+	
+	public ModbusWatchPoint() {
+		
+	}
+	
+	public ModbusWatchPoint(Perf perf) {
+		this.displayName = perf.getDisplayName();
+		this.counter = perf.getCounter();
+		this.interval = perf.getInterval();
+		this.measure = perf.getMeasure();
+		this.scaleFunc = perf.getScaleFunction();
+		this.dataFormat = perf.getDataFormat();
+		this.binLabel = perf.getBinLabel();
+		this.labels = perf.getStatusLabels();
+		this.evt = perf.getFmsEventInfo();
+		this.enable = perf.getEnable();
+	}
 	
 	@Override
 	public int compareTo(Object obj) {
@@ -70,13 +85,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			return 1;
 		}
 	}
-	
-	public int getUnitId() {
-		return unitId;
-	}
-	public void setUnitId(int unitId) {
-		this.unitId = unitId;
-	}
+		
 	public int getFunctionCode() {
 		return functionCode;
 	}
@@ -135,7 +144,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			int modbusAddr;
 			String dataType;
 			
-			String[] counterToken = this.getCounter().split("_");
+			String[] counterToken = this.getCounter().split("\\\\")[0].split("_");
 			
 			functionCode = Integer.parseInt(counterToken[0]);
 			
@@ -157,7 +166,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			this.setHexCounter(functionCode + "_" + (this.getRegisterAddrString()) + "_" + dataType);
 			
 		}catch(Exception e) {
-			throw new ModbusWatchPointInitException(this.getDisplayName());
+			throw new ModbusWatchPointInitException("Modbus Watch Point Initialization Error : \"" + this.getDisplayName() + "\"");
 			
 		}
 	}
