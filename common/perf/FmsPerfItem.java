@@ -200,6 +200,10 @@ public class FmsPerfItem extends Perf {
 		return this.displayName;
 	};
 
+	public void setCounter(String counter) {
+		this.counter = counter;
+	}
+	
 	public String getCounter() {
 		return this.counter;
 	}

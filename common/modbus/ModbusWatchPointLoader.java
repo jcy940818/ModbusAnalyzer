@@ -15,15 +15,17 @@ import common.perf.FmsPerfItem.EventInfo;
 import common.perf.PerfConf;
 import common.perf.PerfLabelStatusBean;
 
-public class ModbusPointLoader {
+public class ModbusWatchPointLoader {
 	
 	public static void main(String[] args) {
 		try {
-			File file = new File("path");
+			File file = new File("C:\\Users\\Moon\\Desktop\\moon file.xlsx");
 			ModbusWatchPoint[] items = loadModbusWatchPointXlsx(file);
 			
-			for(int i = 0; i < items.length; i++) {
-				System.out.println(i + " : " + items[i] + ", counter = " + items[i].getCounter());
+			for (int i = 0; i < items.length; i++) {
+
+				System.out.println(i + ". " + items[i].getDisplayName() + " === >" + items[i].getDecCounter() + " ==> " + items[i].getModbusAddr());
+
 			}
 			
 		}catch(Exception e) {
@@ -31,7 +33,7 @@ public class ModbusPointLoader {
 		}
 	}
         
-    public static ModbusWatchPoint[] loadModbusWatchPointXlsx(File xlsxFile) throws IOException{
+    public static ModbusWatchPoint[] loadModbusWatchPointXlsx(File xlsxFile) throws IOException, ModbusWatchPointInitException{
 		FileInputStream inputStream = new FileInputStream(xlsxFile);
 		Workbook workbook = new XSSFWorkbook(inputStream);
 		Sheet sheet = workbook.getSheetAt(0);
@@ -48,8 +50,9 @@ public class ModbusPointLoader {
 				throw new IOException(Integer.toString(i+1) + "번째 행의 성능 이름이 없습니다");
 			
 			modbusWps[i - 2].displayName = row.getCell(1).getStringCellValue();
+			
 			if (row.getCell(2) == null)
-				throw new IOException(Integer.toString(i+1) + "번째 행의 성능 카운터가 없습니다");
+				throw new IOException(Integer.toString(i+1) + "번째 행 (" + modbusWps[i - 2].displayName + ")의 성능 카운터가 없습니다");
 			
 			String counter = "";
 			counter += Integer.toString((int) row.getCell(2).getNumericCellValue()) + "_";
@@ -75,7 +78,7 @@ public class ModbusPointLoader {
 						j++;
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
-					throw new IOException(Integer.toString(i+1) + "번째 행의 다중 성능 상태 라벨이 잘못되었습니다");
+					throw new IOException(Integer.toString(i+1) + "번째 행 (" + modbusWps[i - 2].displayName + ")의 다중 성능 상태 라벨이 잘못되었습니다");
 				}
 				modbusWps[i - 2].labels = statusLabels;
 			} else if (row.getCell(8) != null && row.getCell(9) != null) {
@@ -103,12 +106,19 @@ public class ModbusPointLoader {
 					evt.autoClose = row.getCell(22).getBooleanCellValue();
 					modbusWps[i - 2].evt = new EventInfo[] { evt };
 				} catch (NullPointerException e) {
-					throw new IOException(Integer.toString(i+1) + "번째 행의 이벤트 정보가 잘못되었습니다.");
+					throw new IOException(Integer.toString(i+1) + "번째 행 (" + modbusWps[i - 2].displayName + ")의 이벤트 정보가 잘못되었습니다");
 				}
 			}
 		}
 		
-		return trimWatchPointArray(modbusWps);
+		modbusWps = trimWatchPointArray(modbusWps); 
+		
+		// 모드버스 정보 초기화
+		for(ModbusWatchPoint modbusWp : modbusWps) {
+			modbusWp.init();
+		}
+		
+		return modbusWps;
     }
    
     

@@ -1,16 +1,21 @@
 package common.modbus;
 
+import com.serotonin.modbus4j.code.DataType;
+
 import common.agent.PerfData;
 import common.perf.FmsPerfItem;
 
 public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	
 	private int unitId;
-	private int functionCode;
+	private int functionCode = 3;
 	private int registerAddr;
 	private int modbusAddr;
 	private String dataType;
 	private PerfData data;
+	
+	private String decCounter;
+	private String hexCounter;
 	
 	@Override
 	public int compareTo(Object obj) {
@@ -79,7 +84,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 		this.functionCode = functionCode;
 	}
 	public int getRegisterAddr() {
-		return registerAddr;
+		return registerAddr & 0xffff;
 	}
 	public void setRegisterAddr(int registerAddr) {
 		this.registerAddr = registerAddr;
@@ -102,8 +107,78 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	public void setData(PerfData data) {
 		this.data = data;
 	}
-	public Object getContent() {
+	public String getDecCounter() {
+		return decCounter;
+	}
+
+	public String getHexCounter() {
+		return hexCounter;
+	}
+
+	public void setDecCounter(String decCounter) {
+		this.decCounter = decCounter;
+	}
+
+	public void setHexCounter(String hexCounter) {
+		this.hexCounter = hexCounter;
+	}
+
+	public Object getDataContent() {
 		return PerfData.getPerfLastContent(this, this.data);
+	}
+	
+	public void init() throws ModbusWatchPointInitException{
+		
+		try {			
+			int functionCode;
+			int registerAddr;
+			int modbusAddr;
+			String dataType;
+			
+			String[] counterToken = this.getCounter().split("_");
+			
+			functionCode = Integer.parseInt(counterToken[0]);
+			
+			if (counterToken[1].startsWith("0x") || counterToken[1].startsWith("0X")) {
+				registerAddr = Integer.parseInt(counterToken[1].replace("0x", "").replace("0X", ""), 16);
+			} else {
+				registerAddr = Integer.parseInt(counterToken[1]);
+				registerAddr %= 10000;
+				registerAddr--;
+			}
+	
+			dataType = counterToken[2];
+			
+			this.setFunctionCode(functionCode);
+			this.setRegisterAddr(registerAddr);
+			this.setModbusAddr(Integer.parseInt(this.getModbusAddrString()));
+			this.setDataType(dataType);
+			this.setDecCounter(functionCode + "_" + (this.getRegisterAddr() + 1) + "_" + dataType);
+			this.setHexCounter(functionCode + "_" + (this.getRegisterAddrString()) + "_" + dataType);
+			
+		}catch(Exception e) {
+			throw new ModbusWatchPointInitException(this.getDisplayName());
+			
+		}
+	}
+	
+	public String getRegisterAddrString() {
+		return String.format("0x%04X", this.getRegisterAddr());
+	}
+	
+	public String getModbusAddrString() {
+		String modbus = "";
+		
+		switch(this.getFunctionCode()) {
+			case 1: modbus = "0"; break;
+			case 2: modbus = "1"; break;
+			case 3: modbus = "4"; break;
+			case 4: modbus = "3"; break;
+			case 5: modbus = "0"; break;
+			case 6: modbus = "4"; break;
+		}
+		
+		return String.format("%s%04d", modbus, this.getRegisterAddr() + 1);
 	}
 	
 }
