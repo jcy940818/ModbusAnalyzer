@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -17,10 +18,17 @@ import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
+import common.modbus.ModbusWatchPoint;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
+import javax.swing.JTextField;
+import javax.swing.JScrollPane;
 
 public class AddModbusPointFrame extends JFrame {
 
@@ -28,7 +36,7 @@ public class AddModbusPointFrame extends JFrame {
 	public static boolean isExist = false;
 	private JPanel contentPane;
 	private JButton mk119Button;
-	private JTable table; // frame마다 XML 인스턴스를 가져야 하므로 table 필드는 static 속성을 가질 수 없다
+	private JTable table;
 
 	private JRadioButton mk_V4_RaidoButton;
 	private JRadioButton mk_V10_RaidoButton;
@@ -36,8 +44,14 @@ public class AddModbusPointFrame extends JFrame {
 	private JButton upload_protocol;
 	private JButton upload_xml;
 	private JButton upload_excel;
-	
 	private JButton download_template;
+	
+	private JTextField search_textField;
+	private JTable point_table;
+	
+	
+	private ArrayList<ModbusWatchPoint> left_point = new ArrayList<ModbusWatchPoint>();
+	private ArrayList<ModbusWatchPoint> right_point = new ArrayList<ModbusWatchPoint>();
 	
 	/**
 	 * Launch the application.
@@ -65,7 +79,7 @@ public class AddModbusPointFrame extends JFrame {
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
 				
-		setBounds(100, 100, 1009, 676);
+		setBounds(100, 100, 1140, 733);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new LineBorder(new Color(255, 140, 0), 8));
@@ -96,16 +110,17 @@ public class AddModbusPointFrame extends JFrame {
 		mk119Button.setContentAreaFilled(false);
 		mk119Button.setBorder(UIManager.getBorder("Button.border"));
 		mk119Button.setBackground(Color.WHITE);
-		mk119Button.setBounds(786, 11, 189, 36);		
+		mk119Button.setBounds(917, 11, 189, 36);		
 		actualPanel.add(mk119Button);
 		
 		JPanel backGround_Panel = new JPanel();
 		backGround_Panel.setBackground(Color.LIGHT_GRAY);
-		backGround_Panel.setBounds(10, 57, 965, 564);
+		backGround_Panel.setBounds(10, 57, 1096, 621);
 		actualPanel.add(backGround_Panel);
 		backGround_Panel.setLayout(null);
 		
 		JPanel mk119Version_Panel = new JPanel();
+		mk119Version_Panel.setBorder(new LineBorder(Color.BLACK, 2));
 		mk119Version_Panel.setBackground(Color.WHITE);
 		mk119Version_Panel.setBounds(12, 10, 200, 106);
 		backGround_Panel.add(mk119Version_Panel);
@@ -135,7 +150,7 @@ public class AddModbusPointFrame extends JFrame {
 		mk_V4_RaidoButton.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		mk_V4_RaidoButton.setForeground(mkColor);
 		mk_V4_RaidoButton.setBackground(Color.WHITE);
-		mk_V4_RaidoButton.setBounds(25, 45, 170, 23);
+		mk_V4_RaidoButton.setBounds(25, 44, 170, 23);
 		mk_V4_RaidoButton.setFocusPainted(false);
 		mk_V4_RaidoButton.addActionListener(mkVerionListener);
 		mk119Version_Panel.add(mk_V4_RaidoButton);
@@ -145,7 +160,7 @@ public class AddModbusPointFrame extends JFrame {
 		mk_V10_RaidoButton.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		mk_V10_RaidoButton.setForeground(Color.LIGHT_GRAY);
 		mk_V10_RaidoButton.setBackground(Color.WHITE);
-		mk_V10_RaidoButton.setBounds(25, 75, 170, 23);
+		mk_V10_RaidoButton.setBounds(25, 73, 170, 23);
 		mk_V10_RaidoButton.setFocusPainted(false);
 		mk_V10_RaidoButton.addActionListener(mkVerionListener);
 		mk119Version_Panel.add(mk_V10_RaidoButton);
@@ -155,36 +170,37 @@ public class AddModbusPointFrame extends JFrame {
 		group.add(mk_V10_RaidoButton);
 		
 		JPanel uploadMethod_Panel = new JPanel();
+		uploadMethod_Panel.setBorder(new LineBorder(Color.BLACK, 2));
 		uploadMethod_Panel.setBackground(Color.WHITE);
-		uploadMethod_Panel.setBounds(224, 10, 729, 106);
+		uploadMethod_Panel.setBounds(224, 10, 860, 106);
 		backGround_Panel.add(uploadMethod_Panel);
 		uploadMethod_Panel.setLayout(null);
 		
-		upload_protocol = new JButton("Protocol");
+		upload_protocol = new JButton(" Protocol");
 		upload_protocol.setForeground(Color.BLACK);
 		upload_protocol.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		upload_protocol.setFocusPainted(false);
 		upload_protocol.setIcon(new Util().getFolder2Image());
 		upload_protocol.setBackground(Color.WHITE);
-		upload_protocol.setBounds(12, 10, 177, 86);
+		upload_protocol.setBounds(12, 10, 222, 86);
 		uploadMethod_Panel.add(upload_protocol);
 		
-		upload_xml = new JButton( " XML");
+		upload_xml = new JButton( "  XML");
 		upload_xml.setForeground(Color.BLACK);
 		upload_xml.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		upload_xml.setFocusPainted(false);
 		upload_xml.setIcon(new Util().getXMLImage());
 		upload_xml.setBackground(Color.WHITE);
-		upload_xml.setBounds(201, 10, 145, 86);
+		upload_xml.setBounds(246, 10, 193, 86);
 		uploadMethod_Panel.add(upload_xml);
 		
-		upload_excel = new JButton(" Excel");
+		upload_excel = new JButton("  Excel");
 		upload_excel.setForeground(Color.BLACK);
 		upload_excel.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		upload_excel.setFocusPainted(false);
 		upload_excel.setIcon(new Util().getExcelImage());
 		upload_excel.setBackground(Color.WHITE);
-		upload_excel.setBounds(358, 10, 158, 86);
+		upload_excel.setBounds(451, 10, 196, 86);
 		uploadMethod_Panel.add(upload_excel);
 		
 		download_template = new JButton("<html>&nbsp;Template<br>&nbsp;Download</html>");
@@ -193,7 +209,7 @@ public class AddModbusPointFrame extends JFrame {
 		download_template.setForeground(Color.BLUE);
 		download_template.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		download_template.setBackground(Color.WHITE);
-		download_template.setBounds(528, 10, 189, 86);
+		download_template.setBounds(659, 10, 189, 86);
 		download_template.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -210,7 +226,31 @@ public class AddModbusPointFrame extends JFrame {
 			}
 		});
 		uploadMethod_Panel.add(download_template);
-			
+		
+		search_textField = new JTextField();
+		search_textField.setBounds(84, 139, 294, 28);
+		search_textField.setHorizontalAlignment(SwingConstants.LEFT);
+		search_textField.setForeground(Color.BLACK);
+		search_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
+		search_textField.setColumns(10);
+		search_textField.addFocusListener(Util.focusListener);
+		backGround_Panel.add(search_textField);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(12, 171, 1072, 440);
+		backGround_Panel.add(scrollPane);
+		
+		point_table = new JTable();
+		scrollPane.setViewportView(point_table);
+		initTable(point_table);
+		
+		JLabel lblNewLabel = new JLabel("Search");
+		lblNewLabel.setForeground(Color.BLACK);
+		lblNewLabel.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		lblNewLabel.setBackground(Color.LIGHT_GRAY);
+		lblNewLabel.setBounds(17, 138, 90, 28);
+		backGround_Panel.add(lblNewLabel);
+		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -222,6 +262,66 @@ public class AddModbusPointFrame extends JFrame {
 		super.dispose();
 	}
 	
+	public void initTable(JTable table) {
+		table.setModel(new DefaultTableModel(
+				null,
+				new String[] {
+					"index",
+					"Modbus Point",
+					"Function Code", 
+					"Register", 
+					"Modbus",
+					"Data Type"
+				}
+		) {
+			// 테이블 셀 내용 수정 금지
+			public boolean isCellEditable(int i, int c) {
+				return false;
+			}
+		});
+		
+		setTableStyle(table);
+	}
+	
+	public static void setTableStyle(JTable table) {		
+		// 테이블 헤더 설정
+		table.getTableHeader().setForeground(Color.BLACK);
+		table.getTableHeader().setBackground(new Color(255, 255, 153));
+		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 15));	
+		
+		// 셀 이동 불가
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(true);
+		table.setRowSelectionAllowed(false);
+		table.setCellSelectionEnabled(true);
+		
+		// 테이블 셀 설정
+		table.setBorder(new EmptyBorder(0, 3, 0, 0));
+		table.setRowMargin(3);
+		table.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
+		table.setRowHeight(25);
+		
+		// 테이블 셀 크기 설정
+		table.getColumnModel().getColumn(0).setPreferredWidth(30); // 순 서
+		table.getColumnModel().getColumn(1).setPreferredWidth(400); // 성능명
+		table.getColumnModel().getColumn(2).setPreferredWidth(80); // 기능 코드
+		table.getColumnModel().getColumn(3).setPreferredWidth(50); // 레지스터 주소
+		table.getColumnModel().getColumn(4).setPreferredWidth(50); // 모드버스 주소
+		table.getColumnModel().getColumn(5).setPreferredWidth(200); // 데이터 타입
+		
+		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
+		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
+
+		// DefaultTableCellHeaderRenderer의 정렬을 가운데 정렬로 지정
+		tScheduleCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+		// 정렬할 테이블의 ColumnModel을 가져옴
+		TableColumnModel tcmSchedule = table.getColumnModel();
+		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 프로토콜 번호
+		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 시설물 종류
+	}
+	
+	// 라디오 버튼 액션 이벤트 리스너
 	ActionListener mkVerionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
