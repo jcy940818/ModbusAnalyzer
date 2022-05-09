@@ -138,7 +138,16 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	
 	public void init() throws ModbusWatchPointInitException{
 		
-		try {			
+		try {
+			
+			// 모드버스 관제점 드라이버 코드 유효성 검사
+			if(!this.getCounter().contains("_")) {
+				throw new ModbusWatchPointInitException();
+				
+			}else if(this.getCounter().split("_").length != 3){
+				throw new ModbusWatchPointInitException();
+			}
+			
 			int functionCode;
 			int registerAddr;
 			int modbusAddr;
@@ -147,6 +156,11 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			String[] counterToken = this.getCounter().split("\\\\")[0].split("_");
 			
 			functionCode = Integer.parseInt(counterToken[0]);
+			
+			// 기능 코드 : FC01 ~ FC04
+			if(functionCode < 1 || functionCode > 4) {
+				throw new ModbusWatchPointInitException();
+			}
 			
 			if (counterToken[1].startsWith("0x") || counterToken[1].startsWith("0X")) {
 				registerAddr = Integer.parseInt(counterToken[1].replace("0x", "").replace("0X", ""), 16);

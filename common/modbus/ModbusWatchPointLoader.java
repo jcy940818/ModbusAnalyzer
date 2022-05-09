@@ -22,7 +22,7 @@ public class ModbusWatchPointLoader {
 	
 	public static void main(String[] args) {
 		try {
-			File file = new File("C:\\OnionSoftware\\midknight\\conf\\ko\\fms\\GIMAC1000.xml");
+			File file = new File("C:\\OnionSoftware\\midknight\\conf\\ko\\fms\\AR56_COMP.xml");
 			ModbusWatchPoint[] items = loadModbusWatchPointXML(file, "euc-kr");
 			
 			for (int i = 0; i < items.length; i++) {
