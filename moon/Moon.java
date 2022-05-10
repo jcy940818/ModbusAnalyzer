@@ -58,7 +58,7 @@ public class Moon {
 								try {			
 									Thread.sleep(500);
 									
-									if (currentLanguage.equalsIgnoreCase(Moon.KO)) {
+									if (Moon.isKorean()) {
 										updateTitle(mainFrame, ko);												
 									}else {
 										updateTitle(mainFrame, en);										
@@ -77,6 +77,10 @@ public class Moon {
 				}
 			}
 		});				
+	}
+	
+	public static boolean isKorean() {
+		return currentLanguage.equalsIgnoreCase(Moon.KO);
 	}
 	
 	public static void initFrame(JFrame frame) {
