@@ -392,14 +392,10 @@ public class AddModbusPointFrame extends JFrame {
 			System.out.println(e.getMessage());
 			
 			StringBuilder sb = new StringBuilder();
-			sb.append(String.format("%s\n", Util.colorRed("Modbus Watch Point Initialization Error")));
-			sb.append(String.format("아래의 모드버스 포인트 정보를 초기화중 오류가 발생하였습니다%s%s\n\n", Util.separator, Util.separator));	
-			sb.append(String.format("%s : %s%s%s\n",
-					Util.colorBlue("모드버스 포인트"),
-					e.getMessage(),
-					Util.separator,
-					Util.separator));
-			
+			sb.append(String.format("%s\n", Util.colorRed("Modbus Watch Point Initialization Error")));				
+			sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), e.getMessage(), Util.separator, Util.separator));			
+			sb.append(String.format("위의 모드버스 포인트 정보를 초기화 하는중 오류가 발생하였습니다%s%s\n", Util.separator, Util.separator));
+
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 			
 		}catch(Exception e) {
