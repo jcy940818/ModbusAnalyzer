@@ -177,15 +177,15 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			this.setModbusAddr(Integer.parseInt(this.getModbusAddrString()));
 			this.setDataType(dataType);
 			this.setDecCounter(functionCode + "_" + (this.getRegisterAddr() + 1) + "_" + dataType);
-			this.setHexCounter(functionCode + "_" + (this.getRegisterAddrString()) + "_" + dataType);
+			this.setHexCounter(functionCode + "_" + (this.getRegisterAddrHexString()) + "_" + dataType);
 			
 		}catch(Exception e) {
-			throw new ModbusWatchPointInitException("Modbus Watch Point Initialization Error : \"" + this.getDisplayName() + "\"");
+			throw new ModbusWatchPointInitException(this.getDisplayName());
 			
 		}
 	}
 	
-	public String getRegisterAddrString() {
+	public String getRegisterAddrHexString() {
 		return String.format("0x%04X", this.getRegisterAddr());
 	}
 	

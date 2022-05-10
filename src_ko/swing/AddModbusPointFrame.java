@@ -8,14 +8,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
@@ -25,13 +29,15 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import common.modbus.ModbusWatchPoint;
+import common.modbus.ModbusWatchPointInitException;
+import common.modbus.ModbusWatchPointLoader;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
-import javax.swing.JTextField;
-import javax.swing.JScrollPane;
 
 public class AddModbusPointFrame extends JFrame {
 
+	private ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();
+	
 	private Color mkColor = new Color(237, 76, 55);
 	public static boolean isExist = false;
 	private JPanel contentPane;
@@ -122,45 +128,27 @@ public class AddModbusPointFrame extends JFrame {
 		JPanel mk119Version_Panel = new JPanel();
 		mk119Version_Panel.setBorder(new LineBorder(Color.BLACK, 2));
 		mk119Version_Panel.setBackground(Color.WHITE);
-		mk119Version_Panel.setBounds(12, 10, 200, 106);
+		mk119Version_Panel.setBounds(12, 10, 200, 84);
 		backGround_Panel.add(mk119Version_Panel);
 		mk119Version_Panel.setLayout(null);
-		
-		JLabel mk119Logo = new JLabel();		
-		mk119Logo.setBackground(Color.WHITE);
-		mk119Logo.setFont(new Font("맑은 고딕", Font.BOLD, 20));
-		mk119Logo.setHorizontalAlignment(SwingConstants.LEFT);
-		mk119Logo.setForeground(Color.BLACK);
-		mk119Logo.setIcon(new Util().getMK2Resource());
-		mk119Logo.setBounds(12, 10, 85, 26);
-		mk119Version_Panel.add(mk119Logo);
-		
-		JLabel mk119Version = new JLabel();
-		mk119Version.setBackground(Color.WHITE);
-		mk119Version.setText("Version");
-		mk119Version.setForeground(mkColor);
-		mk119Version.setHorizontalAlignment(SwingConstants.LEFT);		
-		mk119Version.setFont(new Font("맑은 고딕", Font.BOLD, 20));
-		mk119Version.setBounds(92, 8, 94, 26);
-		mk119Version_Panel.add(mk119Version);
 		
 		mk_V4_RaidoButton = new JRadioButton("MK119  V4");
 		mk_V4_RaidoButton.setSelected(true);
 		mk_V4_RaidoButton.setHorizontalAlignment(SwingConstants.LEFT);
-		mk_V4_RaidoButton.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		mk_V4_RaidoButton.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		mk_V4_RaidoButton.setForeground(mkColor);
 		mk_V4_RaidoButton.setBackground(Color.WHITE);
-		mk_V4_RaidoButton.setBounds(25, 44, 170, 23);
+		mk_V4_RaidoButton.setBounds(12, 13, 170, 23);
 		mk_V4_RaidoButton.setFocusPainted(false);
 		mk_V4_RaidoButton.addActionListener(mkVerionListener);
 		mk119Version_Panel.add(mk_V4_RaidoButton);
 		
 		mk_V10_RaidoButton = new JRadioButton("MK119  V10");
 		mk_V10_RaidoButton.setHorizontalAlignment(SwingConstants.LEFT);
-		mk_V10_RaidoButton.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		mk_V10_RaidoButton.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		mk_V10_RaidoButton.setForeground(Color.LIGHT_GRAY);
 		mk_V10_RaidoButton.setBackground(Color.WHITE);
-		mk_V10_RaidoButton.setBounds(25, 73, 170, 23);
+		mk_V10_RaidoButton.setBounds(12, 47, 170, 23);
 		mk_V10_RaidoButton.setFocusPainted(false);
 		mk_V10_RaidoButton.addActionListener(mkVerionListener);
 		mk119Version_Panel.add(mk_V10_RaidoButton);
@@ -172,7 +160,7 @@ public class AddModbusPointFrame extends JFrame {
 		JPanel uploadMethod_Panel = new JPanel();
 		uploadMethod_Panel.setBorder(new LineBorder(Color.BLACK, 2));
 		uploadMethod_Panel.setBackground(Color.WHITE);
-		uploadMethod_Panel.setBounds(224, 10, 860, 106);
+		uploadMethod_Panel.setBounds(224, 10, 860, 84);
 		backGround_Panel.add(uploadMethod_Panel);
 		uploadMethod_Panel.setLayout(null);
 		
@@ -182,7 +170,7 @@ public class AddModbusPointFrame extends JFrame {
 		upload_protocol.setFocusPainted(false);
 		upload_protocol.setIcon(new Util().getFolder2Image());
 		upload_protocol.setBackground(Color.WHITE);
-		upload_protocol.setBounds(12, 10, 222, 86);
+		upload_protocol.setBounds(12, 10, 222, 66);
 		uploadMethod_Panel.add(upload_protocol);
 		
 		upload_xml = new JButton( "  XML");
@@ -191,7 +179,13 @@ public class AddModbusPointFrame extends JFrame {
 		upload_xml.setFocusPainted(false);
 		upload_xml.setIcon(new Util().getXMLImage());
 		upload_xml.setBackground(Color.WHITE);
-		upload_xml.setBounds(246, 10, 193, 86);
+		upload_xml.setBounds(246, 10, 193, 66);
+		upload_xml.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				pointUploadXml();
+			}
+		});
 		uploadMethod_Panel.add(upload_xml);
 		
 		upload_excel = new JButton("  Excel");
@@ -200,20 +194,20 @@ public class AddModbusPointFrame extends JFrame {
 		upload_excel.setFocusPainted(false);
 		upload_excel.setIcon(new Util().getExcelImage());
 		upload_excel.setBackground(Color.WHITE);
-		upload_excel.setBounds(451, 10, 196, 86);
+		upload_excel.setBounds(451, 10, 196, 66);
 		uploadMethod_Panel.add(upload_excel);
 		
 		download_template = new JButton("<html>&nbsp;Template<br>&nbsp;Download</html>");
 		download_template.setIcon(new Util().getExcelImage());
 		download_template.setFocusPainted(false);
 		download_template.setForeground(Color.BLUE);
-		download_template.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		download_template.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		download_template.setBackground(Color.WHITE);
-		download_template.setBounds(659, 10, 189, 86);
+		download_template.setBounds(659, 10, 189, 66);
 		download_template.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				File file = new File("C:\\4.2\\ModbusAnalyzer\\MODBUS 양식.xlsx");
+				File file = new File("경로\\템플릿 파일.xlsx");
 				String path = Util.getFilePath();
 				
 				if(path != null) {
@@ -228,28 +222,29 @@ public class AddModbusPointFrame extends JFrame {
 		uploadMethod_Panel.add(download_template);
 		
 		search_textField = new JTextField();
-		search_textField.setBounds(84, 139, 294, 28);
+		search_textField.setBounds(84, 115, 294, 28);
 		search_textField.setHorizontalAlignment(SwingConstants.LEFT);
 		search_textField.setForeground(Color.BLACK);
 		search_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		search_textField.setColumns(10);
 		search_textField.addFocusListener(Util.focusListener);
-		backGround_Panel.add(search_textField);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(12, 171, 1072, 440);
-		backGround_Panel.add(scrollPane);
-		
-		point_table = new JTable();
-		scrollPane.setViewportView(point_table);
-		initTable(point_table);
 		
 		JLabel lblNewLabel = new JLabel("Search");
 		lblNewLabel.setForeground(Color.BLACK);
 		lblNewLabel.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		lblNewLabel.setBackground(Color.LIGHT_GRAY);
-		lblNewLabel.setBounds(17, 138, 90, 28);
+		lblNewLabel.setBounds(22, 114, 90, 28);
 		backGround_Panel.add(lblNewLabel);
+		backGround_Panel.add(search_textField);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
+		scrollPane.setBounds(12, 147, 1072, 464);
+		backGround_Panel.add(scrollPane);
+		
+		point_table = new JTable();
+		scrollPane.setViewportView(point_table);
+		resetTable(point_table);
 		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
@@ -262,7 +257,7 @@ public class AddModbusPointFrame extends JFrame {
 		super.dispose();
 	}
 	
-	public void initTable(JTable table) {
+	public void resetTable(JTable table) {
 		table.setModel(new DefaultTableModel(
 				null,
 				new String[] {
@@ -317,8 +312,12 @@ public class AddModbusPointFrame extends JFrame {
 
 		// 정렬할 테이블의 ColumnModel을 가져옴
 		TableColumnModel tcmSchedule = table.getColumnModel();
-		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 프로토콜 번호
-		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 시설물 종류
+		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
+//		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 
+		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 성능명 
+		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 레지스터 주소
+		tcmSchedule.getColumn(4).setCellRenderer(tScheduleCellRenderer); // 모드버스 주소
+		tcmSchedule.getColumn(5).setCellRenderer(tScheduleCellRenderer); // 데이터 타입
 	}
 	
 	// 라디오 버튼 액션 이벤트 리스너
@@ -343,4 +342,134 @@ public class AddModbusPointFrame extends JFrame {
 			
 		}
 	};
+	
+	
+	public void pointUploadXml() {
+		try {
+			String path = Util.getFilePath();
+			String encoding = "euc-kr";
+			File xmlFile = null;
+			
+			if (path == null || path.length() < 1) {
+				return;
+			}else {
+				xmlFile = new File(path);
+				
+				if(xmlFile == null || !xmlFile.exists()) {
+					return;
+				}
+				
+				StringBuilder msg = new StringBuilder();
+				msg.append("<font color='Green'>XML File Encoding</font>\n");
+				msg.append("XML 파일의 인코딩 방식을 선택해주세요" + Util.separator + Util.separator +"\n");
+
+				int menu = Util.showOption(msg.toString(), new String[] { "EUC-KR", "UTF-8"}, JOptionPane.QUESTION_MESSAGE);
+
+				switch (menu) {
+					case 0: // 첫 번째 버튼 : EUC-KR
+						encoding = "euc-kr";
+						break;
+						
+					case 1: // 두 번째 버튼
+						encoding = "utf-8";
+						break;
+						
+					default :
+						return;
+				}
+			}
+
+			ModbusWatchPoint[] modbusWps = ModbusWatchPointLoader.loadModbusWatchPointXML(xmlFile, encoding);
+			
+			if(modbusWps != null) {
+				resetTable(point_table);
+				addRecord(point_table, modbusWps);
+			}
+			
+			setTableStyle(point_table);
+			
+		}catch(ModbusWatchPointInitException e) {
+			System.out.println(e.getMessage());
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("%s\n", Util.colorRed("Modbus Watch Point Initialization Error")));
+			sb.append(String.format("아래의 모드버스 포인트 정보를 초기화중 오류가 발생하였습니다%s%s\n\n", Util.separator, Util.separator));	
+			sb.append(String.format("%s : %s%s%s\n",
+					Util.colorBlue("모드버스 포인트"),
+					e.getMessage(),
+					Util.separator,
+					Util.separator));
+			
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			
+		}
+	}
+	
+	
+	/**
+	 * 	레코드 추가
+	 */
+	public void addRecord(JTable table, ModbusWatchPoint... modbusWps) {
+		try {
+			Vector record;
+			
+			DefaultTableModel model = (DefaultTableModel)table.getModel();
+			
+			for(int i = 0; i < modbusWps.length; i++) {
+				
+				record = new Vector();
+				int index = 0;
+				
+				if(table.getRowCount() <= 0) {
+					// 테이블의 행 개수가 0개 일 경우 : index = 1
+					index = 1;
+				}else if(table.getRowCount() >= 1){
+					// 테이블의 행 개수가 최소 1개 이상 일 경우 마지막 레코드의 ( 순서 컬럼 값 + 1 )
+					index = Integer.parseInt(String.valueOf(table.getValueAt(table.getRowCount()-1, 0))) + 1;				
+				}
+				
+				/* column[0] */ record.add(String.valueOf(index)); // 순 서
+				/* column[1] */ record.add(modbusWps[i]); // 성능명
+				/* column[2] */ record.add(modbusWps[i].getFunctionCode());  // 기능코드
+				/* column[3] */ record.add(modbusWps[i].getRegisterAddrHexString());  // 레지스터 주소
+				/* column[4] */ record.add(modbusWps[i].getModbusAddr()); // 모드버스 주소
+				/* column[5] */ record.add(modbusWps[i].getDataType()); // 데이터 타입
+				
+				model.addRow(record);
+			}
+		}catch(Exception e) {
+			// 레코드 추가 중 예외 발생 시 아무것도 수행하지 않음
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 레코드 삭제 
+	 * 삭제시 for문으로  삭제 할 것이 아니라 선택된 포인트의 인덱스를 검사하여 삭제하도록 구현하자
+	 */
+	public void removeRecord(JTable table, int... index) {
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+	
+		if(index.length < 0) {
+			// 선택 된 행이 없거나
+			if(table.getRowCount()==0) {
+				// 테이블에 행이 없을 경우 아무것도 수행하지 않음
+				return;
+			}
+		}
+
+		// index[0] : 1번째 레코드
+		// index[1] : 2번째 레코드
+		// index[2] : 3번째 레코드
+		// 위의 경우 index[0] (첫번째 레코드)를 삭제하면
+		// index[1] (두번째 레코드)이 index[0] (두번째 레코드)가 되기 때문에
+		// model.revmoe(index[0]) 로직을 수행한다
+		for(int i = 0; i < index.length; i++) {
+			model.removeRow(index[0]);
+		}
+	}
+	
 }
