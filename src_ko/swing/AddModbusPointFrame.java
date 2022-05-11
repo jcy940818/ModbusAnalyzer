@@ -4,10 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -53,8 +58,8 @@ public class AddModbusPointFrame extends JFrame {
 	private JButton download_template;
 	
 	private JTextField search_textField;
+	private JTextField dragAndDropField;
 	private JTable point_table;
-	
 	
 	private ArrayList<ModbusWatchPoint> left_point = new ArrayList<ModbusWatchPoint>();
 	private ArrayList<ModbusWatchPoint> right_point = new ArrayList<ModbusWatchPoint>();
@@ -110,13 +115,28 @@ public class AddModbusPointFrame extends JFrame {
 				
 		mk119Button = new JButton(new Util().getMK2Resource());
 		mk119Button.setForeground(Color.BLACK);
-		mk119Button.setText(" Button");
+		mk119Button.setText(" 템플릿 다운로드");
 		mk119Button.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		mk119Button.setFocusPainted(false);
 		mk119Button.setContentAreaFilled(false);
 		mk119Button.setBorder(UIManager.getBorder("Button.border"));
 		mk119Button.setBackground(Color.WHITE);
-		mk119Button.setBounds(917, 11, 189, 36);		
+		mk119Button.setBounds(804, 11, 302, 36);		
+		mk119Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				File file = new File("경로\\템플릿 파일.xlsx");
+				String path = Util.getFilePath();
+				
+				if(path != null) {
+					path += ".xlsx";
+					FileUtil.copyFile(file, new File(path));
+					System.out.println(path);
+				}else {
+					return;
+				}
+			}
+		});
 		actualPanel.add(mk119Button);
 		
 		JPanel backGround_Panel = new JPanel();
@@ -197,29 +217,82 @@ public class AddModbusPointFrame extends JFrame {
 		upload_excel.setBounds(451, 10, 196, 66);
 		uploadMethod_Panel.add(upload_excel);
 		
-		download_template = new JButton("<html>&nbsp;Template<br>&nbsp;Download</html>");
-		download_template.setIcon(new Util().getExcelImage());
-		download_template.setFocusPainted(false);
-		download_template.setForeground(Color.BLUE);
-		download_template.setFont(new Font("맑은 고딕", Font.BOLD, 17));
-		download_template.setBackground(Color.WHITE);
-		download_template.setBounds(659, 10, 189, 66);
-		download_template.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				File file = new File("경로\\템플릿 파일.xlsx");
-				String path = Util.getFilePath();
-				
-				if(path != null) {
-					path += ".xlsx";
-					FileUtil.copyFile(file, new File(path));
-					System.out.println(path);
-				}else {
-					return;
+		dragAndDropField = new JTextField("File Drag & Drop");
+		dragAndDropField.setBackground(Color.WHITE);
+		dragAndDropField.setForeground(new Color(0, 128, 0));
+		dragAndDropField.setHorizontalAlignment(SwingConstants.CENTER);
+		dragAndDropField.setEditable(false);
+		dragAndDropField.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		dragAndDropField.setBounds(659, 10, 189, 66);
+		dragAndDropField.setColumns(10);
+		dragAndDropField.setBorder(new LineBorder(Color.BLACK, 2));
+		dragAndDropField.setDropTarget(new DropTarget() {
+			public synchronized void drop(DropTargetDropEvent evt) {
+				try {
+					evt.acceptDrop(DnDConstants.ACTION_COPY);
+					List<File> droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+					for (File file : droppedFiles) {
+						
+						if(file != null && file.exists()) {
+							// 인코딩 선택 해야함
+							try {								
+								String encoding = "euc-kr";								
+									
+								if(file == null || !file.exists()) {
+									return;
+								}
+								
+								StringBuilder msg = new StringBuilder();
+								msg.append("<font color='Green'>XML File Encoding</font>\n");
+								msg.append("XML 파일의 인코딩 방식을 선택해주세요" + Util.separator + Util.separator +"\n");
+
+								int menu = Util.showOption(msg.toString(), new String[] { "EUC-KR", "UTF-8"}, JOptionPane.QUESTION_MESSAGE);
+
+								switch (menu) {
+									case 0: // 첫 번째 버튼 : EUC-KR
+										encoding = "euc-kr";
+										break;
+										
+									case 1: // 두 번째 버튼
+										encoding = "utf-8";
+										break;
+										
+									default :
+										return;
+								}								
+
+								ModbusWatchPoint[] modbusWps = ModbusWatchPointLoader.loadModbusWatchPointXML(file, encoding);
+								
+								if(modbusWps != null) {
+									resetTable(point_table);
+									addRecord(point_table, modbusWps);
+								}
+								
+								setTableStyle(point_table);
+								
+							}catch(ModbusWatchPointInitException e) {
+								System.out.println(e.getMessage());
+								
+								StringBuilder sb = new StringBuilder();
+								sb.append(String.format("%s\n", Util.colorRed("Modbus Watch Point Initialization Error")));				
+								sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), e.getMessage(), Util.separator, Util.separator));			
+								sb.append(String.format("위의 모드버스 포인트 정보를 초기화 하는중 오류가 발생하였습니다%s%s\n", Util.separator, Util.separator));
+
+								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+								
+							}catch(Exception e) {
+								e.printStackTrace();
+								
+							}
+						}						
+					}					
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
 			}
 		});
-		uploadMethod_Panel.add(download_template);
+		uploadMethod_Panel.add(dragAndDropField);
+		
 		
 		search_textField = new JTextField();
 		search_textField.setBounds(84, 115, 294, 28);
@@ -229,11 +302,11 @@ public class AddModbusPointFrame extends JFrame {
 		search_textField.setColumns(10);
 		search_textField.addFocusListener(Util.focusListener);
 		
-		JLabel lblNewLabel = new JLabel("Search");
+		JLabel lblNewLabel = new JLabel("검 색");
 		lblNewLabel.setForeground(Color.BLACK);
 		lblNewLabel.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		lblNewLabel.setBackground(Color.LIGHT_GRAY);
-		lblNewLabel.setBounds(22, 114, 90, 28);
+		lblNewLabel.setBounds(25, 114, 76, 28);
 		backGround_Panel.add(lblNewLabel);
 		backGround_Panel.add(search_textField);
 		
@@ -261,12 +334,12 @@ public class AddModbusPointFrame extends JFrame {
 		table.setModel(new DefaultTableModel(
 				null,
 				new String[] {
-					"index",
-					"Modbus Point",
-					"Function Code", 
+					"순 서",
+					"모드버스 포인트",
+					"기능 코드", 
 					"Register", 
 					"Modbus",
-					"Data Type"
+					"데이터 타입"
 				}
 		) {
 			// 테이블 셀 내용 수정 금지
@@ -342,6 +415,7 @@ public class AddModbusPointFrame extends JFrame {
 			
 		}
 	};
+	
 	
 	
 	public void pointUploadXml() {
@@ -467,5 +541,4 @@ public class AddModbusPointFrame extends JFrame {
 			model.removeRow(index[0]);
 		}
 	}
-	
 }

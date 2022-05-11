@@ -7,11 +7,16 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.io.File;
 import java.util.List;
 
-import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
-public class DragAndDropArea extends JTextArea {
+public class DragAndDropField extends JTextField {
 
-	public DragAndDropArea() {
+	public DragAndDropField(String text) {
+		this();
+		this.setText(text);
+	}
+	
+	public DragAndDropField() {
 		this.setDropTarget(new DropTarget() {
 			public synchronized void drop(DropTargetDropEvent evt) {
 				try {
