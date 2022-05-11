@@ -3,6 +3,9 @@ package src_en.swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -149,6 +152,17 @@ public class XmlViewerFrame extends JFrame {
 		currentFunction.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
 		currentFunction.setBackground(Color.WHITE);
 		currentFunction.setBounds(0, 0, 181, 55);
+		currentFunction.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(xmlFile != null) {
+					StringSelection data = new StringSelection(xmlFile.getName());
+					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					clipboard.setContents(data, data);
+				}
+			}
+			
+		});
 		actualPanel.add(currentFunction);
 		
 				
@@ -416,6 +430,17 @@ public class XmlViewerFrame extends JFrame {
 		protocolNameLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
 		protocolNameLabel.setBackground(Color.WHITE);
 		protocolNameLabel.setBounds(193, 10, 596, 35);
+		protocolNameLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(xmlFile != null) {
+					StringSelection data = new StringSelection(xmlFile.getName());
+					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					clipboard.setContents(data, data);
+				}
+			}
+			
+		});
 		actualPanel.add(protocolNameLabel);
 		
 		JButton xmlOpenButton = new JButton("Open XML File");
@@ -425,7 +450,7 @@ public class XmlViewerFrame extends JFrame {
 		xmlOpenButton.setContentAreaFilled(false);
 		xmlOpenButton.setBorder(UIManager.getBorder("Button.border"));
 		xmlOpenButton.setBackground(Color.WHITE);
-		xmlOpenButton.setBounds(560, 89, 160, 35);
+		xmlOpenButton.setBounds(560, 94, 160, 30);
 		xmlOpenButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -464,7 +489,7 @@ public class XmlViewerFrame extends JFrame {
 		xmlReloadButton.setContentAreaFilled(false);
 		xmlReloadButton.setBorder(UIManager.getBorder("Button.border"));
 		xmlReloadButton.setBackground(Color.WHITE);
-		xmlReloadButton.setBounds(726, 89, 160, 35);
+		xmlReloadButton.setBounds(726, 94, 160, 30);
 		xmlReloadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -483,7 +508,7 @@ public class XmlViewerFrame extends JFrame {
 		encodingButton.setContentAreaFilled(false);
 		encodingButton.setBorder(UIManager.getBorder("Button.border"));
 		encodingButton.setBackground(Color.WHITE);
-		encodingButton.setBounds(936, 89, 106, 35);
+		encodingButton.setBounds(936, 94, 106, 30);
 		encodingButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -510,7 +535,7 @@ public class XmlViewerFrame extends JFrame {
 		resetFormButton.setContentAreaFilled(false);
 		resetFormButton.setBorder(UIManager.getBorder("Button.border"));
 		resetFormButton.setBackground(Color.WHITE);
-		resetFormButton.setBounds(560, 50, 160, 35);
+		resetFormButton.setBounds(560, 60, 160, 30);
 		resetFormButton.addActionListener(new ActionListener() {
 			
 			@Override
