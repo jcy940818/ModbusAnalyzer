@@ -293,6 +293,12 @@ public class AddModbusPointFrame extends JFrame {
 		});
 		uploadMethod_Panel.add(dragAndDropField);
 		
+		JLabel lblNewLabel = new JLabel("검 색");
+		lblNewLabel.setForeground(Color.BLACK);
+		lblNewLabel.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		lblNewLabel.setBackground(Color.LIGHT_GRAY);
+		lblNewLabel.setBounds(25, 114, 76, 28);
+		backGround_Panel.add(lblNewLabel);
 		
 		search_textField = new JTextField();
 		search_textField.setBounds(84, 115, 294, 28);
@@ -300,14 +306,7 @@ public class AddModbusPointFrame extends JFrame {
 		search_textField.setForeground(Color.BLACK);
 		search_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		search_textField.setColumns(10);
-		search_textField.addFocusListener(Util.focusListener);
-		
-		JLabel lblNewLabel = new JLabel("검 색");
-		lblNewLabel.setForeground(Color.BLACK);
-		lblNewLabel.setFont(new Font("맑은 고딕", Font.BOLD, 18));
-		lblNewLabel.setBackground(Color.LIGHT_GRAY);
-		lblNewLabel.setBounds(25, 114, 76, 28);
-		backGround_Panel.add(lblNewLabel);
+		search_textField.setBorder(new LineBorder(Color.BLACK, 2));
 		backGround_Panel.add(search_textField);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -336,8 +335,8 @@ public class AddModbusPointFrame extends JFrame {
 				new String[] {
 					"순 서",
 					"모드버스 포인트",
-					"기능 코드", 
-					"Register", 
+					"기능코드",
+					"Register",
 					"Modbus",
 					"데이터 타입"
 				}
@@ -355,7 +354,7 @@ public class AddModbusPointFrame extends JFrame {
 		// 테이블 헤더 설정
 		table.getTableHeader().setForeground(Color.BLACK);
 		table.getTableHeader().setBackground(new Color(255, 255, 153));
-		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 15));	
+		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		
 		// 셀 이동 불가
 		table.getTableHeader().setReorderingAllowed(false);
@@ -372,10 +371,10 @@ public class AddModbusPointFrame extends JFrame {
 		// 테이블 셀 크기 설정
 		table.getColumnModel().getColumn(0).setPreferredWidth(30); // 순 서
 		table.getColumnModel().getColumn(1).setPreferredWidth(400); // 성능명
-		table.getColumnModel().getColumn(2).setPreferredWidth(80); // 기능 코드
-		table.getColumnModel().getColumn(3).setPreferredWidth(50); // 레지스터 주소
-		table.getColumnModel().getColumn(4).setPreferredWidth(50); // 모드버스 주소
-		table.getColumnModel().getColumn(5).setPreferredWidth(200); // 데이터 타입
+		table.getColumnModel().getColumn(2).setPreferredWidth(50); // 기능 코드
+		table.getColumnModel().getColumn(3).setPreferredWidth(60); // 레지스터 주소
+		table.getColumnModel().getColumn(4).setPreferredWidth(60); // 모드버스 주소
+		table.getColumnModel().getColumn(5).setPreferredWidth(250); // 데이터 타입
 		
 		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
 		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
