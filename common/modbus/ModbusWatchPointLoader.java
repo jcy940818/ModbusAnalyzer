@@ -123,7 +123,7 @@ public class ModbusWatchPointLoader {
 					}
 					
 				}catch(Exception e) {
-					throw new IOException("point" + "," + Integer.toString(i+1) + "," + item + "," + modbusWps[i - 2].displayName);					
+					throw new IOException("point" + "," + Integer.toString(i+1) + "," + item + "," + modbusWps[i - 2].displayName);			
 				}
 	
 				if (row.getCell(11) != null && !CellUtil.getStringValue(row.getCell(11)).equalsIgnoreCase("")) {

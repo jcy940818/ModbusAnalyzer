@@ -231,7 +231,6 @@ public class AddModbusPointFrame extends JFrame {
 		dragAndDropField.setDropTarget(new DropTarget() {
 			public synchronized void drop(DropTargetDropEvent evt) {
 				try {
-					Moon.currentLanguage = "ko";
 					
 					evt.acceptDrop(DnDConstants.ACTION_COPY);
 					List<File> droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
