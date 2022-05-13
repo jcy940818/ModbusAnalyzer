@@ -11,6 +11,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -36,6 +37,7 @@ import javax.swing.table.TableColumnModel;
 import common.modbus.ModbusWatchPoint;
 import common.modbus.ModbusWatchPointInitException;
 import common.modbus.ModbusWatchPointLoader;
+import moon.Moon;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
 
@@ -229,6 +231,8 @@ public class AddModbusPointFrame extends JFrame {
 		dragAndDropField.setDropTarget(new DropTarget() {
 			public synchronized void drop(DropTargetDropEvent evt) {
 				try {
+					Moon.currentLanguage = "ko";
+					
 					evt.acceptDrop(DnDConstants.ACTION_COPY);
 					List<File> droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
 					for (File file : droppedFiles) {
@@ -293,9 +297,35 @@ public class AddModbusPointFrame extends JFrame {
 
 								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 								
-							}catch(Exception e) {
-								e.printStackTrace();
+							}catch(IOException e) {								
+								if( !(e.getMessage().startsWith("point") || e.getMessage().startsWith("event"))) {
+									e.printStackTrace();
+									return;
+								}
 								
+								boolean isPoint = e.getMessage().startsWith("point");
+								
+								String[] info = e.getMessage().split(",");
+								boolean hasPointName = !info[3].equalsIgnoreCase("null");
+								
+								StringBuilder sb = new StringBuilder();
+								sb.append(String.format("%s\n", Util.colorRed("Modbus Watch Point Initialization Error")));
+								sb.append(String.format("%s : %s%s%s\n", Util.colorBlue("행 번호"), info[1], Util.separator, Util.separator));
+								sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("에러 필드"), info[2], Util.separator, Util.separator));
+								
+								if(hasPointName) {
+									sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), info[3], Util.separator, Util.separator));
+								}
+								
+								sb.append(String.format("%s번 행의 %s %s 필드 파싱 과정에서 에러가 발생하였습니다%s%s\n", 
+												Util.colorRed(info[1]),
+												isPoint ? "모드버스" : "이벤트",
+												Util.colorRed(info[2]),
+												Util.separator,
+												Util.separator));
+								
+								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+								return;		
 							}
 						}
 					}
