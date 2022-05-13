@@ -13,6 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import common.perf.FmsPerfConf;
 import common.perf.FmsPerfItem.EventInfo;
+import moon.Moon;
 import common.perf.Perf;
 import common.perf.PerfConf;
 import common.perf.PerfLabelStatusBean;
@@ -38,6 +39,8 @@ public class ModbusWatchPointLoader {
     public static ModbusWatchPoint[] loadModbusWatchPointXlsx(File xlsxFile) throws IOException, ModbusWatchPointInitException{
     	
     	FileInputStream inputStream = null;
+    	String item = "";
+		Cell cell = null;
     	
     	try {
 			inputStream = new FileInputStream(xlsxFile);
@@ -49,108 +52,136 @@ public class ModbusWatchPointLoader {
 			for (int i = 2; i < numberOfRows; i++) {
 				Row row = sheet.getRow(i);
 				
-				if(row == null) break;
-				
-				modbusWps[i - 2] = new ModbusWatchPoint();
-				
-				if (row.getCell(1) == null) throw new IOException(Integer.toString(i+1) + "번째 행의 성능 이름이 없습니다");
-				modbusWps[i - 2].displayName = CellUtil.getStringValue(row.getCell(1));
-				
-				if (row.getCell(2) == null) throw new IOException(Integer.toString(i+1) + "번째 행 (" + modbusWps[i - 2].displayName + ")의 성능 카운터가 없습니다");
-				
-				String counter = "";
-				counter += CellUtil.getIntValue(row.getCell(2)) + "_";
-				counter += CellUtil.getStringValue(row.getCell(3)).toLowerCase().contains("0x") ? CellUtil.getStringValue(row.getCell(3)) : CellUtil.getIntValue(row.getCell(3));
-				counter += "_";
-				counter += CellUtil.getStringValue(row.getCell(4));
-				
-				modbusWps[i - 2].counter = counter;
-				modbusWps[i - 2].interval = row.getCell(5) != null ? CellUtil.getIntValue(row.getCell(5)) : 60;
-				modbusWps[i - 2].measure = row.getCell(6) != null ? CellUtil.getStringValue(row.getCell(6)) : "";
-				modbusWps[i - 2].scaleFunc = row.getCell(7) != null ? CellUtil.getStringValue(row.getCell(7)) : "x";
-	
-				if (row.getCell(10) != null) {
-					modbusWps[i - 2].dataFormat = PerfConf.DATA_FORMAT_STATUS;
-					String[] keys = CellUtil.getStringValue(row.getCell(10)).split(";");
-					PerfLabelStatusBean[] statusLabels = new PerfLabelStatusBean[keys.length / 2];
-					int j = 0;
-					try {
+				try {
+					if(row == null) break;
+					
+					modbusWps[i - 2] = new ModbusWatchPoint();
+					
+					item = (Moon.isKorean()) ? "성능명" : "Point Name";
+					cell = row.getCell(1);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					modbusWps[i - 2].displayName = CellUtil.getStringValue(cell);
+					
+					item = (Moon.isKorean()) ? "기능코드" : "Function Code";
+					cell = row.getCell(2);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					int functionCode = CellUtil.getIntValue(cell);
+					
+					item = (Moon.isKorean()) ? "주소" : "Address";
+					cell = row.getCell(3);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					String address = CellUtil.getStringValue(cell).toLowerCase().contains("0x") ? CellUtil.getStringValue(cell) : String.valueOf(CellUtil.getIntValue(cell));
+					
+					item = (Moon.isKorean()) ? "데이터 타입" : "Data Type";
+					cell = row.getCell(4);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					String dataType = CellUtil.getStringValue(cell);
+					
+					String counter = functionCode + "_" + address + "_" + dataType;
+					
+					modbusWps[i - 2].counter = counter;
+					
+					item = (Moon.isKorean()) ? "수집 주기" : "Interval";
+					cell = row.getCell(5);
+					modbusWps[i - 2].interval = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getIntValue(cell) : 60;
+					
+					item = (Moon.isKorean()) ? "단위" : "Measure";
+					cell = row.getCell(6);
+					modbusWps[i - 2].measure = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getStringValue(cell) : "";
+					
+					item = (Moon.isKorean()) ? "보정식" : "Scale Function";
+					cell = row.getCell(7);
+					modbusWps[i - 2].scaleFunc = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getStringValue(cell) : "x";
+		
+					
+					if (row.getCell(10) != null) {
+						item = (Moon.isKorean()) ? "다중 상태 레이블" : "Multi-Status Label";
+						cell = row.getCell(10);
+						String[] keys = CellUtil.getStringValue(cell).split(";");
+						
+						modbusWps[i - 2].dataFormat = PerfConf.DATA_FORMAT_STATUS;
+						PerfLabelStatusBean[] statusLabels = new PerfLabelStatusBean[keys.length / 2];
+						int j = 0;
+						
 						for (int k = 0; k < keys.length; k += 2) {
 							statusLabels[j] = new PerfLabelStatusBean();
 							statusLabels[j].value = Integer.parseInt(keys[k].trim());
 							statusLabels[j].label = keys[k + 1].trim();
 							j++;
 						}
-					} catch (Exception e) {
-						throw new IOException(Integer.toString(i+1) + "번째 행 (" + modbusWps[i - 2].displayName + ")의 다중 성능 상태 라벨이 잘못되었습니다");
+						
+						modbusWps[i - 2].labels = statusLabels;
+						
+					} else if (row.getCell(8) != null && row.getCell(9) != null) {
+						item = (Moon.isKorean()) ? "이진 상태 레이블" : "Binary Status Label";
+						modbusWps[i - 2].dataFormat = PerfConf.DATA_FORMAT_DIGITAL;
+						modbusWps[i - 2].binLabel = new String[] { 
+								CellUtil.getStringValue(row.getCell(8)),
+								CellUtil.getStringValue(row.getCell(9)) };
+					} else {
+						modbusWps[i - 2].dataFormat = PerfConf.DATA_FORMAT_MEASURE;
 					}
-					modbusWps[i - 2].labels = statusLabels;
-				} else if (row.getCell(8) != null && row.getCell(9) != null) {
-					modbusWps[i - 2].dataFormat = PerfConf.DATA_FORMAT_DIGITAL;
-					modbusWps[i - 2].binLabel = new String[] { 
-							CellUtil.getStringValue(row.getCell(8)),
-							CellUtil.getStringValue(row.getCell(9)) };
-				} else {
-					modbusWps[i - 2].dataFormat = PerfConf.DATA_FORMAT_MEASURE;
+					
+				}catch(Exception e) {
+					throw new IOException("point" + "," + Integer.toString(i+1) + "," + item + "," + modbusWps[i - 2].displayName);					
 				}
 	
 				if (row.getCell(11) != null && !CellUtil.getStringValue(row.getCell(11)).equalsIgnoreCase("")) {
-					String item = "";
-					Cell cell = null;
+				
 					try {
 						EventInfo evt = new EventInfo();
 						
-						item = "severity";
+						item = (Moon.isKorean()) ? "심각도" : "Severity";
 						cell = row.getCell(11);
 						evt.severity = CellUtil.getIntValue(cell);
 						
-						item = "threshold";
+						item = (Moon.isKorean()) ? "임계값" : "Threshold";
 						cell = row.getCell(12);
 						evt.threshold = CellUtil.getDoubleValue(cell);
 						
-						item = "op";
+						item = (Moon.isKorean()) ? "연산자" : "Operator";
 						cell = row.getCell(13);
 						evt.op = CellUtil.getStringValue(cell);
 						
-						item = "mode";
+						item = (Moon.isKorean()) ? "발생 모드" : "Mode";
 						cell = row.getCell(14);
 						evt.mode = CellUtil.getIntValue(cell);
 						
-						item = "duration";
+						item = (Moon.isKorean()) ? "지속 시간" : "Duration";
 						cell = row.getCell(15);
 						evt.duration = CellUtil.getIntValue(cell);
 						
-						item = "count";
+						item = (Moon.isKorean()) ? "발생 횟수" : "Count";
 						cell = row.getCell(16);
 						evt.count = CellUtil.getIntValue(cell);
 						
-						item = "seqCount";
+						item = (Moon.isKorean()) ? "통보 횟수" : "SeqCount";
 						cell = row.getCell(17);
 						evt.seqCount = CellUtil.getIntValue(cell);
 						
-						item = "autoReg";
+						item = (Moon.isKorean()) ? "자동 등록 사용여부" : "AutoReg";
 						cell = row.getCell(18);
 						evt.autoReg = CellUtil.getBooleanValue(cell);
 						
-						item = "name";
+						item = (Moon.isKorean()) ? "이름" : "Name";
 						cell = row.getCell(19);
 						evt.name = CellUtil.getStringValue(cell);
 						
-						item = "msg";
+						item = (Moon.isKorean()) ? "메시지" : "Message";
 						cell = row.getCell(20);
 						evt.msg = CellUtil.getStringValue(cell);
 						
-						item = "enable";
+						item = (Moon.isKorean()) ? "사용여부" : "Enable";
 						cell = row.getCell(21);
 						evt.enable = CellUtil.getIntValue(cell);
 						
-						item = "autoClose";
+						item = (Moon.isKorean()) ? "자동 복구 사용여부" : "AutoClose";
 						cell = row.getCell(22);
 						evt.autoClose = CellUtil.getBooleanValue(cell);
 						
 						modbusWps[i - 2].evt = new EventInfo[] { evt };
 					} catch (Exception e) {
-						throw new IOException(Integer.toString(i+1) + "번째 행 (" + modbusWps[i - 2].displayName + ")의 이벤트 정보( " + item +" )가 잘못되었습니다");
+						throw new IOException("event" + "," + Integer.toString(i+1) + "," + item + "," + modbusWps[i - 2].displayName);			
 					}
 				}
 			}
@@ -163,14 +194,13 @@ public class ModbusWatchPointLoader {
 			}
 			
 			return modbusWps;
-			
+		
     	}finally {
     		if(inputStream != null) inputStream.close();
     		inputStream = null;
     		
     	}
     }
-    
     
     
     public static ModbusWatchPoint[] loadModbusWatchPointXML(File xmlFile, String encoding) throws IOException, ModbusWatchPointInitException{
