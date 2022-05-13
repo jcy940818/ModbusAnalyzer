@@ -273,16 +273,13 @@ public class AddModbusPointFrame extends JFrame {
 									modbusWps = ModbusWatchPointLoader.loadModbusWatchPointXlsx(file);
 								}
 								
-								if(modbusWps != null) {
+								if(modbusWps != null && modbusWps.length > 0) {
 									resetTable(point_table);
 									addRecord(point_table, modbusWps);
-								}
-								
-								setTableStyle(point_table);
-								
-								if(modbusWps != null && modbusWps.length > 0) {
-									// 정상적으로 하나 이상의 모드버스 포인트를 읽었을 경우 메소드를 종료한다
+									setTableStyle(point_table);									
 									setTitle("ModbusAnalyzer : " + file.getName());
+									
+									// 정상적으로 하나 이상의 모드버스 포인트를 읽었을 경우 메소드를 종료한다
 									return;
 								}
 								
