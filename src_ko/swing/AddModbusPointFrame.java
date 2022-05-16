@@ -37,7 +37,6 @@ import javax.swing.table.TableColumnModel;
 import common.modbus.ModbusWatchPoint;
 import common.modbus.ModbusWatchPointInitException;
 import common.modbus.ModbusWatchPointLoader;
-import moon.Moon;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
 
@@ -62,9 +61,6 @@ public class AddModbusPointFrame extends JFrame {
 	private JTextField search_textField;
 	private JTextField dragAndDropField;
 	private JTable point_table;
-	
-	private ArrayList<ModbusWatchPoint> left_point = new ArrayList<ModbusWatchPoint>();
-	private ArrayList<ModbusWatchPoint> right_point = new ArrayList<ModbusWatchPoint>();
 	
 	/**
 	 * Launch the application.
