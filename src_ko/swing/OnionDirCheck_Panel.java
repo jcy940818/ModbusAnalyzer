@@ -3,11 +3,14 @@ package src_ko.swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -22,7 +25,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import src_ko.info.ONION_Info;
-import src_ko.info.Protocol;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
 
@@ -88,6 +90,23 @@ public class OnionDirCheck_Panel extends JPanel {
 		onionDirPath_TextField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				checkDirPathButton.doClick();
+			}
+		});
+		onionDirPath_TextField.setDropTarget(new DropTarget() {
+			public synchronized void drop(DropTargetDropEvent evt) {
+				try {
+					evt.acceptDrop(DnDConstants.ACTION_COPY);
+					List<File> droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+					for (File file : droppedFiles) {
+						if(file != null) {
+							onionDirPath_TextField.setText(file.getAbsolutePath());
+							checkDirPathButton.doClick();
+							return;
+						}
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 		});
 		actualPanel.add(onionDirPath_TextField);
