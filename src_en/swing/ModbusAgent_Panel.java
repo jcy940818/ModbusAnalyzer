@@ -844,6 +844,16 @@ public class ModbusAgent_Panel extends JPanel {
 		functionCode_label.setBounds(465, 31, 77, 31);
 		form_InputPanel.add(functionCode_label);
 		
+		String[] reqCount125 = new String[125];
+		for(int i = 0; i < 125; i++) {
+			reqCount125[i] = String.valueOf(i+1);
+		}
+		
+		String[] reqCount2000 = new String[2000];
+		for(int i = 0; i < 2000; i++) {
+			reqCount2000[i] = String.valueOf(i+1);
+		}
+		
 		functionCode_comboBox = new JComboBox();
 		functionCode_comboBox.setForeground(Color.BLACK);
 		functionCode_comboBox.setBackground(Color.WHITE);		
@@ -854,18 +864,31 @@ public class ModbusAgent_Panel extends JPanel {
 		functionCode_comboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JComboBox temp = (JComboBox)e.getSource();				
-				if(Integer.parseInt(temp.getSelectedItem().toString()) == 0x05) {
+				JComboBox temp = (JComboBox)e.getSource();
+				
+				int functionCode = Integer.parseInt(temp.getSelectedItem().toString());
+				Object lastSelected = requestCount_comboBox.getSelectedItem();
+				
+				if(functionCode == 0x01 || functionCode == 0x02) {
+					requestCount_comboBox.setModel(new DefaultComboBoxModel(reqCount2000));
+					
+				}else if(functionCode == 0x03 || functionCode == 0x04) {
+					requestCount_comboBox.setModel(new DefaultComboBoxModel(reqCount125));
+					
+				}else if(functionCode == 0x05) {
 					// Force Single Coil : 0x05
 					controlStatus_ON_Button.setVisible(true);
 					controlStatus_OFF_Button.setVisible(true);
 					controlValue.setVisible(false);
-				} else if(Integer.parseInt(temp.getSelectedItem().toString()) == 0x06){
+					
+				} else if(functionCode == 0x06){
 					// Preset Single Register : 0x06
 					controlStatus_ON_Button.setVisible(false);
 					controlStatus_OFF_Button.setVisible(false);
 					controlValue.setVisible(true);
 				}
+				
+				requestCount_comboBox.setSelectedItem(lastSelected);
 				
 				// 기능코드 콤보박스 내용 변경시 사용자에게 표시해줄 모드버스 시작주소를 변경해주어야 하기 때문에
 				// 시작주소 텍스트필드의 keyEvent를 발생시켜준다
@@ -885,11 +908,7 @@ public class ModbusAgent_Panel extends JPanel {
 		
 		requestCount_comboBox = new JComboBox();		
 		requestCount_comboBox.setForeground(Color.BLACK);
-		String[] requestValue = new String[125];
-		for(int i = 0; i < 125; i++) {
-			requestValue[i] = String.valueOf(i+1);
-		}		
-		requestCount_comboBox.setModel(new DefaultComboBoxModel(requestValue));
+		requestCount_comboBox.setModel(new DefaultComboBoxModel(reqCount125));
 		requestCount_comboBox.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		requestCount_comboBox.setBackground(Color.WHITE);
 		requestCount_comboBox.setBounds(537, 71, 103, 32);

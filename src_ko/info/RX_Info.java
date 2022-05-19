@@ -138,12 +138,12 @@ public class RX_Info {
 		this.functionCode = functionCode;
 				
 		switch(functionCode) {
-			case 1 : commandType = "코일 상태(ON/OFF)"; functionContent="Read Coil Status"; isRead=true; break;
-			case 2 : commandType = "레지스터 상태(ON/OFF)"; functionContent="Read Input Status"; isRead=true; break;
-			case 3 : commandType = "레지스터(성능) 값"; functionContent="Read Holding Registers"; isRead=true; break;
-			case 4 : commandType = "레지스터(성능) 값"; functionContent="Read Input Registers"; isRead=true; break;
-			case 5 : commandType = "코일 상태(ON/OFF) 제어"; functionContent="Force Single Coil"; isRead=false; break;
-			case 6 : commandType = "레지스터(성능) 값 제어"; functionContent="Preset Single Register"; isRead=false; break;			
+			case 1 : commandType = "코일 상태"; functionContent="Read Coil Status"; isRead=true; break;
+			case 2 : commandType = "레지스터 상태"; functionContent="Read Input Status"; isRead=true; break;
+			case 3 : commandType = "레지스터 값"; functionContent="Read Holding Registers"; isRead=true; break;
+			case 4 : commandType = "레지스터 값"; functionContent="Read Input Registers"; isRead=true; break;
+			case 5 : commandType = "코일 상태 제어"; functionContent="Force Single Coil"; isRead=false; break;
+			case 6 : commandType = "레지스터 값 제어"; functionContent="Preset Single Register"; isRead=false; break;			
 			default : commandType = "Exception Response"; functionContent="Exception Response"; isRead=true; break;
 		}
 		

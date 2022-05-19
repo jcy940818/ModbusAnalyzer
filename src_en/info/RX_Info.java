@@ -138,11 +138,11 @@ public class RX_Info {
 		this.functionCode = functionCode;
 				
 		switch(functionCode) {
-			case 1 : commandType = "Coil Status(ON/OFF)"; functionContent="Read Coil Status"; isRead=true; break;
-			case 2 : commandType = "Register Status(ON/OFF)"; functionContent="Read Input Status"; isRead=true; break;
+			case 1 : commandType = "Coil Status"; functionContent="Read Coil Status"; isRead=true; break;
+			case 2 : commandType = "Register Status"; functionContent="Read Input Status"; isRead=true; break;
 			case 3 : commandType = "Register Value"; functionContent="Read Holding Registers"; isRead=true; break;
 			case 4 : commandType = "Register Value"; functionContent="Read Input Registers"; isRead=true; break;
-			case 5 : commandType = "Coil Status(ON/FF) Control"; functionContent="Force Single Coil"; isRead=false; break;
+			case 5 : commandType = "Coil Status Control"; functionContent="Force Single Coil"; isRead=false; break;
 			case 6 : commandType = "Register Value Control"; functionContent="Preset Single Register"; isRead=false; break;			
 			default : commandType = "Exception Response"; functionContent="Exception Response"; isRead=true; break;
 		}
