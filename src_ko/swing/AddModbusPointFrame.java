@@ -198,7 +198,7 @@ public class AddModbusPointFrame extends JFrame {
 		upload_xml.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				pointUploadXml();
+				pointUpload();
 			}
 		});
 		uploadMethod_Panel.add(upload_xml);
@@ -210,6 +210,12 @@ public class AddModbusPointFrame extends JFrame {
 		upload_excel.setIcon(new Util().getExcelImage());
 		upload_excel.setBackground(Color.WHITE);
 		upload_excel.setBounds(451, 10, 196, 66);
+		upload_excel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				pointUpload();
+			}
+		});
 		uploadMethod_Panel.add(upload_excel);
 		
 		dragAndDropField = new JTextField("File Drag & Drop");
@@ -375,8 +381,7 @@ public class AddModbusPointFrame extends JFrame {
 		}
 	};
 	
-	
-	public void pointUploadXml() {
+	public void pointUpload() {
 		try {
 			String path = Util.getFilePath();
 			
