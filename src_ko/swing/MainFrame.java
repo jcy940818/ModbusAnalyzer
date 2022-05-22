@@ -351,7 +351,7 @@ public class MainFrame extends JFrame {
 		
 		// MK119 ¸Þ´º
 		mk119Menu = new JMenu("   MK119   ");
-		mk119Menu.setForeground(Color.RED);
+		mk119Menu.setForeground(new Color(0, 100, 0));
 		mk119Menu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		mk119Menu.setHorizontalAlignment(SwingConstants.CENTER);
 		mk119Menu.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
@@ -360,7 +360,7 @@ public class MainFrame extends JFrame {
 		JMenuItem mk119Lite = new JMenuItem("MK119 : MK119 Lite");
 		mk119Lite.setHorizontalAlignment(SwingConstants.LEFT);
 		mk119Lite.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 14));
-		mk119Lite.setForeground(Color.RED);
+		mk119Lite.setForeground(new Color(0, 100, 0));
 		mk119Lite.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				showMK119Login("MK119Lite");
@@ -371,7 +371,7 @@ public class MainFrame extends JFrame {
 		
 		// MK119 ¸Þ´º : : XML ºä¾î
 		JMenuItem xmlViewer = new JMenuItem("MK119 : ÇÁ·ÎÅäÄÝ & XML ºä¾î     ");
-		xmlViewer.setForeground(Color.RED);
+		xmlViewer.setForeground(new Color(0, 100, 0));
 		xmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
 		xmlViewer.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 14));
 		mk119Menu.add(xmlViewer);
