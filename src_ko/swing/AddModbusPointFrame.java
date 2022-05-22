@@ -11,7 +11,6 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -20,7 +19,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -35,7 +33,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import common.modbus.ModbusWatchPoint;
-import common.modbus.ModbusWatchPointInitException;
 import common.modbus.ModbusWatchPointLoader;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
@@ -227,102 +224,30 @@ public class AddModbusPointFrame extends JFrame {
 		dragAndDropField.setDropTarget(new DropTarget() {
 			public synchronized void drop(DropTargetDropEvent evt) {
 				try {
-					
 					evt.acceptDrop(DnDConstants.ACTION_COPY);
 					List<File> droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
 					for (File file : droppedFiles) {
 						
 						if(file != null && file.exists()) {
 							
-							ModbusWatchPoint[] modbusWps  = null;
+							int mkVersion = mk_V4_RaidoButton.isSelected() ? 4 : 10;
 							
-							// 인코딩 선택 해야함
-							try {								
-								String encoding = "euc-kr";
-									
-								if(file == null || !file.exists()) {
-									return;
-								}
+							ModbusWatchPoint[] modbusWps  = ModbusWatchPointLoader.load(mkVersion, file);
+							
+							if(modbusWps != null && modbusWps.length > 0) {
+								resetTable(point_table);
+								addRecord(point_table, modbusWps);
+								setTableStyle(point_table);									
+								setTitle("ModbusAnalyzer : " + file.getName());
 								
-								if(file.getAbsolutePath().toLowerCase().endsWith(".xml")) {
-									StringBuilder msg = new StringBuilder();
-									msg.append("<font color='Green'>XML File Encoding</font>\n");
-									msg.append("XML 파일의 인코딩 방식을 선택해주세요" + Util.separator + Util.separator +"\n");
-
-									int menu = Util.showOption(msg.toString(), new String[] { "EUC-KR", "UTF-8"}, JOptionPane.QUESTION_MESSAGE);
-
-									switch (menu) {
-										case 0: // 첫 번째 버튼 : EUC-KR
-											encoding = "euc-kr";
-											break;
-											
-										case 1: // 두 번째 버튼
-											encoding = "utf-8";
-											break;
-											
-										default :
-											return;
-									}								
-
-									modbusWps = ModbusWatchPointLoader.loadModbusWatchPointXML(file, encoding);
-								}else {
-									modbusWps = ModbusWatchPointLoader.loadModbusWatchPointXlsx(file);
-								}
-								
-								if(modbusWps != null && modbusWps.length > 0) {
-									resetTable(point_table);
-									addRecord(point_table, modbusWps);
-									setTableStyle(point_table);									
-									setTitle("ModbusAnalyzer : " + file.getName());
-									
-									// 정상적으로 하나 이상의 모드버스 포인트를 읽었을 경우 메소드를 종료한다
-									return;
-								}
-								
-							}catch(ModbusWatchPointInitException e) {
-								System.out.println(e.getMessage());
-								
-								StringBuilder sb = new StringBuilder();
-								sb.append(String.format("%s\n", Util.colorRed("Modbus Watch Point Initialization Error")));
-								sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), e.getMessage(), Util.separator, Util.separator));
-								sb.append(String.format("위의 모드버스 포인트 정보를 초기화 하는중 오류가 발생하였습니다%s%s\n", Util.separator, Util.separator));
-
-								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-								
-							}catch(IOException e) {								
-								if( !(e.getMessage().startsWith("point") || e.getMessage().startsWith("event"))) {
-									e.printStackTrace();
-									return;
-								}
-								
-								boolean isPoint = e.getMessage().startsWith("point");
-								
-								String[] info = e.getMessage().split(",");
-								boolean hasPointName = !info[3].equalsIgnoreCase("null");
-								
-								StringBuilder sb = new StringBuilder();
-								sb.append(String.format("%s\n", Util.colorRed("Modbus Watch Point Initialization Error")));
-								sb.append(String.format("%s : %s%s%s\n", Util.colorBlue("행 번호"), info[1], Util.separator, Util.separator));
-								sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("에러 필드"), info[2], Util.separator, Util.separator));
-								
-								if(hasPointName) {
-									sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), info[3], Util.separator, Util.separator));
-								}
-								
-								sb.append(String.format("%s번 행의 %s %s 필드 파싱 과정에서 에러가 발생하였습니다%s%s\n", 
-												Util.colorRed(info[1]),
-												isPoint ? "모드버스" : "이벤트",
-												Util.colorRed(info[2]),
-												Util.separator,
-												Util.separator));
-								
-								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-								return;		
+								// 정상적으로 하나 이상의 모드버스 포인트를 읽었을 경우 메소드를 종료한다
+								return;
 							}
+							
 						}
 					}
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					ex.printStackTrace();					
 				}
 			}
 		});
@@ -451,64 +376,35 @@ public class AddModbusPointFrame extends JFrame {
 	};
 	
 	
-	
 	public void pointUploadXml() {
 		try {
 			String path = Util.getFilePath();
-			String encoding = "euc-kr";
-			File xmlFile = null;
 			
 			if (path == null || path.length() < 1) {
 				return;
 			}else {
-				xmlFile = new File(path);
+				File xmlFile = new File(path);
 				
-				if(xmlFile == null || !xmlFile.exists()) {
-					return;
-				}
-				
-				StringBuilder msg = new StringBuilder();
-				msg.append("<font color='Green'>XML File Encoding</font>\n");
-				msg.append("XML 파일의 인코딩 방식을 선택해주세요" + Util.separator + Util.separator +"\n");
-
-				int menu = Util.showOption(msg.toString(), new String[] { "EUC-KR", "UTF-8"}, JOptionPane.QUESTION_MESSAGE);
-
-				switch (menu) {
-					case 0: // 첫 번째 버튼 : EUC-KR
-						encoding = "euc-kr";
-						break;
+				if(xmlFile != null && xmlFile.exists()) {
+					
+					int mkVersion = mk_V4_RaidoButton.isSelected() ? 4 : 10;
+					
+					ModbusWatchPoint[] modbusWps  = ModbusWatchPointLoader.load(mkVersion, xmlFile);
+					
+					if(modbusWps != null && modbusWps.length > 0) {
+						resetTable(point_table);
+						addRecord(point_table, modbusWps);
+						setTableStyle(point_table);
+						setTitle("ModbusAnalyzer : " + xmlFile.getName());
 						
-					case 1: // 두 번째 버튼
-						encoding = "utf-8";
-						break;
-						
-					default :
+						// 정상적으로 하나 이상의 모드버스 포인트를 읽었을 경우 메소드를 종료한다
 						return;
+					}
 				}
+				
 			}
-
-			ModbusWatchPoint[] modbusWps = ModbusWatchPointLoader.loadModbusWatchPointXML(xmlFile, encoding);
-			
-			if(modbusWps != null) {
-				resetTable(point_table);
-				addRecord(point_table, modbusWps);
-			}
-			
-			setTableStyle(point_table);
-			
-		}catch(ModbusWatchPointInitException e) {
-			System.out.println(e.getMessage());
-			
-			StringBuilder sb = new StringBuilder();
-			sb.append(String.format("%s\n", Util.colorRed("Modbus Watch Point Initialization Error")));				
-			sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), e.getMessage(), Util.separator, Util.separator));			
-			sb.append(String.format("위의 모드버스 포인트 정보를 초기화 하는중 오류가 발생하였습니다%s%s\n", Util.separator, Util.separator));
-
-			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-			
 		}catch(Exception e) {
 			e.printStackTrace();
-			
 		}
 	}
 	

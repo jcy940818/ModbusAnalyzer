@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -12,27 +14,96 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import common.perf.FmsPerfConf;
-import common.perf.FmsPerfItem.EventInfo;
-import moon.Moon;
 import common.perf.Perf;
 import common.perf.PerfConf;
 import common.perf.PerfLabelStatusBean;
+import moon.Moon;
+import src_ko.util.Util;
 
 public class ModbusWatchPointLoader {
 	
-	public static void main(String[] args) {
+	public static ModbusWatchPoint[] load(int mkVersion, File file) {
+		ModbusWatchPoint[] modbusWps  = null;
+		
 		try {
-			File file = new File("C:\\OnionSoftware\\midknight\\conf\\ko\\fms\\AR56_COMP.xml");
-			ModbusWatchPoint[] items = loadModbusWatchPointXML(file, "euc-kr");
-			
-			for (int i = 0; i < items.length; i++) {
+			if(file != null && file.exists()) {
 
-				System.out.println(i + ". " + items[i].getDisplayName() + "  === >  " + items[i].getHexCounter() + "  ==>  " + items[i].getModbusAddr());
+				// 인코딩 선택 해야함
+				try {
+					String encoding = "euc-kr";
+					
+					if(file.getAbsolutePath().toLowerCase().endsWith(".xml")) {
+						StringBuilder msg = new StringBuilder();
+						msg.append("<font color='Green'>XML File Encoding</font>\n");
+						msg.append("XML 파일의 인코딩 방식을 선택해주세요" + Util.separator + Util.separator +"\n");
 
+						int menu = Util.showOption(msg.toString(), new String[] { "EUC-KR", "UTF-8"}, JOptionPane.QUESTION_MESSAGE);
+
+						switch (menu) {
+							case 0: // 첫 번째 버튼 : EUC-KR
+								encoding = "euc-kr";
+								break;
+								
+							case 1: // 두 번째 버튼
+								encoding = "utf-8";
+								break;
+								
+							default :
+								return null;
+						}
+
+						modbusWps = ModbusWatchPointLoader.loadModbusWatchPointXML(file, encoding);
+						
+					}else {
+						if(mkVersion >= 10) {
+							/* modbusWps = mkV10_Excel() */
+						}else {
+							modbusWps = ModbusWatchPointLoader.loadModbusWatchPointXlsx(file);	
+						}
+					}
+					
+				}catch(ModbusWatchPointInitException e) {
+					modbusWps = null;
+					e.printStackTrace();
+					
+					StringBuilder sb = new StringBuilder();
+					sb.append(String.format("%s\n", Util.colorRed("Modbus Watch Point Initialization Error")));
+					sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), e.getMessage(), Util.separator, Util.separator));
+					sb.append(String.format("위의 모드버스 포인트 정보를 초기화 하는중 오류가 발생하였습니다%s%s\n", Util.separator, Util.separator));
+					Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+					
+				}catch(IOException e) {
+					modbusWps = null;
+					e.printStackTrace();
+					
+					String[] info = e.getMessage().split(",");
+					boolean hasPointName = !info[2].equalsIgnoreCase("null");
+					
+					StringBuilder sb = new StringBuilder();
+					sb.append(String.format("%s\n", Util.colorRed("Modbus Watch Point Initialization Error")));
+					sb.append(String.format("%s : %s%s%s\n", Util.colorBlue("행 번호"), info[0], Util.separator, Util.separator));
+					sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("에러 필드"), info[1], Util.separator, Util.separator));
+					
+					if(hasPointName) {
+						sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), info[2], Util.separator, Util.separator));
+					}
+					
+					sb.append(String.format("%s번 행의 %s 필드 파싱 과정에서 에러가 발생하였습니다%s%s\n", 
+									Util.colorRed(info[0]),							
+									Util.colorRed(info[1]),
+									Util.separator,
+									Util.separator));
+					
+					Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);						
+				}
 			}
 			
-		}catch(Exception e) {
+		} catch (Exception e) {
+			modbusWps = null;
 			e.printStackTrace();
+			
+		}finally {
+			return modbusWps;
 		}
 	}
         
@@ -93,7 +164,6 @@ public class ModbusWatchPointLoader {
 					cell = row.getCell(7);
 					modbusWps[i - 2].scaleFunc = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getStringValue(cell) : "x";
 		
-					
 					if (row.getCell(10) != null) {
 						item = (Moon.isKorean()) ? "다중 상태 레이블" : "Multi-Status Label";
 						cell = row.getCell(10);
@@ -123,9 +193,10 @@ public class ModbusWatchPointLoader {
 					}
 					
 				}catch(Exception e) {
-					throw new IOException("point" + "," + Integer.toString(i+1) + "," + item + "," + modbusWps[i - 2].displayName);			
+					throw new IOException(Integer.toString(i+1) + "," + item + "," + modbusWps[i - 2].displayName);			
 				}
 	
+				/*
 				if (row.getCell(11) != null && !CellUtil.getStringValue(row.getCell(11)).equalsIgnoreCase("")) {
 				
 					try {
@@ -182,8 +253,9 @@ public class ModbusWatchPointLoader {
 						modbusWps[i - 2].evt = new EventInfo[] { evt };
 					} catch (Exception e) {
 						throw new IOException("event" + "," + Integer.toString(i+1) + "," + item + "," + modbusWps[i - 2].displayName);			
-					}
+					}	
 				}
+				*/
 			}
 			
 			modbusWps = trimWatchPointArray(modbusWps);
@@ -198,7 +270,6 @@ public class ModbusWatchPointLoader {
     	}finally {
     		if(inputStream != null) inputStream.close();
     		inputStream = null;
-    		
     	}
     }
     
