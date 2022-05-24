@@ -660,7 +660,7 @@ public class MainFrame extends JFrame {
 		if(agent != null && agent.equalsIgnoreCase("watchPoint")) {
 			ProtocolList_Panel.goXmlViewer.setText("Add Watch Point");
 		}else {
-			ProtocolList_Panel.goXmlViewer.setText("Oepn XML Viewer");
+			ProtocolList_Panel.goXmlViewer.setText("Open XML Viewer");
 		}
 		
 		cardLayout.show(actualPanel, "onionDirCheck_Panel");

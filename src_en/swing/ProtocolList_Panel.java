@@ -322,7 +322,7 @@ public class ProtocolList_Panel extends JPanel {
 		});
 		infoPanel.add(languageButton);
 		
-		goXmlViewer = new JButton("Oepn XML Viewer");
+		goXmlViewer = new JButton("Open XML Viewer");
 		goXmlViewer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				showXmlViewer();
