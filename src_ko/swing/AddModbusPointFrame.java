@@ -34,6 +34,7 @@ import javax.swing.table.TableColumnModel;
 
 import common.modbus.ModbusWatchPoint;
 import common.modbus.ModbusWatchPointLoader;
+import src_ko.main.MoonInspector;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
 
@@ -47,17 +48,17 @@ public class AddModbusPointFrame extends JFrame {
 	private JButton mk119Button;
 	private JTable table;
 
-	private JRadioButton mk_V4_RaidoButton;
-	private JRadioButton mk_V10_RaidoButton;
+	private static JRadioButton mk_V4_RaidoButton;
+	private static JRadioButton mk_V10_RaidoButton;
 	
 	private JButton upload_protocol;
 	private JButton upload_xml;
 	private JButton upload_excel;
 	private JButton download_template;
 	
-	private JTextField search_textField;
-	private JTextField dragAndDropField;
-	private JTable point_table;
+	private static JTextField search_textField;
+	private static JTextField dragAndDropField;
+	private static JTable point_table;
 	
 	/**
 	 * Launch the application.
@@ -153,7 +154,7 @@ public class AddModbusPointFrame extends JFrame {
 		mk_V4_RaidoButton.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		mk_V4_RaidoButton.setForeground(mkColor);
 		mk_V4_RaidoButton.setBackground(Color.WHITE);
-		mk_V4_RaidoButton.setBounds(12, 13, 170, 23);
+		mk_V4_RaidoButton.setBounds(12, 13, 180, 23);
 		mk_V4_RaidoButton.setFocusPainted(false);
 		mk_V4_RaidoButton.addActionListener(mkVerionListener);
 		mk119Version_Panel.add(mk_V4_RaidoButton);
@@ -163,7 +164,7 @@ public class AddModbusPointFrame extends JFrame {
 		mk_V10_RaidoButton.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		mk_V10_RaidoButton.setForeground(Color.LIGHT_GRAY);
 		mk_V10_RaidoButton.setBackground(Color.WHITE);
-		mk_V10_RaidoButton.setBounds(12, 47, 170, 23);
+		mk_V10_RaidoButton.setBounds(12, 47, 180, 23);
 		mk_V10_RaidoButton.setFocusPainted(false);
 		mk_V10_RaidoButton.addActionListener(mkVerionListener);
 		mk119Version_Panel.add(mk_V10_RaidoButton);
@@ -186,6 +187,12 @@ public class AddModbusPointFrame extends JFrame {
 		upload_protocol.setIcon(new Util().getFolder2Image());
 		upload_protocol.setBackground(Color.WHITE);
 		upload_protocol.setBounds(12, 10, 222, 66);
+		upload_protocol.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MainFrame.showOnionDirCheck(MoonInspector.isMoon(), "watchPoint");
+			}
+		});
 		uploadMethod_Panel.add(upload_protocol);
 		
 		upload_xml = new JButton( "  XML");
@@ -295,7 +302,7 @@ public class AddModbusPointFrame extends JFrame {
 		super.dispose();
 	}
 	
-	public void resetTable(JTable table) {
+	public static void resetTable(JTable table) {
 		table.setModel(new DefaultTableModel(
 				null,
 				new String[] {
@@ -399,8 +406,7 @@ public class AddModbusPointFrame extends JFrame {
 					if(modbusWps != null && modbusWps.length > 0) {
 						resetTable(point_table);
 						addRecord(point_table, modbusWps);
-						setTableStyle(point_table);
-						setTitle("ModbusAnalyzer : " + xmlFile.getName());
+						setTableStyle(point_table);						
 						
 						// 정상적으로 하나 이상의 모드버스 포인트를 읽었을 경우 메소드를 종료한다
 						return;
@@ -413,11 +419,34 @@ public class AddModbusPointFrame extends JFrame {
 		}
 	}
 	
+	public static void pointUpload(File file) {
+		try {
+			if (file != null && file.exists()) {
+
+				int mkVersion = mk_V4_RaidoButton.isSelected() ? 4 : 10;
+
+				ModbusWatchPoint[] modbusWps = ModbusWatchPointLoader.load(mkVersion, file);
+
+				if (modbusWps != null && modbusWps.length > 0) {
+					resetTable(point_table);
+					addRecord(point_table, modbusWps);
+					setTableStyle(point_table);					
+
+					// 정상적으로 하나 이상의 모드버스 포인트를 읽었을 경우 메소드를 종료한다
+					return;
+				}
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	/**
 	 * 	레코드 추가
 	 */
-	public void addRecord(JTable table, ModbusWatchPoint... modbusWps) {
+	public static void addRecord(JTable table, ModbusWatchPoint... modbusWps) {
 		try {
 			Vector record;
 			

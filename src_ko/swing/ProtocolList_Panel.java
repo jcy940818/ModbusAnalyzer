@@ -57,7 +57,7 @@ public class ProtocolList_Panel extends JPanel {
 	private static JTextField searchProtocol_textField;
 	
 	private static JTable table;		
-	private JButton goXmlViewer;
+	public static JButton goXmlViewer;
 	private JButton openXmlFile;
 	private static JLabel protocolVersion;
 	
@@ -618,10 +618,16 @@ public class ProtocolList_Panel extends JPanel {
 		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("프로토콜 이름"),pName , separator, separator));
 		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("성능 XML"), p.getXml(), separator, separator));
 		
-		int menu = Util.showOption(msg.toString(), new String[] { "XML Viewer 열기", "XML 파일 열기"}, JOptionPane.QUESTION_MESSAGE);
+		int menu = -1;
+		
+		if(OnionDirCheck_Panel.agent != null && OnionDirCheck_Panel.agent.equalsIgnoreCase("watchPoint")) {
+			menu = Util.showOption(msg.toString(), new String[] { "모드버스 포인트 추가", "XML 파일 열기"}, JOptionPane.QUESTION_MESSAGE);
+		}else {
+			menu = Util.showOption(msg.toString(), new String[] { "XML Viewer 열기", "XML 파일 열기"}, JOptionPane.QUESTION_MESSAGE);	
+		}
 
 		switch (menu) {
-			case -1: // 사용자가 메뉴를 선택하지 않고 대화상자를 나갔을 때				
+			case -1: // 사용자가 메뉴를 선택하지 않고 대화상자를 나갔을 때		
 				return;
 				
 			case 0: // XML Viewer 열기
@@ -720,11 +726,15 @@ public class ProtocolList_Panel extends JPanel {
 				Util.showMessage(msg.toString(), JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-						
-			// XML Viewer Frame 생성
-			new XmlViewerFrame(pName, xmlFile, protocol);
 			
-		}catch(Exception e) {			
+			if(OnionDirCheck_Panel.agent != null && OnionDirCheck_Panel.agent.equalsIgnoreCase("watchPoint")) {
+				AddModbusPointFrame.pointUpload(xmlFile);
+			}else {
+				// XML Viewer Frame 생성
+				new XmlViewerFrame(pName, xmlFile, protocol);				
+			}
+			
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 	}

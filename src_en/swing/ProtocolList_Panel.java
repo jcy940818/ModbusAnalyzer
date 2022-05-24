@@ -36,7 +36,6 @@ import javax.swing.table.TableColumnModel;
 import src_en.info.Protocol;
 import src_en.util.FileUtil;
 import src_en.util.Util;
-import src_en.swing.XmlViewerFrame;
 
 public class ProtocolList_Panel extends JPanel {
 	
@@ -58,7 +57,7 @@ public class ProtocolList_Panel extends JPanel {
 	private static JTextField searchProtocol_textField;
 	
 	private static JTable table;		
-	private JButton goXmlViewer;
+	public static JButton goXmlViewer;
 	private JButton openXmlFile;
 	private static JLabel protocolVersion;
 	
@@ -619,7 +618,13 @@ public class ProtocolList_Panel extends JPanel {
 		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("Protocol Name"),pName , separator, separator));
 		msg.append(String.format("%s : %s%s%s\n", Util.colorBlue("Watch Point XML"), p.getXml(), separator, separator));
 		
-		int menu = Util.showOption(msg.toString(), new String[] { "Open XML Viewer", "Open XML File"}, JOptionPane.QUESTION_MESSAGE);
+		int menu = -1;
+		
+		if(OnionDirCheck_Panel.agent != null && OnionDirCheck_Panel.agent.equalsIgnoreCase("watchPoint")) {
+			menu = Util.showOption(msg.toString(), new String[] { "Add Modbus Watch Point", "Open XML File"}, JOptionPane.QUESTION_MESSAGE);
+		}else {
+			menu = Util.showOption(msg.toString(), new String[] { "Open XML Viewer", "Open XML File"}, JOptionPane.QUESTION_MESSAGE);	
+		}
 
 		switch (menu) {
 			case -1: // 사용자가 메뉴를 선택하지 않고 대화상자를 나갔을 때				
@@ -722,8 +727,12 @@ public class ProtocolList_Panel extends JPanel {
 				return;
 			}
 						
-			// XML Viewer Frame 생성
-			new XmlViewerFrame(pName, xmlFile, protocol);
+			if(OnionDirCheck_Panel.agent != null && OnionDirCheck_Panel.agent.equalsIgnoreCase("watchPoint")) {
+//				AddModbusPointFrame.pointUpload(xmlFile);
+			}else {
+				// XML Viewer Frame 생성
+				new XmlViewerFrame(pName, xmlFile, protocol);	
+			}
 			
 		}catch(Exception e) {			
 			e.printStackTrace();

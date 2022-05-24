@@ -32,6 +32,8 @@ public class OnionDirCheck_Panel extends JPanel {
 		
 	public static JCheckBox isProject_checkBox;
 	
+	public static String agent = null;
+	
 	private static JTextField onionDirPath_TextField;
 	private static JLabel msgLabel;
 	private static JButton checkDirPathButton;

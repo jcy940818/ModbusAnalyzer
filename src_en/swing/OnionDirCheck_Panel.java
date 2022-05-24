@@ -28,10 +28,11 @@ import src_en.info.ONION_Info;
 import src_en.util.FileUtil;
 import src_en.util.Util;
 
-
 public class OnionDirCheck_Panel extends JPanel {	
 	
 	public static JCheckBox isProject_checkBox;
+	
+	public static String agent = null;
 	
 	private static JTextField onionDirPath_TextField;
 	private static JLabel msgLabel;

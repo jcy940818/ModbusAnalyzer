@@ -566,7 +566,7 @@ public class MainFrame extends JFrame {
 		xmlViewer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// OnionSoftware 디렉토리 경로 프로토콜 다운로드				
-				showOnionDirCheck(false);				
+				showOnionDirCheck(false, null);				
 			}
 		});
 		
@@ -587,7 +587,7 @@ public class MainFrame extends JFrame {
 		moonXmlViewer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// MK119 XML 편집 : 라디오 버튼 옵션으로 수정 가능				
-				showOnionDirCheck(true);
+				showOnionDirCheck(true, null);
 			}
 		});
 		
@@ -650,11 +650,19 @@ public class MainFrame extends JFrame {
 		cardLayout.show(actualPanel, "protocolDownloadPanel");
 	}
 	
-	public static void showOnionDirCheck(boolean isProject) {
+	public static void showOnionDirCheck(boolean isProject, String agent) {
 		// isProject : MK119 프로젝트의 XML 편집
 		OnionDirCheck_Panel.isProject = isProject;
 		OnionDirCheck_Panel.isProject_checkBox.setVisible(isProject);
 		OnionDirCheck_Panel.changeSatate();
+		
+		OnionDirCheck_Panel.agent = agent;
+		if(agent != null && agent.equalsIgnoreCase("watchPoint")) {
+			ProtocolList_Panel.goXmlViewer.setText("Add Watch Point");
+		}else {
+			ProtocolList_Panel.goXmlViewer.setText("Oepn XML Viewer");
+		}
+		
 		cardLayout.show(actualPanel, "onionDirCheck_Panel");
 	}
 	
