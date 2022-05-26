@@ -94,6 +94,7 @@ public class OnionMember {
 		new OnionMember("PSÆÀ", "ÀÌÀç¼º", "Woody");
 		new OnionMember("PSÆÀ", "ÀÌÇüÂù", "Rick");
 		new OnionMember("PSÆÀ", "±è¿ø±â", "Dustin");
+		new OnionMember("PSÆÀ", "¼Ûµ¿Çö", "Danny");
 		
 		new OnionMember("½Ì°¡ÆúÆÀ", "Kelvin", "Kelvin");
 		new OnionMember("½Ì°¡ÆúÆÀ", "Jia Hui", "Jia");
@@ -102,7 +103,6 @@ public class OnionMember {
 		new OnionMember("½Ì°¡ÆúÆÀ", "SoonMeng", "SoonMeng");
 		new OnionMember("½Ì°¡ÆúÆÀ", "Tee", "Tee");
 		new OnionMember("½Ì°¡ÆúÆÀ", "Miffy", "Miffy");
-		
 	}
 	
 	
