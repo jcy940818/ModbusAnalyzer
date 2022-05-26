@@ -5,7 +5,7 @@ import common.perf.FmsPerfItem;
 import common.perf.Perf;
 
 public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
-		
+	
 	private int functionCode = 3;
 	private int registerAddr;
 	private int modbusAddr;
@@ -14,6 +14,10 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	
 	private String decCounter;
 	private String hexCounter;
+	
+	// MK119 V10 : Liz 전용 필드
+	private int deviceID;
+	private int pointID;
 	
 	public ModbusWatchPoint() {
 		
@@ -86,6 +90,22 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 		}
 	}
 		
+	public int getDeviceID() {
+		return deviceID;
+	}
+
+	public int getPointID() {
+		return pointID;
+	}
+
+	public void setDeviceID(int deviceID) {
+		this.deviceID = deviceID;
+	}
+
+	public void setPointID(int pointID) {
+		this.pointID = pointID;
+	}
+
 	public int getFunctionCode() {
 		return functionCode;
 	}
