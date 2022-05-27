@@ -1,8 +1,12 @@
 package common.modbus;
 
+import javax.swing.JOptionPane;
+
 import common.agent.PerfData;
 import common.perf.FmsPerfItem;
 import common.perf.Perf;
+import common.perf.PerfLabelStatusBean;
+import src_ko.util.Util;
 
 public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	
@@ -222,6 +226,90 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 		}
 		
 		return String.format("%s%04d", modbus, this.getRegisterAddr() + 1);
+	}
+	
+	public static void showInfo(ModbusWatchPoint wp) {
+		if(wp != null) {			
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("%s%s%s\n", Util.colorGreen("Modbus Point Information"), Util.separator, Util.separator));
+			
+			sb.append(String.format("%s : %s", Util.colorBlue("1. Name"), wp.getDisplayName()));
+			sb.append(Util.separator + Util.separator + "\n\n");
+			
+			sb.append(String.format("%s : %s", Util.colorBlue("2. Counter"), wp.getCounter()));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			
+			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+			sb.append(String.format("%s", Util.colorBlue("¦¢")));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			
+			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;2-1. Function Code"), wp.getFunctionCode()));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			
+			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;2-2. Register Address ( HEX )"), wp.getRegisterAddrHexString()));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			
+			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+			sb.append(String.format("%s : %d", Util.colorBlue("¦§&nbsp;&nbsp;2-3. Register Address ( DEC )"), wp.getRegisterAddr()));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			
+			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;2-4. Modbus Address ( DEC )"), wp.getModbusAddrString()));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			
+			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+			sb.append(String.format("%s : %s", Util.colorBlue("¦¦&nbsp;&nbsp;2-5. Data Type"), wp.getDataType()));
+			sb.append(Util.separator + Util.separator + "\n\n");
+			
+			sb.append(String.format("%s : %s", Util.colorBlue("3. Measure"), wp.getMeasure()));
+			sb.append(Util.separator + Util.separator + "\n\n");
+			
+			sb.append(String.format("%s : %s", Util.colorBlue("4. Scale"), wp.getScaleFunction()));
+			sb.append(Util.separator + Util.separator + "\n\n");
+			
+			sb.append(String.format("%s : %s", Util.colorBlue("5. Data Format"), wp.getDataFormat()));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			if(wp.getDataFormat() == 1) {
+				String[] binLabel = wp.getBinLabel();
+				
+				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+				sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;Label 0"), binLabel[0]));
+				sb.append(Util.separator + Util.separator + "\n");
+				
+				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+				sb.append(String.format("%s : %s", Util.colorBlue("¦¦&nbsp;&nbsp;Label 1"), binLabel[1]));
+				sb.append(Util.separator + Util.separator + "\n");
+				
+			}else if(wp.getDataFormat() == 2) {
+				PerfLabelStatusBean[] labels = wp.getStatusLabels();
+				
+				for(int i = 0; i < labels.length; i++) {
+					sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+					sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+					sb.append(String.format("%s%s : %s&nbsp;&nbsp;%s&nbsp;&nbsp;%s : %s",
+							Util.colorBlue((i != (labels.length - 1)) ? "¦§&nbsp;&nbsp;" : "¦¦&nbsp;&nbsp;"),
+							Util.colorBlue("5-" + (i+1) + ". Value"),
+							labels[i].value,
+							Util.colorRed("/"),
+							Util.colorBlue("Label"),
+							labels[i].label));
+					sb.append(Util.separator + Util.separator + "\n");
+				}
+			}
+			
+			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 	
 }

@@ -10,6 +10,10 @@ import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +23,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -32,15 +37,21 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import common.agent.PerfData;
+import common.agent.RestAgent;
 import common.modbus.ModbusWatchPoint;
 import common.modbus.ModbusWatchPointLoader;
+import common.perf.FmsPerfItem;
+import common.perf.Perf;
+import common.server.Server;
+import src_ko.info.ONION_Info;
 import src_ko.main.MoonInspector;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
 
 public class AddModbusPointFrame extends JFrame {
 
-	private ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();
+	private static ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();
 	
 	private Color mkColor = new Color(237, 76, 55);
 	public static boolean isExist = false;
@@ -67,8 +78,9 @@ public class AddModbusPointFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AddModbusPointFrame frame = new AddModbusPointFrame();
-					frame.setVisible(true);
+					
+					new AddModbusPointFrame();
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -86,7 +98,7 @@ public class AddModbusPointFrame extends JFrame {
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
 				
-		setBounds(100, 100, 1140, 733);
+		setBounds(100, 100, 1138, 722);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new LineBorder(new Color(255, 140, 0), 8));
@@ -137,7 +149,7 @@ public class AddModbusPointFrame extends JFrame {
 		
 		JPanel backGround_Panel = new JPanel();
 		backGround_Panel.setBackground(Color.LIGHT_GRAY);
-		backGround_Panel.setBounds(10, 57, 1096, 621);
+		backGround_Panel.setBounds(10, 57, 1096, 610);
 		actualPanel.add(backGround_Panel);
 		backGround_Panel.setLayout(null);
 		
@@ -249,9 +261,9 @@ public class AddModbusPointFrame extends JFrame {
 							
 							if(modbusWps != null && modbusWps.length > 0) {
 								resetTable(point_table);
-								addRecord(point_table, modbusWps);
-								setTableStyle(point_table);									
-								setTitle("ModbusAnalyzer : " + file.getName());
+								fill(pointList, modbusWps);
+								addRecord(point_table, pointList);
+								setTableStyle(point_table);
 								
 								// 정상적으로 하나 이상의 모드버스 포인트를 읽었을 경우 메소드를 종료한다
 								return;
@@ -260,7 +272,7 @@ public class AddModbusPointFrame extends JFrame {
 						}
 					}
 				} catch (Exception ex) {
-					ex.printStackTrace();					
+					ex.printStackTrace();
 				}
 			}
 		});
@@ -280,20 +292,55 @@ public class AddModbusPointFrame extends JFrame {
 		search_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
 		search_textField.setColumns(10);
 		search_textField.setBorder(new LineBorder(Color.BLACK, 2));
+		search_textField.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				try {
+					doTableFilter();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			
+			public void keyReleased(KeyEvent e) {
+				try {
+					doTableFilter();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});		
 		backGround_Panel.add(search_textField);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
-		scrollPane.setBounds(12, 147, 1072, 464);
+		scrollPane.setBounds(12, 147, 1072, 454);
 		backGround_Panel.add(scrollPane);
 		
 		point_table = new JTable();
+		point_table.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getButton() == 1) { } // 왼쪽 클릭
+				if (e.getButton() == 1 && e.getClickCount() == 2) { 
+					// 왼쪽 버튼 더블 클릭
+					int row = point_table.getSelectedRow();
+					ModbusWatchPoint wp = (ModbusWatchPoint) point_table.getValueAt(row, 1);
+					ModbusWatchPoint.showInfo(wp);
+				}
+				if (e.getButton() == 3) {
+					// 오른쪽 클릭
+					int row = point_table.getSelectedRow();
+					ModbusWatchPoint wp = (ModbusWatchPoint) point_table.getValueAt(row, 1);
+					ModbusWatchPoint.showInfo(wp);
+				}
+			}
+		});
 		scrollPane.setViewportView(point_table);
 		resetTable(point_table);
 		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
+		
 	}
 
 	@Override
@@ -323,7 +370,7 @@ public class AddModbusPointFrame extends JFrame {
 		setTableStyle(table);
 	}
 	
-	public static void setTableStyle(JTable table) {		
+	public static void setTableStyle(JTable table) {
 		// 테이블 헤더 설정
 		table.getTableHeader().setForeground(Color.BLACK);
 		table.getTableHeader().setBackground(new Color(255, 255, 153));
@@ -405,7 +452,8 @@ public class AddModbusPointFrame extends JFrame {
 					
 					if(modbusWps != null && modbusWps.length > 0) {
 						resetTable(point_table);
-						addRecord(point_table, modbusWps);
+						fill(pointList, modbusWps);
+						addRecord(point_table, pointList);
 						setTableStyle(point_table);						
 						
 						// 정상적으로 하나 이상의 모드버스 포인트를 읽었을 경우 메소드를 종료한다
@@ -429,8 +477,9 @@ public class AddModbusPointFrame extends JFrame {
 
 				if (modbusWps != null && modbusWps.length > 0) {
 					resetTable(point_table);
-					addRecord(point_table, modbusWps);
-					setTableStyle(point_table);					
+					fill(pointList, modbusWps);
+					addRecord(point_table, pointList);
+					setTableStyle(point_table);
 
 					// 정상적으로 하나 이상의 모드버스 포인트를 읽었을 경우 메소드를 종료한다
 					return;
@@ -446,14 +495,15 @@ public class AddModbusPointFrame extends JFrame {
 	/**
 	 * 	레코드 추가
 	 */
-	public static void addRecord(JTable table, ModbusWatchPoint... modbusWps) {
+	public static void addRecord(JTable table, ArrayList<ModbusWatchPoint> modbusWps) {
 		try {
 			Vector record;
 			
 			DefaultTableModel model = (DefaultTableModel)table.getModel();
 			
-			for(int i = 0; i < modbusWps.length; i++) {
+			for(int i = 0; i < modbusWps.size(); i++) {
 				
+				ModbusWatchPoint modbusWp = modbusWps.get(i);
 				record = new Vector();
 				int index = 0;
 				
@@ -466,11 +516,11 @@ public class AddModbusPointFrame extends JFrame {
 				}
 				
 				/* column[0] */ record.add(String.valueOf(index)); // 순 서
-				/* column[1] */ record.add(modbusWps[i]); // 성능명
-				/* column[2] */ record.add(modbusWps[i].getFunctionCode());  // 기능코드
-				/* column[3] */ record.add(modbusWps[i].getRegisterAddrHexString());  // 레지스터 주소
-				/* column[4] */ record.add(modbusWps[i].getModbusAddr()); // 모드버스 주소
-				/* column[5] */ record.add(modbusWps[i].getDataType()); // 데이터 타입
+				/* column[1] */ record.add(modbusWp); // 성능명
+				/* column[2] */ record.add(modbusWp.getFunctionCode());  // 기능코드
+				/* column[3] */ record.add(modbusWp.getRegisterAddrHexString());  // 레지스터 주소
+				/* column[4] */ record.add(modbusWp.getModbusAddr()); // 모드버스 주소
+				/* column[5] */ record.add(modbusWp.getDataType()); // 데이터 타입
 				
 				model.addRow(record);
 			}
@@ -505,4 +555,64 @@ public class AddModbusPointFrame extends JFrame {
 			model.removeRow(index[0]);
 		}
 	}
+	
+	public static void fill(ArrayList<ModbusWatchPoint> list, ModbusWatchPoint[] array) {
+		list.clear();
+		for(ModbusWatchPoint wp : array) {
+			list.add(wp);
+		}
+	}
+	
+	public static void existsFrame() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(Util.colorRed("Modbus Watch Point Upload Frame Already Exists") + Util.separator + "\n");
+		sb.append("Modbus Watch Point Upload 프레임이 이미 열려있습니다" + Util.separator + "\n");
+		Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+		return;
+	}
+	
+	
+	public void doTableFilter() {
+		if(search_textField == null) return;
+		
+		ArrayList<ModbusWatchPoint> filterList = new ArrayList<ModbusWatchPoint>();
+		String text = search_textField.getText().toUpperCase().trim();
+		
+		boolean noSearch = (text == null || text.length() == 0 || text.equals(""));
+		
+		if(noSearch) {
+			resetTable(point_table);
+			addRecord(point_table, pointList);
+			return;
+		}
+		
+		for(int i = 0; i < pointList.size(); i++) {
+			ModbusWatchPoint modbusWp = pointList.get(i);
+
+			String searchElement = modbusWp.toString().toUpperCase();
+			
+			boolean isContain = false;
+			
+			if(text.contains(",")) {
+				String[] textToken = text.split(",");
+				for(int i2 = 0; i2 < textToken.length; i2++) {
+					String token = textToken[i2].trim();
+					if(searchElement.contains(token)) {
+						isContain = true;
+					}
+				}
+			}else if(searchElement.contains(text)) {
+				isContain = true;
+			}
+			
+			if(isContain) {
+				filterList.add(modbusWp);
+			}
+			
+		}// for loop
+
+		resetTable(point_table);
+		addRecord(point_table, filterList);
+	}
+	
 }

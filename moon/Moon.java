@@ -9,6 +9,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 
 import common.OnionMember;
+import src_ko.swing.AddModbusPointFrame;
+import src_ko.swing.PremiumLoginFrame;
 import src_ko.util.Util;
 
 public class Moon {
@@ -47,9 +49,9 @@ public class Moon {
 					initFrame(mainFrame);
 										
 					showFrame(Moon.KO);
-					
+					new AddModbusPointFrame();
 					// 테스트 코드 : 자동 사용자 인증
-//					new PremiumLoginFrame(true).loginSuccess(true);
+					new PremiumLoginFrame(true).loginSuccess(true);
 					
 					// **************** 프레임 제목 업데이트 스레드 *************************************************
 					new Thread(new Runnable() {
