@@ -48,6 +48,9 @@ import src_ko.info.ONION_Info;
 import src_ko.main.MoonInspector;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class AddModbusPointFrame extends JFrame {
 
@@ -70,6 +73,10 @@ public class AddModbusPointFrame extends JFrame {
 	private static JTextField search_textField;
 	private static JTextField dragAndDropField;
 	private static JTable point_table;
+	
+	private static JCheckBox useFilter;
+	private static JComboBox fc_filter;
+	private static JComboBox dataType_filter;
 	
 	/**
 	 * Launch the application.
@@ -282,14 +289,14 @@ public class AddModbusPointFrame extends JFrame {
 		lblNewLabel.setForeground(Color.BLACK);
 		lblNewLabel.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 18));
 		lblNewLabel.setBackground(Color.LIGHT_GRAY);
-		lblNewLabel.setBounds(25, 114, 76, 28);
+		lblNewLabel.setBounds(25, 110, 76, 28);
 		backGround_Panel.add(lblNewLabel);
 		
 		search_textField = new JTextField();
-		search_textField.setBounds(84, 115, 294, 28);
+		search_textField.setBounds(84, 104, 430, 39);
 		search_textField.setHorizontalAlignment(SwingConstants.LEFT);
 		search_textField.setForeground(Color.BLACK);
-		search_textField.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 16));
+		search_textField.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 17));
 		search_textField.setColumns(10);
 		search_textField.setBorder(new LineBorder(Color.BLACK, 2));
 		search_textField.addKeyListener(new KeyAdapter() {
@@ -337,10 +344,86 @@ public class AddModbusPointFrame extends JFrame {
 		scrollPane.setViewportView(point_table);
 		resetTable(point_table);
 		
+		useFilter = new JCheckBox(" «  ≈Õ");		
+		useFilter.setFocusPainted(false);
+		useFilter.setHorizontalAlignment(SwingConstants.LEFT);
+		useFilter.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 18));
+		useFilter.setBackground(Color.LIGHT_GRAY);
+		useFilter.setBounds(535, 110, 83, 28);
+		useFilter.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(useFilter.isSelected()) {
+					fc_filter.setEnabled(true);
+					dataType_filter.setEnabled(true);
+				}else {
+					fc_filter.setEnabled(false);
+					dataType_filter.setEnabled(false);
+				}
+				
+				doTableFilter();
+			}
+		});
+		backGround_Panel.add(useFilter);
+		
+		fc_filter = new JComboBox();
+		fc_filter.setEnabled(false);
+		fc_filter.setForeground(Color.BLACK);
+		fc_filter.setModel(new DefaultComboBoxModel(
+				new String[] {
+						"ALL", 						
+						"FC 01", 
+						"FC 02", 
+						"FC 03", 
+						"FC 04"
+						}));
+		fc_filter.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
+		fc_filter.setBackground(Color.WHITE);
+		fc_filter.setBounds(618, 104, 90, 39);
+		fc_filter.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				doTableFilter();
+			}
+		});
+		backGround_Panel.add(fc_filter);
+		
+		dataType_filter = new JComboBox();
+		dataType_filter.setForeground(Color.BLACK);
+		dataType_filter.setEnabled(false);
+		dataType_filter.setMaximumRowCount(20);
+		dataType_filter.setModel(new DefaultComboBoxModel(
+				new String[] {
+						"ALL",
+						"",
+						"BINARY",
+						"",
+						"TWO BYTE INT SIGNED", 
+						"TWO BYTE INT UNSIGNED",
+						"",						
+						"FOUR BYTE INT SIGNED", 
+						"FOUR BYTE INT UNSIGNED",
+						"FOUR BYTE INT SIGNED SWAPPED",
+						"FOUR BYTE INT UNSIGNED SWAPPED",
+						"",
+						"FOUR BYTE FLOAT",
+						"FOUR BYTE FLOAT SWAPPED",
+						"",
+						"EIGHT BYTE INT SIGNED",
+						"EIGHT BYTE FLOAT"
+						}));
+		dataType_filter.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 17));
+		dataType_filter.setBackground(Color.WHITE);
+		dataType_filter.setBounds(714, 104, 370, 39);
+		dataType_filter.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				doTableFilter();
+			}
+		});
+		backGround_Panel.add(dataType_filter);
+		
 		// «¡∑π¿”¿Ã »≠∏È ∞°øÓµ•ø°º≠ ª˝º∫µ»¥Ÿ
 		setLocationRelativeTo(null);
 		setVisible(true);
-		
 	}
 
 	@Override
@@ -573,36 +656,70 @@ public class AddModbusPointFrame extends JFrame {
 	
 	
 	public void doTableFilter() {
-		if(search_textField == null) return;
+		if(search_textField == null && useFilter == null) return;
 		
 		ArrayList<ModbusWatchPoint> filterList = new ArrayList<ModbusWatchPoint>();
-		String text = search_textField.getText().toUpperCase().trim();
+		String text = search_textField.getText();
 		
 		boolean noSearch = (text == null || text.length() == 0 || text.equals(""));
 		
-		if(noSearch) {
+		if(noSearch && !useFilter.isSelected()) {
 			resetTable(point_table);
 			addRecord(point_table, pointList);
 			return;
 		}
 		
+		if(!noSearch) {
+			text = text.toUpperCase().trim();
+		}
+		
 		for(int i = 0; i < pointList.size(); i++) {
 			ModbusWatchPoint modbusWp = pointList.get(i);
-
-			String searchElement = modbusWp.toString().toUpperCase();
-			
 			boolean isContain = false;
 			
-			if(text.contains(",")) {
-				String[] textToken = text.split(",");
-				for(int i2 = 0; i2 < textToken.length; i2++) {
-					String token = textToken[i2].trim();
-					if(searchElement.contains(token)) {
-						isContain = true;
+			if(!noSearch) {
+				String searchElement = modbusWp.toString().toUpperCase();
+				
+				if(text.contains(",")) {
+					String[] textToken = text.split(",");
+					for(int i2 = 0; i2 < textToken.length; i2++) {
+						String token = textToken[i2].trim();
+						if(searchElement.contains(token)) {
+							isContain = true;
+						}
 					}
+				}else if(searchElement.contains(text)) {
+					isContain = true;
 				}
-			}else if(searchElement.contains(text)) {
+			}else {
 				isContain = true;
+			}
+			
+			if(useFilter.isSelected()) {
+				boolean fcPass = false;
+				boolean dataTypePass = false;
+				
+				if( !(fc_filter.getSelectedItem().toString().equalsIgnoreCase("") || fc_filter.getSelectedItem().toString().equalsIgnoreCase("ALL")) ) { 
+					int fc = Integer.parseInt(fc_filter.getSelectedItem().toString().split(" ")[1].trim());
+					if(modbusWp.getFunctionCode() == fc) {
+						fcPass = true;
+					}
+				}else {
+					// ALL
+					fcPass = true;
+				}
+				
+				if( !(dataType_filter.getSelectedItem().toString().equalsIgnoreCase("") || dataType_filter.getSelectedItem().toString().equalsIgnoreCase("ALL")) ) { 
+					String dataType = dataType_filter.getSelectedItem().toString().toUpperCase().trim();
+					if(modbusWp.getDataType().toUpperCase().trim().equalsIgnoreCase(dataType)) {
+						dataTypePass = true;
+					}
+				}else {
+					// ALL
+					dataTypePass = true;
+				}
+				
+				isContain = isContain && fcPass && dataTypePass;
 			}
 			
 			if(isContain) {
@@ -614,5 +731,4 @@ public class AddModbusPointFrame extends JFrame {
 		resetTable(point_table);
 		addRecord(point_table, filterList);
 	}
-	
 }
