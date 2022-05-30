@@ -20,7 +20,10 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -37,20 +40,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-import common.agent.PerfData;
-import common.agent.RestAgent;
 import common.modbus.ModbusWatchPoint;
 import common.modbus.ModbusWatchPointLoader;
-import common.perf.FmsPerfItem;
-import common.perf.Perf;
-import common.server.Server;
-import src_ko.info.ONION_Info;
+import moon.Moon;
 import src_ko.main.MoonInspector;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
 
 public class AddModbusPointFrame extends JFrame {
 
@@ -59,7 +54,7 @@ public class AddModbusPointFrame extends JFrame {
 	private Color mkColor = new Color(237, 76, 55);
 	public static boolean isExist = false;
 	private JPanel contentPane;
-	private JButton mk119Button;
+	private JButton downloadTemplateButton;
 	private JTable table;
 
 	private static JRadioButton mk_V4_RaidoButton;
@@ -126,33 +121,68 @@ public class AddModbusPointFrame extends JFrame {
 		currentFunction.setBackground(Color.WHITE);
 		currentFunction.setBounds(0, 0, 380, 55);
 		actualPanel.add(currentFunction);
-		
 				
-		mk119Button = new JButton(new Util().getMK2Resource());
-		mk119Button.setForeground(Color.BLACK);
-		mk119Button.setText(" 템플릿 다운로드");
-		mk119Button.setFont(new Font("맑은 고딕", Font.BOLD, 17));
-		mk119Button.setFocusPainted(false);
-		mk119Button.setContentAreaFilled(false);
-		mk119Button.setBorder(UIManager.getBorder("Button.border"));
-		mk119Button.setBackground(Color.WHITE);
-		mk119Button.setBounds(804, 11, 302, 36);		
-		mk119Button.addActionListener(new ActionListener() {
+		downloadTemplateButton = new JButton();
+		downloadTemplateButton.setForeground(Color.BLACK);
+		downloadTemplateButton.setText("템플릿 다운로드");
+		downloadTemplateButton.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		downloadTemplateButton.setFocusPainted(false);
+		downloadTemplateButton.setContentAreaFilled(false);
+		downloadTemplateButton.setBorder(UIManager.getBorder("Button.border"));
+		downloadTemplateButton.setBackground(Color.WHITE);
+		downloadTemplateButton.setBounds(710, 12, 162, 36);		
+		downloadTemplateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				File file = new File("경로\\템플릿 파일.xlsx");
-				String path = Util.getFilePath();
+				try {
+					String mkVersion = mk_V4_RaidoButton.isSelected() ? "V4" : "V10";				
+
+					String filePath = String.format("%s\\%s\\%s\\%s\\%s.xlsx", 
+							MainFrame.getCurrentPath(),
+							"template",
+							mkVersion,
+							Moon.currentLanguage,
+							"Modbus"
+							);
+					
+					File file = new File(filePath);
+					if(!file.exists()) {
+						StringBuilder sb = new StringBuilder();
+						sb.append(Util.colorRed("Template File that does not Exist") + Util.separator + "\n");
+						sb.append("아래의 경로에 템플릿 파일이 존재하지 않습니다" + Util.separator + Util.separator + "\n\n");
+						sb.append(Util.colorRed("Path") + " : " + file.getAbsolutePath().replace("\\", Util.colorRed("\\")) + Util.separator + Util.separator + "\n");
+						Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					
+					String downloadPath = Util.getFilePath();
 				
-				if(path != null) {
-					path += ".xlsx";
-					FileUtil.copyFile(file, new File(path));
-					System.out.println(path);
-				}else {
+					if(downloadPath != null) {
+						downloadPath += ".xlsx";
+						File downloadFile =new File(downloadPath);
+						FileUtil.copyFile(file, downloadFile);
+						if(downloadFile.exists()) {
+							StringBuilder sb = new StringBuilder();
+							sb.append(Util.colorGreen("Template File Download Successful") + Util.separator + "\n");
+							sb.append("아래의 경로에 템플릿 파일을 다운로드 완료하였습니다" + Util.separator + Util.separator + "\n\n");
+							sb.append(Util.colorBlue("Path") + " : " + downloadFile.getAbsolutePath().replace("\\", Util.colorBlue("\\")) + Util.separator + Util.separator + "\n");
+							Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+							return;
+						}					
+					}else {
+						return;
+					}
+				}catch(Exception exception) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(Util.colorRed("Failed to Download Template File") + Util.separator + "\n");
+					sb.append("처리 할 수 없는 예외가 발생하여 템플릿 파일 다운로드에 실패하였습니다" + Util.separator + Util.separator + "\n\n");
+					sb.append(Util.colorRed("Exception Message") + " : " + exception.getMessage() + Util.separator + Util.separator + "\n");
+					Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 			}
 		});
-		actualPanel.add(mk119Button);
+		actualPanel.add(downloadTemplateButton);
 		
 		JPanel backGround_Panel = new JPanel();
 		backGround_Panel.setBackground(Color.LIGHT_GRAY);
@@ -329,9 +359,9 @@ public class AddModbusPointFrame extends JFrame {
 				if (e.getButton() == 1) { } // 왼쪽 클릭
 				if (e.getButton() == 1 && e.getClickCount() == 2) { 
 					// 왼쪽 버튼 더블 클릭
-					int row = point_table.getSelectedRow();
-					ModbusWatchPoint wp = (ModbusWatchPoint) point_table.getValueAt(row, 1);
-					ModbusWatchPoint.showInfo(wp);
+//					int row = point_table.getSelectedRow();
+//					ModbusWatchPoint wp = (ModbusWatchPoint) point_table.getValueAt(row, 1);
+//					ModbusWatchPoint.showInfo(wp);
 				}
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
@@ -420,6 +450,17 @@ public class AddModbusPointFrame extends JFrame {
 			}
 		});
 		backGround_Panel.add(dataType_filter);
+		
+		JButton button = new JButton();
+		button.setText("모드버스 포인트 추가");
+		button.setForeground(Color.BLUE);
+		button.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		button.setFocusPainted(false);
+		button.setContentAreaFilled(false);
+		button.setBorder(UIManager.getBorder("Button.border"));
+		button.setBackground(Color.WHITE);
+		button.setBounds(881, 12, 225, 36);
+		actualPanel.add(button);
 		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
@@ -563,17 +604,16 @@ public class AddModbusPointFrame extends JFrame {
 					fill(pointList, modbusWps);
 					addRecord(point_table, pointList);
 					setTableStyle(point_table);
-
+					
 					// 정상적으로 하나 이상의 모드버스 포인트를 읽었을 경우 메소드를 종료한다
 					return;
 				}
-
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
 	
 	/**
 	 * 	레코드 추가
@@ -654,6 +694,15 @@ public class AddModbusPointFrame extends JFrame {
 		return;
 	}
 	
+	public static ArrayList<ModbusWatchPoint> getSelectedModbusPoint(JTable table) {
+		ArrayList<ModbusWatchPoint> selectedPointlist = new ArrayList<ModbusWatchPoint>();
+		int[] selectedIndex = table.getSelectedRows();
+		for(int i = 0; i < selectedIndex.length; i++) {
+			ModbusWatchPoint wp = (ModbusWatchPoint) table.getValueAt(selectedIndex[i], 1);
+			selectedPointlist.add(wp);
+		}
+		return selectedPointlist;
+	}
 	
 	public void doTableFilter() {
 		if(search_textField == null && useFilter == null) return;

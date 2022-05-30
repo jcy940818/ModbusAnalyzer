@@ -272,7 +272,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			sb.append(String.format("%s : %s", Util.colorBlue("3. Measure"), wp.getMeasure()));
 			sb.append(Util.separator + Util.separator + "\n\n");
 			
-			sb.append(String.format("%s : %s", Util.colorBlue("4. Scale"), wp.getScaleFunction()));
+			sb.append(String.format("%s : %s", Util.colorBlue("4. Scale Formula"), wp.getScaleFunction()));
 			sb.append(Util.separator + Util.separator + "\n\n");
 			
 			sb.append(String.format("%s : %s", Util.colorBlue("5. Data Format"), wp.getDataFormat()));
