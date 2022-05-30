@@ -14,6 +14,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -33,6 +35,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import common.modbus.ModbusWatchPoint;
 import src_ko.agent.ClientSocket;
 import src_ko.agent.ModbusAgent;
 import src_ko.agent.Perf;
@@ -46,33 +49,42 @@ public class ModbusMonitor_Panel extends JPanel {
 	// 클라이언트 소켓
 	public static Socket socket_ko = ModbusAgent.clientSocket;
 	public static String IP;
-	public static int PORT;	
+	public static int PORT;
+	
+	// Modbus Point List
+	public static JTable pointListTable;
+	private static ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();
+	private static String addrType = "register_hex";
 	
 	// information Component
 	JPanel infoPanel; // 클라이언트 소켓이 서버와 연결 된 상태일때만 인포메이션 컴포넌트들을 활성화 시킨다.
+	JPanel viewTypePanel;
+	JPanel modbusTypePanel;
+	JPanel viewPanel;
 	JPanel inputFormPanel;
-	JPanel typePanel;
 	JPanel resultPanel;
 	JPanel imagePanel; /* ONION Image */
 	
 	private JButton connectButton; // 연결 정보 입력버튼 (중요)
 	private static boolean isRTU = false; // Default : Modbus TCP (아주 중요한 변수)
 	private static RX_Info global_rx = null;
-	public static JTable table;
 	private static JLabel currentState;
+	private static JTextField transactionId_text; // Modbus TCP : TransactionID 필드
 	
-	// TX Form 전송 관련 컴포넌트
-	private CardLayout inputPanel_layout;
-	private JTextField transactionId_text; // Modbus TCP : TransactionID 필드
-	
+	private static CardLayout cardLayout;
 	private JButton form_sendPacketButton;
 	private static JButton form_resetButton;
 	private static ButtonGroup radioGroup;
+	private static ButtonGroup radioGroup2;
+	private static JRadioButton radio_pointList;
+	private static JRadioButton radio_packetLog;	
 	private static JRadioButton radio_modbusTCP;
 	private static JRadioButton radio_modbusRTU;
 	
+	
 	// 통신 기록
-	public static JScrollPane packetLog_scrollPane;
+	public static JScrollPane packetLog_ScrollPane;
+	public static JScrollPane pointList_ScrollPane;
 	public static JTextArea packetLog;
 	public static MessageFrame packetlog_Frame;
 	public TX_Info tx;
@@ -127,90 +139,89 @@ public class ModbusMonitor_Panel extends JPanel {
 		resultPanel.setLayout(null);
 		infoPanel.add(resultPanel);
 		
-		JScrollPane resultTable_ScrollPane = new JScrollPane();
-		resultTable_ScrollPane.setBorder(new LineBorder(Color.BLACK, 3));
-		resultTable_ScrollPane.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
-		resultTable_ScrollPane.setBackground(Color.WHITE);
-		resultTable_ScrollPane.setBounds(578, 127, 438, 405);
-		resultPanel.add(resultTable_ScrollPane);
+		viewTypePanel = new JPanel();
+		viewTypePanel.setBorder(new LineBorder(Color.BLACK, 2));
+		viewTypePanel.setBackground(Color.WHITE);
+		viewTypePanel.setBounds(12, 10, 140, 72);
+		viewTypePanel.setLayout(null);
+		resultPanel.add(viewTypePanel);
 		
-		// 테이블 생성 부분
-		table = new JTable();
-		table.setBackground(Color.WHITE);		
-		table.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				if (e.getButton() == 1) { } // 왼쪽 클릭
-				if (e.getButton() == 1 && e.getClickCount() == 2) { } // 왼쪽 버튼 더블 클릭
-				if (e.getButton() == 3) {
-					// 오른쪽 클릭
-					int column = table.columnAtPoint(e.getPoint());
-					int row = table.rowAtPoint(e.getPoint());
-					table.changeSelection(row, column, false, false);
-					table.requestFocus();
-					int[] selectedIndex = table.getSelectedRows();
-					Perf.showBitStatus(table, selectedIndex, "TWO BYTE INT SIGNED");
-				}
+		radio_pointList = new JRadioButton("Point List");
+		radio_pointList.setBounds(8, 6, 125, 30);
+		radio_pointList.setSelected(true);
+		radio_pointList.setHorizontalAlignment(SwingConstants.LEFT);
+		radio_pointList.setForeground(Color.BLACK);
+		radio_pointList.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		radio_pointList.setBackground(Color.WHITE);
+		radio_pointList.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cardLayout.show(viewPanel, radio_pointList.getText());
 			}
 		});
-		resetTable(table);
+		viewTypePanel.add(radio_pointList);
 		
-		resultTable_ScrollPane.setViewportView(table);
+		radio_packetLog = new JRadioButton("Packet Log");
+		radio_packetLog.setBounds(8, 35, 125, 30);
+		radio_packetLog.setHorizontalAlignment(SwingConstants.LEFT);
+		radio_packetLog.setForeground(Color.BLACK);
+		radio_packetLog.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		radio_packetLog.setBackground(Color.WHITE);
+		radio_packetLog.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cardLayout.show(viewPanel, radio_packetLog.getText());
+			}
+		});
+		viewTypePanel.add(radio_packetLog);
 		
-		packetLog_scrollPane = new JScrollPane();
-		packetLog_scrollPane.setBorder(new LineBorder(Color.BLACK, 3));
-		packetLog_scrollPane.setBounds(12, 127, 553, 405);
-		resultPanel.add(packetLog_scrollPane);
+		radioGroup2 = new ButtonGroup();		
+		radioGroup2.add(radio_pointList);
+		radioGroup2.add(radio_packetLog);
 		
-		
-		packetLog = new JTextArea();		
-		packetLog.setFont(new Font("맑은 고딕", Font.PLAIN, 16));				
-		packetLog_scrollPane.setViewportView(packetLog);				
-		
-		typePanel = new JPanel();
-		typePanel.setBounds(12, 10, 141, 107);
-		resultPanel.add(typePanel);
-		typePanel.setBackground(Color.WHITE);
-		typePanel.setLayout(null);
-		
-		JLabel modbusType = new JLabel("Modbus Type");
-		modbusType.setForeground(Color.BLACK);
-		modbusType.setHorizontalAlignment(SwingConstants.LEFT);
-		modbusType.setFont(new Font("맑은 고딕", Font.BOLD, 16));
-		modbusType.setBounds(12, 10, 129, 31);
-		typePanel.add(modbusType);
+		modbusTypePanel = new JPanel();
+		modbusTypePanel.setBorder(new LineBorder(Color.BLACK, 2));
+		modbusTypePanel.setBounds(163, 10, 140, 72);
+		resultPanel.add(modbusTypePanel);
+		modbusTypePanel.setBackground(Color.WHITE);
+		modbusTypePanel.setLayout(null);
 		
 		radio_modbusTCP = new JRadioButton("Modbus TCP");
 		radio_modbusTCP.setForeground(Color.BLACK);
 		radio_modbusTCP.setBackground(Color.WHITE);
 		radio_modbusTCP.setHorizontalAlignment(SwingConstants.LEFT);
-		radio_modbusTCP.setSelected(true);
 		radio_modbusTCP.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		radio_modbusTCP.setBounds(8, 43, 125, 30);
-		typePanel.add(radio_modbusTCP);
+		radio_modbusTCP.setBounds(8, 6, 125, 30);
+		modbusTypePanel.add(radio_modbusTCP);
 		
 		radio_modbusRTU = new JRadioButton("Modbus RTU");
 		radio_modbusRTU.setForeground(Color.BLACK);
 		radio_modbusRTU.setBackground(Color.WHITE);
+		radio_modbusRTU.setSelected(true);
 		radio_modbusRTU.setHorizontalAlignment(SwingConstants.LEFT);
 		radio_modbusRTU.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		radio_modbusRTU.setBounds(8, 72, 125, 30);
-		typePanel.add(radio_modbusRTU);
+		radio_modbusRTU.setBounds(8, 35, 125, 30);
+		modbusTypePanel.add(radio_modbusRTU);
 		
 		radioGroup = new ButtonGroup();
 		radioGroup.add(radio_modbusTCP);
 		radioGroup.add(radio_modbusRTU);
 		
-		inputPanel_layout = new CardLayout(0, 0);		
+		// 라디오 버튼(TCP/RTU)에 리스너 추가
+		radio_modbusTCP.addActionListener(radioListener);
+		radio_modbusRTU.addActionListener(radioListener);
+		
 		inputFormPanel = new JPanel();
-		inputFormPanel.setBounds(165, 10, 851, 107);
-		resultPanel.add(inputFormPanel);
+		inputFormPanel.setBorder(new LineBorder(Color.BLACK, 2));
+		inputFormPanel.setBounds(315, 10, 701, 72);
 		inputFormPanel.setBackground(Color.WHITE);
-		inputFormPanel.setLayout(inputPanel_layout);
+		inputFormPanel.setLayout(new BorderLayout(0, 0));
+		resultPanel.add(inputFormPanel);
 		
 		JPanel form_InputPanel = new JPanel();
 		form_InputPanel.setLayout(null);
 		form_InputPanel.setBackground(Color.WHITE);
-		inputFormPanel.add(form_InputPanel, "form_InputPanel");
+		inputFormPanel.add(form_InputPanel);
 		
 		transactionId_text = new JTextField();
 		transactionId_text.setText("1");
@@ -218,7 +229,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		transactionId_text.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		transactionId_text.setColumns(10);
 		transactionId_text.setBorder(UIManager.getBorder("TextField.border"));
-		transactionId_text.setBounds(164, 31, 85, 31);
+		transactionId_text.setBounds(12, 10, 85, 31);
 		transactionId_text.addFocusListener(new FocusAdapter() {
 			public void focusLost(FocusEvent e) {
 				int transactionId = 0;
@@ -286,16 +297,18 @@ public class ModbusMonitor_Panel extends JPanel {
 		form_resetButton.setForeground(Color.BLACK);
 		form_resetButton.setFont(new Font("맑은 고딕", Font.BOLD, 13));
 		form_resetButton.setBackground(Color.WHITE);
-		form_resetButton.setBounds(751, 50, 88, 31);
+		form_resetButton.setBounds(227, 11, 88, 31);
 		form_resetButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {			
 				global_rx = null;
 				packetLog.setText(null);
-				resetTable(table);
+				resetTable(pointListTable);
 								
 				transactionId_text.setText("1");
-				transactionId_text.setForeground(Color.BLUE);				
-			}						
+				transactionId_text.setForeground(Color.BLUE);
+				
+				pointList.clear();
+			}
 		});
 		
 		// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
@@ -335,7 +348,7 @@ public class ModbusMonitor_Panel extends JPanel {
 																																													
 								// updataTable() 에 넘겨줄 RX_Info 인스턴스 먼저 초기화를 해줘야한다.
 								global_rx = rx;
-								updateTable(table, rx);
+								updateTable(pointListTable, rx);
 								ModbusAgent.isRTU = isRTU;
 								ModbusAgent.lastFunctionCode = rx.getFunctionCode();
 									
@@ -352,7 +365,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					}).start();
 					
 				}catch(Exception exception) {
-					resetTable(table);
+					resetTable(pointListTable);
 					exception.printStackTrace();
 				}
 				
@@ -362,16 +375,55 @@ public class ModbusMonitor_Panel extends JPanel {
 		form_sendPacketButton.setForeground(Color.BLACK);
 		form_sendPacketButton.setFont(new Font("맑은 고딕", Font.BOLD, 13));
 		form_sendPacketButton.setBackground(Color.WHITE);
-		form_sendPacketButton.setBounds(751, 10, 88, 31);		
+		form_sendPacketButton.setBounds(127, 11, 88, 31);		
 		form_InputPanel.add(form_sendPacketButton);
 		form_InputPanel.add(form_resetButton);
 		
-		// 라디오 버튼(TCP/RTU)에 리스너 추가
-		radio_modbusTCP.addActionListener(radioListener);
-		radio_modbusRTU.addActionListener(radioListener);
-		radio_modbusRTU.doClick();
+		pointList_ScrollPane = new JScrollPane();		
+		pointList_ScrollPane.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
+		pointList_ScrollPane.setBackground(Color.WHITE);
+		pointList_ScrollPane.setBounds(578, 360, 438, 172);
+		
+		// 테이블 생성 부분
+		pointListTable = new JTable();
+		pointListTable.setBackground(Color.WHITE);		
+		pointListTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getButton() == 1) { } // 왼쪽 클릭
+				if (e.getButton() == 1 && e.getClickCount() == 2) { } // 왼쪽 버튼 더블 클릭
+				if (e.getButton() == 3) {
+					// 오른쪽 클릭
+					int column = pointListTable.columnAtPoint(e.getPoint());
+					int row = pointListTable.rowAtPoint(e.getPoint());
+					pointListTable.changeSelection(row, column, false, false);
+					pointListTable.requestFocus();
+					int[] selectedIndex = pointListTable.getSelectedRows();
+					Perf.showBitStatus(pointListTable, selectedIndex, "TWO BYTE INT SIGNED");
+				}
+			}
+		});
+		resetTable(pointListTable);
+		
+		pointList_ScrollPane.setViewportView(pointListTable);
+		
+		packetLog_ScrollPane = new JScrollPane();		
+		packetLog_ScrollPane.setBounds(12, 360, 553, 172);
+		
+		packetLog = new JTextArea();		
+		packetLog.setFont(new Font("맑은 고딕", Font.PLAIN, 16));				
+		packetLog_ScrollPane.setViewportView(packetLog);				
+		
+		cardLayout = new CardLayout(0, 0);
+		viewPanel = new JPanel();
+		viewPanel.setBorder(new LineBorder(Color.BLACK, 2));
+		viewPanel.setBackground(Color.WHITE);
+		viewPanel.setBounds(0, 92, 1028, 450);
+		viewPanel.setLayout(cardLayout);
+		viewPanel.add(pointList_ScrollPane, radio_pointList.getText());
+		viewPanel.add(packetLog_ScrollPane, radio_packetLog.getText());
+		resultPanel.add(viewPanel);
 			
-		currentState = new JLabel();		
+		currentState = new JLabel();
 		currentState.setOpaque(true);
 		currentState.setHorizontalAlignment(SwingConstants.CENTER);
 		currentState.setFont(new Font("맑은 고딕", Font.BOLD, 22));
@@ -388,7 +440,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		connectButton.setBackground(Color.WHITE);
 		connectButton.setBounds(400, 11, 160, 36);
 		connectButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {							
+			public void actionPerformed(ActionEvent e) {
 				
 				// 클라이언트 소켓의 마지막 커넥션 정보
 				String lastConnectionInfo = ClientSocket.getSimpleConnectedInfo();
@@ -534,14 +586,15 @@ public class ModbusMonitor_Panel extends JPanel {
 		}.start();
 		
 		panel_ON(); // 테스트
+		radio_modbusRTU.doClick();
 		
 	}// end ModbusMonitor_Panel()
 	
 	
 	public void panel_ON() {
 		// 접속 전에는 판넬 컴포넌트들을 사용하지 않는다
-		typePanel.setVisible(true);
-		typePanel.setEnabled(true);
+		modbusTypePanel.setVisible(true);
+		modbusTypePanel.setEnabled(true);
 		inputFormPanel.setVisible(true);
 		inputFormPanel.setEnabled(true);
 		resultPanel.setVisible(true);
@@ -557,8 +610,8 @@ public class ModbusMonitor_Panel extends JPanel {
 	
 	public void panel_OFF() {
 		// 접속 전에는 판넬 컴포넌트들을 사용하지 않는다
-		typePanel.setVisible(false);
-		typePanel.setEnabled(false);
+		modbusTypePanel.setVisible(false);
+		modbusTypePanel.setEnabled(false);
 		inputFormPanel.setVisible(false);
 		inputFormPanel.setEnabled(false);
 		resultPanel.setVisible(false);
@@ -578,35 +631,34 @@ public class ModbusMonitor_Panel extends JPanel {
 	
 	
 	public static void resetTable(JTable table){
-		// 테이블 헤더 설정
-		table.getTableHeader().setForeground(Color.BLACK);
-		table.getTableHeader().setBackground(new Color(255, 255, 153));
-		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		
-		// 테이블 셀 설정
-		table.setBorder(new EmptyBorder(0, 3, 0, 0));
-		table.setRowMargin(3);
-		table.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
-		table.setRowHeight(25);
 		
 		table.setModel(new DefaultTableModel(
-			new Object[][] {
-				// 테이블 기본 셀 없음
-			},
-			new String[] {
-				"순 서", "Register", "Modbus", "Value"
-			}
-		));
-		table.getColumnModel().getColumn(0).setPreferredWidth(1); // 순서
-		table.getColumnModel().getColumn(1).setPreferredWidth(30); // 레지스터 주소
-		table.getColumnModel().getColumn(2).setPreferredWidth(30); // 모드버스 주소
-		table.getColumnModel().getColumn(3).setPreferredWidth(120); // 값
+				new Object[][] {
+					
+				},
+				new String[] {
+						"순 서",
+						"모드버스 포인트",
+						"기능코드",
+						"주 소",
+						"데이터 타입",
+						"결 과"
+					}) {
+				boolean[] columnEditables = new boolean[] {
+						false, // 순 서 : 수정 불가
+						true, // 모드버스 포인트 : 수정 가능
+						false, // 기능코드 : 수정 불가
+						false, // 주 소 : 수정 불가
+						false, // 데이터 타입 : 수정 불가
+						false, // 결 과 : 수정 불가
+				};
+				public boolean isCellEditable(int row, int column) {
+					return columnEditables[column];
+				}
+		});
 		
-		// 셀 크기 임의 변경 불가
-		table.getTableHeader().setReorderingAllowed(false);
-		table.getTableHeader().setResizingAllowed(false);			
+		setTableStyle(table);
 	}
-	
 	
 	public static void updateTable(JTable table, RX_Info rx) {
 		
@@ -636,7 +688,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				
 		if(isRTU) {
 			// Modbus RTU : 테이블의 마지막 셀에 CRC 내용을 표시해주기 위해서 성능 개수보다 셀을 한개 더 많도록 설정			
-			content = new Object[tableRow + 1][];			
+			content = new Object[tableRow + 1][];
 		}else {
 			// Modbus TCP
 			content = new Object[tableRow][];
@@ -692,12 +744,12 @@ public class ModbusMonitor_Panel extends JPanel {
 		return packetLog;
 	}
 	
-	public static JTable getResultTable() {
-		return table;
+	public static JTable getViewTable() {
+		return pointListTable;
 	}
 	
 	public static void scrollUp() {
-		packetLog_scrollPane.getVerticalScrollBar().setValue(packetLog_scrollPane.getVerticalScrollBar().getMaximum());		
+		packetLog_ScrollPane.getVerticalScrollBar().setValue(packetLog_ScrollPane.getVerticalScrollBar().getMaximum());		
 	}
 	
 	public void initTid(int tid) {
@@ -752,7 +804,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		}
 		
 		return isValid;
-	}	
+	}
 	
 	// Modbus 타입이 TCP인지 RTU인지를 결정하는 라디오 버튼 이벤트
 	ActionListener radioListener = new ActionListener() {			
@@ -764,7 +816,7 @@ public class ModbusMonitor_Panel extends JPanel {
 			// Modbus RTU, TCP 라디오 버튼 이동 시 
 			global_rx = null;
 			transactionId_text.setText(null);
-			resetTable(table);
+			resetTable(pointListTable);
 
 			if (b.getText().contains("RTU")) {
 				isRTU = true;					
@@ -778,11 +830,69 @@ public class ModbusMonitor_Panel extends JPanel {
 		}						
 	};
 	
+	/**
+	 * 	레코드 추가
+	 */
+	public static void addRecord(JTable table, ArrayList<ModbusWatchPoint> modbusWps) {
+		try {
+			Vector record;
+			
+			DefaultTableModel model = (DefaultTableModel)table.getModel();
+			
+			for(int i = 0; i < modbusWps.size(); i++) {
+				
+				ModbusWatchPoint modbusWp = modbusWps.get(i);
+				record = new Vector();
+				int index = 0;
+				
+				if(table.getRowCount() <= 0) {
+					// 테이블의 행 개수가 0개 일 경우 : index = 1
+					index = 1;
+				}else if(table.getRowCount() >= 1){
+					// 테이블의 행 개수가 최소 1개 이상 일 경우 마지막 레코드의 ( 순서 컬럼 값 + 1 )
+					index = Integer.parseInt(String.valueOf(table.getValueAt(table.getRowCount()-1, 0))) + 1;				
+				}
+				
+				/* column[0] */ record.add(String.valueOf(index)); // 순 서
+				/* column[1] */ record.add(modbusWp); // 모드버스 포인트
+				/* column[2] */ record.add(modbusWp.getFunctionCode());  // 기능코드
+				
+				Object addr = null;
+				switch(addrType) {
+					case "modbus" :
+						addr = modbusWp.getModbusAddrString();
+						break;
+					case "register_dec" :
+						addr = modbusWp.getRegisterAddr();
+						break;
+					case "register_hex" :
+						addr = modbusWp.getRegisterAddrHexString();
+						break;
+					default : 
+						addr = modbusWp.getModbusAddrString();
+						break;
+				}
+				
+				/* column[3] */ record.add(addr);  // 주소
+				/* column[4] */ record.add(modbusWp.getDataType()); // 데이터 타입
+				/* column[5] */ record.add("-"); // 결 과
+				
+				model.addRow(record);
+			}
+		}catch(Exception e) {
+			// 레코드 추가 중 예외 발생 시 아무것도 수행하지 않음
+			e.printStackTrace();
+		}
+	}
 	
 	public static void setTableStyle(JTable table) {
+		
 		// 이동 불가, 셀 크기 조절 불가
+		table.getTableHeader().setBackground(new Color(255, 255, 153));
+		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		table.getTableHeader().setForeground(Color.BLACK);
 		table.getTableHeader().setReorderingAllowed(false);
-		table.getTableHeader().setResizingAllowed(false);
+		table.getTableHeader().setResizingAllowed(true);
 		
 		// 테이블 셀 설정
 		table.setBorder(new EmptyBorder(0, 3, 0, 0));
@@ -791,10 +901,12 @@ public class ModbusMonitor_Panel extends JPanel {
 		table.setRowHeight(25);
 		
 		// 테이블 셀 크기 설정
-		table.getColumnModel().getColumn(0).setPreferredWidth(1); // 순서
-		table.getColumnModel().getColumn(1).setPreferredWidth(30); // 레지스터 주소
-		table.getColumnModel().getColumn(2).setPreferredWidth(30); // 모드버스 주소
-		table.getColumnModel().getColumn(3).setPreferredWidth(120); // 스캔 결과
+		table.getColumnModel().getColumn(0).setPreferredWidth(50); // 순 서
+		table.getColumnModel().getColumn(1).setPreferredWidth(350); // 모드버스 포인트
+		table.getColumnModel().getColumn(2).setPreferredWidth(65); // 기능코드
+		table.getColumnModel().getColumn(3).setPreferredWidth(80); // 주 소
+		table.getColumnModel().getColumn(4).setPreferredWidth(250); // 데이터 타입
+		table.getColumnModel().getColumn(5).setPreferredWidth(100); // 결 과
 				
 		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
 		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
@@ -805,10 +917,11 @@ public class ModbusMonitor_Panel extends JPanel {
 		// 정렬할 테이블의 ColumnModel을 가져옴
 		TableColumnModel tcmSchedule = table.getColumnModel();
 		
-		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순서
-		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 레지스터 주소
-		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 모드버스 주소
-		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 결과
+		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
+//		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 모드버스 포인트
+		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 기능코드
+		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 주 소
+		tcmSchedule.getColumn(4).setCellRenderer(tScheduleCellRenderer); // 데이터 타입
+		tcmSchedule.getColumn(5).setCellRenderer(tScheduleCellRenderer); // 결 과
 	}
-		
 }

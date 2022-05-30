@@ -55,6 +55,7 @@ public class AddModbusPointFrame extends JFrame {
 	public static boolean isExist = false;
 	private JPanel contentPane;
 	private JButton downloadTemplateButton;
+	private JButton addModbusWatchPoint;
 	private JTable table;
 
 	private static JRadioButton mk_V4_RaidoButton;
@@ -183,6 +184,30 @@ public class AddModbusPointFrame extends JFrame {
 			}
 		});
 		actualPanel.add(downloadTemplateButton);
+		
+		addModbusWatchPoint = new JButton();
+		addModbusWatchPoint.setText("모드버스 포인트 추가");
+		addModbusWatchPoint.setForeground(Color.BLUE);
+		addModbusWatchPoint.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		addModbusWatchPoint.setFocusPainted(false);
+		addModbusWatchPoint.setContentAreaFilled(false);
+		addModbusWatchPoint.setBorder(UIManager.getBorder("Button.border"));
+		addModbusWatchPoint.setBackground(Color.WHITE);
+		addModbusWatchPoint.setBounds(881, 12, 225, 36);		
+		addModbusWatchPoint.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ArrayList<ModbusWatchPoint> selectedPointList = getSelectedModbusPoint(point_table);
+				
+				if(selectedPointList == null || selectedPointList.size() < 1) {
+					return;
+				}else {
+					ModbusMonitor_Panel.addRecord(ModbusMonitor_Panel.getViewTable(), selectedPointList);
+				}
+				
+			}
+		});
+		actualPanel.add(addModbusWatchPoint);
 		
 		JPanel backGround_Panel = new JPanel();
 		backGround_Panel.setBackground(Color.LIGHT_GRAY);
@@ -450,17 +475,6 @@ public class AddModbusPointFrame extends JFrame {
 			}
 		});
 		backGround_Panel.add(dataType_filter);
-		
-		JButton button = new JButton();
-		button.setText("모드버스 포인트 추가");
-		button.setForeground(Color.BLUE);
-		button.setFont(new Font("맑은 고딕", Font.BOLD, 17));
-		button.setFocusPainted(false);
-		button.setContentAreaFilled(false);
-		button.setBorder(UIManager.getBorder("Button.border"));
-		button.setBackground(Color.WHITE);
-		button.setBounds(881, 12, 225, 36);
-		actualPanel.add(button);
 		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
