@@ -35,6 +35,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import common.agent.PerfData;
 import common.modbus.ModbusWatchPoint;
 import src_ko.agent.ClientSocket;
 import src_ko.agent.ModbusAgent;
@@ -393,12 +394,19 @@ public class ModbusMonitor_Panel extends JPanel {
 				if (e.getButton() == 1 && e.getClickCount() == 2) { } // 왼쪽 버튼 더블 클릭
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
+					
+					int row = pointListTable.getSelectedRow();
+					ModbusWatchPoint wp = (ModbusWatchPoint) pointListTable.getValueAt(row, 1);
+					ModbusWatchPoint.showInfo(wp);
+					
+					/* 비트구조 확인
 					int column = pointListTable.columnAtPoint(e.getPoint());
 					int row = pointListTable.rowAtPoint(e.getPoint());
 					pointListTable.changeSelection(row, column, false, false);
 					pointListTable.requestFocus();
 					int[] selectedIndex = pointListTable.getSelectedRows();
 					Perf.showBitStatus(pointListTable, selectedIndex, "TWO BYTE INT SIGNED");
+					*/
 				}
 			}
 		});
@@ -875,7 +883,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				
 				/* column[3] */ record.add(addr);  // 주소
 				/* column[4] */ record.add(modbusWp.getDataType()); // 데이터 타입
-				/* column[5] */ record.add("-"); // 결 과
+				/* column[5] */ record.add(PerfData.getPerfLastContent(modbusWp, modbusWp.getData())); // 결 과
 				
 				model.addRow(record);
 			}

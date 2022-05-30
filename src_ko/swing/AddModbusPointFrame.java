@@ -202,9 +202,15 @@ public class AddModbusPointFrame extends JFrame {
 				if(selectedPointList == null || selectedPointList.size() < 1) {
 					return;
 				}else {
+					
+					// 사용자에게 선택되어 모드버스 모니터에 추가되는 포인트는 해당 프레임의 관리 리스트에서 삭제된다 (중복 포인트 등록 방지)
+					for(ModbusWatchPoint wp : selectedPointList) {
+						pointList.remove(wp);
+					}
+					
 					ModbusMonitor_Panel.addRecord(ModbusMonitor_Panel.getViewTable(), selectedPointList);
+					doTableFilter();
 				}
-				
 			}
 		});
 		actualPanel.add(addModbusWatchPoint);
