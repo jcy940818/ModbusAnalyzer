@@ -49,7 +49,7 @@ public class Moon {
 					initFrame(mainFrame);
 										
 					showFrame(Moon.KO);
-					new AddModbusPointFrame();
+
 					// 테스트 코드 : 자동 사용자 인증
 					new PremiumLoginFrame(true).loginSuccess(true);
 					

@@ -138,6 +138,7 @@ public class PerfData implements Comparable{
 	}
 	
 	public static Object getPerfLastContent(Perf perf, PerfData data) {
+		
 		Object content = "-";
 		boolean labelMapping = false;
 		
@@ -157,7 +158,6 @@ public class PerfData implements Comparable{
 						content = (Math.round(doubleValue*1000)/1000.0);
 					}
 				}catch(Exception e) {
-					e.printStackTrace();
 					content = "-";
 				}
 				break;
@@ -177,7 +177,6 @@ public class PerfData implements Comparable{
 						}
 					}
 				}catch(Exception e) {
-					e.printStackTrace();
 					content = "-";
 				}
 				break;
@@ -192,7 +191,6 @@ public class PerfData implements Comparable{
 						content = (Math.round(doubleValue*1000)/1000.0);
 					}
 				}catch(Exception e) {
-					e.printStackTrace();
 					content = "-";
 				}
 				break;
@@ -216,7 +214,6 @@ public class PerfData implements Comparable{
 				}
 			}
 		}catch(Exception e) {
-			e.printStackTrace();
 			content = temp;
 		}
 		

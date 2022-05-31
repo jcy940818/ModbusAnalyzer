@@ -66,7 +66,7 @@ public class AddModbusPointFrame extends JFrame {
 	private JButton upload_excel;
 	private JButton download_template;
 	
-	private static JTextField search_textField;
+	private static JTextField search_TextField;
 	private static JTextField dragAndDropField;
 	private static JTable point_table;
 	
@@ -198,17 +198,18 @@ public class AddModbusPointFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ArrayList<ModbusWatchPoint> selectedPointList = getSelectedModbusPoint(point_table);
-				
-				if(selectedPointList == null || selectedPointList.size() < 1) {
+	
+				if (selectedPointList == null || selectedPointList.size() < 1) {
 					return;
-				}else {
-					
+				} else {
+	
 					// 사용자에게 선택되어 모드버스 모니터에 추가되는 포인트는 해당 프레임의 관리 리스트에서 삭제된다 (중복 포인트 등록 방지)
-					for(ModbusWatchPoint wp : selectedPointList) {
+					for (ModbusWatchPoint wp : selectedPointList) {
 						pointList.remove(wp);
 					}
-					
-					ModbusMonitor_Panel.addRecord(ModbusMonitor_Panel.getViewTable(), selectedPointList);
+	
+					ModbusMonitor_Panel.setPointList(selectedPointList);
+					ModbusMonitor_Panel.doTableFilter();
 					doTableFilter();
 				}
 			}
@@ -353,14 +354,15 @@ public class AddModbusPointFrame extends JFrame {
 		lblNewLabel.setBounds(25, 110, 76, 28);
 		backGround_Panel.add(lblNewLabel);
 		
-		search_textField = new JTextField();
-		search_textField.setBounds(84, 104, 430, 39);
-		search_textField.setHorizontalAlignment(SwingConstants.LEFT);
-		search_textField.setForeground(Color.BLACK);
-		search_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 17));
-		search_textField.setColumns(10);
-		search_textField.setBorder(new LineBorder(Color.BLACK, 2));
-		search_textField.addKeyListener(new KeyAdapter() {
+		search_TextField = new JTextField();
+		search_TextField.setBounds(84, 104, 430, 39);
+		search_TextField.setHorizontalAlignment(SwingConstants.LEFT);
+		search_TextField.setForeground(Color.BLACK);
+		search_TextField.setBackground(Color.WHITE);
+		search_TextField.setFont(new Font("맑은 고딕", Font.PLAIN, 17));
+		search_TextField.setColumns(10);
+		search_TextField.setBorder(new LineBorder(Color.BLACK, 2));
+		search_TextField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				try {
 					doTableFilter();
@@ -376,8 +378,8 @@ public class AddModbusPointFrame extends JFrame {
 					ex.printStackTrace();
 				}
 			}
-		});		
-		backGround_Panel.add(search_textField);
+		});
+		backGround_Panel.add(search_TextField);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
@@ -407,6 +409,7 @@ public class AddModbusPointFrame extends JFrame {
 		
 		useFilter = new JCheckBox(" 필 터");		
 		useFilter.setFocusPainted(false);
+		useFilter.setForeground(Color.BLACK);
 		useFilter.setHorizontalAlignment(SwingConstants.LEFT);
 		useFilter.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		useFilter.setBackground(Color.LIGHT_GRAY);
@@ -725,10 +728,10 @@ public class AddModbusPointFrame extends JFrame {
 	}
 	
 	public void doTableFilter() {
-		if(search_textField == null && useFilter == null) return;
+		if(search_TextField == null && useFilter == null) return;
 		
 		ArrayList<ModbusWatchPoint> filterList = new ArrayList<ModbusWatchPoint>();
-		String text = search_textField.getText();
+		String text = search_TextField.getText();
 		
 		boolean noSearch = (text == null || text.length() == 0 || text.equals(""));
 		
@@ -800,4 +803,5 @@ public class AddModbusPointFrame extends JFrame {
 		resetTable(point_table);
 		addRecord(point_table, filterList);
 	}
+	
 }
