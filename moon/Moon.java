@@ -3,13 +3,15 @@ package moon;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 
 import common.OnionMember;
-import src_ko.swing.AddModbusPointFrame;
 import src_ko.swing.PremiumLoginFrame;
 import src_ko.util.Util;
 
@@ -119,6 +121,40 @@ public class Moon {
 		}
 		
 		mainFrame.pack();
+	}
+	
+	
+	public static void setVerticalResizable(boolean enabled) {
+		ComponentListener[] listener = mainFrame.getComponentListeners();
+		boolean haveListener = (listener != null || listener.length > 0);
+		if(enabled && haveListener) {
+			return;
+		}
+		
+		if(enabled) {
+			Dimension cur = mainFrame.getPreferredSize();
+			
+			mainFrame.addComponentListener(new ComponentAdapter() {
+				@Override
+				public void componentResized(ComponentEvent e) {
+					mainFrame.setMinimumSize(new Dimension(cur.width + 10, cur.height + 10));
+					mainFrame.setSize(new Dimension(cur.width + 10, mainFrame.getHeight()));
+					super.componentResized(e);
+				}
+			});
+			
+			mainFrame.setResizable(true);
+		}else {
+			for(ComponentListener c : listener) {
+				System.out.println(c);
+				mainFrame.removeComponentListener(c);
+			}
+			
+			mainFrame.setBounds(100, 100, 1080, 680);
+			mainFrame.setResizable(false);
+			mainFrame.getContentPane().setPreferredSize(new Dimension(1074,628));
+			mainFrame.pack();
+		}
 	}
 	
 }
