@@ -376,15 +376,27 @@ public class ModbusMonitor_Panel extends JPanel {
 		form_resetButton.setBackground(Color.WHITE);
 		form_resetButton.setBounds(292, 31, 88, 31);
 		form_resetButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {			
+			public void actionPerformed(ActionEvent e) {
 				global_rx = null;
-				packetLog.setText(null);
-				resetTable(point_table);
-								
+				
 				transactionId_text.setText("1");
 				transactionId_text.setForeground(Color.BLUE);
 				
+				radio_pointList.doClick();
+				packetLog.setText(null);
+				radio_modbusRTU.doClick();
+				addrTypeComboBox.setSelectedIndex(2);
+				unitID_comboBox.setSelectedIndex(0);
+				
+				search_TextField.setText(null);
+				fc_filter.setSelectedIndex(0);
+				fc_filter.setEnabled(false);
+				dataType_filter.setSelectedIndex(0);
+				dataType_filter.setEnabled(false);
+				useFilter.setSelected(false);
+				
 				pointList.clear();
+				resetTable(point_table);
 			}
 		});
 		
@@ -715,7 +727,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					// 마지막 커넥션 정보와 다른 정보로 세션을  생성시 컴포넌트 초기화
 					if(!ClientSocket.getSimpleConnectedInfo().equalsIgnoreCase(lastConnectionInfo)) {
 						componentAllClear();
-						src_en.swing.ModbusMonitor_Panel.componentAllClear();
+//						src_en.swing.ModbusMonitor_Panel.componentAllClear(); 영문버전 추가시 주석 해제
 					}
 					
 					// 사용자가 입력한 IP, port를 클라이언트 소켓의 마지막 연결 성공 정보에 저장					

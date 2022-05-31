@@ -104,7 +104,7 @@ public class AddModbusPointFrame extends JFrame {
 		setBounds(100, 100, 1138, 722);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
-		contentPane.setBorder(new LineBorder(new Color(255, 140, 0), 8));
+		contentPane.setBorder(new LineBorder(Color.DARK_GRAY, 8));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		
