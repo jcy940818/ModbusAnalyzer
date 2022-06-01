@@ -34,6 +34,8 @@ public class Moon {
 	private static JMenuBar ko_menuBar = ko.getJMenuBar();
 	private static JMenuBar en_menuBar = en.getJMenuBar();
 		
+	private static ComponentEvent componentEvent;
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -48,6 +50,7 @@ public class Moon {
 					actualPanel.add(ko_panel, Moon.KO);
 					actualPanel.add(en_panel, Moon.EN);
 					mainFrame.setContentPane(actualPanel);
+					mainFrame.setTitle("ModbusAnalyzer");
 					initFrame(mainFrame);
 										
 					showFrame(Moon.KO);
@@ -67,6 +70,11 @@ public class Moon {
 									}else {
 										updateTitle(mainFrame, en);										
 									}
+											
+									ComponentListener[] listeners = mainFrame.getComponentListeners();
+									for(ComponentListener c : listeners) {
+										if(c != null && componentEvent != null) c.componentResized(componentEvent);
+									}
 									
 								}catch (Exception e) {
 									e.printStackTrace();
@@ -74,7 +82,7 @@ public class Moon {
 							}
 						}
 					}).start();
-					//************************************************************************************************
+					//************************************************************************************************					
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -87,8 +95,7 @@ public class Moon {
 		return currentLanguage.equalsIgnoreCase(Moon.KO);
 	}
 	
-	public static void initFrame(JFrame frame) {
-		frame.setTitle("ModbusAnalyzer");
+	public static void initFrame(JFrame frame) {		
 		frame.setBounds(100, 100, 1080, 680);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setIconImage(new Util().getIconResource().getImage());
@@ -107,6 +114,10 @@ public class Moon {
 		}
 	}
 	
+	public static JFrame getMainFrame() {
+		return mainFrame;
+	}
+	
 	public static void showFrame(String language) {
 		cardLayout.show(mainFrame.getContentPane(), language);
 		
@@ -123,10 +134,9 @@ public class Moon {
 		mainFrame.pack();
 	}
 	
-	
 	public static void setVerticalResizable(boolean enabled) {
 		ComponentListener[] listener = mainFrame.getComponentListeners();
-		boolean haveListener = (listener != null || listener.length > 0);
+		boolean haveListener = (listener != null && listener.length > 0);
 		if(enabled && haveListener) {
 			return;
 		}
@@ -139,21 +149,19 @@ public class Moon {
 				public void componentResized(ComponentEvent e) {
 					mainFrame.setMinimumSize(new Dimension(cur.width + 10, cur.height + 10));
 					mainFrame.setSize(new Dimension(cur.width + 10, mainFrame.getHeight()));
+					componentEvent = e;
 					super.componentResized(e);
 				}
 			});
-			
 			mainFrame.setResizable(true);
+			
 		}else {
-			for(ComponentListener c : listener) {
-				System.out.println(c);
+			
+			for(ComponentListener c : listener) {			
 				mainFrame.removeComponentListener(c);
 			}
-			
-			mainFrame.setBounds(100, 100, 1080, 680);
-			mainFrame.setResizable(false);
-			mainFrame.getContentPane().setPreferredSize(new Dimension(1074,628));
-			mainFrame.pack();
+			componentEvent = null;
+			initFrame(mainFrame);
 		}
 	}
 	
