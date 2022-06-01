@@ -20,6 +20,7 @@ public class Moon {
 	public static String currentLanguage = "Moon";
 	
 	private static JFrame mainFrame;
+	private static JPanel actualPanel;
 	private static CardLayout cardLayout;
 	
 	public static final String KO = "ko";
@@ -33,7 +34,7 @@ public class Moon {
 	
 	private static JMenuBar ko_menuBar = ko.getJMenuBar();
 	private static JMenuBar en_menuBar = en.getJMenuBar();
-		
+	
 	private static ComponentEvent componentEvent;
 	
 	public static void main(String[] args) {
@@ -43,7 +44,7 @@ public class Moon {
 					OnionMember.init();
 					
 					mainFrame = new JFrame();
-					JPanel actualPanel = new JPanel();
+					actualPanel = new JPanel();
 					
 					cardLayout = new CardLayout(0, 0);
 					actualPanel.setLayout(cardLayout);
@@ -116,6 +117,10 @@ public class Moon {
 	
 	public static JFrame getMainFrame() {
 		return mainFrame;
+	}
+	
+	public static JPanel getActualPanel() {
+		return actualPanel;
 	}
 	
 	public static void showFrame(String language) {
