@@ -39,13 +39,13 @@ public class MyCalendar {
 		for(int i = 1; i <= getMonthLastDay(yearNow, monthNow + 1); i++) day.add(String.format("%02d", i));
 		
 		ArrayList<String> hour = new ArrayList<String>();
-		for(int i = 0; i <= 23; i++) hour.add(String.format("%02d", i));
+		for(int i = 0; i < 24; i++) hour.add(String.format("%02d", i));
 		
 		ArrayList<String> minute = new ArrayList<String>();
-		for(int i = 1; i < 60; i++) minute.add(String.format("%02d", i));
+		for(int i = 0; i < 60; i++) minute.add(String.format("%02d", i));
 		
 		ArrayList<String> second = new ArrayList<String>();
-		for(int i = 1; i < 60; i++) second.add(String.format("%02d", i));
+		for(int i = 0; i < 60; i++) second.add(String.format("%02d", i));
 		
 		year_c.setModel(new DefaultComboBoxModel(year.toArray()));
 		month_c.setModel(new DefaultComboBoxModel(month.toArray()));
