@@ -127,8 +127,7 @@ public class AddModbusPointFrame extends JFrame {
 		downloadTemplateButton.setForeground(Color.BLACK);
 		downloadTemplateButton.setText("ÅÛÇÃ¸´ ´Ù¿î·Îµå");
 		downloadTemplateButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
-		downloadTemplateButton.setFocusPainted(false);
-		downloadTemplateButton.setContentAreaFilled(false);
+		downloadTemplateButton.setFocusPainted(false);		
 		downloadTemplateButton.setBorder(UIManager.getBorder("Button.border"));
 		downloadTemplateButton.setBackground(Color.WHITE);
 		downloadTemplateButton.setBounds(710, 12, 162, 36);		
