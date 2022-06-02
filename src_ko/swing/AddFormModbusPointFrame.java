@@ -429,7 +429,7 @@ public class AddFormModbusPointFrame extends JFrame {
 			}
 			startAddress = Integer.parseInt(addr);
 			startAddress = (startAddress % 10000) - 1;
-			if(startAddress > 0xffff) throw new NumberFormatException();
+			if(startAddress > 0xffff || startAddress < 0) throw new NumberFormatException();
 			
 		}else if(addr_reg_dec.isSelected()) {
 			addr = addr_reg_dec_var.getText().trim();
@@ -440,7 +440,7 @@ public class AddFormModbusPointFrame extends JFrame {
 				return;
 			}
 			startAddress = Integer.parseInt(addr);
-			if(startAddress > 0xffff) throw new NumberFormatException();
+			if(startAddress > 0xffff || startAddress < 0) throw new NumberFormatException();
 			
 		}else {
 			addr = addr_reg_hex_var.getText().trim();
@@ -457,7 +457,7 @@ public class AddFormModbusPointFrame extends JFrame {
 				startAddress = Integer.parseInt(addr.replaceAll("0x", "").replaceAll("0X", ""),16);
 			}
 			
-			if(startAddress > 0xffff) throw new NumberFormatException();
+			if(startAddress > 0xffff || startAddress < 0) throw new NumberFormatException();
 		}
 		
 		String modbusAddr = String.format("%s%04d", modbusAddress, (startAddress & 0xffff) + 1);
