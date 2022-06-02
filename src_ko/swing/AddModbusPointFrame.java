@@ -208,7 +208,7 @@ public class AddModbusPointFrame extends JFrame {
 						pointList.remove(wp);
 					}
 	
-					ModbusMonitor_Panel.setPointList(selectedPointList);
+					ModbusMonitor_Panel.addPointList(selectedPointList);
 					ModbusMonitor_Panel.doTableFilter();
 					doTableFilter();
 				}

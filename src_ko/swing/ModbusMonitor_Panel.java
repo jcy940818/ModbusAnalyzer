@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -63,8 +64,9 @@ public class ModbusMonitor_Panel extends JPanel {
 	JPanel infoPanel; // 클라이언트 소켓이 서버와 연결 된 상태일때만 인포메이션 컴포넌트들을 활성화 시킨다.
 	JPanel viewTypePanel;
 	JPanel modbusTypePanel;
-	JPanel viewPanel;
-	JPanel inputFormPanel;
+	JPanel form_InputPanel;
+	JPanel function_Panel;
+	JPanel viewPanel;	
 	JPanel resultPanel;
 	JPanel imagePanel; /* ONION Image */
 	
@@ -78,8 +80,8 @@ public class ModbusMonitor_Panel extends JPanel {
 	private static JTextField transactionId_text; // Modbus TCP : TransactionID 필드
 	
 	private static CardLayout cardLayout;
-	private JButton form_sendPacketButton;
-	private static JButton form_resetButton;
+	private JButton send_Button;
+	private static JButton reset_Button;
 	private static ButtonGroup radioGroup;
 	private static ButtonGroup radioGroup2;
 	private static JRadioButton radio_pointList;
@@ -107,6 +109,7 @@ public class ModbusMonitor_Panel extends JPanel {
 	private static JComboBox dataType_filter;
 	private static JComboBox addrTypeComboBox;
 	private ActionListener radioListener;
+	private JButton update_button;
 	
 	/**
 	 * Create the panel.
@@ -125,7 +128,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		actualPanel.setLayout(null);
 		
 		infoPanel = new JPanel();
-		infoPanel.setBounds(12, 10, 1050, 608);
+		infoPanel.setBounds(12, 10, 1050, 606);
 		infoPanel.setBackground(Color.WHITE);
 		infoPanel.setLayout(null);
 		actualPanel.add(infoPanel);
@@ -288,17 +291,12 @@ public class ModbusMonitor_Panel extends JPanel {
 		});
 		addrTypePanel.add(addrTypeComboBox);
 		
-		inputFormPanel = new JPanel();
-		inputFormPanel.setBorder(new LineBorder(Color.BLACK, 2));
-		inputFormPanel.setBounds(465, 10, 551, 72);
-		inputFormPanel.setBackground(Color.WHITE);
-		inputFormPanel.setLayout(new BorderLayout(0, 0));
-		resultPanel.add(inputFormPanel);
-		
-		JPanel form_InputPanel = new JPanel();
+		form_InputPanel = new JPanel();
+		form_InputPanel.setBounds(465, 10, 234, 72);
+		form_InputPanel.setBorder(new LineBorder(Color.BLACK, 2));
 		form_InputPanel.setLayout(null);
 		form_InputPanel.setBackground(Color.WHITE);
-		inputFormPanel.add(form_InputPanel);
+		resultPanel.add(form_InputPanel);
 		
 		transactionId_text = new JTextField();
 		transactionId_text.setText("1");
@@ -306,7 +304,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		transactionId_text.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		transactionId_text.setColumns(10);
 		transactionId_text.setBorder(UIManager.getBorder("TextField.border"));
-		transactionId_text.setBounds(10, 30, 103, 31);
+		transactionId_text.setBounds(10, 34, 103, 31);
 		transactionId_text.addFocusListener(new FocusAdapter() {
 			public void focusLost(FocusEvent e) {
 				int transactionId = 0;
@@ -370,41 +368,23 @@ public class ModbusMonitor_Panel extends JPanel {
 		
 		form_InputPanel.add(transactionId_text);
 		
-		form_resetButton = new JButton("초기화");
-		form_resetButton.setForeground(Color.BLACK);
-		form_resetButton.setFont(new Font("맑은 고딕", Font.BOLD, 13));
-		form_resetButton.setBackground(Color.WHITE);
-		form_resetButton.setBounds(292, 31, 88, 31);
-		form_resetButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				global_rx = null;
-				
-				transactionId_text.setText("1");
-				transactionId_text.setForeground(Color.BLUE);
-				
-				radio_pointList.doClick();
-				packetLog.setText(null);
-				radio_modbusRTU.doClick();
-				addrTypeComboBox.setSelectedIndex(2);
-				unitID_comboBox.setSelectedIndex(0);
-				
-				search_TextField.setText(null);
-				fc_filter.setSelectedIndex(0);
-				fc_filter.setEnabled(false);
-				dataType_filter.setSelectedIndex(0);
-				dataType_filter.setEnabled(false);
-				useFilter.setSelected(false);
-				
-				pointList.clear();
-				resetTable(point_table);
-			}
-		});
+		function_Panel = new JPanel();
+		function_Panel.setBackground(Color.WHITE);
+		function_Panel.setBounds(707, 10, 309, 72);
+		function_Panel.setBorder(new LineBorder(Color.BLACK, 2));
+		function_Panel.setLayout(null);
+		resultPanel.add(function_Panel);
 		
 		// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 		// TX Form 전송 버튼
-		form_sendPacketButton = new JButton("전 송");
+		send_Button = new JButton("전 송");
+		send_Button.setFocusPainted(false);
+		send_Button.setMargin(new Insets(2, 0, 2, 0));
+		send_Button.setBounds(232, 8, 70, 27);
+		function_Panel.add(send_Button);
+		
 		// 전송 버튼 클릭시 발생하는 이벤트
-		form_sendPacketButton.addActionListener(new ActionListener() {
+		send_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								
 				
 				// 수집 요청 TX 생성에 필요한 Form 에 정보가 모두 입력되어 있는지 체크
@@ -461,35 +441,93 @@ public class ModbusMonitor_Panel extends JPanel {
 			}			
 		});
 		// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-		form_sendPacketButton.setForeground(Color.BLACK);
-		form_sendPacketButton.setFont(new Font("맑은 고딕", Font.BOLD, 13));
-		form_sendPacketButton.setBackground(Color.WHITE);
-		form_sendPacketButton.setBounds(392, 31, 88, 31);		
-		form_InputPanel.add(form_sendPacketButton);
-		form_InputPanel.add(form_resetButton);
+		send_Button.setForeground(Color.BLUE);
+		send_Button.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+		send_Button.setBackground(Color.WHITE);
+		
+		reset_Button = new JButton("초기화");
+		reset_Button.setFocusPainted(false);
+		reset_Button.setMargin(new Insets(2, 0, 2, 0));
+		reset_Button.setBounds(232, 40, 70, 27);
+		reset_Button.setForeground(Color.RED);
+		reset_Button.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+		reset_Button.setBackground(Color.WHITE);
+		function_Panel.add(reset_Button);
+		
+		JButton add_button = new JButton("추 가");
+		add_button.setFocusPainted(false);
+		add_button.setMargin(new Insets(2, 0, 2, 0));
+		add_button.setForeground(Color.BLACK);
+		add_button.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		add_button.setBackground(Color.WHITE);
+		add_button.setBounds(8, 20, 70, 39);
+		function_Panel.add(add_button);
+		
+		JButton delete_button = new JButton("삭 제");
+		delete_button.setFocusPainted(false);
+		delete_button.setMargin(new Insets(2, 0, 2, 0));
+		delete_button.setForeground(Color.BLACK);
+		delete_button.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		delete_button.setBackground(Color.WHITE);
+		delete_button.setBounds(82, 20, 70, 39);
+		function_Panel.add(delete_button);
+		
+		update_button = new JButton("수 정");
+		update_button.setFocusPainted(false);
+		update_button.setMargin(new Insets(2, 0, 2, 0));
+		update_button.setForeground(Color.BLACK);
+		update_button.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		update_button.setBackground(Color.WHITE);
+		update_button.setBounds(156, 20, 70, 39);
+		function_Panel.add(update_button);
+		reset_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				global_rx = null;
+				
+				transactionId_text.setText("1");
+				transactionId_text.setForeground(Color.BLUE);
+				
+				radio_pointList.doClick();
+				packetLog.setText(null);
+				radio_modbusRTU.doClick();
+				addrTypeComboBox.setSelectedIndex(2);
+				unitID_comboBox.setSelectedIndex(0);
+				
+				search_TextField.setText(null);
+				fc_filter.setSelectedIndex(0);
+				fc_filter.setEnabled(false);
+				dataType_filter.setSelectedIndex(0);
+				dataType_filter.setEnabled(false);
+				useFilter.setSelected(false);
+				
+				pointList.clear();
+				resetTable(point_table);
+			}
+		});
 		
 		TID = new JLabel("Transaction ID");
 		TID.setForeground(Color.BLACK);
 		TID.setFont(new Font("맑은 고딕", Font.BOLD, 14));
-		TID.setBounds(11, 7, 100, 15);
+		TID.setBounds(11, 9, 100, 15);
 		form_InputPanel.add(TID);
+		
+		String[] unitIdValue = new String[255];
+		for(int i = 0; i < 255; i++) {
+			unitIdValue[i] = String.valueOf(i+1) + "번";
+		}		
 		
 		unitID_comboBox = new JComboBox();
 		unitID_comboBox.setForeground(Color.BLACK);
 		unitID_comboBox.setBackground(Color.WHITE);
 		unitID_comboBox.setFont(new Font("맑은 고딕", Font.BOLD, 15));		
-		unitID_comboBox.setBounds(132, 30, 90, 30);
-		String[] unitIdValue = new String[255];
-		for(int i = 0; i < 255; i++) {
-			unitIdValue[i] = String.valueOf(i+1) + "번";
-		}		
+		unitID_comboBox.setBounds(133, 34, 90, 30);
 		unitID_comboBox.setModel(new DefaultComboBoxModel(unitIdValue));
 		form_InputPanel.add(unitID_comboBox);
 		
 		UNIT_ID = new JLabel("Unit ID");
 		UNIT_ID.setForeground(Color.BLACK);
 		UNIT_ID.setFont(new Font("맑은 고딕", Font.BOLD, 14));
-		UNIT_ID.setBounds(133, 7, 57, 15);
+		UNIT_ID.setBounds(134, 9, 57, 15);
 		form_InputPanel.add(UNIT_ID);
 		
 		pointList_ScrollPane = new JScrollPane();		
@@ -522,6 +560,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				}
 			}
 		});
+				
 		resetTable(point_table);
 		
 		pointList_ScrollPane.setViewportView(point_table);
@@ -537,7 +576,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		viewPanel = new JPanel();
 		viewPanel.setBorder(new LineBorder(Color.BLACK, 2));
 		viewPanel.setBackground(Color.WHITE);
-		viewPanel.setBounds(0, 124, 1028, 418);
+		viewPanel.setBounds(0, 135, 1028, 407);
 		viewPanel.setLayout(cardLayout);
 		viewPanel.add(pointList_ScrollPane, radio_pointList.getText());
 		viewPanel.add(packetLog_ScrollPane, radio_packetLog.getText());
@@ -547,7 +586,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		search.setForeground(Color.BLACK);
 		search.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		search.setBackground(Color.LIGHT_GRAY);
-		search.setBounds(15, 93, 57, 25);
+		search.setBounds(15, 105, 57, 25);
 		resultPanel.add(search);
 		
 		search_TextField = new JTextField();
@@ -574,7 +613,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				}
 			}
 		});
-		search_TextField.setBounds(71, 90, 374, 30);
+		search_TextField.setBounds(71, 102, 374, 28);
 		resultPanel.add(search_TextField);
 		
 		useFilter = new JCheckBox(" 필 터");
@@ -597,7 +636,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				doTableFilter();
 			}
 		});
-		useFilter.setBounds(465, 93, 78, 25);
+		useFilter.setBounds(465, 105, 78, 25);
 		resultPanel.add(useFilter);
 		
 		fc_filter = new JComboBox();
@@ -618,7 +657,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				doTableFilter();
 			}
 		});
-		fc_filter.setBounds(548, 90, 92, 30);
+		fc_filter.setBounds(548, 102, 92, 28);
 		resultPanel.add(fc_filter);
 		
 		dataType_filter = new JComboBox();
@@ -652,7 +691,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				doTableFilter();
 			}
 		});
-		dataType_filter.setBounds(646, 90, 370, 30);
+		dataType_filter.setBounds(646, 102, 370, 28);
 		resultPanel.add(dataType_filter);
 			
 		currentState = new JLabel();
@@ -851,11 +890,11 @@ public class ModbusMonitor_Panel extends JPanel {
 	public void panel_ON() {
 		// 접속 전에는 판넬 컴포넌트들을 사용하지 않는다
 		modbusTypePanel.setVisible(true);
-		modbusTypePanel.setEnabled(true);
-		inputFormPanel.setVisible(true);
-		inputFormPanel.setEnabled(true);
+		modbusTypePanel.setEnabled(true);		
 		resultPanel.setVisible(true);
-		resultPanel.setEnabled(true);							
+		resultPanel.setEnabled(true);			
+		form_InputPanel.setVisible(true);
+		form_InputPanel.setEnabled(true);
 		imagePanel.setVisible(false);
 		imagePanel.setEnabled(false);
 		importButton.setVisible(true);
@@ -872,11 +911,11 @@ public class ModbusMonitor_Panel extends JPanel {
 	public void panel_OFF() {
 		// 접속 전에는 판넬 컴포넌트들을 사용하지 않는다
 		modbusTypePanel.setVisible(false);
-		modbusTypePanel.setEnabled(false);
-		inputFormPanel.setVisible(false);
-		inputFormPanel.setEnabled(false);
+		modbusTypePanel.setEnabled(false);		
 		resultPanel.setVisible(false);
 		resultPanel.setEnabled(false);
+		form_InputPanel.setVisible(false);
+		form_InputPanel.setEnabled(false);
 		imagePanel.setVisible(true);
 		imagePanel.setEnabled(true);		
 		importButton.setVisible(false);
@@ -1002,7 +1041,7 @@ public class ModbusMonitor_Panel extends JPanel {
 	}
 	
 	public static void componentAllClear() {
-		form_resetButton.doClick();		
+		reset_Button.doClick();		
 	}
 	
 	public static JTextArea getPacketLog() {
@@ -1257,8 +1296,14 @@ public class ModbusMonitor_Panel extends JPanel {
 		pointList = list;
 	}
 	
+	public static void addPointList(ArrayList<ModbusWatchPoint> list) {
+		for(ModbusWatchPoint wp : list) {
+			pointList.add(wp);
+		}
+		Collections.sort(pointList);
+	}
+	
 	public static ArrayList<ModbusWatchPoint> getPointList(){
 		return pointList;
 	}
-	
 }
