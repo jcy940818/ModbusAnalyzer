@@ -470,6 +470,23 @@ public class ModbusMonitor_Panel extends JPanel {
 		delete_button.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		delete_button.setBackground(Color.WHITE);
 		delete_button.setBounds(82, 20, 70, 39);
+		delete_button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ArrayList<ModbusWatchPoint> selectedPointList = getSelectedModbusPoint(point_table);
+
+				if (selectedPointList == null || selectedPointList.size() < 1) {
+					return;
+				} else {
+
+					for (ModbusWatchPoint wp : selectedPointList) {
+						pointList.remove(wp);
+					}
+
+					doTableFilter();
+				}
+			}
+		});
 		function_Panel.add(delete_button);
 		
 		update_button = new JButton("¼ö Á¤");
@@ -1305,5 +1322,15 @@ public class ModbusMonitor_Panel extends JPanel {
 	
 	public static ArrayList<ModbusWatchPoint> getPointList(){
 		return pointList;
+	}
+	
+	public static ArrayList<ModbusWatchPoint> getSelectedModbusPoint(JTable table) {
+		ArrayList<ModbusWatchPoint> selectedPointlist = new ArrayList<ModbusWatchPoint>();
+		int[] selectedIndex = table.getSelectedRows();
+		for(int i = 0; i < selectedIndex.length; i++) {
+			ModbusWatchPoint wp = (ModbusWatchPoint) table.getValueAt(selectedIndex[i], 1);
+			selectedPointlist.add(wp);
+		}
+		return selectedPointlist;
 	}
 }
