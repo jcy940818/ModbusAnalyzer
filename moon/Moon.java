@@ -71,10 +71,12 @@ public class Moon {
 									}else {
 										updateTitle(mainFrame, en);										
 									}
-											
-									ComponentListener[] listeners = mainFrame.getComponentListeners();
-									for(ComponentListener c : listeners) {
-										if(c != null && componentEvent != null) c.componentResized(componentEvent);
+										
+									if(mainFrame.isResizable()) {
+										ComponentListener[] listeners = mainFrame.getComponentListeners();
+										for(ComponentListener c : listeners) {
+											if(c != null && componentEvent != null) c.componentResized(componentEvent);
+										}
 									}
 									
 								}catch (Exception e) {
