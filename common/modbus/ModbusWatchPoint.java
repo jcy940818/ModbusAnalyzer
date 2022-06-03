@@ -209,6 +209,27 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 		}
 	}
 	
+	public ModbusWatchPoint getClone() {
+		try {
+			ModbusWatchPoint clone = new ModbusWatchPoint();
+			clone.displayName = this.displayName + " Clone";
+			clone.counter = this.counter;
+			clone.scaleFunc = this.scaleFunc;
+			clone.interval = this.interval;
+			clone.measure = this.measure;
+			clone.dataFormat = this.dataFormat;
+			clone.binLabel = this.binLabel.clone();
+			if(this.labels != null) {
+				clone.labels = this.labels.clone();	
+			}
+			clone.init();
+			return clone;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	public String getRegisterAddrHexString() {
 		return String.format("0x%04X", this.getRegisterAddr());
 	}

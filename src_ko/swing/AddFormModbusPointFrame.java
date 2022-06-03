@@ -71,7 +71,7 @@ public class AddFormModbusPointFrame extends JFrame {
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
 				
-		setBounds(100, 100, 720, 431);
+		setBounds(100, 100, 720, 434);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new LineBorder(Color.DARK_GRAY, 10));
@@ -95,7 +95,7 @@ public class AddFormModbusPointFrame extends JFrame {
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(220, 220, 220));
-		panel.setBounds(10, 65, 672, 307);
+		panel.setBounds(10, 65, 672, 310);
 		actualPanel.add(panel);
 		panel.setLayout(null);
 		
@@ -347,11 +347,28 @@ public class AddFormModbusPointFrame extends JFrame {
 		cnt_var = new JTextField();
 		cnt_var.setBorder(new LineBorder(Color.BLACK, 2));
 		cnt_var.setHorizontalAlignment(SwingConstants.LEFT);
-		cnt_var.setForeground(Color.BLACK);
+		cnt_var.setForeground(Color.BLUE);
+		cnt_var.setBackground(Color.WHITE);
 		cnt_var.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
 		cnt_var.setColumns(10);
-		cnt_var.setBackground(Color.WHITE);
 		cnt_var.setBounds(263, 210, 190, 30);
+		cnt_var.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				try {
+					checkRequestCount();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			
+			public void keyReleased(KeyEvent e) {
+				try {
+					checkRequestCount();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
 		panel.add(cnt_var);
 		
 		dataType_var = new JComboBox();
@@ -396,6 +413,12 @@ public class AddFormModbusPointFrame extends JFrame {
 		resetButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		resetButton.setFocusPainted(false);		
 		resetButton.setBorder(UIManager.getBorder("Button.border"));
+		resetButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				resetForm();
+			}
+		});
 		actualPanel.add(resetButton);
 		
 			
@@ -529,7 +552,30 @@ public class AddFormModbusPointFrame extends JFrame {
 		}
 		
 	}
-
+	
+	public void checkRequestCount() {
+		try {
+			int count = Integer.parseInt(cnt_var.getText().trim());
+			
+			if(count < 1) {
+				cnt_var.setForeground(Color.RED);
+			}else {
+				cnt_var.setForeground(Color.BLUE);	
+			}
+			
+		}catch(Exception e) {
+			cnt_var.setForeground(Color.RED);
+		}
+	}
+	
+	public void resetForm() {
+		fc_var.setSelectedIndex(2);
+		addr_modbus_dec_var.setText(null);
+		addr_reg_dec_var.setText(null);
+		addr_reg_hex_var.setText(null);
+		cnt_var.setText(null);
+		dataType_var.setSelectedIndex(0);
+	}
 
 	@Override
 	public void dispose() {

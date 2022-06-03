@@ -558,7 +558,17 @@ public class ModbusMonitor_Panel extends JPanel {
 		point_table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == 1) { } // 왼쪽 클릭
-				if (e.getButton() == 1 && e.getClickCount() == 2) { } // 왼쪽 버튼 더블 클릭
+				if (e.getButton() == 1 && e.getClickCount() == 2) {
+					// 왼쪽 버튼 더블 클릭
+					int row = point_table.getSelectedRow();
+					ModbusWatchPoint wp = (ModbusWatchPoint) point_table.getValueAt(row, 1);
+					
+					ModbusWatchPoint clone = wp.getClone();
+					if(clone != null) {
+						pointList.add(clone);
+						doTableFilter();
+					}
+				}
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
 					
@@ -967,7 +977,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					}) {
 				boolean[] columnEditables = new boolean[] {
 						false, // 순 서 : 수정 불가
-						true, // 모드버스 포인트 : 수정 가능
+						false, // 모드버스 포인트 : 수정 불가
 						false, // 기능코드 : 수정 불가
 						false, // 주 소 : 수정 불가
 						false, // 데이터 타입 : 수정 불가
