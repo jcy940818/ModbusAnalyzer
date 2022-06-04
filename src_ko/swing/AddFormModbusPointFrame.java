@@ -2,6 +2,7 @@ package src_ko.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -15,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
@@ -24,11 +26,13 @@ import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 
 import src_ko.util.Util;
+import javax.swing.JSeparator;
 
 public class AddFormModbusPointFrame extends JFrame {
 
 	public static boolean isExist = false;
 	private JPanel contentPane;
+	private JPanel panel;
 	private JButton mk119Button;
 	private JTable table; // frame마다 XML 인스턴스를 가져야 하므로 table 필드는 static 속성을 가질 수 없다
 	private JComboBox fc_var;	
@@ -41,9 +45,18 @@ public class AddFormModbusPointFrame extends JFrame {
 	private JTextField addr_modbus_dec_var;
 	private JTextField cnt_var;
 
+	private JButton showContentButton;
 	private JButton addButton;
 	private JButton resetButton;
 	private ActionListener radioListener;	
+	private JLabel addrStep;
+	private JLabel label;
+	private JLabel con_1;
+	private JLabel con_2;
+	private JLabel con_3;
+	private JLabel con_4;
+	private JLabel con_0;
+	private JLabel con_5;
 	
 	/**
 	 * Launch the application.
@@ -71,7 +84,7 @@ public class AddFormModbusPointFrame extends JFrame {
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
 				
-		setBounds(100, 100, 720, 434);
+		setBounds(100, 100, 790, 484);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new LineBorder(Color.DARK_GRAY, 10));
@@ -93,14 +106,14 @@ public class AddFormModbusPointFrame extends JFrame {
 		currentFunction.setBounds(0, 0, 277, 55);
 		actualPanel.add(currentFunction);
 		
-		JPanel panel = new JPanel();
+		panel = new JPanel();
 		panel.setBackground(new Color(220, 220, 220));
-		panel.setBounds(10, 65, 672, 310);
-		actualPanel.add(panel);
+		panel.setBounds(10, 65, 742, 358);
 		panel.setLayout(null);
+		actualPanel.add(panel);
 		
-		JLabel fc = new JLabel("Function Code");
-		fc.setBounds(35, 10, 198, 30);
+		JLabel fc = new JLabel("기능 코드");
+		fc.setBounds(35, 10, 212, 30);
 		panel.add(fc);
 		fc.setHorizontalAlignment(SwingConstants.LEFT);
 		fc.setForeground(Color.BLACK);
@@ -113,8 +126,8 @@ public class AddFormModbusPointFrame extends JFrame {
 
 				JRadioButton b = (JRadioButton)e.getSource();
 				
-				switch (b.getText()) {					
-					case "Modbus Address ( DEC )":
+				switch (b.getText().trim()) {					
+					case "모드버스 주소 ( DEC )":
 						addr_modbus_dec_var.setEnabled(true);
 						addr_reg_dec_var.setEnabled(false);
 						addr_reg_hex_var.setEnabled(false);
@@ -128,7 +141,7 @@ public class AddFormModbusPointFrame extends JFrame {
 						addr_reg_hex_var.setText(null);
 						break;
 		
-					case "Register Address ( DEC )":
+					case "레지스터 주소 ( DEC )" :
 						addr_modbus_dec_var.setEnabled(false);
 						addr_reg_dec_var.setEnabled(true);
 						addr_reg_hex_var.setEnabled(false);
@@ -142,7 +155,7 @@ public class AddFormModbusPointFrame extends JFrame {
 						addr_reg_hex_var.setText(null);
 						break;
 						
-					case "Register Address ( HEX )":
+					case "레지스터 주소 ( HEX )":
 						addr_modbus_dec_var.setEnabled(false);
 						addr_reg_dec_var.setEnabled(false);
 						addr_reg_hex_var.setEnabled(true);
@@ -160,36 +173,36 @@ public class AddFormModbusPointFrame extends JFrame {
 			}						
 		};
 		
-		addr_modbus_dec = new JRadioButton("Modbus Address ( DEC )");
+		addr_modbus_dec = new JRadioButton(" 모드버스 주소 ( DEC )");
 		addr_modbus_dec.setSelected(false);
 		addr_modbus_dec.setFocusPainted(false);
 		addr_modbus_dec.setHorizontalAlignment(SwingConstants.LEFT);
 		addr_modbus_dec.setForeground(Color.BLACK);
 		addr_modbus_dec.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		addr_modbus_dec.setBackground(new Color(220, 220, 220));
-		addr_modbus_dec.setBounds(12, 60, 230, 30);
+		addr_modbus_dec.setBounds(12, 60, 235, 30);
 		addr_modbus_dec.addActionListener(radioListener);
 		panel.add(addr_modbus_dec);
 		
-		addr_reg_dec = new JRadioButton("Register Address ( DEC )");
+		addr_reg_dec = new JRadioButton(" 레지스터 주소 ( DEC )");
 		addr_reg_dec.setSelected(true);
 		addr_reg_dec.setFocusPainted(false);
 		addr_reg_dec.setHorizontalAlignment(SwingConstants.LEFT);
 		addr_reg_dec.setForeground(Color.BLACK);
 		addr_reg_dec.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		addr_reg_dec.setBackground(new Color(220, 220, 220));
-		addr_reg_dec.setBounds(12, 110, 230, 30);
+		addr_reg_dec.setBounds(12, 110, 235, 30);
 		addr_reg_dec.addActionListener(radioListener);
 		panel.add(addr_reg_dec);
 		
-		addr_reg_hex = new JRadioButton("Register Address ( HEX )");
+		addr_reg_hex = new JRadioButton(" 레지스터 주소 ( HEX )");
 		addr_reg_hex.setSelected(false);
 		addr_reg_hex.setFocusPainted(false);
 		addr_reg_hex.setHorizontalAlignment(SwingConstants.LEFT);
 		addr_reg_hex.setForeground(Color.BLACK);
 		addr_reg_hex.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		addr_reg_hex.setBackground(new Color(220, 220, 220));
-		addr_reg_hex.setBounds(12, 160, 230, 30);
+		addr_reg_hex.setBounds(12, 160, 235, 30);
 		addr_reg_hex.addActionListener(radioListener);
 		panel.add(addr_reg_hex);
 		
@@ -198,20 +211,20 @@ public class AddFormModbusPointFrame extends JFrame {
 		group.add(addr_reg_dec);
 		group.add(addr_reg_hex);
 		
-		JLabel cnt = new JLabel("Count");
+		JLabel cnt = new JLabel("포인트 추가 개수");
 		cnt.setHorizontalAlignment(SwingConstants.LEFT);
 		cnt.setForeground(Color.BLACK);
 		cnt.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		cnt.setBackground(Color.WHITE);
-		cnt.setBounds(35, 210, 198, 30);
+		cnt.setBounds(35, 210, 212, 30);
 		panel.add(cnt);
 		
-		JLabel dataType = new JLabel("Data Type");
+		JLabel dataType = new JLabel("데이터 타입");
 		dataType.setHorizontalAlignment(SwingConstants.LEFT);
 		dataType.setForeground(Color.BLACK);
 		dataType.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		dataType.setBackground(Color.WHITE);
-		dataType.setBounds(35, 265, 198, 30);
+		dataType.setBounds(35, 265, 212, 30);
 		panel.add(dataType);
 		
 		fc_var = new JComboBox();
@@ -252,6 +265,8 @@ public class AddFormModbusPointFrame extends JFrame {
 				}
 				
 				syncAddr();
+				dataType_var.setSelectedIndex(0);
+				setContent();
 			}
 		});
 		panel.add(fc_var);
@@ -270,6 +285,7 @@ public class AddFormModbusPointFrame extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				try {
 					syncAddr();
+					setContent();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -278,6 +294,7 @@ public class AddFormModbusPointFrame extends JFrame {
 			public void keyReleased(KeyEvent e) {
 				try {
 					syncAddr();
+					setContent();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -299,6 +316,7 @@ public class AddFormModbusPointFrame extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				try {
 					syncAddr();
+					setContent();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -307,6 +325,7 @@ public class AddFormModbusPointFrame extends JFrame {
 			public void keyReleased(KeyEvent e) {
 				try {
 					syncAddr();
+					setContent();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -328,6 +347,7 @@ public class AddFormModbusPointFrame extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				try {
 					syncAddr();
+					setContent();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -336,6 +356,7 @@ public class AddFormModbusPointFrame extends JFrame {
 			public void keyReleased(KeyEvent e) {
 				try {
 					syncAddr();
+					setContent();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -356,6 +377,7 @@ public class AddFormModbusPointFrame extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				try {
 					checkRequestCount();
+					setContent();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -364,8 +386,9 @@ public class AddFormModbusPointFrame extends JFrame {
 			public void keyReleased(KeyEvent e) {
 				try {
 					checkRequestCount();
+					setContent();
 				}catch(Exception ex) {
-					ex.printStackTrace();
+					ex.printStackTrace();					
 				}
 			}
 		});
@@ -393,20 +416,162 @@ public class AddFormModbusPointFrame extends JFrame {
 						"EIGHT BYTE INT SIGNED",
 						"EIGHT BYTE FLOAT"
 						}));
+		dataType_var.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String dataType = dataType_var.getSelectedItem().toString().toUpperCase().trim();
+				if(dataType.length() < 1 || dataType.equals("")) dataType_var.setSelectedIndex(0);
+				
+				int step = 1;
+				
+				if(dataType.startsWith("BIN") || dataType.startsWith("TWO")) {
+					step  = 1;			
+				}else if(dataType.startsWith("FOUR")) {
+					step = 2;
+				}else if(dataType.startsWith("EIGHT")) {
+					step = 4;
+				}else {
+					step = 1;
+				}
+				
+				addrStep.setText(String.format("<html>%s&nbsp;&nbsp;&nbsp;&nbsp;( 주소 값이 시작 주소부터 %s 씩 증가 )</html>", Util.colorBlue("" + step), Util.colorBlue("" + step)));
+				setContent();
+			}
+		});
+		
 		panel.add(dataType_var);
 		
+		JLabel addrIncrement = new JLabel("주소 증가량");
+		addrIncrement.setHorizontalAlignment(SwingConstants.LEFT);
+		addrIncrement.setForeground(Color.BLACK);
+		addrIncrement.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		addrIncrement.setBackground(Color.WHITE);
+		addrIncrement.setBounds(35, 315, 212, 30);
+		panel.add(addrIncrement);
+		
+		addrStep = new JLabel(String.format("<html>%s&nbsp;&nbsp;&nbsp;&nbsp;( 주소 값이 시작 주소부터 %s 씩 증가 )</html>", Util.colorBlue("1"), Util.colorBlue("1")));
+		addrStep.setHorizontalAlignment(SwingConstants.LEFT);
+		addrStep.setForeground(Color.BLACK);
+		addrStep.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		addrStep.setBackground(Color.WHITE);
+		addrStep.setBounds(263, 315, 401, 30);
+		panel.add(addrStep);
+		
+		JSeparator separator = new JSeparator();
+		separator.setForeground(Color.BLACK);
+		separator.setBounds(12, 358, 718, 7);
+		panel.add(separator);
+		
+		label = new JLabel("내 용");
+		label.setHorizontalAlignment(SwingConstants.LEFT);
+		label.setForeground(Color.BLACK);
+		label.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		label.setBackground(Color.WHITE);
+		label.setBounds(35, 372, 212, 30);
+		panel.add(label);
+		
+		con_0 = new JLabel("기능 코드");
+		con_0.setHorizontalAlignment(SwingConstants.LEFT);
+		con_0.setForeground(Color.BLACK);
+		con_0.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		con_0.setBackground(Color.WHITE);
+		con_0.setBounds(35, 422, 645, 30);
+		panel.add(con_0);
+		
+		con_1 = new JLabel("모드버스 주소 ( DEC )");
+		con_1.setHorizontalAlignment(SwingConstants.LEFT);
+		con_1.setForeground(Color.BLACK);
+		con_1.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		con_1.setBackground(Color.WHITE);
+		con_1.setBounds(35, 462, 645, 30);
+		panel.add(con_1);
+		
+		con_2 = new JLabel("레지스터 주소 ( DEC )");
+		con_2.setHorizontalAlignment(SwingConstants.LEFT);
+		con_2.setForeground(Color.BLACK);
+		con_2.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		con_2.setBackground(Color.WHITE);
+		con_2.setBounds(35, 502, 645, 30);
+		panel.add(con_2);
+		
+		con_3 = new JLabel("레지스터 주소 ( HEX )");
+		con_3.setHorizontalAlignment(SwingConstants.LEFT);
+		con_3.setForeground(Color.BLACK);
+		con_3.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		con_3.setBackground(Color.WHITE);
+		con_3.setBounds(35, 542, 645, 30);
+		panel.add(con_3);
+		
+		con_4 = new JLabel("모드버스 포인트 추가 개수");
+		con_4.setHorizontalAlignment(SwingConstants.LEFT);
+		con_4.setForeground(Color.BLACK);
+		con_4.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		con_4.setBackground(Color.WHITE);
+		con_4.setBounds(35, 582, 645, 30);
+		panel.add(con_4);
+		
+		con_5 = new JLabel("( 참고 내용 )");
+		con_5.setHorizontalAlignment(SwingConstants.LEFT);
+		con_5.setForeground(new Color(0, 128, 0));
+		con_5.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		con_5.setBackground(Color.WHITE);
+		con_5.setBounds(35, 622, 695, 30);
+		panel.add(con_5);
+		
 		addButton = new JButton();
-		addButton.setBounds(585, 10, 97, 32);
+		addButton.setBounds(655, 10, 97, 32);
 		addButton.setText("추 가");
 		addButton.setForeground(Color.BLACK);
 		addButton.setBackground(Color.WHITE);
 		addButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		addButton.setFocusPainted(false);		
 		addButton.setBorder(UIManager.getBorder("Button.border"));
+		addButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(checkFormValidation()) {
+					try {
+						int addr = syncAddr();
+						if(addr < 0) return;
+						
+						int count = Integer.parseInt(cnt_var.getText());
+						
+					}catch(Exception ex) {
+						
+					}
+				}
+			}
+		});
 		actualPanel.add(addButton);
 		
+		showContentButton = new JButton();
+		showContentButton.setText("내용 보기");
+		showContentButton.setForeground(Color.BLACK);
+		showContentButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		showContentButton.setFocusPainted(false);
+		showContentButton.setBorder(UIManager.getBorder("Button.border"));
+		showContentButton.setBackground(Color.WHITE);
+		showContentButton.setBounds(423, 10, 113, 32);
+		showContentButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String text = showContentButton.getText().trim();
+				
+				if(text.contains("보기")) {
+					showContent(true);	
+					showContentButton.setText("내용 닫기");
+				}else {
+					showContent(false);
+					showContentButton.setText("내용 보기");
+				}
+				
+			}
+		});
+		actualPanel.add(showContentButton);
+		
+		
 		resetButton = new JButton();
-		resetButton.setBounds(476, 10, 97, 32);
+		resetButton.setBounds(546, 10, 97, 32);
 		resetButton.setText("초기화");
 		resetButton.setForeground(Color.BLACK);
 		resetButton.setBackground(Color.WHITE);
@@ -427,7 +592,7 @@ public class AddFormModbusPointFrame extends JFrame {
 		setVisible(true);
 	}
 	
-	public void syncAddr() {
+	public int syncAddr() {
 		int fc = Integer.parseInt(fc_var.getSelectedItem().toString().split(" ")[1]); 
 		int startAddress = 0;
 		String modbusAddress = "";
@@ -448,7 +613,7 @@ public class AddFormModbusPointFrame extends JFrame {
 				addr_modbus_dec_var.setText(null);
 				addr_reg_dec_var.setText(null);
 				addr_reg_hex_var.setText(null);
-				return;
+				return -1;
 			}
 			startAddress = Integer.parseInt(addr);
 			startAddress = (startAddress % 10000) - 1;
@@ -460,7 +625,7 @@ public class AddFormModbusPointFrame extends JFrame {
 				addr_modbus_dec_var.setText(null);
 				addr_reg_dec_var.setText(null);
 				addr_reg_hex_var.setText(null);
-				return;
+				return -1;
 			}
 			startAddress = Integer.parseInt(addr);
 			if(startAddress > 0xffff || startAddress < 0) throw new NumberFormatException();
@@ -471,7 +636,7 @@ public class AddFormModbusPointFrame extends JFrame {
 				addr_modbus_dec_var.setText(null);
 				addr_reg_dec_var.setText(null);
 				addr_reg_hex_var.setText(null);
-				return;
+				return -1;
 			}
 			if(addr.startsWith("0x")||addr.startsWith("0X")) {
 				startAddress = Integer.parseInt(addr.replaceAll("0x", "").replaceAll("0X", ""),16); 				
@@ -508,6 +673,7 @@ public class AddFormModbusPointFrame extends JFrame {
 		addr_reg_dec_var.setDisabledTextColor(Color.BLUE);
 		addr_reg_hex_var.setForeground(Color.BLUE);
 		addr_reg_hex_var.setDisabledTextColor(Color.BLUE);
+		return startAddress;
 		
 		}catch(NumberFormatException e) {
 			if(addr_modbus_dec.isSelected()) {
@@ -549,6 +715,8 @@ public class AddFormModbusPointFrame extends JFrame {
 				addr_reg_hex_var.setForeground(Color.RED);
 				addr_reg_hex_var.setDisabledTextColor(Color.RED);
 			}
+			
+			return -1;
 		}
 		
 	}
@@ -576,7 +744,109 @@ public class AddFormModbusPointFrame extends JFrame {
 		cnt_var.setText(null);
 		dataType_var.setSelectedIndex(0);
 	}
+	
+	public boolean checkFormValidation() {
+		boolean formValid = true;
+		formValid = formValid && !(addr_modbus_dec_var.getForeground() == Color.RED);
+		formValid = formValid && !(addr_reg_dec_var.getForeground() == Color.RED);
+		formValid = formValid && !(addr_reg_hex_var.getForeground() == Color.RED);
+		formValid = formValid && !(addr_modbus_dec_var.getText().length() < 1 || addr_modbus_dec_var.getText().equals(""));
+		formValid = formValid && !(addr_reg_dec_var.getText().length() < 1 || addr_reg_dec_var.getText().equals(""));
+		formValid = formValid && !(addr_reg_hex_var.getText().length() < 1 || addr_reg_hex_var.getText().equals(""));
+		formValid = formValid && !(addr_modbus_dec_var.getText().trim().equals("유효하지 않은 주소"));
+		formValid = formValid && !(addr_reg_dec_var.getText().trim().equals("유효하지 않은 주소"));
+		formValid = formValid && !(addr_reg_hex_var.getText().trim().equals("유효하지 않은 주소"));
+		if(!formValid) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("%s%s%s\n", Util.colorRed("Form Validation Error"), Util.separator, Util.separator));
+			sb.append(String.format("%s", "추가하실 모드버스 포인트의 시작 " + Util.colorBlue("주소(Address)") +  " 정보를 입력해주세요"));
+			sb.append(Util.separator + Util.separator + Util.separator + "\n");
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		formValid = formValid && !(cnt_var.getText().length() < 1 || cnt_var.getText().equals(""));
+		formValid = formValid && !(cnt_var.getForeground() == Color.RED);
+		if(!formValid) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("%s%s%s\n", Util.colorRed("Form Validation Error"), Util.separator, Util.separator));
+			sb.append(String.format("%s", "추가하실 모드버스 포인트 " + Util.colorBlue("개수(Count)") + " 정보를 확인해주세요"));
+			sb.append(Util.separator + Util.separator + Util.separator + "\n");
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		return formValid;
+	}
+	
+	public void showContent(boolean enabled) {
+		if(enabled) {
+			this.setSize(new Dimension(790, 785));
+			panel.setSize(new Dimension(742, 661));
+		}else {
+			this.setSize(new Dimension(790, 484));
+			panel.setSize(new Dimension(742, 358));
+		}
+	}
+	
+	public void setContent() {
+		int fc = Integer.parseInt(fc_var.getSelectedItem().toString().split(" ")[1]);
+		
+		String dataType = dataType_var.getSelectedItem().toString().toUpperCase().trim();
+		int step = 1;
+		if(dataType.startsWith("BIN") || dataType.startsWith("TWO")) {
+			step  = 1;			
+		}else if(dataType.startsWith("FOUR")) {
+			step = 2;
+		}else if(dataType.startsWith("EIGHT")) {
+			step = 4;
+		}
+		
+		
+		try {
+			int addr = syncAddr();
+			if(addr < 0) throw new Exception();
+			int count = Integer.parseInt(cnt_var.getText().trim());
+			
+			int[] addrArray = new int[count];
+			addrArray[0] = addr;
+			
+			for(int i = 1; i < addrArray.length; i++) {
+				addrArray[i] = addrArray[i-1] + step;
+			}
+			
+			con_0.setText(String.format("<html>기능코드 %s번, 데이터 타입 %s 을(를) 사용하는</html>", Util.colorBlue("" + fc), Util.colorBlue(dataType)));
+			con_1.setText(String.format("<html>모드버스 주소 ( DEC ) : %s ~ %s</html>", Util.colorBlue(getModbusAddr(fc, addrArray[0])), Util.colorBlue(getModbusAddr(fc, addrArray[count-1]))));
+			con_2.setText(String.format("<html>레지스터 주소 ( DEC ) : %s ~ %s</html>", Util.colorBlue("" + addrArray[0]), Util.colorBlue("" + addrArray[count-1])));
+			con_3.setText(String.format("<html>레지스터 주소 ( HEX ) : %s ~ %s</html>", Util.colorBlue(getRegisterAddrHex(addrArray[0])), Util.colorBlue(getRegisterAddrHex(addrArray[count-1]))));
+			con_4.setText(String.format("<html>총 %s개의 모드버스 포인트 추가</html>", Util.colorBlue("" + count)));
+			con_5.setText(String.format("<html>( 위의 세 가지 주소 방식은 표기 방식이 다를 뿐 결국 모두 동일한 내용입니다 )</html>"));
+		}catch(Exception ex) {
+			ex.printStackTrace();
+			con_0.setText("기능 코드");
+			con_1.setText("모드버스 주소 ( DEC )");
+			con_2.setText("레지스터 주소 ( DEC )");
+			con_3.setText("레지스터 주소 ( HEX )");
+			con_4.setText("모드버스 포인트 추가 개수");
+			con_5.setText("( 참고 내용 )");
+		}
+	}
 
+	public String getModbusAddr(int functionCode, int registerAddr) {
+		String modbusAddress = "";
+		switch(functionCode) {
+			case 1: modbusAddress = "0"; break;
+			case 2: modbusAddress = "1"; break;
+			case 3: modbusAddress = "4"; break;
+			case 4: modbusAddress = "3"; break;
+		}
+		return String.format("%s%04d", modbusAddress, (registerAddr & 0xffff) + 1);
+	}
+	
+	public String getRegisterAddrHex(int registerAddr) {
+		return String.format("0x%04X", registerAddr);
+	}
+	
 	@Override
 	public void dispose() {
 		AddFormModbusPointFrame.isExist = false;

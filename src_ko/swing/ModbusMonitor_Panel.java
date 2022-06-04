@@ -461,6 +461,12 @@ public class ModbusMonitor_Panel extends JPanel {
 		add_button.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		add_button.setBackground(Color.WHITE);
 		add_button.setBounds(8, 20, 70, 39);
+		add_button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				new AddFormModbusPointFrame();
+			}
+		});
 		function_Panel.add(add_button);
 		
 		JButton delete_button = new JButton("»è Á¦");
