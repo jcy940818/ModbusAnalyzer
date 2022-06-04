@@ -274,9 +274,9 @@ public class ModbusMonitor_Panel extends JPanel {
 		addrTypeComboBox = new JComboBox();
 		addrTypeComboBox.setModel(new DefaultComboBoxModel(
 				new String[] {
-						"Register (HEX)",
+						"Modbus (DEC)",
 						"Register (DEC)", 
-						"Modbus (DEC)"
+						"Register (HEX)"
 						}));
 		addrTypeComboBox.setSelectedIndex(2);
 		addrTypeComboBox.setForeground(Color.BLACK);
@@ -464,7 +464,11 @@ public class ModbusMonitor_Panel extends JPanel {
 		add_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new AddFormModbusPointFrame();
+				if(!AddFormModbusPointFrame.isExist) {
+					new AddFormModbusPointFrame();					
+				 }else {
+					 AddFormModbusPointFrame.existsFrame();
+				 }
 			}
 		});
 		function_Panel.add(add_button);
@@ -513,7 +517,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				radio_pointList.doClick();
 				packetLog.setText(null);
 				radio_modbusRTU.doClick();
-				addrTypeComboBox.setSelectedIndex(2);
+				addrTypeComboBox.setSelectedIndex(0);
 				unitID_comboBox.setSelectedIndex(0);
 				
 				search_TextField.setText(null);

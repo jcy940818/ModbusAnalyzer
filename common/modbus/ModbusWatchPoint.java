@@ -270,19 +270,16 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;2-1. Function Code"), wp.getFunctionCode()));
 			sb.append(Util.separator + Util.separator + "\n");
 			
-			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;2-2. Register Address ( HEX )"), wp.getRegisterAddrHexString()));
+			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;2-2. Modbus Address ( DEC )"), wp.getModbusAddrString()));
 			sb.append(Util.separator + Util.separator + "\n");
-			
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 			sb.append(String.format("%s : %d", Util.colorBlue("¦§&nbsp;&nbsp;2-3. Register Address ( DEC )"), wp.getRegisterAddr()));
 			sb.append(Util.separator + Util.separator + "\n");
 			
-			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;2-4. Modbus Address ( DEC )"), wp.getModbusAddrString()));
+			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;2-4. Register Address ( HEX )"), wp.getRegisterAddrHexString()));
 			sb.append(Util.separator + Util.separator + "\n");
 			
 			
