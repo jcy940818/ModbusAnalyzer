@@ -570,14 +570,6 @@ public class ModbusMonitor_Panel extends JPanel {
 				if (e.getButton() == 1) { } // 왼쪽 클릭
 				if (e.getButton() == 1 && e.getClickCount() == 2) {
 					// 왼쪽 버튼 더블 클릭
-					int row = point_table.getSelectedRow();
-					ModbusWatchPoint wp = (ModbusWatchPoint) point_table.getValueAt(row, 1);
-					
-					ModbusWatchPoint clone = wp.getClone();
-					if(clone != null) {
-						pointList.add(clone);
-						doTableFilter();
-					}
 				}
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
