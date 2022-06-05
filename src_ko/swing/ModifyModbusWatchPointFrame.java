@@ -477,16 +477,19 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				
 				switch(dataFormat) {
 				case 1 :
+					statusLabel.setText("이진 상태");
 					frameSize = new Dimension(790, 664);
 					panelSize = new Dimension(742, 539);
 					scrollPane.setBounds(53, 447, 677, 80);
 					break;
 				case 2 :
+					statusLabel.setText("다중 상태");
 					frameSize = new Dimension(790, 785);
 					panelSize = new Dimension(742, 661);
 					scrollPane.setBounds(53, 447, 677, 205);
 					break;
 				case 3 :
+					statusLabel.setText("아날로그 데이터");
 					frameSize = new Dimension(790, 515);
 					panelSize = new Dimension(742, 391);
 					break;
