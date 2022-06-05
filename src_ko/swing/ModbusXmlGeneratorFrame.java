@@ -214,6 +214,7 @@ public class ModbusXmlGeneratorFrame extends JFrame {
 		resetTable(table);
 		
 		JPanel formPanel = new JPanel();
+		formPanel.setForeground(Color.BLACK);
 		formPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		formPanel.setBackground(Color.WHITE);
 		formPanel.setBounds(12, 547, 1030, 109);		
@@ -221,6 +222,7 @@ public class ModbusXmlGeneratorFrame extends JFrame {
 		formPanel.setLayout(null);
 		
 		JLabel addressInfo = new JLabel("\uC8FC\uC18C \uB4F1\uB85D \uBC29\uC2DD");
+		addressInfo.setForeground(Color.BLACK);
 		addressInfo.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		addressInfo.setBounds(14, 10, 130, 30);
 		formPanel.add(addressInfo);
@@ -252,11 +254,13 @@ public class ModbusXmlGeneratorFrame extends JFrame {
 		formPanel.add(separator);
 		
 		JLabel EventInfo = new JLabel("\uC774\uBCA4\uD2B8");
+		EventInfo.setForeground(Color.BLACK);
 		EventInfo.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		EventInfo.setBounds(178, 10, 68, 30);
 		formPanel.add(EventInfo);
 		
 		useAutoEvent = new JCheckBox("\uC774\uBCA4\uD2B8 \uC790\uB3D9 \uB4F1\uB85D \uC0AC\uC6A9");
+		useAutoEvent.setForeground(Color.BLACK);
 		useAutoEvent.setBackground(Color.WHITE);
 		useAutoEvent.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		useAutoEvent.setBounds(195, 78, 189, 23);
@@ -306,6 +310,7 @@ public class ModbusXmlGeneratorFrame extends JFrame {
 		formPanel.add(separator_1);
 		
 		JLabel tableSet = new JLabel("\uD14C\uC774\uBE14 \uC870\uC791");
+		tableSet.setForeground(Color.BLACK);
 		tableSet.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		tableSet.setBounds(415, 10, 111, 30);
 		formPanel.add(tableSet);
@@ -437,6 +442,7 @@ public class ModbusXmlGeneratorFrame extends JFrame {
 		formPanel.add(resetButton);
 		
 		useAutoMeasure = new JCheckBox("\uC131\uB2A5 \uB2E8\uC704 \uC790\uB3D9 \uC0DD\uC131");
+		useAutoMeasure.setForeground(Color.BLACK);
 		useAutoMeasure.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		useAutoMeasure.setBackground(Color.WHITE);
 		useAutoMeasure.setBounds(854, 15, 161, 23);

@@ -145,6 +145,7 @@ public class SearchFrame extends JFrame {
 		actualPanel.add(searchButton);
 		
 		searchBar_TextField = new JTextField();
+		searchBar_TextField.setForeground(Color.BLACK);
 		searchBar_TextField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
 		searchBar_TextField.setBounds(110, 84, 419, 44);
 		searchBar_TextField.setBorder(new LineBorder(new Color(255, 140, 0), 3));	

@@ -205,6 +205,7 @@ public class ControlXmlGeneratorFrame extends JFrame {
 		formPanel.setLayout(null);
 		
 		JLabel addressInfo = new JLabel("\uC81C\uC5B4 \uAC04\uD3B8 \uC5C5\uB85C\uB4DC");
+		addressInfo.setForeground(Color.BLACK);
 		addressInfo.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		addressInfo.setBounds(14, 10, 140, 30);
 		formPanel.add(addressInfo);
@@ -269,6 +270,7 @@ public class ControlXmlGeneratorFrame extends JFrame {
 		formPanel.add(separator_1);
 		
 		JLabel tableSet = new JLabel("\uD14C\uC774\uBE14 \uC870\uC791");
+		tableSet.setForeground(Color.BLACK);
 		tableSet.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		tableSet.setBounds(415, 10, 111, 30);
 		formPanel.add(tableSet);

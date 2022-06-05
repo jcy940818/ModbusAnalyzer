@@ -242,6 +242,7 @@ public class ModbusXmlGeneratorFrame extends JFrame {
 		formPanel.setLayout(null);
 		
 		JLabel addressInfo = new JLabel("Address Type");
+		addressInfo.setForeground(Color.BLACK);
 		addressInfo.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		addressInfo.setBounds(14, 10, 130, 30);
 		formPanel.add(addressInfo);
@@ -273,11 +274,13 @@ public class ModbusXmlGeneratorFrame extends JFrame {
 		formPanel.add(separator);
 		
 		JLabel EventInfo = new JLabel("Event");
+		EventInfo.setForeground(Color.BLACK);
 		EventInfo.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		EventInfo.setBounds(178, 10, 68, 30);
 		formPanel.add(EventInfo);
 		
 		useAutoEvent = new JCheckBox("Use Auto Event");
+		useAutoEvent.setForeground(Color.BLACK);
 		useAutoEvent.setBackground(Color.WHITE);
 		useAutoEvent.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		useAutoEvent.setBounds(215, 78, 150, 23);
@@ -327,6 +330,7 @@ public class ModbusXmlGeneratorFrame extends JFrame {
 		formPanel.add(separator_1);
 		
 		JLabel tableSet = new JLabel("Table Operation");
+		tableSet.setForeground(Color.BLACK);
 		tableSet.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		tableSet.setBounds(415, 10, 150, 30);
 		formPanel.add(tableSet);
@@ -470,6 +474,7 @@ public class ModbusXmlGeneratorFrame extends JFrame {
 		formPanel.add(resetButton);
 		
 		useAutoMeasure = new JCheckBox("Automatic generation of performance units");
+		useAutoMeasure.setForeground(Color.BLACK);
 		useAutoMeasure.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		useAutoMeasure.setBackground(Color.WHITE);
 		useAutoMeasure.setBounds(670, 15, 345, 23);
