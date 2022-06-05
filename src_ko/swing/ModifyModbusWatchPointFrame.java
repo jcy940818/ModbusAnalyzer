@@ -5,29 +5,33 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 import common.modbus.ModbusWatchPoint;
 import src_ko.util.Util;
@@ -37,8 +41,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	public static boolean isExist = false;
 	private JPanel contentPane;
 	private JPanel panel;
-	private JButton mk119Button;
-	private JTable table; // frame마다 XML 인스턴스를 가져야 하므로 table 필드는 static 속성을 가질 수 없다
+	private JButton mk119Button;	
 	private JComboBox fc_var;	
 	private JComboBox dataType_var;
 	private JComboBox dataFormat_var;
@@ -56,6 +59,12 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	private JLabel scale;
 	private JTextField scale_var;
 	private JLabel dataFormat;
+	private JLabel statusLabel;
+	
+	private JScrollPane scrollPane;
+	private JTable table;
+	private JButton addRow;
+	private JButton deleteRow;
 	
 	/**
 	 * Launch the application.
@@ -458,11 +467,82 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 						"2 ( 다중 상태 )",
 						"3 ( 아날로그 데이터 )"
 						}));
+		dataFormat_var.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				int dataFormat = Integer.parseInt(dataFormat_var.getSelectedItem().toString().split(" ")[0].trim());
+				Dimension frameSize = null;
+				Dimension panelSize = null;
+				
+				switch(dataFormat) {
+				case 1 :
+					frameSize = new Dimension(790, 664);
+					panelSize = new Dimension(742, 539);
+					scrollPane.setBounds(53, 447, 677, 80);
+					break;
+				case 2 :
+					frameSize = new Dimension(790, 785);
+					panelSize = new Dimension(742, 661);
+					scrollPane.setBounds(53, 447, 677, 205);
+					break;
+				case 3 :
+					frameSize = new Dimension(790, 515);
+					panelSize = new Dimension(742, 391);
+					break;
+				}
+				
+				setFrameAndPanelSize(frameSize, panelSize);
+				resetTable(table, dataFormat);
+			}
+		});
 		panel.add(dataFormat_var);
+		
+		JSeparator separator = new JSeparator();
+		separator.setForeground(Color.BLACK);
+		separator.setBounds(12, 392, 718, 7);
+		panel.add(separator);
+		
+		statusLabel = new JLabel("이진 상태");
+		statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		statusLabel.setForeground(Color.BLACK);
+		statusLabel.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		statusLabel.setBackground(Color.WHITE);
+		statusLabel.setBounds(31, 407, 212, 30);
+		panel.add(statusLabel);
+		
+		scrollPane = new JScrollPane();
+		scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
+		scrollPane.setBounds(53, 447, 677, 101);
+		panel.add(scrollPane);
+		
+		table = new JTable();
+		table.setCellSelectionEnabled(true);
+		table.addKeyListener(new KeyAdapter() {				
+			// 셀 내용  삭제
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if( e.getKeyCode() == KeyEvent.VK_DELETE ) {
+					int[] selectedRows = table.getSelectedRows();
+					int[] selectedColumns = table.getSelectedColumns();
+					
+					for(int row = 0; row < selectedRows.length; row++) {
+						for(int column = 0; column < selectedColumns.length; column++) {			
+					
+							// 사용자가 수정 할 수 있는 셀 내용만 삭제
+							if(table.isCellEditable(selectedRows[row], selectedColumns[column])) {
+								table.setValueAt("", selectedRows[row], selectedColumns[column]);	
+							}
+						}
+					}
+				}							
+			}
+		});
+		scrollPane.setViewportView(table);
 		
 		addButton = new JButton();
 		addButton.setBounds(668, 10, 84, 32);
-		addButton.setText("추 가");
+		addButton.setText("적 용");
 		addButton.setForeground(new Color(0, 128, 0));
 		addButton.setBackground(Color.WHITE);
 		addButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
@@ -506,15 +586,51 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				resetForm();
+				
+				System.out.println(getSize());
+				System.out.println(panel.getSize());
 			}
 		});
 		actualPanel.add(resetButton);
 		
+		addRow = new JButton();
+		addRow.setText("추 가");
+		addRow.setForeground(Color.BLACK);
+		addRow.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		addRow.setFocusPainted(false);
+		addRow.setBorder(UIManager.getBorder("Button.border"));
+		addRow.setBackground(Color.WHITE);
+		addRow.setBounds(543, 405, 90, 32);
+		addRow.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				addRecord(table);
+			}
+		});
+		panel.add(addRow);
+		
+		deleteRow = new JButton();
+		deleteRow.setText("삭 제");
+		deleteRow.setForeground(Color.BLACK);
+		deleteRow.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		deleteRow.setFocusPainted(false);
+		deleteRow.setBorder(UIManager.getBorder("Button.border"));
+		deleteRow.setBackground(Color.WHITE);
+		deleteRow.setBounds(640, 405, 90, 32);
+		deleteRow.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				deleteRow(table);
+			}
+		});
+		panel.add(deleteRow);
+
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
 		
-		addr_reg_dec_var.requestFocus();
+		dataFormat_var.setSelectedIndex(2);
+		pointName_var.requestFocus();
 	}
 	
 	public int syncAddr() {
@@ -713,14 +829,9 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		return String.format("0x%04X", registerAddr);
 	}
 	
-	public void useTable(boolean enabled) {
-		if(enabled) {
-			this.setSize(new Dimension(790, 785));
-			panel.setSize(new Dimension(742, 661));
-		}else {
-			this.setSize(new Dimension(790, 515));
-			panel.setSize(new Dimension(742, 391));
-		}
+	public void setFrameAndPanelSize(Dimension frameSize, Dimension panelSize) {
+		this.setSize(frameSize);
+		panel.setSize(panelSize);
 	}
 	
 	public static void existsFrame() {
@@ -729,6 +840,112 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		sb.append("Modify Modbus Watch Point 프레임이 이미 열려있습니다" + Util.separator + "\n");
 		Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 		return;
+	}
+	
+	public void resetTable(JTable table, int dataFormat){
+		if(dataFormat == 1) {
+			addRow.setEnabled(false);
+			addRow.setVisible(false);
+			deleteRow.setEnabled(false);
+			deleteRow.setVisible(false);
+			
+			table.setModel(new DefaultTableModel(
+					new Object[][] {
+						{0, null},
+						{1, null},
+					},
+					new String[] { "값", "내 용"}) {
+					boolean[] columnEditables = new boolean[] {
+							false, // 필 드 : 수정 불가
+							true, // 내 용 : 수정 불가						
+					};
+					public boolean isCellEditable(int row, int column) {
+						return columnEditables[column];
+					}
+			});
+		}else {
+			addRow.setEnabled(true);
+			addRow.setVisible(true);
+			deleteRow.setEnabled(true);
+			deleteRow.setVisible(true);
+			
+			table.setModel(new DefaultTableModel(
+					null,
+					new String[] { "값", "내 용"}) {
+					boolean[] columnEditables = new boolean[] {
+							true, // 필 드 : 수정 불가
+							true, // 내 용 : 수정 불가						
+					};
+					public boolean isCellEditable(int row, int column) {
+						return columnEditables[column];
+					}
+			});
+		}
+		
+		setTableStyle(table);
+	}
+	
+	public static void setTableStyle(JTable table){
+		// 테이블 헤더 설정
+		table.getTableHeader().setForeground(Color.BLACK);
+		table.getTableHeader().setBackground(new Color(255, 255, 153));
+		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		
+		// 테이블 셀 설정
+		table.setBorder(new EmptyBorder(0, 3, 0, 0));
+		table.setRowMargin(3);
+		table.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
+		table.setRowHeight(25);
+		
+		table.getColumnModel().getColumn(0).setPreferredWidth(5); // 값
+		table.getColumnModel().getColumn(1).setPreferredWidth(500); // 내 용
+		
+		// 셀 크기 임의 변경 불가
+		table.getTableHeader().setReorderingAllowed(false); // 컬럼 위치 임의 변경 불가
+		table.getTableHeader().setResizingAllowed(false); // 컬럼 와이드 크기 임의 변경 불가
+		
+		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
+		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
+
+		// DefaultTableCellHeaderRenderer의 정렬을 가운데 정렬로 지정
+		tScheduleCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+		// 정렬할 테이블의 ColumnModel을 가져옴
+		TableColumnModel tcmSchedule = table.getColumnModel();
+		
+		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순서
+	}
+	
+	/**
+	 * 	레코드 추가 메소드 
+	 */
+	public static void addRecord(JTable table) {
+		try {
+			((DefaultTableModel)table.getModel()).addRow(new Vector());
+		} catch (Exception e) {
+			// 레코드 추가 중 예외 발생 시 아무것도 수행하지 않음
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 레코드 삭제 메소드
+	 */
+	public void deleteRow(JTable table) {
+		int[] index = table.getSelectedRows();	
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+	
+		if(index.length < 0) {
+			// 선택 된 행이 없거나
+			if(table.getRowCount()==0) {
+				// 테이블에 행이 없을 경우 아무것도 수행하지 않음
+				return;
+			}
+		}
+				
+		for(int i = 0; i < index.length; i++) {
+			model.removeRow(index[0]);			
+		}
 	}
 	
 	@Override

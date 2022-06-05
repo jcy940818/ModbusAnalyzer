@@ -506,7 +506,18 @@ public class ModbusMonitor_Panel extends JPanel {
 		update_button.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		update_button.setBackground(Color.WHITE);
 		update_button.setBounds(156, 20, 70, 39);
+		update_button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(!ModifyModbusWatchPointFrame.isExist) {
+					new ModifyModbusWatchPointFrame();
+				 }else {
+					 ModifyModbusWatchPointFrame.existsFrame();
+				 }
+			}
+		});
 		function_Panel.add(update_button);
+		
 		reset_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				global_rx = null;
@@ -564,6 +575,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		
 		// 테이블 생성 부분
 		point_table = new JTable();
+		point_table.setCellSelectionEnabled(true);
 		point_table.setBackground(Color.WHITE);		
 		point_table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
