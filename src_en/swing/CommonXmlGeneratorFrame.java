@@ -762,15 +762,28 @@ public class CommonXmlGeneratorFrame extends JFrame {
 				return;
 			}
 		}
-
-		// index[0] : 1번째 레코드
-		// index[1] : 2번째 레코드
-		// index[2] : 3번째 레코드
-		// 위의 경우 index[0] (첫번째 레코드)를 삭제하면
-		// index[1] (두번째 레코드)이 index[0] (두번째 레코드)가 되기 때문에
-		// model.revmoe(index[0]) 로직을 수행한다
+		
+		ArrayList<Integer> indexList = new ArrayList<Integer>();
 		for(int i = 0; i < index.length; i++) {
-			model.removeRow(index[0]);
+			int rowIndex = Integer.parseInt(table.getValueAt(index[i], 0).toString().trim());
+			indexList.add(rowIndex);	
+		}
+		
+		for(Integer removeIndex : indexList) {
+			removeRow(removeIndex);
+		}
+	}
+	
+	public void removeRow(Integer rowNum) {
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		int rowCount = table.getRowCount();
+		
+		for(int i = 0; i < rowCount; i++) {
+			Integer num = Integer.parseInt(table.getValueAt(i, 0).toString().trim());
+			if(rowNum == num) {
+				model.removeRow(i);				
+				return;
+			}
 		}
 	}
 	
