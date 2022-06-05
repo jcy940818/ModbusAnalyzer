@@ -490,6 +490,7 @@ public class ControlXmlGeneratorFrame extends JFrame {
 	
 	public static void resetTable(JTable table){
 		// 테이블 헤더 설정
+		table.getTableHeader().setForeground(Color.BLACK);
 		table.getTableHeader().setBackground(new Color(255, 255, 153));
 		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		
