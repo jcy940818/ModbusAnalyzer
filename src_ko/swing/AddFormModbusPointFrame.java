@@ -140,10 +140,6 @@ public class AddFormModbusPointFrame extends JFrame {
 						addr_modbus_dec_var.setBackground(Color.WHITE);
 						addr_reg_dec_var.setBackground(new Color(220, 220, 220));
 						addr_reg_hex_var.setBackground(new Color(220, 220, 220));
-						
-						addr_modbus_dec_var.setText(null);
-						addr_reg_dec_var.setText(null);
-						addr_reg_hex_var.setText(null);
 						break;
 		
 					case "레지스터 주소 ( DEC )" :
@@ -154,10 +150,6 @@ public class AddFormModbusPointFrame extends JFrame {
 						addr_modbus_dec_var.setBackground(new Color(220, 220, 220));
 						addr_reg_dec_var.setBackground(Color.WHITE);
 						addr_reg_hex_var.setBackground(new Color(220, 220, 220));
-						
-						addr_modbus_dec_var.setText(null);
-						addr_reg_dec_var.setText(null);
-						addr_reg_hex_var.setText(null);
 						break;
 						
 					case "레지스터 주소 ( HEX )":
@@ -168,10 +160,6 @@ public class AddFormModbusPointFrame extends JFrame {
 						addr_modbus_dec_var.setBackground(new Color(220, 220, 220));
 						addr_reg_dec_var.setBackground(new Color(220, 220, 220));
 						addr_reg_hex_var.setBackground(Color.WHITE);
-						
-						addr_modbus_dec_var.setText(null);
-						addr_reg_dec_var.setText(null);
-						addr_reg_hex_var.setText(null);
 						break;
 				}
 							
@@ -442,7 +430,7 @@ public class AddFormModbusPointFrame extends JFrame {
 				if(incrementAddr.isSelected()) {
 					addrStep.setText(String.format("<html>%s&nbsp;&nbsp;&nbsp;&nbsp;( 주소 값이 시작 주소부터 %s 씩 증가 )</html>", Util.colorBlue("" + step), Util.colorBlue("" + step)));	
 				}else {
-					addrStep.setText(String.format("<html>%s&nbsp;&nbsp;&nbsp;( 중복 주소 사용 )</html>", Util.colorBlue("주소 증가 사용하지 않음"), Util.colorBlue("" + step)));
+					addrStep.setText(String.format("<html>%s&nbsp;&nbsp;&nbsp;( 동일한 주소 사용 )</html>", Util.colorRed("주소 증가 사용하지 않음"), Util.colorBlue("" + step)));
 				}
 				
 				getPointList(false);
@@ -775,6 +763,7 @@ public class AddFormModbusPointFrame extends JFrame {
 	}
 	
 	public void resetForm() {
+		incrementAddr.setSelected(true);
 		fc_var.setSelectedIndex(2);
 		addr_modbus_dec_var.setText(null);
 		addr_reg_dec_var.setText(null);
@@ -797,7 +786,7 @@ public class AddFormModbusPointFrame extends JFrame {
 		if(!formValid) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(String.format("%s%s%s\n", Util.colorRed("Form Validation Error"), Util.separator, Util.separator));
-			sb.append(String.format("%s", "추가하실 모드버스 포인트의 시작 " + Util.colorBlue("주소(Address)") +  " 정보를 입력해주세요"));
+			sb.append(String.format("%s", "추가하실 모드버스 포인트의 시작 " + Util.colorBlue("주소(Address)") +  " 정보를 확인해주세요"));
 			sb.append(Util.separator + Util.separator + Util.separator + "\n");
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 			return false;
