@@ -510,7 +510,13 @@ public class ModbusMonitor_Panel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(!ModifyModbusWatchPointFrame.isExist) {
-					new ModifyModbusWatchPointFrame();
+					ArrayList<ModbusWatchPoint> selectedPointList = getSelectedModbusPoint(point_table);
+
+					if (selectedPointList == null || selectedPointList.size() < 1) {
+						return;
+					}
+					
+					new ModifyModbusWatchPointFrame(selectedPointList.get(0));
 				 }else {
 					 ModifyModbusWatchPointFrame.existsFrame();
 				 }

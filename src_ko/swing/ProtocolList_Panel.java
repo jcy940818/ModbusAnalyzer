@@ -727,9 +727,10 @@ public class ProtocolList_Panel extends JPanel {
 				return;
 			}
 			
-			if(OnionDirCheck_Panel.agent != null && OnionDirCheck_Panel.agent.equalsIgnoreCase("watchPoint")) {
-				AddModbusPointFrame.pointUpload(xmlFile);
-				MainFrame.showModbusMonitor();
+			if(OnionDirCheck_Panel.agent != null && OnionDirCheck_Panel.agent.equalsIgnoreCase("watchPoint")) {				
+				if(AddModbusPointFrame.pointUpload(xmlFile)) {
+					MainFrame.showModbusMonitor();
+				}
 			}else {
 				// XML Viewer Frame »ý¼º
 				new XmlViewerFrame(pName, xmlFile, protocol);				

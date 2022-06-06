@@ -212,7 +212,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	public ModbusWatchPoint getClone() {
 		try {
 			ModbusWatchPoint clone = new ModbusWatchPoint();
-			clone.displayName = this.displayName + " Clone";
+			clone.displayName = this.displayName;
 			clone.counter = this.counter;
 			clone.scaleFunc = this.scaleFunc;
 			clone.interval = this.interval;

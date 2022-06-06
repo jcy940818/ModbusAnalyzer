@@ -34,7 +34,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import common.modbus.ModbusWatchPoint;
+import common.perf.PerfLabelStatusBean;
 import src_ko.util.Util;
+import javax.swing.JCheckBox;
 
 public class ModifyModbusWatchPointFrame extends JFrame {
 
@@ -65,6 +67,18 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	private JTable table;
 	private JButton addRow;
 	private JButton deleteRow;
+	private JTextField measure_var;
+	
+	private ModbusWatchPoint[] pointList;
+	private JCheckBox c_pointName;
+	private JCheckBox c_fc;
+	private JCheckBox c_addr;
+	private JCheckBox c_dataType;
+	private JCheckBox c_measure;
+	private JCheckBox c_scale;
+	private JCheckBox c_dataForamt;
+	
+	
 	
 	/**
 	 * Launch the application.
@@ -85,14 +99,15 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ModifyModbusWatchPointFrame() {
+	public ModifyModbusWatchPointFrame(ModbusWatchPoint... point) {
+		this.pointList = point;
 		ModifyModbusWatchPointFrame.isExist = true;
 		setTitle("ModbusAnalyzer");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
 		
-		setBounds(100, 100, 790, 515);
+		setBounds(100, 100, 790, 610);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new LineBorder(Color.DARK_GRAY, 10));
@@ -116,7 +131,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		
 		panel = new JPanel();
 		panel.setBackground(new Color(220, 220, 220));
-		panel.setBounds(10, 65, 742, 391);
+		panel.setBounds(10, 114, 742, 437);
 		panel.setLayout(null);
 		actualPanel.add(panel);
 		
@@ -130,11 +145,11 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		
 		JLabel fc = new JLabel("기능 코드");
 		fc.setBounds(31, 65, 212, 30);
-		panel.add(fc);
 		fc.setHorizontalAlignment(SwingConstants.LEFT);
 		fc.setForeground(Color.BLACK);
 		fc.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		fc.setBackground(Color.WHITE);
+		panel.add(fc);
 		
 		radioListener = new ActionListener() {			
 			@Override
@@ -235,9 +250,51 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		dataType.setBounds(31, 245, 212, 30);
 		panel.add(dataType);
 		
+		JLabel measure = new JLabel("측정 단위");
+		measure.setHorizontalAlignment(SwingConstants.LEFT);
+		measure.setForeground(Color.BLACK);
+		measure.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		measure.setBackground(Color.WHITE);
+		measure.setBounds(31, 295, 212, 30);
+		panel.add(measure);
+		
+		scale = new JLabel("보정식");
+		scale.setHorizontalAlignment(SwingConstants.LEFT);
+		scale.setForeground(Color.BLACK);
+		scale.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		scale.setBackground(Color.WHITE);
+		scale.setBounds(31, 345, 212, 30);
+		panel.add(scale);
+		
+		dataFormat = new JLabel("데이터 형식");
+		dataFormat.setHorizontalAlignment(SwingConstants.LEFT);
+		dataFormat.setForeground(Color.BLACK);
+		dataFormat.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		dataFormat.setBackground(Color.WHITE);
+		dataFormat.setBounds(31, 395, 212, 30);
+		panel.add(dataFormat);
+		
+		
+		pointName_var = new JTextField();
+		pointName_var.setHorizontalAlignment(SwingConstants.LEFT);
+		pointName_var.setForeground(Color.BLUE);
+		pointName_var.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		pointName_var.setEnabled(true);		
+		pointName_var.setColumns(10);
+		pointName_var.setBorder(new LineBorder(Color.BLACK, 2));
+		pointName_var.setBackground(Color.WHITE);
+		pointName_var.setBounds(259, 15, 401, 30);
+		panel.add(pointName_var);
+		
 		fc_var = new JComboBox();
 		fc_var.setBorder(new LineBorder(Color.BLACK, 2));
-		fc_var.setModel(new DefaultComboBoxModel(new String[] {"FC 01", "FC 02", "FC 03", "FC 04"}));
+		fc_var.setModel(new DefaultComboBoxModel(
+				new String[] {
+						"FC 01", 
+						"FC 02", 
+						"FC 03", 
+						"FC 04"
+						}));
 		fc_var.setForeground(Color.BLACK);
 		fc_var.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		fc_var.setBackground(Color.WHITE);
@@ -277,23 +334,8 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				
 			}
 		});
-		
-		scale = new JLabel("보정식");
-		scale.setHorizontalAlignment(SwingConstants.LEFT);
-		scale.setForeground(Color.BLACK);
-		scale.setFont(new Font("맑은 고딕", Font.BOLD, 17));
-		scale.setBackground(Color.WHITE);
-		scale.setBounds(31, 295, 212, 30);
-		panel.add(scale);
-		
-		dataFormat = new JLabel("데이터 형식");
-		dataFormat.setHorizontalAlignment(SwingConstants.LEFT);
-		dataFormat.setForeground(Color.BLACK);
-		dataFormat.setFont(new Font("맑은 고딕", Font.BOLD, 17));
-		dataFormat.setBackground(Color.WHITE);
-		dataFormat.setBounds(31, 345, 212, 30);
-		panel.add(dataFormat);
 		panel.add(fc_var);
+		
 		
 		addr_modbus_dec_var = new JTextField();
 		addr_modbus_dec_var.setEnabled(false);
@@ -433,16 +475,17 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		});
 		panel.add(dataType_var);
 		
-		pointName_var = new JTextField();
-		pointName_var.setHorizontalAlignment(SwingConstants.LEFT);
-		pointName_var.setForeground(Color.BLUE);
-		pointName_var.setFont(new Font("맑은 고딕", Font.BOLD, 17));
-		pointName_var.setEnabled(true);		
-		pointName_var.setColumns(10);
-		pointName_var.setBorder(new LineBorder(Color.BLACK, 2));
-		pointName_var.setBackground(Color.WHITE);
-		pointName_var.setBounds(259, 15, 401, 30);
-		panel.add(pointName_var);
+		measure_var = new JTextField();
+		measure_var.setText((String) null);
+		measure_var.setHorizontalAlignment(SwingConstants.LEFT);
+		measure_var.setForeground(Color.BLUE);
+		measure_var.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		measure_var.setEnabled(true);
+		measure_var.setColumns(10);
+		measure_var.setBorder(new LineBorder(Color.BLACK, 2));
+		measure_var.setBackground(Color.WHITE);
+		measure_var.setBounds(259, 295, 190, 30);
+		panel.add(measure_var);
 		
 		scale_var = new JTextField();
 		scale_var.setHorizontalAlignment(SwingConstants.LEFT);
@@ -452,7 +495,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		scale_var.setColumns(10);
 		scale_var.setBorder(new LineBorder(Color.BLACK, 2));
 		scale_var.setBackground(Color.WHITE);
-		scale_var.setBounds(259, 295, 190, 30);
+		scale_var.setBounds(259, 345, 190, 30);
 		panel.add(scale_var);
 		
 		dataFormat_var = new JComboBox();
@@ -460,7 +503,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		dataFormat_var.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		dataFormat_var.setBorder(new LineBorder(Color.BLACK, 2));
 		dataFormat_var.setBackground(Color.WHITE);
-		dataFormat_var.setBounds(259, 345, 401, 30);
+		dataFormat_var.setBounds(259, 395, 401, 30);
 		dataFormat_var.setModel(new DefaultComboBoxModel(
 				new String[] {
 						"1 ( 이진 상태 )",
@@ -478,20 +521,20 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				switch(dataFormat) {
 				case 1 :
 					statusLabel.setText("이진 상태");
-					frameSize = new Dimension(790, 664);
-					panelSize = new Dimension(742, 539);
-					scrollPane.setBounds(53, 447, 677, 80);
+					frameSize = new Dimension(790, 764);
+					panelSize = new Dimension(742, 590);
+					scrollPane.setBounds(50, 496, 677, 80);
 					break;
 				case 2 :
 					statusLabel.setText("다중 상태");
-					frameSize = new Dimension(790, 785);
-					panelSize = new Dimension(742, 661);
-					scrollPane.setBounds(53, 447, 677, 205);
+					frameSize = new Dimension(790, 831);
+					panelSize = new Dimension(742, 658);
+					scrollPane.setBounds(50, 496, 677, 155);
 					break;
 				case 3 :
 					statusLabel.setText("아날로그 데이터");
-					frameSize = new Dimension(790, 515);
-					panelSize = new Dimension(742, 391);
+					frameSize = new Dimension(790, 610);
+					panelSize = new Dimension(742, 437);
 					break;
 				}
 				
@@ -503,7 +546,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		
 		JSeparator separator = new JSeparator();
 		separator.setForeground(Color.BLACK);
-		separator.setBounds(12, 392, 718, 7);
+		separator.setBounds(8, 441, 718, 7);
 		panel.add(separator);
 		
 		statusLabel = new JLabel("이진 상태");
@@ -511,12 +554,12 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		statusLabel.setForeground(Color.BLACK);
 		statusLabel.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		statusLabel.setBackground(Color.WHITE);
-		statusLabel.setBounds(31, 407, 212, 30);
+		statusLabel.setBounds(27, 456, 212, 30);
 		panel.add(statusLabel);
 		
 		scrollPane = new JScrollPane();
 		scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
-		scrollPane.setBounds(53, 447, 677, 101);
+		scrollPane.setBounds(49, 496, 677, 101);
 		panel.add(scrollPane);
 		
 		table = new JTable();
@@ -588,10 +631,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		resetButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				resetForm();
-				
-				System.out.println(getSize());
-				System.out.println(panel.getSize());
+				initModbusPointInfo(pointList);
 			}
 		});
 		actualPanel.add(resetButton);
@@ -603,7 +643,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		addRow.setFocusPainted(false);
 		addRow.setBorder(UIManager.getBorder("Button.border"));
 		addRow.setBackground(Color.WHITE);
-		addRow.setBounds(543, 405, 90, 32);
+		addRow.setBounds(539, 454, 90, 32);
 		addRow.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -619,7 +659,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		deleteRow.setFocusPainted(false);
 		deleteRow.setBorder(UIManager.getBorder("Button.border"));
 		deleteRow.setBackground(Color.WHITE);
-		deleteRow.setBounds(640, 405, 90, 32);
+		deleteRow.setBounds(636, 454, 90, 32);
 		deleteRow.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -627,12 +667,103 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			}
 		});
 		panel.add(deleteRow);
+		
+		JButton button = new JButton();
+		button.setText("비트 연산");
+		button.setForeground(Color.BLACK);
+		button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		button.setFocusPainted(false);
+		button.setBorder(UIManager.getBorder("Button.border"));
+		button.setBackground(Color.WHITE);
+		button.setBounds(456, 345, 110, 32);
+		button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String scale = scale_var.getText().trim();
+				if(scale.contains(">>") || scale.contains("&")) {
+					return;
+				}else {
+					scale_var.setText("(x>>" + scale + ")&1");
+				}
+			}
+		});
+		panel.add(button);
+		
+		c_pointName = new JCheckBox("포인트 이름");
+		c_pointName.setSelected(true);
+		c_pointName.setFocusPainted(false);
+		c_pointName.setBackground(Color.WHITE);
+		c_pointName.setHorizontalAlignment(SwingConstants.LEFT);
+		c_pointName.setForeground(Color.BLACK);
+		c_pointName.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		c_pointName.setBounds(21, 76, 115, 32);
+		actualPanel.add(c_pointName);
+		
+		c_fc = new JCheckBox("기능코드");
+		c_fc.setSelected(true);
+		c_fc.setFocusPainted(false);
+		c_fc.setHorizontalAlignment(SwingConstants.LEFT);
+		c_fc.setForeground(Color.BLACK);
+		c_fc.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		c_fc.setBackground(Color.WHITE);
+		c_fc.setBounds(143, 76, 95, 32);
+		actualPanel.add(c_fc);
+		
+		c_addr = new JCheckBox("주소");
+		c_addr.setSelected(true);
+		c_addr.setFocusPainted(false);
+		c_addr.setHorizontalAlignment(SwingConstants.LEFT);
+		c_addr.setForeground(Color.BLACK);
+		c_addr.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		c_addr.setBackground(Color.WHITE);
+		c_addr.setBounds(236, 76, 65, 32);
+		actualPanel.add(c_addr);
+		
+		c_dataType = new JCheckBox("데이터 타입");
+		c_dataType.setSelected(true);
+		c_dataType.setFocusPainted(false);
+		c_dataType.setHorizontalAlignment(SwingConstants.LEFT);
+		c_dataType.setForeground(Color.BLACK);
+		c_dataType.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		c_dataType.setBackground(Color.WHITE);
+		c_dataType.setBounds(301, 76, 115, 32);
+		actualPanel.add(c_dataType);
+		
+		c_measure = new JCheckBox("측정 단위");
+		c_measure.setSelected(true);
+		c_measure.setFocusPainted(false);
+		c_measure.setHorizontalAlignment(SwingConstants.LEFT);
+		c_measure.setForeground(Color.BLACK);
+		c_measure.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		c_measure.setBackground(Color.WHITE);
+		c_measure.setBounds(421, 76, 97, 32);
+		actualPanel.add(c_measure);
+		
+		c_scale = new JCheckBox("보정식");
+		c_scale.setSelected(true);
+		c_scale.setFocusPainted(false);
+		c_scale.setHorizontalAlignment(SwingConstants.LEFT);
+		c_scale.setForeground(Color.BLACK);
+		c_scale.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		c_scale.setBackground(Color.WHITE);
+		c_scale.setBounds(523, 76, 84, 32);
+		actualPanel.add(c_scale);
+		
+		c_dataForamt = new JCheckBox("데이터 형식");
+		c_dataForamt.setSelected(true);
+		c_dataForamt.setFocusPainted(false);
+		c_dataForamt.setHorizontalAlignment(SwingConstants.LEFT);
+		c_dataForamt.setForeground(Color.BLACK);
+		c_dataForamt.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		c_dataForamt.setBackground(Color.WHITE);
+		c_dataForamt.setBounds(609, 76, 115, 32);
+		actualPanel.add(c_dataForamt);
 
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
 		
-		dataFormat_var.setSelectedIndex(2);
+		initModbusPointInfo(this.pointList);
 		pointName_var.requestFocus();
 	}
 	
@@ -763,14 +894,6 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			return -1;
 		}
 		
-	}
-	
-	public void resetForm() {
-		fc_var.setSelectedIndex(2);
-		addr_modbus_dec_var.setText(null);
-		addr_reg_dec_var.setText(null);
-		addr_reg_hex_var.setText(null);		
-		dataType_var.setSelectedIndex(0);
 	}
 	
 	public boolean checkFormValidation() {
@@ -922,9 +1045,19 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	/**
 	 * 	레코드 추가 메소드 
 	 */
-	public static void addRecord(JTable table) {
+	public static void addRecord(JTable table, String... content) {
 		try {
-			((DefaultTableModel)table.getModel()).addRow(new Vector());
+			DefaultTableModel model = (DefaultTableModel)table.getModel();
+
+			Vector recored = new Vector();
+			
+			if(content != null) {
+				for(String str : content) {
+					recored.add(str);
+				}
+			}
+			
+			model.addRow(recored);
 		} catch (Exception e) {
 			// 레코드 추가 중 예외 발생 시 아무것도 수행하지 않음
 			e.printStackTrace();
@@ -948,6 +1081,64 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				
 		for(int i = 0; i < index.length; i++) {
 			model.removeRow(index[0]);			
+		}
+	}
+	
+	public void resetForm() {
+		pointName_var.setText(null);
+		fc_var.setSelectedIndex(2);
+		addr_modbus_dec_var.setText(null);
+		addr_reg_dec_var.setText(null);
+		addr_reg_hex_var.setText(null);
+		dataType_var.setSelectedIndex(0);
+		measure_var.setText(null);
+		scale_var.setText(null);
+		dataFormat_var.setSelectedIndex(2);
+	}
+	
+	public void initModbusPointInfo(ModbusWatchPoint... pointList) {
+		try {
+			if(pointList == null || pointList.length < 1) {
+				resetForm();
+				return;
+			}
+			
+			ModbusWatchPoint point = pointList[0];
+			
+			pointName_var.setText(point.getDisplayName());
+			fc_var.setSelectedIndex(point.getFunctionCode() - 1);
+			addr_reg_dec_var.setText("" + point.getRegisterAddr());
+			syncAddr();
+			dataType_var.setSelectedItem(point.getDataType());
+			measure_var.setText(point.getMeasure());
+			scale_var.setText(point.getScaleFunction());
+			
+			switch(point.getDataFormat()) {
+				case 1 :
+					dataFormat_var.setSelectedIndex(0);
+					table.setValueAt(point.getBinLabel()[0], 0, 1);
+					table.setValueAt(point.getBinLabel()[1], 1, 1);
+					break;
+					
+				case 2 :
+					dataFormat_var.setSelectedIndex(1);
+					PerfLabelStatusBean[] labels =  point.getStatusLabels();
+					for(PerfLabelStatusBean label : labels) {
+						addRecord(table, "" + label.value, "" + label.label);
+					}
+					break;
+					
+				case 3 :
+					dataFormat_var.setSelectedIndex(2);
+					break;
+					
+				default :
+					dataFormat_var.setSelectedIndex(2);
+					break;
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+			resetForm();
 		}
 	}
 	

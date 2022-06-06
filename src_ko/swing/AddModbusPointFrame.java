@@ -613,7 +613,7 @@ public class AddModbusPointFrame extends JFrame {
 		}
 	}
 	
-	public static void pointUpload(File file) {
+	public static boolean pointUpload(File file) {
 		try {
 			if (file != null && file.exists()) {
 
@@ -627,13 +627,16 @@ public class AddModbusPointFrame extends JFrame {
 					addRecord(point_table, pointList);
 					setTableStyle(point_table);
 					
-					// 정상적으로 하나 이상의 모드버스 포인트를 읽었을 경우 메소드를 종료한다
-					return;
+					// 정상적으로 하나 이상의 모드버스 포인트를 읽었을 경우 true 리턴
+					return true;
 				}
-				
 			}
+			
+			return false;
+			
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 	
