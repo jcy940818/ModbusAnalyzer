@@ -715,14 +715,14 @@ public class Perf implements Comparable{
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("<font color='green'>Bit Structure</font>\n");
-		sb.append(String.format(" <font color='blue'>Data Type : </font>%s%s%s\n\n",dataType ,Util.separator, Util.separator));					
+		sb.append(String.format(" <font color='blue'>Data Type</font> : %s%s%s\n\n",dataType ,Util.separator, Util.separator));
 		
-		sb.append(String.format(" <font color='blue'>Register Address (Dec) : </font>%d%s%s\n", Integer.parseInt(perf.getRegisterAddress().replace("0x", ""), 16)  ,Util.separator, Util.separator));
-		sb.append(String.format(" <font color='blue'>Register Address (Hex) : </font>%s%s%s\n",perf.getRegisterAddress() ,Util.separator, Util.separator));
-		sb.append(String.format(" <font color='blue'>Modbus Address (Dec) : </font>%s%s%s\n\n",perf.getModbusAddress() ,Util.separator, Util.separator));
+		sb.append(String.format(" <font color='blue'>Modbus Address (DEC)</font> : %s%s%s\n",perf.getModbusAddress() ,Util.separator, Util.separator));
+		sb.append(String.format(" <font color='blue'>Register Address (DEC)</font> : %d%s%s\n", Integer.parseInt(perf.getRegisterAddress().replace("0x", ""), 16)  ,Util.separator, Util.separator));
+		sb.append(String.format(" <font color='blue'>Register Address (HEX)</font> : %s%s%s\n\n",perf.getRegisterAddress() ,Util.separator, Util.separator));
 		
-		sb.append(String.format(" <font color='blue'>Original Value : </font>%d%s%s\n",lastValue ,Util.separator, Util.separator));
-		sb.append(String.format(" <font color='blue'>Bit Structure</font> : "));
+		sb.append(String.format(" <font color='blue'>Decimal</font> : %d%s%s\n",lastValue ,Util.separator, Util.separator));
+		sb.append(String.format(" <font color='blue'>Binary</font> : "));
 		for(int i = 0; i < bitCount; i++) {
 			long bitStatus = (lastValue >> i) & 1;
 			String content = (bitStatus == 1) ? "1" : "0";
