@@ -789,7 +789,16 @@ public class AddFormModbusPointFrame extends JFrame {
 			sb.append(String.format("%s", "추가하실 모드버스 포인트의 시작 " + Util.colorBlue("주소(Address)") +  " 정보를 확인해주세요"));
 			sb.append(Util.separator + Util.separator + Util.separator + "\n");
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-			return false;
+			
+			if(addr_modbus_dec.isSelected()) {
+				addr_modbus_dec_var.requestFocus();
+			}else if(addr_reg_dec.isSelected()) {
+				addr_reg_dec_var.requestFocus();
+			}else {
+				addr_reg_hex_var.requestFocus();
+			}
+			
+			return formValid;
 		}
 		
 		formValid = formValid && !(cnt_var.getText().length() < 1 || cnt_var.getText().equals(""));
@@ -800,7 +809,7 @@ public class AddFormModbusPointFrame extends JFrame {
 			sb.append(String.format("%s", "추가하실 모드버스 포인트 " + Util.colorBlue("개수(Count)") + " 정보를 확인해주세요"));
 			sb.append(Util.separator + Util.separator + Util.separator + "\n");
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-			return false;
+			return formValid;
 		}
 		
 		return formValid;

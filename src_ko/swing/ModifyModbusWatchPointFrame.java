@@ -36,6 +36,7 @@ import javax.swing.table.TableColumnModel;
 
 import common.modbus.ModbusWatchPoint;
 import common.perf.PerfLabelStatusBean;
+import src_ko.util.JavaScript;
 import src_ko.util.Util;
 
 public class ModifyModbusWatchPointFrame extends JFrame {
@@ -482,6 +483,39 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		scale_var.setBorder(new LineBorder(Color.BLACK, 2));
 		scale_var.setBackground(Color.WHITE);
 		scale_var.setBounds(259, 345, 190, 30);
+		scale_var.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				try {
+					
+					String scale = scale_var.getText().trim();
+					try {
+						JavaScript.eval(scale, "1");
+						scale_var.setForeground(Color.BLUE);
+					}catch(Exception ex) {
+						scale_var.setForeground(Color.RED);
+					}
+					
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			
+			public void keyReleased(KeyEvent e) {
+				try {
+					
+					String scale = scale_var.getText().trim();
+					try {
+						JavaScript.eval(scale, "1");
+						scale_var.setForeground(Color.BLUE);
+					}catch(Exception ex) {
+						scale_var.setForeground(Color.RED);
+					}
+					
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
 		panel.add(scale_var);
 		
 		dataFormat_var = new JComboBox();
@@ -941,7 +975,40 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			sb.append(String.format("%s", "모드버스 포인트의 " + Util.colorBlue("주소(Address)") +  " 정보를 확인해주세요"));
 			sb.append(Util.separator + Util.separator + Util.separator + "\n");
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-			return false;
+			
+			if(addr_modbus_dec.isSelected()) {
+				addr_modbus_dec_var.requestFocus();
+			}else if(addr_reg_dec.isSelected()) {
+				addr_reg_dec_var.requestFocus();
+			}else {
+				addr_reg_hex_var.requestFocus();
+			}
+			
+			return formValid;
+		}
+		
+		if(scale_var.getForeground() == Color.RED) {
+			formValid = false;
+			
+		}else {
+			String scale = scale_var.getText().trim();
+			try {
+				JavaScript.eval(scale, "1");
+				scale_var.setForeground(Color.BLUE);
+			}catch(Exception e) {
+				formValid = false;
+				scale_var.setForeground(Color.RED);
+			}
+		}
+		
+		if(!formValid) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("%s%s%s\n", Util.colorRed("Form Validation Error"), Util.separator, Util.separator));
+			sb.append(String.format("%s", "모드버스 포인트의 " + Util.colorBlue("보정식(Scale Formula)") +  " 정보를 확인해주세요"));
+			sb.append(Util.separator + Util.separator + Util.separator + "\n");
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			scale_var.requestFocus();
+			return formValid;
 		}
 		
 		return formValid;
