@@ -125,7 +125,15 @@ public class ModbusWatchPointLoader {
 				Row row = sheet.getRow(i);
 				
 				try {
-					if(row == null) break;
+					if(row == null) {
+						continue;
+					}else if(row.getCell(1) == null) {
+						// 성능명 내용이 없으면 스킵
+						continue;
+					}else if(CellUtil.getStringValue(row.getCell(1)).equals("")) {
+						// 성능명 내용이 없으면 스킵
+						continue;
+					}
 					
 					modbusWps[i - 2] = new ModbusWatchPoint();
 					
@@ -295,7 +303,15 @@ public class ModbusWatchPointLoader {
 				Row row = mappingSheet.getRow(i);
 				
 				try {
-					if(row == null) break;
+					if(row == null) {
+						continue;
+					}else if(row.getCell(2) == null) {
+						// Point Value Code Definition 시트의 Data Code 내용이 없으면 스킵
+						continue;
+					}else if(CellUtil.getStringValue(row.getCell(2)).equals("")) {
+						// Point Value Code Definition 시트의 Data Code 내용이 없으면 스킵
+						continue;
+					}
 					
 					item = content + " ( Device ID )";
 					cell = row.getCell(0);
@@ -341,7 +357,15 @@ public class ModbusWatchPointLoader {
 				Row row = sheet.getRow(i);
 				
 				try {
-					if(row == null) break;
+					if(row == null) {
+						continue;
+					}else if(row.getCell(3) == null) {
+						// Point Definition 시트의 Point Name 내용이 없으면 스킵
+						continue;
+					}else if(CellUtil.getStringValue(row.getCell(3)).equals("")) {
+						// Point Definition 시트의 Point Name 내용이 없으면 스킵
+						continue;
+					}
 					
 					modbusWps[rowNum] = new ModbusWatchPoint();
 					
