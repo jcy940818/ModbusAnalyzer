@@ -92,6 +92,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	private JCheckBox c_measure;
 	private JCheckBox c_scale;
 	private JCheckBox c_dataForamt;
+	private JButton showPointList;
 	
 	/**
 	 * Launch the application.
@@ -608,6 +609,27 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		});
 		scrollPane.setViewportView(table);
 		
+		showPointList = new JButton();
+		showPointList.setText("포인트 리스트 열기");
+		showPointList.setForeground(Color.BLACK);
+		showPointList.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		showPointList.setFocusPainted(false);
+		showPointList.setBorder(UIManager.getBorder("Button.border"));
+		showPointList.setBackground(Color.WHITE);
+		showPointList.setBounds(370, 10, 190, 32);
+		showPointList.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(showPointList.getText().contains("열기")) {
+					showPointList.setText("포인트 리스트 닫기");
+				}else {
+					showPointList.setText("포인트 리스트 열기");
+				}
+			}
+		});
+		actualPanel.add(showPointList);
+		
 		addButton = new JButton();
 		addButton.setBounds(668, 10, 84, 32);
 		addButton.setText("적 용");
@@ -869,6 +891,8 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			}
 		});
 		actualPanel.add(c_dataForamt);
+		
+		
 
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
