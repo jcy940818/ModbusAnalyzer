@@ -94,6 +94,14 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	private JCheckBox c_dataForamt;
 	private JButton showPointList;
 	
+	private int frameWidth = 790;
+	private int frameHeight = 610;
+	private int panelWidth = 742;
+	private int panelHeight = 437;
+	
+	private JScrollPane pointScrollPane;
+	private JTable pointTable;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -124,7 +132,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
 		
-		setBounds(100, 100, 790, 610);
+		setBounds(100, 100, frameWidth, frameHeight);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new LineBorder(Color.DARK_GRAY, 10));
@@ -148,7 +156,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		
 		panel = new JPanel();
 		panel.setBackground(new Color(220, 220, 220));
-		panel.setBounds(10, 114, 742, 437);
+		panel.setBounds(10, 114, panelWidth, panelHeight);
 		panel.setLayout(null);
 		actualPanel.add(panel);
 		
@@ -544,20 +552,31 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				switch(dataFormat) {
 				case 1 :
 					statusLabel.setText("이진 상태");
-					frameSize = new Dimension(790, 764);
-					panelSize = new Dimension(742, 590);
-					scrollPane.setBounds(50, 496, 677, 80);
+					frameHeight = 764;
+					panelHeight = 590;
+					frameSize = new Dimension(frameWidth, frameHeight);
+					panelSize = new Dimension(panelWidth, panelHeight);
+					scrollPane.setSize(677, 80);
+					pointScrollPane.setSize(482, panelHeight);
 					break;
+					
 				case 2 :
 					statusLabel.setText("다중 상태");
-					frameSize = new Dimension(790, 831);
-					panelSize = new Dimension(742, 658);
-					scrollPane.setBounds(50, 496, 677, 155);
+					frameHeight = 831;
+					panelHeight = 658;
+					frameSize = new Dimension(frameWidth, frameHeight);
+					panelSize = new Dimension(panelWidth, panelHeight);
+					scrollPane.setSize(677, 155);
+					pointScrollPane.setSize(482, panelHeight);
 					break;
+					
 				case 3 :
 					statusLabel.setText("아날로그 데이터");
-					frameSize = new Dimension(790, 610);
-					panelSize = new Dimension(742, 437);
+					frameHeight = 610;
+					panelHeight = 437;
+					frameSize = new Dimension(frameWidth, frameHeight);
+					panelSize = new Dimension(panelWidth, panelHeight);
+					pointScrollPane.setSize(482, panelHeight);
 					break;
 				}
 				
@@ -582,7 +601,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		
 		scrollPane = new JScrollPane();
 		scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
-		scrollPane.setBounds(49, 496, 677, 101);
+		scrollPane.setBounds(50, 496, 677, 80);
 		panel.add(scrollPane);
 		
 		table = new JTable();
@@ -623,8 +642,15 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				if(showPointList.getText().contains("열기")) {
 					showPointList.setText("포인트 리스트 닫기");
+					frameWidth = 1285;
+					setSize(new Dimension(frameWidth, frameHeight));
+					
 				}else {
 					showPointList.setText("포인트 리스트 열기");
+					frameWidth = 790;
+					setSize(new Dimension(frameWidth, frameHeight));
+					
+					
 				}
 			}
 		});
@@ -892,8 +918,15 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		});
 		actualPanel.add(c_dataForamt);
 		
+		pointScrollPane = new JScrollPane();
+		pointScrollPane.setBounds(765, 114, 482, 437);
+		pointScrollPane.setBorder(new LineBorder(Color.BLACK, 2));
+		actualPanel.add(pointScrollPane);
 		
-
+		pointTable = new JTable();
+		pointScrollPane.setViewportView(pointTable);
+		resetPointListTable(pointTable);
+		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -1398,6 +1431,60 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		addRow.setVisible(c_dataForamt.isSelected());
 		deleteRow.setEnabled(c_dataForamt.isSelected());
 		deleteRow.setVisible(c_dataForamt.isSelected());
+	}
+	
+	public static void resetPointListTable(JTable table){
+		
+		table.setModel(new DefaultTableModel(
+				new Object[][] {
+					
+				},
+				new String[] {
+						"순 서",
+						"모드버스 포인트"
+					}) {
+				boolean[] columnEditables = new boolean[] {
+						false, // 순 서 : 수정 불가
+						false, // 모드버스 포인트 : 수정 불가
+				};
+				public boolean isCellEditable(int row, int column) {
+					return columnEditables[column];
+				}
+		});
+		
+		setPointTableStyle(table);
+	}
+	
+	public static void setPointTableStyle(JTable table) {
+		
+		// 이동 불가, 셀 크기 조절 불가
+		table.getTableHeader().setBackground(new Color(255, 255, 153));
+		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		table.getTableHeader().setForeground(Color.BLACK);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
+		
+		// 테이블 셀 설정
+		table.setBorder(new EmptyBorder(0, 3, 0, 0));
+		table.setRowMargin(3);
+		table.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
+		table.setRowHeight(25);
+		
+		// 테이블 셀 크기 설정
+		table.getColumnModel().getColumn(0).setPreferredWidth(5); // 순 서
+		table.getColumnModel().getColumn(1).setPreferredWidth(350); // 모드버스 포인트		
+				
+		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
+		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
+		
+		// DefaultTableCellHeaderRenderer의 정렬을 가운데 정렬로 지정
+		tScheduleCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		// 정렬할 테이블의 ColumnModel을 가져옴
+		TableColumnModel tcmSchedule = table.getColumnModel();
+		
+		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
+//		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 모드버스 포인트
 	}
 	
 	@Override
