@@ -381,8 +381,18 @@ public class OnionDirCheck_Panel extends JPanel {
 		back_button.setVisible(false);
 		back_button.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {				
-				OnionDirCheck_Panel.back_button.setVisible(false);				
+			public void actionPerformed(ActionEvent e) {
+				
+				MainFrame.showModbusMonitor();
+				
+				if(!AddModbusPointFrame.isExist) {
+					new AddModbusPointFrame();
+				}else {
+					AddModbusPointFrame.existsFrame();
+				}
+				
+				OnionDirCheck_Panel.back_button.setEnabled(false);
+				OnionDirCheck_Panel.back_button.setVisible(false);
 			}
 		});
 		actualPanel.add(back_button);

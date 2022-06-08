@@ -488,6 +488,8 @@ public class AddModbusPointFrame extends JFrame {
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
+		
+		doTableFilter();
 	}
 
 	@Override

@@ -684,9 +684,13 @@ public class MainFrame extends JFrame {
 		if(agent != null && agent.equalsIgnoreCase("watchPoint")) {
 			ProtocolList_Panel.goXmlViewer.setText("포인트 추가하기");
 			onionDirCheck_Panel.setBackground(Color.DARK_GRAY);
+			OnionDirCheck_Panel.back_button.setEnabled(true);
+			OnionDirCheck_Panel.back_button.setVisible(true);
 		}else {
 			ProtocolList_Panel.goXmlViewer.setText("XML Viewer 열기");
 			onionDirCheck_Panel.setBackground(new Color(255, 140, 0));
+			OnionDirCheck_Panel.back_button.setEnabled(false);
+			OnionDirCheck_Panel.back_button.setVisible(false);
 		}
 		
 		cardLayout.show(actualPanel, "onionDirCheck_Panel");
