@@ -52,6 +52,8 @@ public class MainFrame extends JFrame {
 	private static JMenuItem simpleValueScan;
 	private static JMenuItem realTime;
 	
+	private static OnionDirCheck_Panel onionDirCheck_Panel;
+	
 	/**
 	 * Launch the application. 
 	 */
@@ -583,7 +585,7 @@ public class MainFrame extends JFrame {
 		});
 		
 		/** OnionDirCheck Panel ***********************************/
-		OnionDirCheck_Panel onionDirCheck_Panel = new OnionDirCheck_Panel();
+		onionDirCheck_Panel = new OnionDirCheck_Panel();
 		actualPanel.add(onionDirCheck_Panel, "onionDirCheck_Panel");
 		xmlViewer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -681,15 +683,24 @@ public class MainFrame extends JFrame {
 		OnionDirCheck_Panel.agent = agent;
 		if(agent != null && agent.equalsIgnoreCase("watchPoint")) {
 			ProtocolList_Panel.goXmlViewer.setText("포인트 추가하기");
+			onionDirCheck_Panel.setBackground(Color.DARK_GRAY);
 		}else {
 			ProtocolList_Panel.goXmlViewer.setText("XML Viewer 열기");
-		}		
+			onionDirCheck_Panel.setBackground(new Color(255, 140, 0));
+		}
 		
 		cardLayout.show(actualPanel, "onionDirCheck_Panel");
 	}
 	
 	public static void showXmlEditor(File xmlDir, ArrayList<Protocol> protocols) {
 		ProtocolList_Panel.isKorean = true;
+		
+		if(OnionDirCheck_Panel.agent != null && OnionDirCheck_Panel.agent.equalsIgnoreCase("watchPoint")) {
+			ProtocolList_Panel.actualPanel.setBackground(Color.DARK_GRAY);
+		}else {
+			ProtocolList_Panel.actualPanel.setBackground(new Color(255, 140, 0));
+		}
+		
 		if(ProtocolList_Panel.languageButton != null) ProtocolList_Panel.languageButton.setText("한글명");
 		ProtocolList_Panel.xmlDir = xmlDir;
 		ProtocolList_Panel.protocols = protocols;

@@ -56,6 +56,7 @@ public class ProtocolList_Panel extends JPanel {
 	private JLabel searchProtocol_Label;
 	private static JTextField searchProtocol_textField;
 	
+	public static JPanel actualPanel;
 	private static JTable table;		
 	public static JButton goXmlViewer;
 	private JButton openXmlFile;
@@ -72,7 +73,7 @@ public class ProtocolList_Panel extends JPanel {
 		setBackground(Color.WHITE);
 		setLayout(new BorderLayout(0, 0));
 
-		JPanel actualPanel = new JPanel();
+		actualPanel = new JPanel();
 		actualPanel.setBackground(new Color(255, 140, 0));
 		add(actualPanel, BorderLayout.CENTER);
 		actualPanel.setLayout(null);
@@ -727,10 +728,22 @@ public class ProtocolList_Panel extends JPanel {
 				return;
 			}
 			
-			if(OnionDirCheck_Panel.agent != null && OnionDirCheck_Panel.agent.equalsIgnoreCase("watchPoint")) {				
-				if(AddModbusPointFrame.pointUpload(xmlFile)) {
-					MainFrame.showModbusMonitor();
-				}
+			if(OnionDirCheck_Panel.agent != null && OnionDirCheck_Panel.agent.equalsIgnoreCase("watchPoint")) {
+				AddModbusPointFrame addModbusPointFrame= null;
+				
+				if(!AddModbusPointFrame.isExist) {
+					addModbusPointFrame = new AddModbusPointFrame();
+					
+					if(AddModbusPointFrame.pointUpload(xmlFile)) {
+						MainFrame.showModbusMonitor();
+					}else {
+						addModbusPointFrame.dispose();
+					}
+					
+				 }else {
+					 AddModbusPointFrame.existsFrame();
+				 }
+				
 			}else {
 				// XML Viewer Frame »ý¼º
 				new XmlViewerFrame(pName, xmlFile, protocol);				

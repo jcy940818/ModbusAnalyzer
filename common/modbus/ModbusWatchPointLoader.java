@@ -36,6 +36,7 @@ public class ModbusWatchPointLoader {
 					if(file.getAbsolutePath().toLowerCase().endsWith(".xml")) {
 						StringBuilder msg = new StringBuilder();
 						msg.append("<font color='Green'>XML File Encoding</font>\n");
+						msg.append(Util.colorBlue("XML File") + " : " + file.getName() + Util.separator + Util.separator +"\n\n");
 						msg.append("XML 파일의 인코딩 방식을 선택해주세요" + Util.separator + Util.separator +"\n");
 
 						int menu = Util.showOption(msg.toString(), new String[] { "EUC-KR", "UTF-8"}, JOptionPane.QUESTION_MESSAGE);
