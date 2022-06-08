@@ -55,7 +55,8 @@ public class AddModbusPointFrame extends JFrame {
 	public static boolean isExist = false;
 	private JPanel contentPane;
 	private JButton downloadTemplateButton;
-	private JButton addModbusWatchPoint;
+	private JButton resetButton;
+	private JButton addPointButton;
 	private JTable table;
 
 	private static JRadioButton mk_V4_RaidoButton;
@@ -74,6 +75,8 @@ public class AddModbusPointFrame extends JFrame {
 	private static JComboBox fc_filter;
 	private static JComboBox dataType_filter;
 	
+	private ActionListener mkVerionListener = null;
+
 	/**
 	 * Launch the application.
 	 */
@@ -90,7 +93,7 @@ public class AddModbusPointFrame extends JFrame {
 			}
 		});
 	}
-
+	
 	/**
 	 * Create the frame.
 	 */
@@ -130,7 +133,7 @@ public class AddModbusPointFrame extends JFrame {
 		downloadTemplateButton.setFocusPainted(false);		
 		downloadTemplateButton.setBorder(UIManager.getBorder("Button.border"));
 		downloadTemplateButton.setBackground(Color.WHITE);
-		downloadTemplateButton.setBounds(710, 12, 162, 36);		
+		downloadTemplateButton.setBounds(629, 11, 165, 36);		
 		downloadTemplateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -184,16 +187,15 @@ public class AddModbusPointFrame extends JFrame {
 		});
 		actualPanel.add(downloadTemplateButton);
 		
-		addModbusWatchPoint = new JButton();
-		addModbusWatchPoint.setText("모드버스 포인트 추가");
-		addModbusWatchPoint.setForeground(Color.BLUE);
-		addModbusWatchPoint.setFont(new Font("맑은 고딕", Font.BOLD, 17));
-		addModbusWatchPoint.setFocusPainted(false);
-		addModbusWatchPoint.setContentAreaFilled(false);
-		addModbusWatchPoint.setBorder(UIManager.getBorder("Button.border"));
-		addModbusWatchPoint.setBackground(Color.WHITE);
-		addModbusWatchPoint.setBounds(881, 12, 225, 36);		
-		addModbusWatchPoint.addActionListener(new ActionListener() {
+		addPointButton = new JButton();
+		addPointButton.setText("포인트 등록");
+		addPointButton.setForeground(Color.BLUE);
+		addPointButton.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		addPointButton.setFocusPainted(false);		
+		addPointButton.setBorder(UIManager.getBorder("Button.border"));
+		addPointButton.setBackground(Color.WHITE);
+		addPointButton.setBounds(956, 11, 150, 36);		
+		addPointButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ArrayList<ModbusWatchPoint> selectedPointList = getSelectedModbusPoint(point_table);
@@ -213,7 +215,24 @@ public class AddModbusPointFrame extends JFrame {
 				}
 			}
 		});
-		actualPanel.add(addModbusWatchPoint);
+		
+		resetButton = new JButton();
+		resetButton.setText("포인트 초기화");
+		resetButton.setForeground(Color.RED);
+		resetButton.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		resetButton.setFocusPainted(false);		
+		resetButton.setBorder(UIManager.getBorder("Button.border"));
+		resetButton.setBackground(Color.WHITE);
+		resetButton.setBounds(800, 11, 150, 36);
+		resetButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				pointList.clear();
+				doTableFilter();
+			}
+		});
+		actualPanel.add(resetButton);
+		actualPanel.add(addPointButton);
 		
 		JPanel backGround_Panel = new JPanel();
 		backGround_Panel.setBackground(Color.LIGHT_GRAY);
@@ -227,6 +246,28 @@ public class AddModbusPointFrame extends JFrame {
 		mk119Version_Panel.setBounds(12, 10, 200, 84);
 		backGround_Panel.add(mk119Version_Panel);
 		mk119Version_Panel.setLayout(null);
+		
+		mkVerionListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(mk_V4_RaidoButton.isSelected()) {
+					mk_V4_RaidoButton.setForeground(mkColor);
+					mk_V10_RaidoButton.setForeground(Color.LIGHT_GRAY);
+					
+					upload_protocol.setEnabled(true);
+					upload_xml.setEnabled(true);
+					upload_excel.setEnabled(true);
+				}else {
+					mk_V4_RaidoButton.setForeground(Color.LIGHT_GRAY);
+					mk_V10_RaidoButton.setForeground(mkColor);
+					
+					upload_protocol.setEnabled(false);
+					upload_xml.setEnabled(false);
+					upload_excel.setEnabled(true);
+				}
+				
+			}
+		};
 		
 		mk_V4_RaidoButton = new JRadioButton("MK119  V4");
 		mk_V4_RaidoButton.setSelected(true);
@@ -561,28 +602,8 @@ public class AddModbusPointFrame extends JFrame {
 		tcmSchedule.getColumn(5).setCellRenderer(tScheduleCellRenderer); // 데이터 타입
 	}
 	
-	// 라디오 버튼 액션 이벤트 리스너
-	ActionListener mkVerionListener = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if(mk_V4_RaidoButton.isSelected()) {
-				mk_V4_RaidoButton.setForeground(mkColor);
-				mk_V10_RaidoButton.setForeground(Color.LIGHT_GRAY);
-				
-				upload_protocol.setEnabled(true);
-				upload_xml.setEnabled(true);
-				upload_excel.setEnabled(true);
-			}else {
-				mk_V4_RaidoButton.setForeground(Color.LIGHT_GRAY);
-				mk_V10_RaidoButton.setForeground(mkColor);
-				
-				upload_protocol.setEnabled(false);
-				upload_xml.setEnabled(false);
-				upload_excel.setEnabled(true);
-			}
-			
-		}
-	};
+	
+	
 	
 	public void pointUpload() {
 		try {
@@ -808,5 +829,4 @@ public class AddModbusPointFrame extends JFrame {
 		resetTable(point_table);
 		addRecord(point_table, filterList);
 	}
-	
 }
