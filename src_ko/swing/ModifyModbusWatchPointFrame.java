@@ -36,6 +36,7 @@ import javax.swing.table.TableColumnModel;
 
 import common.modbus.ModbusWatchPoint;
 import common.perf.PerfLabelStatusBean;
+import src_ko.agent.Perf;
 import src_ko.util.JavaScript;
 import src_ko.util.Util;
 
@@ -80,6 +81,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	private JComboBox dataFormat_var;
 	private JTable table;
 	private JScrollPane scrollPane;
+	private JButton autoMeasureButton;
 	private JButton bitOperationButton;
 	
 	// 체크 박스
@@ -688,6 +690,50 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		});
 		panel.add(deleteRow);
 		
+		autoMeasureButton = new JButton();
+		autoMeasureButton.setText("자동 생성");
+		autoMeasureButton.setForeground(Color.BLACK);
+		autoMeasureButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		autoMeasureButton.setFocusPainted(false);
+		autoMeasureButton.setBorder(UIManager.getBorder("Button.border"));
+		autoMeasureButton.setBackground(Color.WHITE);
+		autoMeasureButton.setBounds(456, 295, 110, 32);
+		autoMeasureButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String pointName = pointName_var.getText().trim();
+				
+				if(pointName == null || pointName.length() < 1 || pointName.equals("")) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(String.format("%s%s%s\n", Util.colorRed("Unable to Resolve Point Name"), Util.separator, Util.separator));
+					sb.append(String.format("%s", "모드버스 포인트의 " + Util.colorBlue("이름(Name)") +  " 정보를 입력해주세요"));
+					sb.append(Util.separator + Util.separator + Util.separator + "\n");
+					Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+					measure_var.setText(null);
+					pointName_var.requestFocus();
+					return;
+				}else {
+					String autoMeasure = Perf.createMeasure(pointName);
+					
+					if(autoMeasure == null || autoMeasure.length() < 1 || autoMeasure.equals("")) {
+						StringBuilder sb = new StringBuilder();
+						sb.append(String.format("%s%s%s\n", Util.colorRed("Failed to Automatically Create Measure"), Util.separator, Util.separator));
+						sb.append(String.format("%s", "현재 입력된 모드버스 포인트 이름에 적절한 " + Util.colorBlue("단위(Measure)") +  "의 생성에 실패하였습니다"));
+						sb.append(Util.separator + Util.separator + Util.separator + "\n");
+						Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+						
+						pointName_var.requestFocus();
+						return;
+					}
+					
+					measure_var.setText(autoMeasure);
+					measure_var.requestFocus();
+				}
+				
+			}
+		});
+		panel.add(autoMeasureButton);
+		
 		bitOperationButton = new JButton();
 		bitOperationButton.setText("비트 연산");
 		bitOperationButton.setForeground(Color.BLACK);
@@ -700,7 +746,10 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String scale = scale_var.getText().trim();
-				if(scale.contains(">>") || scale.contains("&")) {
+				
+				if(scale == null || scale.length() < 1 || scale.equals("")) {
+					return;
+				}else if(scale.contains(">>") || scale.contains("&")) {
 					return;
 				}else {
 					scale_var.setText("(x>>" + scale + ")&1");
@@ -1198,6 +1247,8 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		measure_var.setText(null);
 		scale_var.setText(null);
 		dataFormat_var.setSelectedIndex(2);
+		
+		pointName_var.requestFocus();
 	}
 	
 	public void initModbusPointInfo(ModbusWatchPoint point) {
@@ -1249,6 +1300,8 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 					dataFormat_var.setSelectedIndex(2);
 					break;
 			}
+			
+			pointName_var.requestFocus();
 		}catch(Exception e) {
 			e.printStackTrace();
 			resetForm();
@@ -1297,6 +1350,8 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		measure.setVisible(c_measure.isSelected());
 		measure_var.setEnabled(c_measure.isSelected());
 		measure_var.setVisible(c_measure.isSelected());
+		autoMeasureButton.setEnabled(c_measure.isSelected());
+		autoMeasureButton.setVisible(c_measure.isSelected());
 		
 		// 보정식
 		scale.setEnabled(c_scale.isSelected());
