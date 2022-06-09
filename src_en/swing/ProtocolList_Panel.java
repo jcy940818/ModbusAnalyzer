@@ -402,7 +402,7 @@ public class ProtocolList_Panel extends JPanel {
 			if(text.contains(",")) {
 				String[] textToken = text.split(",");
 				for(int i2 = 0; i2 < textToken.length; i2++) {
-					String token = textToken[i2];
+					String token = textToken[i2].trim();
 					if(number.contains(token) || facType.contains(token) || name.contains(token) || xml.contains(token)) {
 						filterProtocol.add(p);
 					}
