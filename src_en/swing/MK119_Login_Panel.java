@@ -201,6 +201,7 @@ public class MK119_Login_Panel extends JPanel {
 		mk119ConnSuccess();			
 		// 메인 프레임 화면을 DB 로그인 성공 화면으로 변경			
 		MainFrame.showDatabaseAccess();
+		StoredProcedure_Panel.setSqlServerInfo(ONION_Info.getSqlServerInfo());
 		DatabaseAccess_Panel.setSqlServerInfo(ONION_Info.getSqlServerInfo());							
 		DatabaseAccess_Panel.resetQueryFormPanel();
 	}
@@ -212,7 +213,8 @@ public class MK119_Login_Panel extends JPanel {
 		mk119ConnSuccess();			
 		// 메인 프레임 화면을 DB 로그인 성공 화면으로 변경			
 		MainFrame.showStoredProcedure();
-		StoredProcedure_Panel.setSqlServerInfo(ONION_Info.getSqlServerInfo());							
+		DatabaseAccess_Panel.setSqlServerInfo(ONION_Info.getSqlServerInfo());
+		StoredProcedure_Panel.setSqlServerInfo(ONION_Info.getSqlServerInfo());
 		StoredProcedure_Panel.resetQueryFormPanel();
 	}
 	
