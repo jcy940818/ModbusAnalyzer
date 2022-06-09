@@ -301,12 +301,24 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 				
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-				sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;Label 0"), binLabel[0]));
+				sb.append(String.format("%s%s : %s&nbsp;&nbsp;%s&nbsp;&nbsp;%s : %s",
+						Util.colorBlue("¦§&nbsp;&nbsp;"),
+						Util.colorBlue("Value"),
+						"0",
+						Util.colorRed("/"),
+						Util.colorBlue("Label"),
+						binLabel[0]));
 				sb.append(Util.separator + Util.separator + "\n");
 				
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-				sb.append(String.format("%s : %s", Util.colorBlue("¦¦&nbsp;&nbsp;Label 1"), binLabel[1]));
+				sb.append(String.format("%s%s : %s&nbsp;&nbsp;%s&nbsp;&nbsp;%s : %s",
+						Util.colorBlue("¦¦&nbsp;&nbsp;"),
+						Util.colorBlue("Value"),
+						"1",
+						Util.colorRed("/"),
+						Util.colorBlue("Label"),
+						binLabel[1]));
 				sb.append(Util.separator + Util.separator + "\n");
 				
 			}else if(wp.getDataFormat() == 2) {
@@ -315,7 +327,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 				for(int i = 0; i < labels.length; i++) {
 					sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 					sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-					sb.append(String.format("%s %s : %s&nbsp;&nbsp;%s&nbsp;&nbsp;%s : %s",
+					sb.append(String.format("%s%s : %s&nbsp;&nbsp;%s&nbsp;&nbsp;%s : %s",
 							Util.colorBlue((i != (labels.length - 1)) ? "¦§&nbsp;&nbsp;" : "¦¦&nbsp;&nbsp;"),
 							Util.colorBlue("Value"),
 							labels[i].value,
