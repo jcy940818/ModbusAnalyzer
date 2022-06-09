@@ -9,7 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -924,8 +927,46 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		actualPanel.add(pointScrollPane);
 		
 		pointTable = new JTable();
+		pointTable.addKeyListener(new KeyAdapter() {			
+			public void keyPressed(KeyEvent e) { 
+				int row = pointTable.getSelectedRow();
+				ModbusWatchPoint wp = (ModbusWatchPoint) pointTable.getValueAt(row, 1);
+				selectedPoint = wp;
+				initModbusPointInfo(wp);
+			}
+			public void keyReleased(KeyEvent e) { 
+				int row = pointTable.getSelectedRow();
+				ModbusWatchPoint wp = (ModbusWatchPoint) pointTable.getValueAt(row, 1);
+				selectedPoint = wp;
+				initModbusPointInfo(wp);
+			}
+		});
+		pointTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getButton() == 1) { 
+					// 왼쪽 클릭
+					int row = pointTable.getSelectedRow();
+					ModbusWatchPoint wp = (ModbusWatchPoint) pointTable.getValueAt(row, 1);
+					selectedPoint = wp;
+					initModbusPointInfo(wp);
+				} 
+				
+				if (e.getButton() == 1 && e.getClickCount() == 2) {
+					// 왼쪽 버튼 더블 클릭
+				}
+				if (e.getButton() == 3) {
+					// 오른쪽 클릭
+					int row = pointTable.getSelectedRow();
+					ModbusWatchPoint wp = (ModbusWatchPoint) pointTable.getValueAt(row, 1);
+					selectedPoint = wp;
+					initModbusPointInfo(wp);
+					ModbusWatchPoint.showInfo(wp);
+				}
+			}
+		});
 		pointScrollPane.setViewportView(pointTable);
 		resetPointListTable(pointTable);
+		addModbusPointRecord(pointTable, pointList);
 		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
@@ -1357,8 +1398,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 					dataFormat_var.setSelectedIndex(2);
 					break;
 			}
-			
-			pointName_var.requestFocus();
+						
 		}catch(Exception e) {
 			e.printStackTrace();
 			resetForm();
@@ -1433,6 +1473,62 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		deleteRow.setVisible(c_dataForamt.isSelected());
 	}
 	
+	/**
+	 * 	레코드 추가
+	 */
+	public static void addModbusPointRecord(JTable table, ArrayList<ModbusWatchPoint> modbusWps) {
+		if(table == null || modbusWps == null) return;
+		
+		try {
+			Vector record;
+			
+			DefaultTableModel model = (DefaultTableModel)table.getModel();
+			Collections.sort(modbusWps);
+			
+			for(int i = 0; i < modbusWps.size(); i++) {
+				
+				ModbusWatchPoint modbusWp = modbusWps.get(i);
+				record = new Vector();
+				int index = 0;
+				
+				if(table.getRowCount() <= 0) {
+					// 테이블의 행 개수가 0개 일 경우 : index = 1
+					index = 1;
+				}else if(table.getRowCount() >= 1){
+					// 테이블의 행 개수가 최소 1개 이상 일 경우 마지막 레코드의 ( 순서 컬럼 값 + 1 )
+					index = Integer.parseInt(String.valueOf(table.getValueAt(table.getRowCount()-1, 0))) + 1;				
+				}
+				
+				/* column[0] */ record.add(String.valueOf(index)); // 순 서
+				/* column[1] */ record.add(modbusWp); // 모드버스 포인트
+				
+				model.addRow(record);
+			}
+		}catch(Exception e) {
+			// 레코드 추가 중 예외 발생 시 아무것도 수행하지 않음
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 레코드 삭제 
+	 * 삭제시 for문으로  삭제 할 것이 아니라 선택된 포인트의 인덱스를 검사하여 삭제하도록 구현하자
+	 */
+	public void deleteModbusPointRecord(JTable table, int... index) {
+		ArrayList<ModbusWatchPoint> selectedPointList = getSelectedModbusPoint(table);
+
+		if (selectedPointList == null || selectedPointList.size() < 1) {
+			return;
+		} else {
+
+			for (ModbusWatchPoint wp : selectedPointList) {
+				pointList.remove(wp);
+			}
+
+//			doTableFilter();
+		}
+	}
+	
 	public static void resetPointListTable(JTable table){
 		
 		table.setModel(new DefaultTableModel(
@@ -1486,6 +1582,17 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
 //		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 모드버스 포인트
 	}
+	
+	public static ArrayList<ModbusWatchPoint> getSelectedModbusPoint(JTable table) {
+		ArrayList<ModbusWatchPoint> selectedPointlist = new ArrayList<ModbusWatchPoint>();
+		int[] selectedIndex = table.getSelectedRows();
+		for(int i = 0; i < selectedIndex.length; i++) {
+			ModbusWatchPoint wp = (ModbusWatchPoint) table.getValueAt(selectedIndex[i], 1);
+			selectedPointlist.add(wp);
+		}
+		return selectedPointlist;
+	}
+	
 	
 	@Override
 	public void dispose() {

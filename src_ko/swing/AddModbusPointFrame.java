@@ -702,32 +702,6 @@ public class AddModbusPointFrame extends JFrame {
 		}
 	}
 	
-	/**
-	 * 레코드 삭제 
-	 * 삭제시 for문으로  삭제 할 것이 아니라 선택된 포인트의 인덱스를 검사하여 삭제하도록 구현하자
-	 */
-	public void removeRecord(JTable table, int... index) {
-		DefaultTableModel model = (DefaultTableModel) table.getModel();
-	
-		if(index.length < 0) {
-			// 선택 된 행이 없거나
-			if(table.getRowCount()==0) {
-				// 테이블에 행이 없을 경우 아무것도 수행하지 않음
-				return;
-			}
-		}
-
-		// index[0] : 1번째 레코드
-		// index[1] : 2번째 레코드
-		// index[2] : 3번째 레코드
-		// 위의 경우 index[0] (첫번째 레코드)를 삭제하면
-		// index[1] (두번째 레코드)이 index[0] (두번째 레코드)가 되기 때문에
-		// model.revmoe(index[0]) 로직을 수행한다
-		for(int i = 0; i < index.length; i++) {
-			model.removeRow(index[0]);
-		}
-	}
-	
 	public static void fill(ArrayList<ModbusWatchPoint> list, ModbusWatchPoint[] array) {
 		list.clear();
 		for(ModbusWatchPoint wp : array) {
