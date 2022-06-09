@@ -267,24 +267,24 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;2-1. Function Code"), wp.getFunctionCode()));
+			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;Function Code"), wp.getFunctionCode()));
 			sb.append(Util.separator + Util.separator + "\n");
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;2-2. Modbus Address ( DEC )"), wp.getModbusAddrString()));
+			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;Modbus Address ( DEC )"), wp.getModbusAddrString()));
 			sb.append(Util.separator + Util.separator + "\n");
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			sb.append(String.format("%s : %d", Util.colorBlue("¦§&nbsp;&nbsp;2-3. Register Address ( DEC )"), wp.getRegisterAddr()));
+			sb.append(String.format("%s : %d", Util.colorBlue("¦§&nbsp;&nbsp;Register Address ( DEC )"), wp.getRegisterAddr()));
 			sb.append(Util.separator + Util.separator + "\n");
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;2-4. Register Address ( HEX )"), wp.getRegisterAddrHexString()));
+			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;Register Address ( HEX )"), wp.getRegisterAddrHexString()));
 			sb.append(Util.separator + Util.separator + "\n");
 			
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			sb.append(String.format("%s : %s", Util.colorBlue("¦¦&nbsp;&nbsp;2-5. Data Type"), wp.getDataType()));
+			sb.append(String.format("%s : %s", Util.colorBlue("¦¦&nbsp;&nbsp;Data Type"), wp.getDataType()));
 			sb.append(Util.separator + Util.separator + "\n\n");
 			
 			sb.append(String.format("%s : %s", Util.colorBlue("3. Measure"), wp.getMeasure()));
@@ -315,9 +315,9 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 				for(int i = 0; i < labels.length; i++) {
 					sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 					sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-					sb.append(String.format("%s%s : %s&nbsp;&nbsp;%s&nbsp;&nbsp;%s : %s",
+					sb.append(String.format("%s %s : %s&nbsp;&nbsp;%s&nbsp;&nbsp;%s : %s",
 							Util.colorBlue((i != (labels.length - 1)) ? "¦§&nbsp;&nbsp;" : "¦¦&nbsp;&nbsp;"),
-							Util.colorBlue("5-" + (i+1) + ". Value"),
+							Util.colorBlue("Value"),
 							labels[i].value,
 							Util.colorRed("/"),
 							Util.colorBlue("Label"),
