@@ -184,7 +184,7 @@ public class ProtocolList_Panel extends JPanel {
 		searchProtocol_Label.setForeground(Color.BLACK);
 		searchProtocol_Label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
 		searchProtocol_Label.setBackground(Color.WHITE);
-		searchProtocol_Label.setBounds(15, 92, 120, 41);
+		searchProtocol_Label.setBounds(15, 94, 120, 41);
 		infoPanel.add(searchProtocol_Label);
 		
 		searchProtocol_textField = new JTextField("");
