@@ -195,7 +195,7 @@ public class AddModbusPointFrame extends JFrame {
 		addPointButton.setFocusPainted(false);		
 		addPointButton.setBorder(UIManager.getBorder("Button.border"));
 		addPointButton.setBackground(Color.WHITE);
-		addPointButton.setBounds(956, 11, 150, 36);		
+		addPointButton.setBounds(800, 11, 150, 36);
 		addPointButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -216,6 +216,7 @@ public class AddModbusPointFrame extends JFrame {
 				}
 			}
 		});
+		actualPanel.add(addPointButton);
 		
 		resetButton = new JButton();
 		resetButton.setText("포인트 초기화");
@@ -224,7 +225,7 @@ public class AddModbusPointFrame extends JFrame {
 		resetButton.setFocusPainted(false);		
 		resetButton.setBorder(UIManager.getBorder("Button.border"));
 		resetButton.setBackground(Color.WHITE);
-		resetButton.setBounds(800, 11, 150, 36);
+		resetButton.setBounds(956, 11, 150, 36);
 		resetButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -233,7 +234,6 @@ public class AddModbusPointFrame extends JFrame {
 			}
 		});
 		actualPanel.add(resetButton);
-		actualPanel.add(addPointButton);
 		
 		JPanel backGround_Panel = new JPanel();
 		backGround_Panel.setBackground(Color.LIGHT_GRAY);

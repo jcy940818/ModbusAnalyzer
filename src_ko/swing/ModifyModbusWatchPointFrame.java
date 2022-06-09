@@ -54,7 +54,8 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	private JPanel contentPane;
 	private JPanel panel;
 	
-	private JButton addButton;
+	private JButton modifyOneButton;
+	private JButton modifyAllButton;
 	private JButton resetButton;
 	private ActionListener radioListener;
 	
@@ -104,9 +105,11 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	private int panelHeight = 437;
 	
 	private JScrollPane pointScrollPane;
-	private JTable pointTable;
+	private static JTable pointTable;
 	private JLabel searchLabel;
-	private JTextField search_TextField;	
+	private static JTextField search_TextField;	
+	private JButton addModifyPoint;
+	private JButton deleteModifyPoint;
 	
 	/**
 	 * Launch the application.
@@ -127,10 +130,10 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ModifyModbusWatchPointFrame(ArrayList<ModbusWatchPoint> pointList) {
-		this.pointList = pointList;
-		if(pointList != null && pointList.size() > 0) {
-			this.selectedPoint = pointList.get(0);
+	public ModifyModbusWatchPointFrame(ArrayList<ModbusWatchPoint> modifyPointList) {
+		this.pointList = modifyPointList;
+		if(modifyPointList != null && modifyPointList.size() > 0) {
+			this.selectedPoint = modifyPointList.get(0);
 		}
 		ModifyModbusWatchPointFrame.isExist = true;
 		setTitle("ModbusAnalyzer");
@@ -138,7 +141,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
 		
-		setBounds(100, 100, frameWidth, frameHeight);
+		setBounds(100, 100, 1285, 610);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new LineBorder(Color.DARK_GRAY, 10));
@@ -641,7 +644,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		showPointList.setFocusPainted(false);
 		showPointList.setBorder(UIManager.getBorder("Button.border"));
 		showPointList.setBackground(Color.WHITE);
-		showPointList.setBounds(370, 10, 190, 32);
+		showPointList.setBounds(347, 10, 190, 32);
 		showPointList.addActionListener(new ActionListener() {
 			
 			@Override
@@ -662,15 +665,15 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		});
 		actualPanel.add(showPointList);
 		
-		addButton = new JButton();
-		addButton.setBounds(668, 10, 84, 32);
-		addButton.setText("¿˚ øÎ");
-		addButton.setForeground(new Color(0, 128, 0));
-		addButton.setBackground(Color.WHITE);
-		addButton.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 16));
-		addButton.setFocusPainted(false);		
-		addButton.setBorder(UIManager.getBorder("Button.border"));
-		addButton.addActionListener(new ActionListener() {
+		modifyOneButton = new JButton();
+		modifyOneButton.setBounds(647, 10, 105, 32);
+		modifyOneButton.setText("¥‹¿œ ºˆ¡§");
+		modifyOneButton.setForeground(new Color(0, 128, 0));
+		modifyOneButton.setBackground(Color.WHITE);
+		modifyOneButton.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 16));
+		modifyOneButton.setFocusPainted(false);		
+		modifyOneButton.setBorder(UIManager.getBorder("Button.border"));
+		modifyOneButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(checkFormValidation()) {
@@ -694,10 +697,10 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				}
 			}
 		});
-		actualPanel.add(addButton);
+		actualPanel.add(modifyOneButton);
 		
 		resetButton = new JButton();
-		resetButton.setBounds(565, 10, 97, 32);
+		resetButton.setBounds(542, 10, 100, 32);
 		resetButton.setText("√ ±‚»≠");
 		resetButton.setForeground(Color.BLACK);
 		resetButton.setBackground(Color.WHITE);
@@ -711,6 +714,64 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			}
 		});
 		actualPanel.add(resetButton);
+		
+		addModifyPoint = new JButton();
+		addModifyPoint.setText("√ﬂ ∞°");
+		addModifyPoint.setForeground(Color.BLACK);
+		addModifyPoint.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 16));
+		addModifyPoint.setFocusPainted(false);
+		addModifyPoint.setBorder(UIManager.getBorder("Button.border"));
+		addModifyPoint.setBackground(Color.WHITE);
+		addModifyPoint.setBounds(962, 10, 85, 32);
+		addModifyPoint.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ArrayList<ModbusWatchPoint> pointList = getSelectedPoint(ModbusMonitor_Panel.pointTable);
+				addPointList(pointList);
+				doTableFilter();
+			}
+		});
+		actualPanel.add(addModifyPoint);
+		
+		deleteModifyPoint = new JButton();
+		deleteModifyPoint.setText("ªË ¡¶");
+		deleteModifyPoint.setForeground(Color.BLACK);
+		deleteModifyPoint.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 16));
+		deleteModifyPoint.setFocusPainted(false);
+		deleteModifyPoint.setBorder(UIManager.getBorder("Button.border"));
+		deleteModifyPoint.setBackground(Color.WHITE);
+		deleteModifyPoint.setBounds(1052, 10, 85, 32);
+		deleteModifyPoint.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ArrayList<ModbusWatchPoint> selectedPointList = getSelectedPoint(pointTable);
+
+				if(selectedPointList == null || selectedPointList.size() < 1) {
+					return;
+					
+				}else{
+					
+					for (ModbusWatchPoint wp : selectedPointList) {
+						pointList.remove(wp);
+					}
+					
+					doTableFilter();
+				}
+				
+			}
+		});
+		actualPanel.add(deleteModifyPoint);
+		
+		modifyAllButton = new JButton();
+		modifyAllButton.setText("¿œ∞˝ ºˆ¡§");
+		modifyAllButton.setForeground(Color.RED);
+		modifyAllButton.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 16));
+		modifyAllButton.setFocusPainted(false);
+		modifyAllButton.setBorder(UIManager.getBorder("Button.border"));
+		modifyAllButton.setBackground(Color.WHITE);
+		modifyAllButton.setBounds(1142, 10, 105, 32);
+		actualPanel.add(modifyAllButton);
+		
 		
 		addRow = new JButton();
 		addRow.setText("√ﬂ ∞°");
@@ -1006,6 +1067,8 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			}
 		});
 		actualPanel.add(search_TextField);
+		
+		
 		
 		// «¡∑π¿”¿Ã »≠∏È ∞°øÓµ•ø°º≠ ª˝º∫µ»¥Ÿ
 		setLocationRelativeTo(null);
@@ -1642,7 +1705,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		return selectedPointlist;
 	}
 	
-	public void doTableFilter() {
+	public static void doTableFilter() {
 		if(search_TextField == null || pointList == null) return;
 		
 		ArrayList<ModbusWatchPoint> filterList = new ArrayList<ModbusWatchPoint>();
@@ -1693,6 +1756,16 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		addPointRecord(pointTable, filterList);
 	}
 	
+	public static void addPointList(ArrayList<ModbusWatchPoint> list) {
+		if(list == null || list.size() < 1) return;
+		
+		for(ModbusWatchPoint wp : list) {
+			if(!pointList.contains(wp)) {
+				pointList.add(wp);	
+			}
+		}
+		Collections.sort(pointList);
+	}
 	
 	@Override
 	public void dispose() {

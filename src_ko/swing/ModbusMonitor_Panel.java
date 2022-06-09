@@ -58,7 +58,7 @@ public class ModbusMonitor_Panel extends JPanel {
 	public static int PORT;
 	
 	// Modbus Point List
-	private static JTable point_table;
+	public static JTable pointTable;
 	private static ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();	
 	
 	// information Component
@@ -418,7 +418,7 @@ public class ModbusMonitor_Panel extends JPanel {
 																																													
 								// updataTable() 에 넘겨줄 RX_Info 인스턴스 먼저 초기화를 해줘야한다.
 								global_rx = rx;
-								updateTable(point_table, rx);
+								updateTable(pointTable, rx);
 								ModbusAgent.isRTU = isRTU;
 								ModbusAgent.lastFunctionCode = rx.getFunctionCode();
 									
@@ -435,7 +435,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					}).start();
 					
 				}catch(Exception exception) {
-					resetTable(point_table);
+					resetTable(pointTable);
 					exception.printStackTrace();
 				}
 				
@@ -453,6 +453,30 @@ public class ModbusMonitor_Panel extends JPanel {
 		reset_Button.setForeground(Color.RED);
 		reset_Button.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 		reset_Button.setBackground(Color.WHITE);
+		reset_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				global_rx = null;
+				
+				transactionId_text.setText("1");
+				transactionId_text.setForeground(Color.BLUE);
+				
+				radio_pointList.doClick();
+				packetLog.setText(null);
+				radio_modbusRTU.doClick();
+				addrTypeComboBox.setSelectedIndex(0);
+				unitID_comboBox.setSelectedIndex(0);
+				
+				search_TextField.setText(null);
+				fc_filter.setSelectedIndex(0);
+				fc_filter.setEnabled(false);
+				dataType_filter.setSelectedIndex(0);
+				dataType_filter.setEnabled(false);
+				useFilter.setSelected(false);
+				
+				pointList.clear();
+				doTableFilter();
+			}
+		});
 		function_Panel.add(reset_Button);
 		
 		JButton add_button = new JButton("추 가");
@@ -484,7 +508,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		delete_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ArrayList<ModbusWatchPoint> selectedPointList = getSelectedModbusPoint(point_table);
+				ArrayList<ModbusWatchPoint> selectedPointList = getSelectedModbusPoint(pointTable);
 
 				if (selectedPointList == null || selectedPointList.size() < 1) {
 					return;
@@ -510,47 +534,26 @@ public class ModbusMonitor_Panel extends JPanel {
 		update_button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if(!ModifyModbusWatchPointFrame.isExist) {
-					ArrayList<ModbusWatchPoint> selectedPointList = getSelectedModbusPoint(point_table);
-
-					if (selectedPointList == null || selectedPointList.size() < 1) {
-						return;
-					}else {
-						new ModifyModbusWatchPointFrame(selectedPointList);
-					}
+				try {
+					ArrayList<ModbusWatchPoint> selectedPointList = getSelectedModbusPoint(pointTable);
+					if (selectedPointList == null || selectedPointList.size() < 1) return;
 					
-				 }else {
-					 ModifyModbusWatchPointFrame.existsFrame();
-				 }
+					if(!ModifyModbusWatchPointFrame.isExist) {
+						new ModifyModbusWatchPointFrame(selectedPointList);
+						
+					 }else {
+						 ModifyModbusWatchPointFrame.addPointList(selectedPointList);
+						 ModifyModbusWatchPointFrame.doTableFilter();
+					 }
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+				
 			}
 		});
 		function_Panel.add(update_button);
 		
-		reset_Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				global_rx = null;
-				
-				transactionId_text.setText("1");
-				transactionId_text.setForeground(Color.BLUE);
-				
-				radio_pointList.doClick();
-				packetLog.setText(null);
-				radio_modbusRTU.doClick();
-				addrTypeComboBox.setSelectedIndex(0);
-				unitID_comboBox.setSelectedIndex(0);
-				
-				search_TextField.setText(null);
-				fc_filter.setSelectedIndex(0);
-				fc_filter.setEnabled(false);
-				dataType_filter.setSelectedIndex(0);
-				dataType_filter.setEnabled(false);
-				useFilter.setSelected(false);
-				
-				pointList.clear();
-				resetTable(point_table);
-				addRecord(point_table, pointList);
-			}
-		});
+		
 		
 		TID = new JLabel("Transaction ID");
 		TID.setForeground(Color.BLACK);
@@ -583,10 +586,10 @@ public class ModbusMonitor_Panel extends JPanel {
 		pointList_ScrollPane.setBounds(578, 360, 438, 172);
 		
 		// 테이블 생성 부분
-		point_table = new JTable();
-		point_table.setCellSelectionEnabled(true);
-		point_table.setBackground(Color.WHITE);		
-		point_table.addMouseListener(new MouseAdapter() {
+		pointTable = new JTable();
+		pointTable.setCellSelectionEnabled(true);
+		pointTable.setBackground(Color.WHITE);		
+		pointTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == 1) { } // 왼쪽 클릭
 				if (e.getButton() == 1 && e.getClickCount() == 2) {
@@ -595,8 +598,8 @@ public class ModbusMonitor_Panel extends JPanel {
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
 					
-					int row = point_table.getSelectedRow();
-					ModbusWatchPoint wp = (ModbusWatchPoint) point_table.getValueAt(row, 1);
+					int row = pointTable.getSelectedRow();
+					ModbusWatchPoint wp = (ModbusWatchPoint) pointTable.getValueAt(row, 1);
 					ModbusWatchPoint.showInfo(wp);
 					
 					/* 비트구조 확인
@@ -611,9 +614,9 @@ public class ModbusMonitor_Panel extends JPanel {
 			}
 		});
 				
-		resetTable(point_table);
+		resetTable(pointTable);
 		
-		pointList_ScrollPane.setViewportView(point_table);
+		pointList_ScrollPane.setViewportView(pointTable);
 		
 		packetLog_ScrollPane = new JScrollPane();		
 		packetLog_ScrollPane.setBounds(12, 360, 553, 172);
@@ -1099,7 +1102,7 @@ public class ModbusMonitor_Panel extends JPanel {
 	}
 	
 	public static JTable getViewTable() {
-		return point_table;
+		return pointTable;
 	}
 	
 	public static void scrollUp() {
@@ -1284,8 +1287,8 @@ public class ModbusMonitor_Panel extends JPanel {
 		boolean noSearch = (text == null || text.length() == 0 || text.equals(""));
 		
 		if(noSearch && !useFilter.isSelected()) {
-			resetTable(point_table);
-			addRecord(point_table, pointList);
+			resetTable(pointTable);
+			addRecord(pointTable, pointList);
 			return;
 		}
 		
@@ -1348,8 +1351,8 @@ public class ModbusMonitor_Panel extends JPanel {
 			
 		}// for loop
 
-		resetTable(point_table);
-		addRecord(point_table, filterList);
+		resetTable(pointTable);
+		addRecord(pointTable, filterList);
 	}
 	
 	public static void setPointList(ArrayList<ModbusWatchPoint> list) {
