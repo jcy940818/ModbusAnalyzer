@@ -27,6 +27,7 @@ import src_ko.analyzer.RX.DataType;
 import src_ko.database.StoredProcedure;
 import src_ko.info.ONION_Info;
 import src_ko.info.Protocol;
+import src_ko.main.MoonInspector;
 import src_ko.util.Util;
 
 public class MainFrame extends JFrame {
@@ -681,11 +682,14 @@ public class MainFrame extends JFrame {
 		OnionDirCheck_Panel.changeSatate();
 		
 		OnionDirCheck_Panel.agent = agent;
+		
 		if(agent != null && agent.equalsIgnoreCase("watchPoint")) {
-			ProtocolList_Panel.goXmlViewer.setText("포인트 추가하기");
 			onionDirCheck_Panel.setBackground(Color.DARK_GRAY);
+			OnionDirCheck_Panel.isProject_checkBox.setVisible(MoonInspector.isMoon());
+			OnionDirCheck_Panel.isProject_checkBox.setSelected(false);
 			OnionDirCheck_Panel.back_button.setEnabled(true);
 			OnionDirCheck_Panel.back_button.setVisible(true);
+			ProtocolList_Panel.goXmlViewer.setText("포인트 추가하기");
 		}else {
 			ProtocolList_Panel.goXmlViewer.setText("XML Viewer 열기");
 			onionDirCheck_Panel.setBackground(new Color(255, 140, 0));
@@ -710,8 +714,8 @@ public class MainFrame extends JFrame {
 		ProtocolList_Panel.protocols = protocols;
 		ProtocolList_Panel.setFacilityComboBox(protocols, true);
 		ProtocolList_Panel.setTableContent("PROTOCOL", "전 체", protocols, ProtocolList_Panel.isKorean);
-		ProtocolList_Panel.resetForm();
 		cardLayout.show(actualPanel, "xmlEditor_Panel");
+		ProtocolList_Panel.resetForm();
 	}
 	
 	public static void showMK119Login(String agentType) {

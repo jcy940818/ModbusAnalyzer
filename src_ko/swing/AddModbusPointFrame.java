@@ -311,7 +311,7 @@ public class AddModbusPointFrame extends JFrame {
 		upload_protocol.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				MainFrame.showOnionDirCheck(MoonInspector.isMoon(), "watchPoint");
+				MainFrame.showOnionDirCheck(false, "watchPoint");
 				dispose();
 			}
 		});

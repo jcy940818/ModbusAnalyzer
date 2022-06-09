@@ -763,6 +763,7 @@ public class ProtocolList_Panel extends JPanel {
 		if(facilityType_comboBox != null) facilityType_comboBox.setSelectedIndex(0);
 		if(seartFacility_textField != null) seartFacility_textField.setText(null);
 		if(searchProtocol_textField != null) searchProtocol_textField.setText(null);
+		if(searchProtocol_textField != null) searchProtocol_textField.requestFocus();
 	}
 	
 }
