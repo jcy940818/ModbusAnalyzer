@@ -141,7 +141,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
 		
-		setBounds(100, 100, 1285, 610);
+		setBounds(100, 100, frameWidth, frameHeight);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new LineBorder(Color.DARK_GRAY, 10));
