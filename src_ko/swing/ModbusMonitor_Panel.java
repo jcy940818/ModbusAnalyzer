@@ -42,6 +42,7 @@ import javax.swing.table.TableColumnModel;
 
 import common.agent.PerfData;
 import common.modbus.ModbusWatchPoint;
+import common.util.TableUtil;
 import src_ko.agent.ClientSocket;
 import src_ko.agent.ModbusAgent;
 import src_ko.info.RX_Info;
@@ -547,6 +548,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				
 				pointList.clear();
 				resetTable(point_table);
+				addRecord(point_table, pointList);
 			}
 		});
 		
@@ -1217,6 +1219,16 @@ public class ModbusMonitor_Panel extends JPanel {
 				
 				model.addRow(record);
 			}
+			
+			if(pointList != null) {
+				int total = pointList.size();
+				int searched = table.getRowCount();
+				String text = String.format("모드버스 포인트  ( %d / %d )", searched, total);
+				TableUtil.setTableHeader(table, 1, text);
+			}else {
+				TableUtil.setTableHeader(table, 1, "모드버스 포인트");
+			}
+			
 		}catch(Exception e) {
 			// 레코드 추가 중 예외 발생 시 아무것도 수행하지 않음
 			e.printStackTrace();

@@ -39,6 +39,7 @@ import javax.swing.table.TableColumnModel;
 
 import common.modbus.ModbusWatchPoint;
 import common.perf.PerfLabelStatusBean;
+import common.util.TableUtil;
 import src_ko.agent.Perf;
 import src_ko.util.JavaScript;
 import src_ko.util.Util;
@@ -47,7 +48,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 
 	public static boolean isExist = false;
 	
-	private ArrayList<ModbusWatchPoint> pointList = null;
+	private static ArrayList<ModbusWatchPoint> pointList = null;
 	private ModbusWatchPoint selectedPoint = null;
 	
 	private JPanel contentPane;
@@ -104,6 +105,8 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	
 	private JScrollPane pointScrollPane;
 	private JTable pointTable;
+	private JLabel searchLabel;
+	private JTextField search_TextField;	
 	
 	/**
 	 * Launch the application.
@@ -769,7 +772,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 					if(autoMeasure == null || autoMeasure.length() < 1 || autoMeasure.equals("")) {
 						StringBuilder sb = new StringBuilder();
 						sb.append(String.format("%s%s%s\n", Util.colorRed("Failed to Automatically Create Measure"), Util.separator, Util.separator));
-						sb.append(String.format("%s", "현재 입력된 모드버스 포인트 이름에 적절한 " + Util.colorBlue("단위(Measure)") +  "의 생성에 실패하였습니다"));
+						sb.append(String.format("%s", "현재 입력된 모드버스 포인트 이름에 적절한 " + Util.colorBlue("단위(Measure)") +  " 생성에 실패하였습니다"));
 						sb.append(Util.separator + Util.separator + Util.separator + "\n");
 						Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 						
@@ -964,9 +967,45 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				}
 			}
 		});
+		
 		pointScrollPane.setViewportView(pointTable);
-		resetPointListTable(pointTable);
-		addModbusPointRecord(pointTable, pointList);
+		resetPointTable(pointTable);
+		addPointRecord(pointTable, this.pointList);
+		
+		searchLabel = new JLabel("검 색");
+		searchLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		searchLabel.setBackground(Color.WHITE);
+		searchLabel.setForeground(Color.BLACK);
+		searchLabel.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		searchLabel.setBounds(778, 77, 56, 30);
+		actualPanel.add(searchLabel);
+		
+		search_TextField = new JTextField();
+		search_TextField.setBorder(new LineBorder(Color.BLACK, 2));
+		search_TextField.setBackground(Color.WHITE);
+		search_TextField.setHorizontalAlignment(SwingConstants.LEFT);
+		search_TextField.setForeground(Color.BLACK);
+		search_TextField.setFont(new Font("맑은 고딕", Font.PLAIN, 17));
+		search_TextField.setBounds(837, 79, 410, 29);
+		search_TextField.setColumns(10);
+		search_TextField.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				try {
+					doTableFilter();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			
+			public void keyReleased(KeyEvent e) {
+				try {
+					doTableFilter();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		actualPanel.add(search_TextField);
 		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
@@ -1476,7 +1515,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	/**
 	 * 	레코드 추가
 	 */
-	public static void addModbusPointRecord(JTable table, ArrayList<ModbusWatchPoint> modbusWps) {
+	public static void addPointRecord(JTable table, ArrayList<ModbusWatchPoint> modbusWps) {
 		if(table == null || modbusWps == null) return;
 		
 		try {
@@ -1504,6 +1543,16 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				
 				model.addRow(record);
 			}
+
+			if(pointList != null) {
+				int total = pointList.size();
+				int searched = table.getRowCount();
+				String text = String.format("모드버스 포인트  ( %d / %d )", searched, total);
+				TableUtil.setTableHeader(table, 1, text);
+			}else {
+				TableUtil.setTableHeader(table, 1, "모드버스 포인트");
+			}
+			
 		}catch(Exception e) {
 			// 레코드 추가 중 예외 발생 시 아무것도 수행하지 않음
 			e.printStackTrace();
@@ -1514,8 +1563,8 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	 * 레코드 삭제 
 	 * 삭제시 for문으로  삭제 할 것이 아니라 선택된 포인트의 인덱스를 검사하여 삭제하도록 구현하자
 	 */
-	public void deleteModbusPointRecord(JTable table, int... index) {
-		ArrayList<ModbusWatchPoint> selectedPointList = getSelectedModbusPoint(table);
+	public void deletePointRecord(JTable table, int... index) {
+		ArrayList<ModbusWatchPoint> selectedPointList = getSelectedPoint(table);
 
 		if (selectedPointList == null || selectedPointList.size() < 1) {
 			return;
@@ -1525,11 +1574,11 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				pointList.remove(wp);
 			}
 
-//			doTableFilter();
+			doTableFilter();
 		}
 	}
 	
-	public static void resetPointListTable(JTable table){
+	public static void resetPointTable(JTable table){
 		
 		table.setModel(new DefaultTableModel(
 				new Object[][] {
@@ -1583,7 +1632,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 //		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 모드버스 포인트
 	}
 	
-	public static ArrayList<ModbusWatchPoint> getSelectedModbusPoint(JTable table) {
+	public static ArrayList<ModbusWatchPoint> getSelectedPoint(JTable table) {
 		ArrayList<ModbusWatchPoint> selectedPointlist = new ArrayList<ModbusWatchPoint>();
 		int[] selectedIndex = table.getSelectedRows();
 		for(int i = 0; i < selectedIndex.length; i++) {
@@ -1591,6 +1640,57 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			selectedPointlist.add(wp);
 		}
 		return selectedPointlist;
+	}
+	
+	public void doTableFilter() {
+		if(search_TextField == null || pointList == null) return;
+		
+		ArrayList<ModbusWatchPoint> filterList = new ArrayList<ModbusWatchPoint>();
+		String text = search_TextField.getText();
+		
+		boolean noSearch = (text == null || text.length() == 0 || text.equals(""));
+		
+		if(noSearch) {
+			resetPointTable(pointTable);
+			addPointRecord(pointTable, pointList);
+			return;
+		}
+		
+		if(!noSearch) {
+			text = text.toUpperCase().trim();
+		}
+		
+		for(int i = 0; i < pointList.size(); i++) {
+			ModbusWatchPoint modbusWp = pointList.get(i);
+			boolean isContain = false;
+			
+			if(!noSearch) {
+				String searchElement = modbusWp.toString().toUpperCase();
+				
+				if(text.contains(",")) {
+					String[] textToken = text.split(",");
+					for(int i2 = 0; i2 < textToken.length; i2++) {
+						String token = textToken[i2].trim();
+						if(searchElement.contains(token)) {
+							isContain = true;
+						}
+					}
+				}else if(searchElement.contains(text)) {
+					isContain = true;
+				}
+			}else {
+				isContain = true;
+			}
+			
+			
+			if(isContain) {
+				filterList.add(modbusWp);
+			}
+			
+		}// for loop
+
+		resetPointTable(pointTable);
+		addPointRecord(pointTable, filterList);
 	}
 	
 	
