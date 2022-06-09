@@ -174,7 +174,27 @@ public class ModbusWatchPointLoader {
 					cell = row.getCell(7);
 					modbusWps[i - 2].scaleFunc = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getStringValue(cell) : "x";
 		
-					if (row.getCell(10) != null) {
+					
+					boolean dataFormat1 = row.getCell(8) != null
+										&& !CellUtil.getStringValue(row.getCell(8)).equals("")
+										&& !(CellUtil.getStringValue(row.getCell(8)).length() < 1);
+					
+					dataFormat1 = dataFormat1
+										&& row.getCell(9) != null
+										&& !CellUtil.getStringValue(row.getCell(9)).equals("")
+										&& !(CellUtil.getStringValue(row.getCell(9)).length() < 1);
+					
+					boolean dataForamt2 = row.getCell(10) != null
+							&& !CellUtil.getStringValue(row.getCell(10)).equals("")
+							&& !(CellUtil.getStringValue(row.getCell(10)).length() < 1);
+					
+					if(dataFormat1 && dataForamt2) {
+						// 데이터 형식 : 이진 상태이면서 동시에 다중 상태 일 수는 없다
+						item = (Moon.isKorean()) ? "이진 상태 레이블 & 다중 상태 레이블" : "Binary Status Label & Multi-Status Label";
+						throw new IOException();
+					}
+					
+					if (dataForamt2) {
 						item = (Moon.isKorean()) ? "다중 상태 레이블" : "Multi-Status Label";
 						cell = row.getCell(10);
 						String[] keys = CellUtil.getStringValue(cell).split(";");
@@ -192,7 +212,7 @@ public class ModbusWatchPointLoader {
 						
 						modbusWps[i - 2].labels = statusLabels;
 						
-					} else if (row.getCell(8) != null && row.getCell(9) != null) {
+					} else if (dataFormat1) {
 						item = (Moon.isKorean()) ? "이진 상태 레이블" : "Binary Status Label";
 						modbusWps[i - 2].dataFormat = PerfConf.DATA_FORMAT_DIGITAL;
 						modbusWps[i - 2].binLabel = new String[] { 
