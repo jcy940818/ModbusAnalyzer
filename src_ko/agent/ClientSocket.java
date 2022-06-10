@@ -247,10 +247,10 @@ public class ClientSocket extends Socket {
 		JLabel insert = new JLabel("<html><font color='blue'>¿¬°á Á¤º¸ ÀÔ·Â</font><br></html>");
 		insert.setFont(boldfont);
 		
-		JLabel ip_label = new JLabel("IP");
+		JLabel ip_label = new JLabel("<html><font color='black'>IP</font></html>");
 		ip_label.setFont(boldfont);
 		
-		JLabel port_label = new JLabel("Port");
+		JLabel port_label = new JLabel("<html><font color='black'>Port</font></html>");
 		port_label.setFont(boldfont);		
 		
 		font = new Font("¸¼Àº °íµñ", Font.PLAIN, 15);
