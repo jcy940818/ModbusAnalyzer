@@ -38,9 +38,14 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import common.modbus.ModbusWatchPoint;
+import common.modbus.ModbusWatchPointInitException;
 import common.perf.PerfLabelStatusBean;
 import common.util.TableUtil;
+import oracle.net.aso.p;
+import src_ko.agent.HttpAgent;
 import src_ko.agent.Perf;
+import src_ko.info.AdminConsole_Info;
+import src_ko.util.ExcelAdapter;
 import src_ko.util.JavaScript;
 import src_ko.util.Util;
 
@@ -114,18 +119,18 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ModifyModbusWatchPointFrame frame = new ModifyModbusWatchPointFrame(null);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					ModifyModbusWatchPointFrame frame = new ModifyModbusWatchPointFrame(null);
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the frame.
@@ -635,6 +640,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				}							
 			}
 		});
+		ExcelAdapter ex = new ExcelAdapter(table); // 여러 열 복사 붙여넣기 가능 
 		scrollPane.setViewportView(table);
 		
 		showPointList = new JButton();
@@ -676,25 +682,22 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		modifyOneButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(checkFormValidation()) {
+				
+				if(selectedPoint == null || pointList == null || pointList.size() < 1) return;
+				
+				int dataFormat = Integer.parseInt(dataFormat_var.getSelectedItem().toString().split(" ")[0].trim());
+				
+				if(checkFormValidation() && checkStatusTable(table, dataFormat)) {
 					try {
-						ArrayList<ModbusWatchPoint> pointList = null;
-						
-						if(pointList != null) {
-							ModbusMonitor_Panel.addPointList(pointList);
-							ModbusMonitor_Panel.doTableFilter();
-							
-							StringBuilder sb = new StringBuilder();
-							sb.append(String.format("%s%s%s\n", Util.colorGreen("Modbus Point Added Successfully"), Util.separator, Util.separator));
-							
-							sb.append(Util.separator + Util.separator + Util.separator + "\n");
-							Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
-						}
+						updatePoint(selectedPoint);
+						ModbusMonitor_Panel.doTableFilter();
+						ModifyModbusWatchPointFrame.doTableFilter();
 						
 					}catch(Exception ex) {
 						ex.printStackTrace();
 					}
 				}
+				
 			}
 		});
 		actualPanel.add(modifyOneButton);
@@ -770,6 +773,44 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		modifyAllButton.setBorder(UIManager.getBorder("Button.border"));
 		modifyAllButton.setBackground(Color.WHITE);
 		modifyAllButton.setBounds(1142, 10, 105, 32);
+		modifyAllButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				StringBuilder sb = new StringBuilder();
+				sb.append(String.format("%s%s%s\n", Util.colorGreen("Do you really Modify All Point?"), Util.separator, Util.separator));
+				
+				sb.append("해당 기능을 사용하면 현재 폼에 입력된 내용이 " + Util.colorBlue("모든 모드버스 포인트에 적용") + "됩니다");
+				sb.append(Util.separator + Util.separator + Util.separator + "\n\n");
+				
+				sb.append("정말 현재 폼에 입력된 내용을 " + Util.colorBlue("모든 모드버스 포인트에 적용") + "하시겠습니까?");
+				sb.append(Util.separator + Util.separator + Util.separator + "\n\n");
+				
+				sb.append("( 특정 내용만 적용되기를 원하신다면 적용하실 내용만 체크박스를 체크해주세요 )");
+				sb.append(Util.separator + Util.separator + Util.separator + "\n");
+
+				int userOption= Util.showConfirm(sb.toString());
+				if(userOption != JOptionPane.YES_OPTION) return;
+				if(selectedPoint == null || pointList == null || pointList.size() < 1) return;
+
+				int dataFormat = Integer.parseInt(dataFormat_var.getSelectedItem().toString().split(" ")[0].trim());
+				
+				if(checkFormValidation() && checkStatusTable(table, dataFormat)) {
+					try {
+						
+						for(ModbusWatchPoint point : pointList) {
+							updatePoint(point);
+						}
+						
+						ModbusMonitor_Panel.doTableFilter();
+						ModifyModbusWatchPointFrame.doTableFilter();
+						
+					}catch(Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+				
+			}
+		});
 		actualPanel.add(modifyAllButton);
 		
 		
@@ -1209,37 +1250,39 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	
 	public boolean checkFormValidation() {
 		boolean formValid = true;
-		formValid = formValid && !(addr_modbus_dec_var.getForeground() == Color.RED);
-		formValid = formValid && !(addr_reg_dec_var.getForeground() == Color.RED);
-		formValid = formValid && !(addr_reg_hex_var.getForeground() == Color.RED);
-		formValid = formValid && !(addr_modbus_dec_var.getText().length() < 1 || addr_modbus_dec_var.getText().equals(""));
-		formValid = formValid && !(addr_reg_dec_var.getText().length() < 1 || addr_reg_dec_var.getText().equals(""));
-		formValid = formValid && !(addr_reg_hex_var.getText().length() < 1 || addr_reg_hex_var.getText().equals(""));
-		formValid = formValid && !(addr_modbus_dec_var.getText().trim().equals("유효하지 않은 주소"));
-		formValid = formValid && !(addr_reg_dec_var.getText().trim().equals("유효하지 않은 주소"));
-		formValid = formValid && !(addr_reg_hex_var.getText().trim().equals("유효하지 않은 주소"));
-		if(!formValid) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(String.format("%s%s%s\n", Util.colorRed("Form Validation Error"), Util.separator, Util.separator));
-			sb.append(String.format("%s", "모드버스 포인트의 " + Util.colorBlue("주소(Address)") +  " 정보를 확인해주세요"));
-			sb.append(Util.separator + Util.separator + Util.separator + "\n");
-			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-			
-			if(addr_modbus_dec.isSelected()) {
-				addr_modbus_dec_var.requestFocus();
-			}else if(addr_reg_dec.isSelected()) {
-				addr_reg_dec_var.requestFocus();
-			}else {
-				addr_reg_hex_var.requestFocus();
+		
+		// 주소 검사
+		if(c_addr.isSelected()) {
+			formValid = formValid && !(addr_modbus_dec_var.getForeground() == Color.RED);
+			formValid = formValid && !(addr_reg_dec_var.getForeground() == Color.RED);
+			formValid = formValid && !(addr_reg_hex_var.getForeground() == Color.RED);
+			formValid = formValid && !(addr_modbus_dec_var.getText().length() < 1 || addr_modbus_dec_var.getText().equals(""));
+			formValid = formValid && !(addr_reg_dec_var.getText().length() < 1 || addr_reg_dec_var.getText().equals(""));
+			formValid = formValid && !(addr_reg_hex_var.getText().length() < 1 || addr_reg_hex_var.getText().equals(""));
+			formValid = formValid && !(addr_modbus_dec_var.getText().trim().equals("유효하지 않은 주소"));
+			formValid = formValid && !(addr_reg_dec_var.getText().trim().equals("유효하지 않은 주소"));
+			formValid = formValid && !(addr_reg_hex_var.getText().trim().equals("유효하지 않은 주소"));
+			if(!formValid) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(String.format("%s%s%s\n", Util.colorRed("Form Validation Error"), Util.separator, Util.separator));
+				sb.append(String.format("%s", "모드버스 포인트의 " + Util.colorBlue("주소(Address)") +  " 정보를 확인해주세요"));
+				sb.append(Util.separator + Util.separator + Util.separator + "\n");
+				Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+				
+				if(addr_modbus_dec.isSelected()) {
+					addr_modbus_dec_var.requestFocus();
+				}else if(addr_reg_dec.isSelected()) {
+					addr_reg_dec_var.requestFocus();
+				}else {
+					addr_reg_hex_var.requestFocus();
+				}
+				
+				return formValid;
 			}
-			
-			return formValid;
 		}
 		
-		if(scale_var.getForeground() == Color.RED) {
-			formValid = false;
-			
-		}else {
+		// 보정식 검사
+		if(c_scale.isSelected()) {
 			String scale = scale_var.getText().trim();
 			try {
 				JavaScript.eval(scale, "1");
@@ -1248,40 +1291,99 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				formValid = false;
 				scale_var.setForeground(Color.RED);
 			}
-		}
-		
-		if(!formValid) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(String.format("%s%s%s\n", Util.colorRed("Form Validation Error"), Util.separator, Util.separator));
-			sb.append(String.format("%s", "모드버스 포인트의 " + Util.colorBlue("보정식(Scale Formula)") +  " 정보를 확인해주세요"));
-			sb.append(Util.separator + Util.separator + Util.separator + "\n");
-			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-			scale_var.requestFocus();
-			return formValid;
+			
+			if(!formValid) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(String.format("%s%s%s\n", Util.colorRed("Form Validation Error"), Util.separator, Util.separator));
+				sb.append(String.format("%s", "모드버스 포인트의 " + Util.colorBlue("보정식(Scale Formula)") +  " 정보를 확인해주세요"));
+				sb.append(Util.separator + Util.separator + Util.separator + "\n");
+				Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+				scale_var.requestFocus();
+				return formValid;
+			}
 		}
 		
 		return formValid;
 	}
 	
-	public ArrayList<ModbusWatchPoint> getPointList(boolean get) {
-		int fc = Integer.parseInt(fc_var.getSelectedItem().toString().split(" ")[1]);
+	public boolean checkStatusTable(JTable table, int dataFormat) {
+		boolean tableValid = true;
 		
-		String dataType = dataType_var.getSelectedItem().toString().toUpperCase().trim();
-		int step = 1;
-		if(dataType.startsWith("BIN") || dataType.startsWith("TWO")) {
-			step  = 1;			
-		}else if(dataType.startsWith("FOUR")) {
-			step = 2;
-		}else if(dataType.startsWith("EIGHT")) {
-			step = 4;
-		}
-		
-		try {
+		if(dataFormat == 1) {
 			
-			return null;
-		}catch(Exception ex) {			
-			return null;
+			boolean status0 = true;
+			boolean status1 = true;
+			
+			String label0 = (table.getValueAt(0, 1) != null) ? table.getValueAt(0, 1).toString().trim() : "";
+			String label1 = (table.getValueAt(1, 1) != null) ? table.getValueAt(1, 1).toString().trim() : "";
+			
+			status0 = (label0 != null) && (!label0.equals("")) && (label0.length() > 0);
+			if(!status0) label0 = Util.colorRed("( 입력되지 않음 )");
+			
+			status1 = (label1 != null) && (!label1.equals("")) && (label1.length() > 0);
+			if(!status1) label1 = Util.colorRed("( 입력되지 않음 )");
+			
+			tableValid = status0 && status1;
+			
+			if(!tableValid) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(String.format("%s%s%s\n", Util.colorRed("Binary Status Table Validation Error"), Util.separator, Util.separator));
+				
+				sb.append(String.format("%s : %d", Util.colorBlue("값"), 0));
+				sb.append("&nbsp;&nbsp;" + Util.colorGreen("/") + "&nbsp;&nbsp;");
+				sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("내용"), label0, Util.separator, Util.separator));
+				
+				sb.append(String.format("%s : %d", Util.colorBlue("값"), 1));
+				sb.append("&nbsp;&nbsp;" + Util.colorGreen("/") + "&nbsp;&nbsp;");
+				sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("내용"), label1, Util.separator, Util.separator));
+				
+				sb.append(String.format("%s", "모드버스 포인트의 " + Util.colorBlue("이진 상태 테이블") +  " 내용을 확인해주세요"));
+				sb.append(Util.separator + Util.separator + Util.separator + "\n");
+				Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);				
+				return tableValid;
+			}
+			
+		}else if(dataFormat == 2){
+			
+			int rowCount = table.getRowCount();
+			int rowNum = 0;
+			
+			try {
+				for(int row = 0; row < rowCount; row++) {
+					rowNum = row;
+					int value = Integer.parseInt(table.getValueAt(row, 0).toString().trim());
+					String label = table.getValueAt(row, 1).toString().trim();
+					
+					tableValid = (label != null) && (!label.equals("")) && (label.length() > 0);
+					if(!tableValid) throw new Exception();
+				}
+			}catch(Exception e) {
+					String value = (table.getValueAt(rowNum, 0) != null) ? table.getValueAt(rowNum, 0).toString().trim() : "";
+					String label = (table.getValueAt(rowNum, 1) != null) ? table.getValueAt(rowNum, 1).toString().trim() : "";
+				
+					boolean valueValid = (value != null) && (!value.equals("")) && (value.length() > 0);
+					if(!valueValid) value = Util.colorRed("( 입력되지 않음 )");
+					
+					boolean labelValid = (label != null) && (!label.equals("")) && (label.length() > 0);
+					if(!labelValid) label = Util.colorRed("( 입력되지 않음 )");
+					
+					StringBuilder sb = new StringBuilder();
+					sb.append(String.format("%s%s%s\n", Util.colorRed("Multi Status Table Validation Error"), Util.separator, Util.separator));
+					sb.append(String.format("%s : %d%s%s\n\n", Util.colorBlue("행 번호"), rowNum + 1, Util.separator, Util.separator));
+					sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("값"), value, Util.separator, Util.separator));
+					sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("내용"), label, Util.separator, Util.separator));
+					sb.append(String.format("%s", "모드버스 포인트의 " + Util.colorBlue("다중 상태 테이블") +  " 내용을 확인해주세요"));
+					sb.append(Util.separator + Util.separator + Util.separator + "\n");
+					Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+					return false;
+			}
+			
+		}else {
+			// dataFormat = 3
+			return true;
 		}
+		
+		return tableValid;
 	}
 
 	public String getModbusAddr(int functionCode, int registerAddr) {
@@ -1474,6 +1576,14 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			dataType_var.setSelectedItem(point.getDataType());
 			measure_var.setText(point.getMeasure());
 			scale_var.setText(point.getScaleFunction());
+			
+			String scale = scale_var.getText().trim();
+			try {
+				JavaScript.eval(scale, "1");
+				scale_var.setForeground(Color.BLUE);
+			}catch(Exception e) {				
+				scale_var.setForeground(Color.RED);
+			}
 			
 			switch(point.getDataFormat()) {
 				case 1 :
@@ -1765,6 +1875,99 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			}
 		}
 		Collections.sort(pointList);
+	}
+	
+	public void updatePoint(ModbusWatchPoint point) {
+		
+		String counter = null;
+		
+		int functionCode = 0;
+		String addr = null;
+		String dataType = null;
+		
+		// 포인트 이름
+		if(c_pointName.isSelected()) {
+			point.displayName = (pointName_var.getText() != null) ? pointName_var.getText().trim() : "";
+		}
+		
+		// 기능 코드
+		if(c_fc.isSelected()) {
+			functionCode = Integer.parseInt(fc_var.getSelectedItem().toString().split(" ")[1]);			
+		}else {
+			functionCode = point.getFunctionCode();
+		}
+		
+		// 주소
+		if(c_addr.isSelected()) {
+			addr = addr_reg_hex_var.getText().trim();
+		}else {
+			addr = point.getRegisterAddrHexString();
+		}
+		
+		// 데이터 타입
+		if(c_dataType.isSelected()) {
+			dataType = dataType_var.getSelectedItem().toString().trim();
+		}else {
+			dataType = point.getDataType();
+		}
+		
+		// 측정 단위
+		if(c_measure.isSelected()) {
+			point.measure = (measure_var.getText() != null) ? measure_var.getText().trim() : "";			
+		}
+		
+		// 보정식
+		if(c_scale.isSelected()) {
+			point.scaleFunc = (scale_var.getText() != null) ? scale_var.getText().trim() : point.scaleFunc;
+		}
+		
+		if(c_dataForamt.isSelected()) {
+			int dataFormat = Integer.parseInt(dataFormat_var.getSelectedItem().toString().split(" ")[0].trim());
+			
+			if(dataFormat == 1) {				
+				String label0 = (table.getValueAt(0, 1) != null) ? table.getValueAt(0, 1).toString().trim() : "";
+				String label1 = (table.getValueAt(1, 1) != null) ? table.getValueAt(1, 1).toString().trim() : "";
+				
+				point.getBinLabel()[0] = label0;
+				point.getBinLabel()[1] = label1;
+				point.dataFormat = 1;
+				
+			}else if(dataFormat == 2){
+				int rowCount = table.getRowCount();
+				ArrayList<PerfLabelStatusBean> labelList = new ArrayList<PerfLabelStatusBean>();
+				
+				for(int i = 0; i < rowCount; i++) {
+					PerfLabelStatusBean bean = new PerfLabelStatusBean();
+					bean.value = Integer.parseInt(table.getValueAt(i, 0).toString().trim());
+					bean.label = table.getValueAt(i, 1).toString().trim();					
+					labelList.add(bean);
+				}
+				
+				point.labelList = labelList;
+				point.setStatusLabels();
+				point.dataFormat = 2;
+				
+			}else {
+				point.dataFormat = 3;
+			}
+		}
+		
+		counter = functionCode + "_" + addr + "_" + dataType;
+		point.setCounter(counter);
+		
+		try {
+			point.init();
+			
+		}catch(ModbusWatchPointInitException e) {
+//			StringBuilder sb = new StringBuilder();
+//			sb.append(String.format("%s\n", Util.colorRed("Modbus Watch Point Initialization Error")));
+//			sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), e.getMessage(), Util.separator, Util.separator));
+//			sb.append(String.format("위의 모드버스 포인트 정보를 초기화 하는중 오류가 발생하였습니다%s%s\n", Util.separator, Util.separator));
+//			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
