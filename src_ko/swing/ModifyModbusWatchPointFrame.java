@@ -41,10 +41,7 @@ import common.modbus.ModbusWatchPoint;
 import common.modbus.ModbusWatchPointInitException;
 import common.perf.PerfLabelStatusBean;
 import common.util.TableUtil;
-import oracle.net.aso.p;
-import src_ko.agent.HttpAgent;
 import src_ko.agent.Perf;
-import src_ko.info.AdminConsole_Info;
 import src_ko.util.ExcelAdapter;
 import src_ko.util.JavaScript;
 import src_ko.util.Util;
@@ -95,6 +92,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	private JButton bitOperationButton;
 	
 	// Ã¼Å© ¹Ú½º
+	private JCheckBox c_All;
 	private JCheckBox c_pointName;
 	private JCheckBox c_fc;
 	private JCheckBox c_addr;
@@ -119,18 +117,18 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					ModifyModbusWatchPointFrame frame = new ModifyModbusWatchPointFrame(null);
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ModifyModbusWatchPointFrame frame = new ModifyModbusWatchPointFrame(null);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	/**
 	 * Create the frame.
@@ -914,6 +912,23 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		});
 		panel.add(bitOperationButton);
 		
+		c_All = new JCheckBox("ÀüÃ¼ ¼±ÅÃ");
+		c_All.setSelected(true);
+		c_All.setFocusPainted(false);
+		c_All.setBackground(Color.WHITE);
+		c_All.setForeground(Color.BLUE);
+		c_All.setHorizontalAlignment(SwingConstants.LEFT);
+		c_All.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
+		c_All.setBounds(21, 50, 115, 32);
+		c_All.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				checkAll(c_All.isSelected());
+				checkUseField();
+			}
+		});
+		actualPanel.add(c_All);
+		
 		c_pointName = new JCheckBox("Æ÷ÀÎÆ® ÀÌ¸§");
 		c_pointName.setSelected(true);
 		c_pointName.setFocusPainted(false);
@@ -921,7 +936,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		c_pointName.setHorizontalAlignment(SwingConstants.LEFT);
 		c_pointName.setForeground(Color.BLACK);
 		c_pointName.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
-		c_pointName.setBounds(21, 76, 115, 32);
+		c_pointName.setBounds(21, 80, 115, 32);
 		c_pointName.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -937,7 +952,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		c_fc.setForeground(Color.BLACK);
 		c_fc.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		c_fc.setBackground(Color.WHITE);
-		c_fc.setBounds(143, 76, 95, 32);
+		c_fc.setBounds(143, 80, 95, 32);
 		c_fc.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -953,7 +968,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		c_addr.setForeground(Color.BLACK);
 		c_addr.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		c_addr.setBackground(Color.WHITE);
-		c_addr.setBounds(236, 76, 65, 32);
+		c_addr.setBounds(240, 80, 65, 32);
 		c_addr.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -969,7 +984,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		c_dataType.setForeground(Color.BLACK);
 		c_dataType.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		c_dataType.setBackground(Color.WHITE);
-		c_dataType.setBounds(301, 76, 115, 32);
+		c_dataType.setBounds(305, 80, 115, 32);
 		c_dataType.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -985,7 +1000,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		c_measure.setForeground(Color.BLACK);
 		c_measure.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		c_measure.setBackground(Color.WHITE);
-		c_measure.setBounds(421, 76, 97, 32);
+		c_measure.setBounds(425, 80, 97, 32);
 		c_measure.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1001,7 +1016,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		c_scale.setForeground(Color.BLACK);
 		c_scale.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		c_scale.setBackground(Color.WHITE);
-		c_scale.setBounds(523, 76, 84, 32);
+		c_scale.setBounds(527, 80, 84, 32);
 		c_scale.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1017,7 +1032,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		c_dataForamt.setForeground(Color.BLACK);
 		c_dataForamt.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		c_dataForamt.setBackground(Color.WHITE);
-		c_dataForamt.setBounds(609, 76, 115, 32);
+		c_dataForamt.setBounds(609, 80, 115, 32);
 		c_dataForamt.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1968,6 +1983,16 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void checkAll(boolean isSelcted) {
+		c_pointName.setSelected(isSelcted);
+		c_fc.setSelected(isSelcted);
+		c_addr.setSelected(isSelcted);
+		c_dataType.setSelected(isSelcted);
+		c_measure.setSelected(isSelcted);
+		c_scale.setSelected(isSelcted);
+		c_dataForamt.setSelected(isSelcted);
 	}
 	
 	@Override
