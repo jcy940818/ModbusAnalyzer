@@ -1,5 +1,7 @@
 package common.modbus;
 
+import java.util.ArrayList;
+
 import javax.swing.JOptionPane;
 
 import common.agent.PerfData;
@@ -209,24 +211,36 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 		}
 	}
 	
-	public ModbusWatchPoint getClone() {
+	public void copy(ModbusWatchPoint clone) {
 		try {
-			ModbusWatchPoint clone = new ModbusWatchPoint();
-			clone.displayName = this.displayName;
-			clone.counter = this.counter;
-			clone.scaleFunc = this.scaleFunc;
-			clone.interval = this.interval;
-			clone.measure = this.measure;
-			clone.dataFormat = this.dataFormat;
-			clone.binLabel = this.binLabel.clone();
-			if(this.labels != null) {
-				clone.labels = this.labels.clone();	
+			this.displayName = clone.displayName;
+			this.counter = clone.counter;
+			this.scaleFunc = clone.scaleFunc;
+			this.interval = clone.interval;
+			this.measure = clone.measure;
+			this.dataFormat = clone.dataFormat;
+			
+			if(this.dataFormat == 1) {
+				this.binLabel[0] = clone.binLabel[0];
+				this.binLabel[1] = clone.binLabel[1];
+			}else if(this.dataFormat == 2) {
+				PerfLabelStatusBean[] cloneBeans = clone.getStatusLabels();
+				if(cloneBeans != null && cloneBeans.length > 0) {
+					ArrayList<PerfLabelStatusBean> labelList = new ArrayList<PerfLabelStatusBean>();
+					for(PerfLabelStatusBean bean : cloneBeans) {
+						PerfLabelStatusBean copyBean = new PerfLabelStatusBean();
+						copyBean.value = bean.value;
+						copyBean.label = bean.label;
+						labelList.add(copyBean);
+					}
+					this.labelList = labelList;
+					this.setStatusLabels();
+				}
 			}
-			clone.init();
-			return clone;
+			
+			this.init();
 		}catch(Exception e) {
 			e.printStackTrace();
-			return null;
 		}
 	}
 	
