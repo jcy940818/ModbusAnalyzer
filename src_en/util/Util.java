@@ -206,28 +206,39 @@ public class Util {
 	
 	public static void showMessage(String msg, int msgType) {
 		msg = msg.replaceFirst("\n", "<br><br>").replaceAll("\n", "<br>");
-		JLabel label = new JLabel("<html>" + msg + "<br></html>");
+		JLabel label = new JLabel("<html><font color='black'>" + msg + "<br></font></html>");
 		label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		JOptionPane.showMessageDialog(null, label, "ModbusAnalyzer", msgType);
 	}
 	
 	public static int showConfirm(String msg) {
 		msg = msg.replaceFirst("\n", "<br><br>").replaceAll("\n", "<br>");
-		JLabel label = new JLabel("<html>" + msg + "<br></html>");
+		JLabel label = new JLabel("<html><font color='black'>" + msg + "<br></font></html>");
 		label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));		
 		return JOptionPane.showConfirmDialog(null, label, "ModbusAnalyzer", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);		
 	}
 
 	public static int showOption(String msg, String[] options, int msgType) {
 		msg = msg.replaceFirst("\n", "<br><br>").replaceAll("\n", "<br>");
-		JLabel label = new JLabel("<html>" + msg + "<br></html>");		
+		JLabel label = new JLabel("<html><font color='black'>" + msg + "<br></font></html>");		
+		label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));						
+		return JOptionPane.showOptionDialog(null, label, "ModbusAnalyzer", JOptionPane.DEFAULT_OPTION, msgType, null, options, null);		
+	}
+	
+	public static int showOption(String msg, String[] options, int msgType, boolean useLineSeparator) {
+		if(useLineSeparator) {
+			msg = msg.replaceFirst("\n", "<br><br>").replaceAll("\n", "<br>");
+		}else {
+			msg = msg.replaceAll("\n", "<br>");
+		}
+		JLabel label = new JLabel("<html><font color='black'>" + msg + "<br></font></html>");		
 		label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));						
 		return JOptionPane.showOptionDialog(null, label, "ModbusAnalyzer", JOptionPane.DEFAULT_OPTION, msgType, null, options, null);		
 	}
 	
 	public static Object showInput(String msg, int msgType) {
 		msg = msg.replaceFirst("\n", "<br><br>").replaceAll("\n", "<br>");
-		JLabel label = new JLabel("<html>" + msg + "<br></html>");		
+		JLabel label = new JLabel("<html><font color='black'>" + msg + "<br></font></html>");		
 		label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));		
 		return JOptionPane.showInputDialog(null, label, "ModbusAnalyzer", msgType);
 	}
