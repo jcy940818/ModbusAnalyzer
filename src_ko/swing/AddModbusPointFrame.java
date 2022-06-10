@@ -692,7 +692,7 @@ public class AddModbusPointFrame extends JFrame {
 				/* column[1] */ record.add(modbusWp); // 성능명
 				/* column[2] */ record.add(modbusWp.getFunctionCode());  // 기능코드
 				/* column[3] */ record.add(modbusWp.getRegisterAddrHexString());  // 레지스터 주소
-				/* column[4] */ record.add(modbusWp.getModbusAddr()); // 모드버스 주소
+				/* column[4] */ record.add(modbusWp.getModbusAddrString()); // 모드버스 주소
 				/* column[5] */ record.add(modbusWp.getDataType()); // 데이터 타입
 				
 				model.addRow(record);
