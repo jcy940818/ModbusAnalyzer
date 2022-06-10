@@ -117,18 +117,18 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ModifyModbusWatchPointFrame frame = new ModifyModbusWatchPointFrame(null);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					ModifyModbusWatchPointFrame frame = new ModifyModbusWatchPointFrame(null);
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the frame.
@@ -783,25 +783,23 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				sb.append("정말 현재 폼에 입력된 내용을 " + Util.colorBlue("모든 모드버스 포인트에 적용") + "하시겠습니까?");
 				sb.append(Util.separator + Util.separator + Util.separator + "\n\n");
 				
-				sb.append("( 특정 내용만 적용되기를 원하신다면 적용하실 내용만 체크박스를 체크해주세요 )");
+				sb.append("( 특정 내용만 적용되기를 원하신다면 적용하실 내용의 체크박스만 체크해주세요 )");
 				sb.append(Util.separator + Util.separator + Util.separator + "\n");
-
-				int userOption= Util.showConfirm(sb.toString());
-				if(userOption != JOptionPane.YES_OPTION) return;
+				
 				if(selectedPoint == null || pointList == null || pointList.size() < 1) return;
 
 				int dataFormat = Integer.parseInt(dataFormat_var.getSelectedItem().toString().split(" ")[0].trim());
 				
 				if(checkFormValidation() && checkStatusTable(table, dataFormat)) {
+					int userOption= Util.showConfirm(sb.toString());
+					if(userOption != JOptionPane.YES_OPTION) return;
+					
 					try {
-						
 						for(ModbusWatchPoint point : pointList) {
 							updatePoint(point);
 						}
-						
 						ModbusMonitor_Panel.doTableFilter();
 						ModifyModbusWatchPointFrame.doTableFilter();
-						
 					}catch(Exception ex) {
 						ex.printStackTrace();
 					}
@@ -923,8 +921,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		c_All.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				checkAll(c_All.isSelected());
-				checkUseField();
+				checkAll(c_All.isSelected());				
 			}
 		});
 		actualPanel.add(c_All);
@@ -1385,7 +1382,8 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 					StringBuilder sb = new StringBuilder();
 					sb.append(String.format("%s%s%s\n", Util.colorRed("Multi Status Table Validation Error"), Util.separator, Util.separator));
 					sb.append(String.format("%s : %d%s%s\n\n", Util.colorBlue("행 번호"), rowNum + 1, Util.separator, Util.separator));
-					sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("값"), value, Util.separator, Util.separator));
+					sb.append(String.format("%s : %s", Util.colorBlue("값"), value));
+					sb.append("&nbsp;&nbsp;" + Util.colorGreen("/") + "&nbsp;&nbsp;");
 					sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("내용"), label, Util.separator, Util.separator));
 					sb.append(String.format("%s", "모드버스 포인트의 " + Util.colorBlue("다중 상태 테이블") +  " 내용을 확인해주세요"));
 					sb.append(Util.separator + Util.separator + Util.separator + "\n");
@@ -1546,14 +1544,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	}
 	
 	public void resetForm() {
-		c_pointName.setSelected(true);
-		c_fc.setSelected(true);
-		c_addr.setSelected(true);
-		c_dataType.setSelected(true);
-		c_measure.setSelected(true);
-		c_scale.setSelected(true);
-		c_dataForamt.setSelected(true);
-		checkUseField();
+		checkAll(true);
 		
 		pointName_var.setText(null);
 		fc_var.setSelectedIndex(2);
@@ -1574,15 +1565,8 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				resetForm();
 				return;
 			}
-			
-			c_pointName.setSelected(true);
-			c_fc.setSelected(true);
-			c_addr.setSelected(true);
-			c_dataType.setSelected(true);
-			c_measure.setSelected(true);
-			c_scale.setSelected(true);
-			c_dataForamt.setSelected(true);
-			checkUseField();
+
+			checkAll(true);
 			
 			pointName_var.setText(point.getDisplayName());
 			fc_var.setSelectedIndex(point.getFunctionCode() - 1);
@@ -1694,10 +1678,12 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		statusLabel.setVisible(c_dataForamt.isSelected());
 		scrollPane.setEnabled(c_dataForamt.isSelected());
 		scrollPane.setVisible(c_dataForamt.isSelected());
-		addRow.setEnabled(c_dataForamt.isSelected());
-		addRow.setVisible(c_dataForamt.isSelected());
-		deleteRow.setEnabled(c_dataForamt.isSelected());
-		deleteRow.setVisible(c_dataForamt.isSelected());
+		if(dataFormat_var.getSelectedIndex() == 1) {
+			addRow.setEnabled(c_dataForamt.isSelected());
+			addRow.setVisible(c_dataForamt.isSelected());
+			deleteRow.setEnabled(c_dataForamt.isSelected());
+			deleteRow.setVisible(c_dataForamt.isSelected());
+		}
 	}
 	
 	/**
@@ -1986,6 +1972,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	}
 	
 	public void checkAll(boolean isSelcted) {
+		c_All.setSelected(isSelcted);
 		c_pointName.setSelected(isSelcted);
 		c_fc.setSelected(isSelcted);
 		c_addr.setSelected(isSelcted);
@@ -1993,6 +1980,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		c_measure.setSelected(isSelcted);
 		c_scale.setSelected(isSelcted);
 		c_dataForamt.setSelected(isSelcted);
+		checkUseField();
 	}
 	
 	@Override
