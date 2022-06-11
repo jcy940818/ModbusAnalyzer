@@ -43,6 +43,35 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	}
 	
 	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ModbusWatchPoint == false)
+			return false;
+
+		ModbusWatchPoint target = (ModbusWatchPoint) obj;
+
+		if (this.displayName == null || target.displayName == null)
+			return false;
+		
+		if (this.counter == null || target.counter == null)
+			return false;
+
+		if (this.measure == null || target.measure == null)
+			return false;
+		
+		if (this.scaleFunc == null || target.scaleFunc == null)
+			return false;
+
+		if (this.dataFormat != target.dataFormat)
+			return false;
+		
+		return this.displayName.equals(target.displayName)
+				&& this.counter.equals(target.counter)
+				&& this.measure.equals(target.measure)
+				&& this.scaleFunc.equals(target.scaleFunc)
+				&& this.dataFormat == target.dataFormat;
+	}
+	
+	@Override
 	public int compareTo(Object obj) {
 		ModbusWatchPoint modbusWp = (ModbusWatchPoint)obj;
 		
@@ -181,7 +210,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			
 			String[] counterToken = this.getCounter().split("\\\\")[0].split("_");
 			
-			functionCode = Integer.parseInt(counterToken[0]);
+			functionCode = Integer.parseInt(counterToken[0].trim());
 			
 			// 기능 코드 : FC01 ~ FC04
 			if(functionCode < 1 || functionCode > 4) {
@@ -189,14 +218,14 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			}
 			
 			if (counterToken[1].startsWith("0x") || counterToken[1].startsWith("0X")) {
-				registerAddr = Integer.parseInt(counterToken[1].replace("0x", "").replace("0X", ""), 16);
+				registerAddr = Integer.parseInt(counterToken[1].replace("0x", "").replace("0X", "").trim(), 16);
 			} else {
-				registerAddr = Integer.parseInt(counterToken[1]);
+				registerAddr = Integer.parseInt(counterToken[1].trim());
 				registerAddr %= 10000;
 				registerAddr--;
 			}
 	
-			dataType = counterToken[2];
+			dataType = counterToken[2].trim();
 			
 			this.setFunctionCode(functionCode);
 			this.setRegisterAddr(registerAddr);
