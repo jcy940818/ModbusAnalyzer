@@ -67,33 +67,30 @@ public class ModbusMonitor{
 	private BatchRead batchRead = new BatchRead();
 
 	public static void main(String[] args) {
+		
+	}
+	
+	public static void test(int modbusType, Socket socket,String ip, int port ,ArrayList<ModbusWatchPoint> pointList) {
 		try {
-			ModbusMonitor m = new ModbusMonitor();
+			ModbusMonitor monitor = new ModbusMonitor();
 			int curtCommand = 0;
-			curtCommand = m.parseCommand("3_1_TWO BYTE INT SIGNED");
-			curtCommand = m.parseCommand("3_2_TWO BYTE INT SIGNED");
-			curtCommand = m.parseCommand("3_3_TWO BYTE INT SIGNED");
-			curtCommand = m.parseCommand("3_5_FOUR BYTE FLOAT");
-			curtCommand = m.parseCommand("3_9_FOUR BYTE FLOAT");
 			
-			String ip = "127.0.0.1";
-			int port = 502;
-			
-			m.init(TYPE_RTU, ip, port);
-			Socket so = new Socket();
-			so.connect(new InetSocketAddress(ip, port), 5000);
-			so.setSoTimeout(ClientSocket.RESPONSE_TIMEOUT);
+			for(ModbusWatchPoint point : pointList) {
+				curtCommand = monitor.parseCommand(point.getHexCounter());
+			}
+						
+			monitor.init(modbusType, ip, port);
 			
 			byte[] buff = new byte[8192];
-			PacketInputStream packetReader = new PacketInputStream(buff, so.getInputStream());
-			PacketOutputStream packetWriter = new PacketOutputStream(so.getOutputStream());			
+			PacketInputStream packetReader = new PacketInputStream(buff, socket.getInputStream());
+			PacketOutputStream packetWriter = new PacketOutputStream(socket.getOutputStream());			
 			
-			m.sendCommand(packetWriter, curtCommand);
+			monitor.sendCommand(packetWriter, curtCommand);
 			byte[] packet = packetWriter.toByteArray();
 			System.out.println("TX : " + getPacketString(packet, 0, packet.length) + "\n");
 			packetWriter.flush();
 			
-			m.parseResponsePacket(packetReader);
+			monitor.parseResponsePacket(packetReader);
 			
 		}catch(Exception e) {
 			e.printStackTrace();

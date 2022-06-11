@@ -41,13 +41,13 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import common.agent.PerfData;
+import common.modbus.ModbusMonitor;
 import common.modbus.ModbusWatchPoint;
 import common.util.TableUtil;
 import src_ko.agent.ClientSocket;
 import src_ko.agent.ModbusAgent;
 import src_ko.info.RX_Info;
 import src_ko.info.TX_Info;
-import src_ko.util.ExceptionProvider;
 import src_ko.util.Util;
 
 public class ModbusMonitor_Panel extends JPanel {
@@ -391,36 +391,36 @@ public class ModbusMonitor_Panel extends JPanel {
 				// 수집 요청 TX 생성에 필요한 Form 에 정보가 모두 입력되어 있는지 체크
 				if(!checkReadRequestForm(isRTU)) return;
 				
-				
 				try {						
 					
 					// 한번 초기화된 TX 내용으로 계속해서 수집
-					tx = null;
-					tx.setAgentType("ModbusMonitor"); // 패킷로그 에이전트 확인용
-					
-					
-					/**
-					 * Monitoring Start ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-					 */
+//					tx = null;
+//					tx.setAgentType("ModbusMonitor"); // 패킷로그 에이전트 확인용
 					
 					new Thread(new Runnable() {							
 						@Override
 						public void run() {
 							try {
-								rx = ModbusAgent.communicate(socket_ko, tx, isRTU, 5000);
 								
-								// 유효하지 않은 응답은 패스한다
-								if(rx == null) return;
-								if(rx.isException()) return;
-								if(rx.isCRCError()) return;							
-								if(rx.getScanResult() == null) return;
-								if(ExceptionProvider.CompareTxRx(tx, rx) != null) return;																																																			
-																																													
-								// updataTable() 에 넘겨줄 RX_Info 인스턴스 먼저 초기화를 해줘야한다.
-								global_rx = rx;
-								updateTable(pointTable, rx);
-								ModbusAgent.isRTU = isRTU;
-								ModbusAgent.lastFunctionCode = rx.getFunctionCode();
+								int modbusType = (isRTU) ? 997 : 998; 
+								ArrayList<ModbusWatchPoint> pointList = getSelectedModbusPoint(pointTable);
+								
+								ModbusMonitor.test(modbusType, socket_ko, IP, PORT , pointList);
+								
+//								rx = ModbusAgent.communicate(socket_ko, tx, isRTU, 5000);
+//								
+//								// 유효하지 않은 응답은 패스한다
+//								if(rx == null) return;
+//								if(rx.isException()) return;
+//								if(rx.isCRCError()) return;							
+//								if(rx.getScanResult() == null) return;
+//								if(ExceptionProvider.CompareTxRx(tx, rx) != null) return;																																																			
+//																																													
+//								// updataTable() 에 넘겨줄 RX_Info 인스턴스 먼저 초기화를 해줘야한다.
+//								global_rx = rx;
+//								updateTable(pointTable, rx);
+//								ModbusAgent.isRTU = isRTU;
+//								ModbusAgent.lastFunctionCode = rx.getFunctionCode();
 									
 							}catch(Exception e) {
 								e.printStackTrace();
@@ -461,8 +461,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				transactionId_text.setForeground(Color.BLUE);
 				
 				radio_pointList.doClick();
-				packetLog.setText(null);
-				radio_modbusRTU.doClick();
+				packetLog.setText(null);				
 				addrTypeComboBox.setSelectedIndex(0);
 				unitID_comboBox.setSelectedIndex(0);
 				
@@ -818,14 +817,13 @@ public class ModbusMonitor_Panel extends JPanel {
 					
 					// 마지막 커넥션 정보와 다른 정보로 세션을  생성시 컴포넌트 초기화
 					if(!ClientSocket.getSimpleConnectedInfo().equalsIgnoreCase(lastConnectionInfo)) {
-						componentAllClear();
+//						componentAllClear();
 //						src_en.swing.ModbusMonitor_Panel.componentAllClear(); 영문버전 추가시 주석 해제
 					}
 					
-					// 사용자가 입력한 IP, port를 클라이언트 소켓의 마지막 연결 성공 정보에 저장					
+					// 사용자가 입력한 IP, port를 클라이언트 소켓의 마지막 연결 성공 정보에 저장
 					ClientSocket.setHasLastConnectionInfo(true);
 				}
-				
 				
 			}
 		});
@@ -1162,12 +1160,6 @@ public class ModbusMonitor_Panel extends JPanel {
 		
 		return isValid;
 	}
-	
-	
-	
-	
-	
-	
 	
 	
 	/**
