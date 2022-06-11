@@ -699,6 +699,12 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 						ModbusMonitor_Panel.doTableFilter();
 						ModifyModbusWatchPointFrame.doTableFilter();
 						
+						StringBuilder sb = new StringBuilder();
+						sb.append(String.format("%s%s%s\n", Util.colorGreen("Point Modification Completed"), Util.separator, Util.separator));						
+						sb.append("입력하신 내용이 " + Util.colorBlue("모드버스 포인트에 적용") + "되었습니다");
+						sb.append(Util.separator + Util.separator + Util.separator + "\n");
+						Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+						
 					}catch(Exception ex) {
 						ex.printStackTrace();
 					}
@@ -757,13 +763,10 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 
 				if(selectedPointList == null || selectedPointList.size() < 1) {
 					return;
-					
 				}else{
-					
 					for (ModbusWatchPoint wp : selectedPointList) {
 						pointList.remove(wp);
 					}
-					
 					doTableFilter();
 				}
 				
@@ -782,10 +785,10 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		modifyAllButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			
-				if(selectedPoint == null || pointList == null || pointList.size() < 1) return;
-				
 				int total = pointList.size();
 				int displayed = pointTable.getRowCount();
+				
+				if(selectedPoint == null || pointList == null || total < 1 || displayed < 1) return;
 				
 				StringBuilder sb = new StringBuilder();
 				sb.append(String.format("%s%s%s\n", Util.colorGreen("Modify All the Points Displayed in the Table?"), Util.separator, Util.separator));
@@ -820,6 +823,13 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 						
 						ModbusMonitor_Panel.doTableFilter();
 						ModifyModbusWatchPointFrame.doTableFilter();
+						
+						sb = new StringBuilder();
+						sb.append(String.format("%s%s%s\n", Util.colorGreen("Point Modification Completed"), Util.separator, Util.separator));						
+						sb.append("입력하신 내용이 테이블에 표시되었던 " + Util.colorBlue("" + displayed) + "개의 "+ Util.colorBlue("모드버스 포인트에 적용") + "되었습니다");
+						sb.append(Util.separator + Util.separator + Util.separator + "\n");
+						Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+						
 					}catch(Exception ex) {
 						ex.printStackTrace();
 					}
@@ -1765,25 +1775,6 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		}
 	}
 	
-	/**
-	 * 레코드 삭제
-	 * 삭제시 for문으로  삭제 할 것이 아니라 선택된 포인트의 인덱스를 검사하여 삭제하도록 구현하자
-	 */
-	public void deletePointRecord(JTable table, int... index) {
-		ArrayList<ModbusWatchPoint> selectedPointList = getSelectedPoint(table);
-
-		if (selectedPointList == null || selectedPointList.size() < 1) {
-			return;
-		} else {
-
-			for (ModbusWatchPoint wp : selectedPointList) {
-				pointList.remove(wp);
-			}
-
-			doTableFilter();
-		}
-	}
-	
 	public static void resetPointTable(JTable table){
 		
 		table.setModel(new DefaultTableModel(
@@ -1897,8 +1888,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			if(!pointList.contains(wp)) {
 				pointList.add(wp);	
 			}
-		}
-		Collections.sort(pointList);
+		}		
 	}
 	
 	public void updatePoint(ModbusWatchPoint point) {

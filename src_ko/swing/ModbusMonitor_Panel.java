@@ -1355,19 +1355,11 @@ public class ModbusMonitor_Panel extends JPanel {
 		addRecord(pointTable, filterList);
 	}
 	
-	public static void setPointList(ArrayList<ModbusWatchPoint> list) {
-		pointList = list;
-	}
-	
 	public static void addPointList(ArrayList<ModbusWatchPoint> list) {
 		for(ModbusWatchPoint wp : list) {
 			pointList.add(wp);
 		}
 		Collections.sort(pointList);
-	}
-	
-	public static ArrayList<ModbusWatchPoint> getPointList(){
-		return pointList;
 	}
 	
 	public static ArrayList<ModbusWatchPoint> getSelectedModbusPoint(JTable table) {
