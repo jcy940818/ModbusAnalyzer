@@ -512,9 +512,13 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 					
 					String scale = scale_var.getText().trim();
 					try {
-						JavaScript.eval(scale, "1");
-						scale_var.setForeground(Color.BLUE);
-					}catch(Exception ex) {
+						if(scale == null || scale.length() < 1 || scale.equals("")) {
+							scale_var.setForeground(Color.RED);
+						}else {
+							JavaScript.eval(scale, "1");
+							scale_var.setForeground(Color.BLUE);
+						}
+					}catch(Exception ex) {				
 						scale_var.setForeground(Color.RED);
 					}
 					
@@ -528,9 +532,13 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 					
 					String scale = scale_var.getText().trim();
 					try {
-						JavaScript.eval(scale, "1");
-						scale_var.setForeground(Color.BLUE);
-					}catch(Exception ex) {
+						if(scale == null || scale.length() < 1 || scale.equals("")) {
+							scale_var.setForeground(Color.RED);
+						}else {
+							JavaScript.eval(scale, "1");
+							scale_var.setForeground(Color.BLUE);
+						}
+					}catch(Exception ex) {				
 						scale_var.setForeground(Color.RED);
 					}
 					
@@ -1297,9 +1305,14 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		if(c_scale.isSelected()) {
 			String scale = scale_var.getText().trim();
 			try {
-				JavaScript.eval(scale, "1");
-				scale_var.setForeground(Color.BLUE);
-			}catch(Exception e) {
+				if(scale == null || scale.length() < 1 || scale.equals("")) {
+					formValid = false;
+					scale_var.setForeground(Color.RED);
+				}else {
+					JavaScript.eval(scale, "1");
+					scale_var.setForeground(Color.BLUE);
+				}
+			}catch(Exception e) {	
 				formValid = false;
 				scale_var.setForeground(Color.RED);
 			}
@@ -1571,6 +1584,9 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			pointName_var.setText(point.getDisplayName());
 			fc_var.setSelectedIndex(point.getFunctionCode() - 1);
 			addr_reg_dec_var.setText("" + point.getRegisterAddr());
+			addr_reg_dec.setSelected(true);
+			addr_modbus_dec.setSelected(false);
+			addr_reg_hex.setSelected(false);
 			syncAddr();
 			dataType_var.setSelectedItem(point.getDataType());
 			measure_var.setText(point.getMeasure());
@@ -1578,8 +1594,12 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			
 			String scale = scale_var.getText().trim();
 			try {
-				JavaScript.eval(scale, "1");
-				scale_var.setForeground(Color.BLUE);
+				if(scale == null || scale.length() < 1 || scale.equals("")) {
+					scale_var.setForeground(Color.RED);
+				}else {
+					JavaScript.eval(scale, "1");
+					scale_var.setForeground(Color.BLUE);
+				}
 			}catch(Exception e) {				
 				scale_var.setForeground(Color.RED);
 			}
@@ -1734,7 +1754,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	}
 	
 	/**
-	 * 레코드 삭제 
+	 * 레코드 삭제
 	 * 삭제시 for문으로  삭제 할 것이 아니라 선택된 포인트의 인덱스를 검사하여 삭제하도록 구현하자
 	 */
 	public void deletePointRecord(JTable table, int... index) {
@@ -1822,15 +1842,13 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		ArrayList<ModbusWatchPoint> filterList = new ArrayList<ModbusWatchPoint>();
 		String text = search_TextField.getText();
 		
-		boolean noSearch = (text == null || text.length() == 0 || text.equals(""));
+		boolean noSearch = (text == null || text.length() < 1 || text.equals(""));
 		
 		if(noSearch) {
 			resetPointTable(pointTable);
 			addPointRecord(pointTable, pointList);
 			return;
-		}
-		
-		if(!noSearch) {
+		}else {
 			text = text.toUpperCase().trim();
 		}
 		
@@ -1838,28 +1856,21 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			ModbusWatchPoint modbusWp = pointList.get(i);
 			boolean isContain = false;
 			
-			if(!noSearch) {
-				String searchElement = modbusWp.toString().toUpperCase();
-				
-				if(text.contains(",")) {
-					String[] textToken = text.split(",");
-					for(int i2 = 0; i2 < textToken.length; i2++) {
-						String token = textToken[i2].trim();
-						if(searchElement.contains(token)) {
-							isContain = true;
-						}
+			String searchElement = modbusWp.toString().toUpperCase();
+			
+			if(text.contains(",")) {
+				String[] textToken = text.split(",");
+				for(int i2 = 0; i2 < textToken.length; i2++) {
+					String token = textToken[i2].trim();
+					if(searchElement.contains(token)) {
+						isContain = true;
 					}
-				}else if(searchElement.contains(text)) {
-					isContain = true;
 				}
-			}else {
+			}else if(searchElement.contains(text)) {
 				isContain = true;
 			}
 			
-			
-			if(isContain) {
-				filterList.add(modbusWp);
-			}
+			if(isContain) filterList.add(modbusWp);
 			
 		}// for loop
 
@@ -1925,7 +1936,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		if(c_dataForamt.isSelected()) {
 			int dataFormat = Integer.parseInt(dataFormat_var.getSelectedItem().toString().split(" ")[0].trim());
 			
-			if(dataFormat == 1) {				
+			if(dataFormat == 1) {
 				String label0 = (table.getValueAt(0, 1) != null) ? table.getValueAt(0, 1).toString().trim() : "";
 				String label1 = (table.getValueAt(1, 1) != null) ? table.getValueAt(1, 1).toString().trim() : "";
 				
