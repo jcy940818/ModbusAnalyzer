@@ -782,19 +782,28 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		modifyAllButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			
+				if(selectedPoint == null || pointList == null || pointList.size() < 1) return;
+				
+				int total = pointList.size();
+				int displayed = pointTable.getRowCount();
+				
 				StringBuilder sb = new StringBuilder();
-				sb.append(String.format("%s%s%s\n", Util.colorGreen("Do you really Modify All Point?"), Util.separator, Util.separator));
+				sb.append(String.format("%s%s%s\n", Util.colorGreen("Modify All the Points Displayed in the Table?"), Util.separator, Util.separator));
 				
-				sb.append("해당 기능을 사용하면 현재 폼에 입력된 내용이 " + Util.colorBlue("모든 모드버스 포인트에 적용") + "됩니다");
+				sb.append("해당 기능을 사용하면 현재 폼에 입력된 내용이");
 				sb.append(Util.separator + Util.separator + Util.separator + "\n\n");
 				
-				sb.append("정말 현재 폼에 입력된 내용을 " + Util.colorBlue("모든 모드버스 포인트에 적용") + "하시겠습니까?");
+				sb.append("테이블에 표시된 " + Util.colorBlue("모든 모드버스 포인트에 적용") + "됩니다");
 				sb.append(Util.separator + Util.separator + Util.separator + "\n\n");
+				
+				sb.append("정말 현재 폼에 입력된 내용을 테이블에 표시된 " + Util.colorBlue("모든 모드버스 포인트에 적용") + "하시겠습니까?");
+				sb.append(Util.separator + Util.separator + Util.separator + "\n\n");
+				
+				sb.append("( 총 " + Util.colorBlue("" + total) +"개의 포인트중 테이블에 표시된 " + Util.colorBlue("" + displayed) + "개의 포인트에 적용됩니다 )");
+				sb.append(Util.separator + Util.separator + Util.separator + "\n");
 				
 				sb.append("( 특정 내용만 적용되기를 원하신다면 적용하실 내용의 체크박스만 체크해주세요 )");
 				sb.append(Util.separator + Util.separator + Util.separator + "\n");
-				
-				if(selectedPoint == null || pointList == null || pointList.size() < 1) return;
 
 				int dataFormat = Integer.parseInt(dataFormat_var.getSelectedItem().toString().split(" ")[0].trim());
 				
@@ -803,9 +812,12 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 					if(userOption != JOptionPane.YES_OPTION) return;
 					
 					try {
-						for(ModbusWatchPoint point : pointList) {
+												
+						for(int row = 0; row < pointTable.getRowCount(); row++) {
+							ModbusWatchPoint point = (ModbusWatchPoint) pointTable.getValueAt(row, 1);
 							updatePoint(point);
 						}
+						
 						ModbusMonitor_Panel.doTableFilter();
 						ModifyModbusWatchPointFrame.doTableFilter();
 					}catch(Exception ex) {
