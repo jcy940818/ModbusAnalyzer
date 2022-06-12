@@ -402,10 +402,13 @@ public class ModbusMonitor_Panel extends JPanel {
 						public void run() {
 							try {
 								
-								int modbusType = (isRTU) ? 997 : 998; 
+								int modbusType = (isRTU) ? ModbusMonitor.TYPE_RTU : ModbusMonitor.TYPE_TCP;
 								ArrayList<ModbusWatchPoint> pointList = getSelectedModbusPoint(pointTable);
 								
-								ModbusMonitor.test(modbusType, socket_ko, IP, PORT , pointList);
+								ModbusMonitor monitor = new ModbusMonitor();
+								if(modbusType == ModbusMonitor.TYPE_TCP) monitor.setTransactionID(getTid());
+								
+								monitor.test(modbusType, socket_ko, pointList);
 								doTableFilter();
 								
 //								rx = ModbusAgent.communicate(socket_ko, tx, isRTU, 5000);
@@ -1043,6 +1046,25 @@ public class ModbusMonitor_Panel extends JPanel {
 			transactionId_text.setText(String.format("0x%04X",tid));
 		}else {
 			transactionId_text.setText(String.format("%d",tid));
+		}
+	}
+	
+	public int getTid() {
+		try {
+			int transactionId = 0;
+			
+			if(transactionId_text.getText().trim().startsWith("0x")){
+				transactionId = Integer.parseInt(transactionId_text.getText().trim().replaceAll("0x", ""),16);								
+			}else if(transactionId_text.getText().trim().startsWith("0X")) {
+				transactionId = Integer.parseInt(transactionId_text.getText().trim().replaceAll("0X", ""),16);
+			}else {
+				transactionId = Integer.parseInt(transactionId_text.getText());
+			}
+			
+			return transactionId;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return 0;
 		}
 	}
 	

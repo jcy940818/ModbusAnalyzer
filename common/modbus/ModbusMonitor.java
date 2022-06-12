@@ -68,27 +68,28 @@ public class ModbusMonitor{
 	ModbusMaster master;
 	private BatchRead batchRead = new BatchRead();
 	
-	public static void test(int modbusType, Socket socket,String ip, int port ,ArrayList<ModbusWatchPoint> pointList) {
+	public void test(int modbusType, Socket socket, ArrayList<ModbusWatchPoint> pointList) {
 		try {
-			ModbusMonitor monitor = new ModbusMonitor();
-			int curtCommand = 0;
-			
 			for(ModbusWatchPoint point : pointList) {
-				curtCommand = monitor.parseCommand(point);
+				parseCommand(point);
 			}
-						
-			monitor.init(modbusType, ip, port);
 			
-			byte[] buff = new byte[8192];
-			PacketInputStream packetReader = new PacketInputStream(buff, socket.getInputStream());
-			PacketOutputStream packetWriter = new PacketOutputStream(socket.getOutputStream());			
+			init(modbusType, socket.getInetAddress().getHostAddress(), socket.getPort());
 			
-			monitor.sendCommand(packetWriter, curtCommand);
-			byte[] packet = packetWriter.toByteArray();
-			System.out.println("TX : " + getPacketString(packet, 0, packet.length) + "\n");
-			packetWriter.flush();
+			List<ReadFunctionGroup> functionGroupList = getFuntionGroupList();
 			
-			monitor.parseResponsePacket(packetReader);
+			for(ReadFunctionGroup fcGroup : functionGroupList) {
+				byte[] buff = new byte[8192];
+				PacketInputStream packetReader = new PacketInputStream(buff, socket.getInputStream());
+				PacketOutputStream packetWriter = new PacketOutputStream(socket.getOutputStream());
+
+				sendCommand(fcGroup, packetWriter);
+				byte[] packet = packetWriter.toByteArray();
+				packetWriter.flush();
+				System.out.println("TX : " + getPacketString(packet, 0, packet.length));
+				parseResponsePacket(fcGroup, packetReader);
+				System.out.println();
+			}
 			
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -105,6 +106,10 @@ public class ModbusMonitor{
 	
 	public int getTransactionID() {
 		return transactionId;
+	}
+	
+	public void setTransactionID(int transactionId) {
+		this.transactionId = transactionId;
 	}
 	
 	protected void init(int type, String ip, int port){
@@ -168,12 +173,10 @@ public class ModbusMonitor{
 		return locators.size() - 1;
 	}
 
-	protected void sendCommand(PacketOutputStream out, int command) throws IOException {
-		BaseLocator locator = (BaseLocator) locators.get(command);
+	protected synchronized void sendCommand(ReadFunctionGroup functionGroup, PacketOutputStream out) throws IOException {
 		ModbusRequest request = null;
 		String hashCode = null;
-
-		ReadFunctionGroup functionGroup = getFuntionGroup(locator);
+		
 		int slaveId = this.getUnitID();
 		int startOffset = functionGroup.getStartOffset();
 
@@ -201,8 +204,6 @@ public class ModbusMonitor{
 		hashCode = functionGroup.getFunctionCode() + "_" + startOffset + "_" + functionGroup.getLength();
 		 
 		out.write(getRequestPacket(request));
-		
-		currentCommand = command;
 	}
 
 	protected int skipHeader(PacketInputStream in) throws IOException {
@@ -228,7 +229,7 @@ public class ModbusMonitor{
 		}
 	}
 
-	protected void parseResponsePacket(PacketInputStream in) throws IOException {
+	protected synchronized void parseResponsePacket(ReadFunctionGroup functionGroup, PacketInputStream in) throws IOException {
 		skipHeader(in);
 		if (type == TYPE_TCP) {
 			// Modubus 프레임 길이
@@ -237,9 +238,6 @@ public class ModbusMonitor{
 				throw new IOException("incorrect unit id");
 			}
 		}
-
-		BaseLocator topLocator = (BaseLocator) locators.get(currentCommand);
-		ReadFunctionGroup functionGroup = getFuntionGroup(topLocator);
 		
 		int funcCode = functionGroup.getFunctionCode();
 		int func = in.read();
@@ -266,6 +264,9 @@ public class ModbusMonitor{
 			in.skipCRC16();
 		}
 
+		byte[] packet = in.debug_getBuffer();
+		System.out.println("RX : " + getPacketString(packet, 0, packet.length));
+		
 		List locators = functionGroup.getLocators();
 		
 		for (int i = 0; i < locators.size(); i++) {
@@ -294,7 +295,7 @@ public class ModbusMonitor{
 			perfData.setTime(System.currentTimeMillis());
 			point.setData(perfData);
 			
-			System.out.printf("Data[ %d_%d_%s ] = " + (Math.round(value*1000)/1000.0) + "\n", fc, addr, getDataTypeString(dataType));
+			System.out.printf("Point[ %s ] = " + (Math.round(value*1000)/1000.0) + "\n", point.getDecCounter());
 		}
 	}
 
@@ -333,6 +334,10 @@ public class ModbusMonitor{
 		}
 
 		throw new IOException();
+	}
+	
+	private synchronized List<ReadFunctionGroup> getFuntionGroupList(){
+		return (List<ReadFunctionGroup>) batchRead.getReadFunctionGroups(master);
 	}
 	
 
