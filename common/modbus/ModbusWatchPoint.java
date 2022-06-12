@@ -381,6 +381,19 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 				}
 			}
 			
+			try {
+				if(wp.getData() != null) {
+					sb.append("\n");
+					sb.append(String.format("%s : %s", Util.colorBlue("6. Last Check Time"), wp.getData().getTimeString()));
+					sb.append(Util.separator + Util.separator + "\n\n");
+					
+					sb.append(String.format("%s : %s", Util.colorBlue("7. Last Result"), wp.getDataContent()));
+					sb.append(Util.separator + Util.separator + "\n");
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
 			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
 		}
 	}

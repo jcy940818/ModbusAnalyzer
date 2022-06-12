@@ -1,7 +1,6 @@
 package common.modbus;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ import com.serotonin.modbus4j.msg.ReadHoldingRegistersRequest;
 import com.serotonin.modbus4j.msg.ReadInputRegistersRequest;
 import com.serotonin.modbus4j.serial.rtu.RtuMessageRequest;
 
-import src_ko.agent.ClientSocket;
+import common.agent.PerfData;
 import src_ko.util.PacketInputStream;
 import src_ko.util.PacketOutputStream;
 
@@ -57,7 +56,8 @@ public class ModbusMonitor{
 
 	private List locators = new ArrayList();
 	private List commands = new ArrayList();
-
+	private List<ModbusWatchPoint> points = new ArrayList<ModbusWatchPoint>();
+	
 	private int type;
 	private int currentCommand = 0;
 	private boolean partitioned = false;
@@ -74,7 +74,7 @@ public class ModbusMonitor{
 			int curtCommand = 0;
 			
 			for(ModbusWatchPoint point : pointList) {
-				curtCommand = monitor.parseCommand(point.getHexCounter());
+				curtCommand = monitor.parseCommand(point);
 			}
 						
 			monitor.init(modbusType, ip, port);
@@ -104,7 +104,7 @@ public class ModbusMonitor{
 	}
 	
 	public int getTransactionID() {
-		return 1;
+		return transactionId;
 	}
 	
 	protected void init(int type, String ip, int port){
@@ -122,7 +122,8 @@ public class ModbusMonitor{
 		}
 	}
 
-	public synchronized int parseCommand(String command) {
+	public synchronized int parseCommand(ModbusWatchPoint point) {
+		String command = point.getHexCounter();
 		String[] strs = command.split("_");
 		int address;
 		int func = Integer.parseInt(strs[0]);
@@ -162,6 +163,7 @@ public class ModbusMonitor{
 		batchRead.addLocator(command, locator);
 		commands.add(command);
 		locators.add(locator);
+		points.add(point);
 
 		return locators.size() - 1;
 	}
@@ -286,7 +288,12 @@ public class ModbusMonitor{
 			int addr = locator.getOffset() + 1;
 			int dataType = locator.getDataType();
 			
-//			updateWatchPoints(cmd, new double[] { value });
+			ModbusWatchPoint point = points.get(cmd);
+			PerfData perfData = new PerfData();
+			perfData.setValue(value);
+			perfData.setTime(System.currentTimeMillis());
+			point.setData(perfData);
+			
 			System.out.printf("Data[ %d_%d_%s ] = " + (Math.round(value*1000)/1000.0) + "\n", fc, addr, getDataTypeString(dataType));
 		}
 	}

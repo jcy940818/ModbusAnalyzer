@@ -406,15 +406,16 @@ public class ModbusMonitor_Panel extends JPanel {
 								ArrayList<ModbusWatchPoint> pointList = getSelectedModbusPoint(pointTable);
 								
 								ModbusMonitor.test(modbusType, socket_ko, IP, PORT , pointList);
+								doTableFilter();
 								
 //								rx = ModbusAgent.communicate(socket_ko, tx, isRTU, 5000);
 //								
 //								// 유효하지 않은 응답은 패스한다
 //								if(rx == null) return;
 //								if(rx.isException()) return;
-//								if(rx.isCRCError()) return;							
+//								if(rx.isCRCError()) return;					
 //								if(rx.getScanResult() == null) return;
-//								if(ExceptionProvider.CompareTxRx(tx, rx) != null) return;																																																			
+//								if(ExceptionProvider.CompareTxRx(tx, rx) != null) return;
 //																																													
 //								// updataTable() 에 넘겨줄 RX_Info 인스턴스 먼저 초기화를 해줘야한다.
 //								global_rx = rx;
@@ -1012,76 +1013,6 @@ public class ModbusMonitor_Panel extends JPanel {
 				}
 		});
 		
-		setTableStyle(table);
-	}
-	
-	public static void updateTable(JTable table, RX_Info rx) {
-		
-		if((table == null)||(rx == null)||(rx.getPerfInfo() == null)) {
-			return;
-		}
-		
-		// 테이블 헤더 설정
-		table.getTableHeader().setBackground(new Color(255, 255, 153));
-		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 15));
-
-		Object[][] content = null;
-		
-		// 결과 테이블의 행을 결정해주는 변수
-		int tableRow;
-		
-		if(rx.getFunctionCode() == 0x01 || rx.getFunctionCode() == 0x02) {
-			// 기능코드 01, 02 같은 경우에는 성능을 8개 미만으로 요청하여도 무조건 바이트 단위로 읽어서 비트연산 하기때문에 결과 테이블 행 개수를 별도로 설정한다
-			// 예를들어 성능 3개만을 요청하여도 바이트 단위로 읽어 8bit를 표시한다.		
-			// 성능 3개만 요청했을때 읽은 8개를 표시해주어도 그 값에 문제만 없으면 상관이 없지만 3개만 요청하고 읽은 8비트 중 3개만 정상적으로 표시되고
-			// 나머지 5개 비트에 대해서는 모두 OFF 값을 주기때문에 요청한 개수만큼 행을 표시해주기로 결정했다
-			tableRow = rx.getTxInfo().getRequestCount();
-		}else {
-			// FC 03 , 04
-			tableRow = rx.getPerfInfo().length;
-		}
-				
-		if(isRTU) {
-			// Modbus RTU : 테이블의 마지막 셀에 CRC 내용을 표시해주기 위해서 성능 개수보다 셀을 한개 더 많도록 설정			
-			content = new Object[tableRow + 1][];
-		}else {
-			// Modbus TCP
-			content = new Object[tableRow][];
-		}
-		
-		Object[] value = null;	
-		
-			// 테이블 레코드를 초기화
-			for (int i = 0; i < tableRow; i++) {
-				content[i] = new Object[4];
-				content[i][0] = new Integer(i + 1); // 순 서
-				content[i][1] = String.format("0x%04X", rx.getPerfInfo()[i].getRegisterAddress()); // 레지스터 주소
-				content[i][2] = Integer.parseInt(String.format("%s%04d", rx.getModbusAddress(), rx.getPerfInfo()[i].getRegisterAddress() + 1)); // 모드버스 주소
-				content[i][3] = value[i]; // 값								
-			}
-					
-			if(isRTU) {
-				// Modbus RTU : 테이블의 마지막 셀에 CRC 내용 추가
-				content[tableRow] = new Object[4];
-				content[tableRow][0] = "CRC16";
-				content[tableRow][1] = "---";
-				content[tableRow][2] = "---";
-				content[tableRow][3] = String.format("0x%04X", rx.getCrc()& 0xffff );
-			}
-						
-			table.setModel(new DefaultTableModel(
-					content,
-					new String[] {
-						"순 서", "Register", "Modbus", "Value"
-						// 순서 , 레지스터 값
-					}
-			) {
-				// 테이블 셀 내용 수정 금지
-				public boolean isCellEditable(int i, int c) {
-					return false;
-				}
-			});
-			
 		setTableStyle(table);
 	}
 	
