@@ -279,7 +279,7 @@ public class ModbusMonitor_Panel extends JPanel {
 						"Register (DEC)", 
 						"Register (HEX)"
 						}));
-		addrTypeComboBox.setSelectedIndex(2);
+		addrTypeComboBox.setSelectedIndex(0);
 		addrTypeComboBox.setForeground(Color.BLACK);
 		addrTypeComboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		addrTypeComboBox.setBackground(Color.WHITE);

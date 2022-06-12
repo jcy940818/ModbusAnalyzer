@@ -63,12 +63,10 @@ public class ModbusMonitor{
 	private boolean partitioned = false;
 	private int transactionId = 0;
 	
+	private int unitID = 1;
+	
 	ModbusMaster master;
 	private BatchRead batchRead = new BatchRead();
-
-	public static void main(String[] args) {
-		
-	}
 	
 	public static void test(int modbusType, Socket socket,String ip, int port ,ArrayList<ModbusWatchPoint> pointList) {
 		try {
@@ -98,8 +96,12 @@ public class ModbusMonitor{
 	}
 	
 	public int getUnitID() {
-        return 1;
+        return unitID;
     }
+	
+	public void setUnitID(int unitID) {
+		this.unitID = unitID;
+	}
 	
 	public int getTransactionID() {
 		return 1;
@@ -107,12 +109,10 @@ public class ModbusMonitor{
 	
 	protected void init(int type, String ip, int port){
 		
-		if(type == TYPE_RTU) this.type = TYPE_RTU;
-		if(type == TYPE_TCP) this.type = TYPE_TCP;
-		
+		this.type = type;
 		IpParameters params = new IpParameters();
-		params.setHost("127.0.0.1");
-		params.setPort(502);
+		params.setHost(ip);
+		params.setPort(port);
 		
 		master = new ModbusFactory().createTcpMaster(params, false);
 		try {
