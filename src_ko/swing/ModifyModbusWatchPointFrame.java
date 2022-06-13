@@ -3,7 +3,6 @@ package src_ko.swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,10 +39,10 @@ import javax.swing.table.TableColumnModel;
 import common.modbus.ModbusWatchPoint;
 import common.modbus.ModbusWatchPointInitException;
 import common.perf.PerfLabelStatusBean;
+import common.util.Calculator;
 import common.util.TableUtil;
 import src_ko.agent.Perf;
 import src_ko.util.ExcelAdapter;
-import src_ko.util.JavaScript;
 import src_ko.util.Util;
 
 public class ModifyModbusWatchPointFrame extends JFrame {
@@ -113,6 +112,8 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	private static JTextField search_TextField;	
 	private JButton addModifyPoint;
 	private JButton deleteModifyPoint;
+	
+	private KeyAdapter saveAndCloseAdpter;
 	
 	/**
 	 * Launch the application.
@@ -510,17 +511,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				try {
 					
-					String scale = scale_var.getText().trim();
-					try {
-						if(scale == null || scale.length() < 1 || scale.equals("")) {
-							scale_var.setForeground(Color.RED);
-						}else {
-							JavaScript.eval(scale, "1");
-							scale_var.setForeground(Color.BLUE);
-						}
-					}catch(Exception ex) {				
-						scale_var.setForeground(Color.RED);
-					}
+					checkScale();
 					
 				}catch(Exception ex) {
 					ex.printStackTrace();
@@ -530,17 +521,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			public void keyReleased(KeyEvent e) {
 				try {
 					
-					String scale = scale_var.getText().trim();
-					try {
-						if(scale == null || scale.length() < 1 || scale.equals("")) {
-							scale_var.setForeground(Color.RED);
-						}else {
-							JavaScript.eval(scale, "1");
-							scale_var.setForeground(Color.BLUE);
-						}
-					}catch(Exception ex) {				
-						scale_var.setForeground(Color.RED);
-					}
+					checkScale();
 					
 				}catch(Exception ex) {
 					ex.printStackTrace();
@@ -1151,7 +1132,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		});
 		actualPanel.add(search_TextField);
 		
-		
+		addKeyAdapter();
 		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
@@ -1324,16 +1305,9 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		}
 		
 		// 보정식 검사
-		if(c_scale.isSelected()) {
-			String scale = scale_var.getText().trim();
+		if(c_scale.isSelected()) {			
 			try {
-				if(scale == null || scale.length() < 1 || scale.equals("")) {
-					formValid = false;
-					scale_var.setForeground(Color.RED);
-				}else {
-					JavaScript.eval(scale, "1");
-					scale_var.setForeground(Color.BLUE);
-				}
+				formValid = checkScale();
 			}catch(Exception e) {	
 				formValid = false;
 				scale_var.setForeground(Color.RED);
@@ -1614,17 +1588,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			measure_var.setText(point.getMeasure());
 			scale_var.setText(point.getScaleFunction());
 			
-			String scale = scale_var.getText().trim();
-			try {
-				if(scale == null || scale.length() < 1 || scale.equals("")) {
-					scale_var.setForeground(Color.RED);
-				}else {
-					JavaScript.eval(scale, "1");
-					scale_var.setForeground(Color.BLUE);
-				}
-			}catch(Exception e) {				
-				scale_var.setForeground(Color.RED);
-			}
+			checkScale();
 			
 			switch(point.getDataFormat()) {
 				case 1 :
@@ -1994,6 +1958,55 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		c_scale.setSelected(isSelcted);
 		c_dataForamt.setSelected(isSelcted);
 		checkUseField();
+	}
+	
+	public boolean checkScale() {
+		String scale = scale_var.getText().trim();
+		try {
+			if(scale == null || scale.length() < 1 || scale.equals("")) {
+				scale_var.setForeground(Color.RED);
+				return false;
+			}else {
+		        Calculator.calculate(scale.replaceAll("x", "1"));
+				scale_var.setForeground(Color.BLUE);
+				return true;
+			}
+		}catch(Exception e) {
+			scale_var.setForeground(Color.RED);
+			return false;
+		}
+	}
+	
+	public void addKeyAdapter() {
+		if(saveAndCloseAdpter == null) {
+			saveAndCloseAdpter = new KeyAdapter() {
+				public void keyPressed(KeyEvent e) {
+					try {
+						if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+							dispose();					
+						}else if(e.getKeyCode() == KeyEvent.VK_ENTER) {					
+							modifyOneButton.doClick();
+						}
+					}catch(Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			};
+		}
+		
+		pointName_var.addKeyListener(saveAndCloseAdpter);
+		fc_var.addKeyListener(saveAndCloseAdpter);
+		addr_modbus_dec.addKeyListener(saveAndCloseAdpter);	
+		addr_reg_dec.addKeyListener(saveAndCloseAdpter);
+		addr_reg_hex.addKeyListener(saveAndCloseAdpter);
+		addr_modbus_dec_var.addKeyListener(saveAndCloseAdpter);
+		addr_reg_dec_var.addKeyListener(saveAndCloseAdpter);
+		addr_reg_hex_var.addKeyListener(saveAndCloseAdpter);
+		dataType_var.addKeyListener(saveAndCloseAdpter);
+		measure_var.addKeyListener(saveAndCloseAdpter);
+		scale_var.addKeyListener(saveAndCloseAdpter);
+		dataFormat_var.addKeyListener(saveAndCloseAdpter);
+		search_TextField.addKeyListener(saveAndCloseAdpter);
 	}
 	
 	@Override

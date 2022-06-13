@@ -23,7 +23,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -37,17 +36,15 @@ public class AddFormModbusPointFrame extends JFrame {
 	public static boolean isExist = false;
 	private JPanel contentPane;
 	private JPanel panel;
-	private JButton mk119Button;
-	private JTable table; // frame마다 XML 인스턴스를 가져야 하므로 table 필드는 static 속성을 가질 수 없다
 	private JComboBox fc_var;	
-	private JComboBox dataType_var;
-	private JRadioButton addr_reg_hex;
-	private JRadioButton addr_reg_dec;
 	private JRadioButton addr_modbus_dec;	
-	private JTextField addr_reg_hex_var;
-	private JTextField addr_reg_dec_var;
+	private JRadioButton addr_reg_dec;
+	private JRadioButton addr_reg_hex;
 	private JTextField addr_modbus_dec_var;
+	private JTextField addr_reg_dec_var;
+	private JTextField addr_reg_hex_var;
 	private JTextField cnt_var;
+	private JComboBox dataType_var;
 
 	private JButton showContentButton;
 	private JButton addButton;
@@ -62,6 +59,8 @@ public class AddFormModbusPointFrame extends JFrame {
 	private JLabel con_4;
 	private JLabel con_0;
 	private JLabel con_5;
+	
+	private KeyAdapter saveAndCloseAdpter;
 	
 	/**
 	 * Launch the application.
@@ -608,6 +607,8 @@ public class AddFormModbusPointFrame extends JFrame {
 		});
 		actualPanel.add(incrementAddr);
 		
+		addKeyAdapter();
+		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -967,6 +968,34 @@ public class AddFormModbusPointFrame extends JFrame {
 		sb.append("Add Modbus Watch Point 프레임이 이미 열려있습니다" + Util.separator + "\n");
 		Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 		return;
+	}
+	
+	public void addKeyAdapter() {
+		if(saveAndCloseAdpter == null) {
+			saveAndCloseAdpter = new KeyAdapter() {
+				public void keyPressed(KeyEvent e) {
+					try {
+						if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+							dispose();					
+						}else if(e.getKeyCode() == KeyEvent.VK_ENTER) {					
+							addButton.doClick();
+						}
+					}catch(Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			};
+		}
+		
+		fc_var.addKeyListener(saveAndCloseAdpter);
+		addr_modbus_dec.addKeyListener(saveAndCloseAdpter);	
+		addr_reg_dec.addKeyListener(saveAndCloseAdpter);
+		addr_reg_hex.addKeyListener(saveAndCloseAdpter);
+		addr_modbus_dec_var.addKeyListener(saveAndCloseAdpter);
+		addr_reg_dec_var.addKeyListener(saveAndCloseAdpter);
+		addr_reg_hex_var.addKeyListener(saveAndCloseAdpter);
+		cnt_var.addKeyListener(saveAndCloseAdpter);
+		dataType_var.addKeyListener(saveAndCloseAdpter);
 	}
 	
 	@Override

@@ -44,7 +44,6 @@ import common.modbus.ModbusWatchPoint;
 import common.modbus.ModbusWatchPointLoader;
 import common.util.TableUtil;
 import moon.Moon;
-import src_ko.main.MoonInspector;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
 
@@ -77,6 +76,7 @@ public class AddModbusPointFrame extends JFrame {
 	private static JComboBox dataType_filter;
 	
 	private ActionListener mkVerionListener = null;
+	private KeyAdapter saveAndCloseAdpter;
 
 	/**
 	 * Launch the application.
@@ -213,6 +213,7 @@ public class AddModbusPointFrame extends JFrame {
 					ModbusMonitor_Panel.addPointList(selectedPointList);
 					ModbusMonitor_Panel.doTableFilter();
 					doTableFilter();
+					search_TextField.requestFocus();
 				}
 			}
 		});
@@ -527,11 +528,15 @@ public class AddModbusPointFrame extends JFrame {
 		});
 		backGround_Panel.add(dataType_filter);
 		
+		addKeyAdapter();
+		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
 		
 		doTableFilter();
+		
+		search_TextField.requestFocus();
 	}
 
 	@Override
@@ -813,5 +818,24 @@ public class AddModbusPointFrame extends JFrame {
 
 		resetTable(point_table);
 		addRecord(point_table, filterList);
+	}
+	
+	public void addKeyAdapter() {
+		if(saveAndCloseAdpter == null) {
+			saveAndCloseAdpter = new KeyAdapter() {
+				public void keyPressed(KeyEvent e) {
+					try {
+						if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+							dispose();					
+						}
+					}catch(Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			};
+		}
+		
+		search_TextField.addKeyListener(saveAndCloseAdpter);
+		point_table.addKeyListener(saveAndCloseAdpter);
 	}
 }
