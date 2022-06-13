@@ -8,6 +8,7 @@ import common.agent.PerfData;
 import common.perf.FmsPerfItem;
 import common.perf.Perf;
 import common.perf.PerfLabelStatusBean;
+import common.util.Calculator;
 import src_ko.util.Util;
 
 public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
@@ -397,5 +398,18 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
+	
+	public final double getComputedValue(double value) {
+		String fixFormula = this.getScaleFunction(); 
+		
+        if (value != Double.NaN && !fixFormula.equals("x")) {
+            try {
+                value = Calculator.calculate(fixFormula.replaceAll("x", Double.toString(value)));
+            } catch (Exception e) {
+                value = value;
+            }
+        }
+        return value;
+    }
 	
 }
