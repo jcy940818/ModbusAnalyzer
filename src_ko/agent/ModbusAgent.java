@@ -5,15 +5,25 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import com.serotonin.modbus4j.base.ReadFunctionGroup;
+
+import common.modbus.ModbusMonitor;
+import common.modbus.ModbusWatchPoint;
+import src_ko.analyzer.RX.RX_Analyzer;
+import src_ko.analyzer.TX.TX_Analyzer;
 import src_ko.info.RX_Info;
 import src_ko.info.TX_Info;
 import src_ko.swing.ExceptionScan_Panel;
-import src_ko.swing.SimpleValueScan_Panel;
 import src_ko.swing.ModbusAgent_Panel;
 import src_ko.swing.RealTime_Panel;
+import src_ko.swing.SimpleValueScan_Panel;
+import src_ko.util.PacketInputStream;
+import src_ko.util.PacketOutputStream;
 import src_ko.util.Timer;
 import src_ko.util.Util;
 
@@ -310,6 +320,102 @@ public class ModbusAgent {
 			}
 			
 	}// exceptionScan
+	
+	
+	
+	public static String modbusCommunicate(ModbusMonitor monitor, int modbusType, Socket client, ArrayList<ModbusWatchPoint> pointList, int timeout) throws IOException, EOFException, SocketException {
+		timeout = (timeout >= 0) ? timeout : ClientSocket.RESPONSE_TIMEOUT;
+		RX_Info rx = null;
+		
+		clientSocket = client;
+		
+		if(clientSocket == null) {
+			return null;
+		}else {
+			clientSocket.setSoTimeout(timeout);	
+		}
+		
+		try {
+			TX_Info tx = null;
+			
+			for(ModbusWatchPoint point : pointList) {
+				monitor.parseCommand(point);
+			}
+			
+			monitor.init(modbusType, client.getInetAddress().getHostAddress(), client.getPort());
+			
+			List<ReadFunctionGroup> functionGroupList = monitor.getFuntionGroupList();
+			
+			for(ReadFunctionGroup fcGroup : functionGroupList) {
+				byte[] buff = new byte[8192];
+				PacketInputStream packetReader = new PacketInputStream(buff, clientSocket.getInputStream());
+				PacketOutputStream packetWriter = new PacketOutputStream(clientSocket.getOutputStream());
+				
+				monitor.sendCommand(fcGroup, packetWriter);
+				byte[] packet = packetWriter.toByteArray();
+				packetWriter.flush();
+				
+				String txPacket = monitor.getPacketString(packet, 0, packet.length);
+				tx = new TX_Info();
+				tx.setContent(txPacket);
+				tx = (modbusType == ModbusMonitor.TYPE_RTU) ? new TX_Analyzer().rtuAnalysis(tx) : new TX_Analyzer().tcpAnalysis(tx);
+				System.out.println("TX : " + txPacket);
+				
+				String rxPacket = monitor.parseResponsePacket(fcGroup, packetReader);
+				rx = new RX_Info();
+				rx.setTxInfo(tx);
+				rx.setContent(rxPacket);
+				rx = (modbusType == ModbusMonitor.TYPE_RTU) ? new RX_Analyzer().rtuAnalysis(rx) : new RX_Analyzer().tcpAnalysis(rx);
+				System.out.println();
+			
+				// 클라이언트 소켓 : TX 전송 완료 후 응답 대기중
+				if(ClientSocket.getCurrentTimeoutCount() >= 5) {
+					ClientSocket.setState(ClientSocket.NODE_CONDITION_COMMERR); // 통신 오류							
+				}else {
+					ClientSocket.setState(ClientSocket.NODE_CONDITION_RESPONSE_WAITING); // 응답 대기중
+				}
+				
+				// 클라이언트 소켓 : 통신중 (요청패킷에 대한 응답패킷을 수신함)
+				ClientSocket.setState(ClientSocket.NODE_CONDITION_REGULAR);
+
+				// 클라이언트 소켓 : 응답패킷 수신시 응답 타임아웃 카운트 초기화
+				ClientSocket.resetTimeoutCount();
+			}
+			
+			return null;
+							
+		} catch (EOFException e) {
+			// TX 전송 후 RX 대기 중 연결 끊김
+			ModbusAgent.waitingLostConnection(e);
+			return null;
+			
+		}catch (SocketTimeoutException e) {
+			// 응답 패킷 수신하였지만 처리 할 수 없는 패킷이 있을 경우 패킷 내용 출력	 
+//				ModbusAgent.printRX(rx, tx.getAgentType());
+			
+			ModbusAgent.responseTimeoutDoNothing(e);
+			if(ClientSocket.getCurrentTimeoutCount() >= 5) {
+				ClientSocket.setState(ClientSocket.NODE_CONDITION_COMMERR); // 클라이언트 소켓 : 통신 오류
+			}
+			return null;
+			
+		} catch (SocketException e) {
+			// 장비의 소켓이 닫혀있음
+			ModbusAgent.serverSocketClosed(e);
+			return null;
+			
+		} catch (NullPointerException e) {
+			clientSocket.close();
+			return null;
+
+		} catch (Exception e) {
+			ModbusAgent.unknownException(e);
+			return null;
+		}
+			
+	}// modbusCommunicate
+	
+	
 	
 	public static void cleaerTempRxPacket() {
 		ModbusAgent.tempRxPacket = null;

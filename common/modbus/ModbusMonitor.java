@@ -112,7 +112,7 @@ public class ModbusMonitor{
 		this.transactionId = transactionId;
 	}
 	
-	protected void init(int type, String ip, int port){
+	public void init(int type, String ip, int port){
 		
 		this.type = type;
 		IpParameters params = new IpParameters();
@@ -173,7 +173,7 @@ public class ModbusMonitor{
 		return locators.size() - 1;
 	}
 
-	protected synchronized void sendCommand(ReadFunctionGroup functionGroup, PacketOutputStream out) throws IOException {
+	public synchronized void sendCommand(ReadFunctionGroup functionGroup, PacketOutputStream out) throws IOException {
 		ModbusRequest request = null;
 		String hashCode = null;
 		
@@ -206,7 +206,7 @@ public class ModbusMonitor{
 		out.write(getRequestPacket(request));
 	}
 
-	protected int skipHeader(PacketInputStream in) throws IOException {
+	public int skipHeader(PacketInputStream in) throws IOException {
 		switch (type) {
 		case TYPE_RTU:
 			while (in.read() != getUnitID()) {
@@ -229,7 +229,7 @@ public class ModbusMonitor{
 		}
 	}
 
-	protected synchronized void parseResponsePacket(ReadFunctionGroup functionGroup, PacketInputStream in) throws IOException {
+	public synchronized String parseResponsePacket(ReadFunctionGroup functionGroup, PacketInputStream in) throws IOException {		
 		skipHeader(in);
 		if (type == TYPE_TCP) {
 			// Modubus 프레임 길이
@@ -265,7 +265,8 @@ public class ModbusMonitor{
 		}
 
 		byte[] packet = in.debug_getBuffer();
-		System.out.println("RX : " + getPacketString(packet, 0, packet.length));
+		String rxPacket = getPacketString(packet, 0, packet.length);
+		System.out.println("RX : " + rxPacket);
 		
 		List locators = functionGroup.getLocators();
 		
@@ -296,22 +297,29 @@ public class ModbusMonitor{
 			perfData.setTime(System.currentTimeMillis());
 			point.setData(perfData);
 			
-			System.out.printf("[ %s ] = " + (Math.round(value*1000)/1000.0) + " %s\n", point.getDecCounter(), (point.getMeasure() != null) ? point.getMeasure() : "");
+			String measrue = null;
+			if(point.getMeasure() != null && !point.getMeasure().trim().equals("") && point.getMeasure().trim().length() >= 1) {
+				measrue = point.getMeasure().trim();
+			}
+			
+			System.out.printf("[ %s ] = " + (Math.round(value*1000)/1000.0) + "%s\n", point.getDecCounter(), (measrue != null) ? " " + point.getMeasure() : "");
 		}
+		
+		return rxPacket;
 	}
 
 	
-	protected final void setType(int type) {
+	public final void setType(int type) {
 		this.type = type;
 	}
 	
 	
-	protected final void setMaxReadRegisterCount(int maxReadRegisterCount) {
+	public final void setMaxReadRegisterCount(int maxReadRegisterCount) {
 		this.master.setMaxReadRegisterCount(maxReadRegisterCount);		
 	}
 	
 
-	protected int getByteCount(PacketInputStream in) throws IOException {
+	public int getByteCount(PacketInputStream in) throws IOException {
 		return in.read();
 	}
 	
@@ -337,7 +345,7 @@ public class ModbusMonitor{
 		throw new IOException();
 	}
 	
-	private synchronized List<ReadFunctionGroup> getFuntionGroupList(){
+	public synchronized List<ReadFunctionGroup> getFuntionGroupList(){
 		return (List<ReadFunctionGroup>) batchRead.getReadFunctionGroups(master);
 	}
 	

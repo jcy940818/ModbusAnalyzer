@@ -407,11 +407,10 @@ public class ModbusMonitor_Panel extends JPanel {
 								
 								ModbusMonitor monitor = new ModbusMonitor();
 								if(modbusType == ModbusMonitor.TYPE_TCP) monitor.setTransactionID(getTid());
+																
+								ModbusAgent.modbusCommunicate(monitor, modbusType, socket_ko, pointList, ClientSocket.RESPONSE_TIMEOUT);
 								
-								monitor.test(modbusType, socket_ko, pointList);
 								doTableFilter();
-								
-//								rx = ModbusAgent.communicate(socket_ko, tx, isRTU, 5000);
 //								
 //								// 유효하지 않은 응답은 패스한다
 //								if(rx == null) return;
@@ -429,8 +428,8 @@ public class ModbusMonitor_Panel extends JPanel {
 							}catch(Exception e) {
 								e.printStackTrace();
 								StringBuilder sb = new StringBuilder();
-								sb.append(Util.colorRed("Real-Time Monitoring Error\n"));
-								sb.append(Util.colorBlue("Real-Time Monitoring") + " 기능 수행중 처리 할 수 없는 예외가 발생하였습니다" + Util.separator + "\n\n");
+								sb.append(Util.colorRed("Modbus Monitor Error\n"));
+								sb.append(Util.colorBlue("Modbus Monitor") + " 기능 수행중 처리 할 수 없는 예외가 발생하였습니다" + Util.separator + "\n\n");
 								sb.append(String.format("Exception Message : %s\n", e.getMessage()));
 								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 							}
