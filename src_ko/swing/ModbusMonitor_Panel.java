@@ -401,6 +401,8 @@ public class ModbusMonitor_Panel extends JPanel {
 								// 현재 모니터가 통신중이라면 현재 요청은 무시
 								if(ModbusMonitor.isRunning) return;
 																
+								int[] selectedRows = pointTable.getSelectedRows();
+								
 								ArrayList<ModbusWatchPoint> pointList = getSelectedModbusPoint(pointTable);
 								
 								ModbusMonitor monitor = new ModbusMonitor();
@@ -410,21 +412,9 @@ public class ModbusMonitor_Panel extends JPanel {
 																
 								ModbusAgent.modbusCommunicate(monitor, socket_ko, pointList, ClientSocket.RESPONSE_TIMEOUT);
 								
-								doTableFilter();
-//								
-//								// 유효하지 않은 응답은 패스한다
-//								if(rx == null) return;
-//								if(rx.isException()) return;
-//								if(rx.isCRCError()) return;					
-//								if(rx.getScanResult() == null) return;
-//								if(ExceptionProvider.CompareTxRx(tx, rx) != null) return;
-//																																													
-//								// updataTable() 에 넘겨줄 RX_Info 인스턴스 먼저 초기화를 해줘야한다.
-//								global_rx = rx;
-//								updateTable(pointTable, rx);
-//								ModbusAgent.isRTU = isRTU;
-//								ModbusAgent.lastFunctionCode = rx.getFunctionCode();
-									
+								updateTable(pointTable);
+								setFocusMultipleRows(pointTable, selectedRows);
+								
 							}catch(Exception e) {
 								e.printStackTrace();
 								StringBuilder sb = new StringBuilder();
@@ -437,12 +427,11 @@ public class ModbusMonitor_Panel extends JPanel {
 						}
 					}).start();
 					
-				}catch(Exception exception) {
-					resetTable(pointTable);
+				}catch(Exception exception) {				
 					exception.printStackTrace();
 				}
 				
-			}			
+			}
 		});
 		// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 		send_Button.setForeground(Color.BLUE);
@@ -616,7 +605,7 @@ public class ModbusMonitor_Panel extends JPanel {
 			}
 		});
 				
-		resetTable(pointTable);
+		resetTable(pointTable, null);
 		
 		pointList_ScrollPane.setViewportView(pointTable);
 		
@@ -988,12 +977,10 @@ public class ModbusMonitor_Panel extends JPanel {
 	}
 	
 	
-	public static void resetTable(JTable table){
+	public static void resetTable(JTable table, Object[][] content){
 		
 		table.setModel(new DefaultTableModel(
-				new Object[][] {
-					
-				},
+				content,
 				new String[] {
 						"순 서",
 						"모드버스 포인트",
@@ -1220,6 +1207,52 @@ public class ModbusMonitor_Panel extends JPanel {
 		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 주 소
 		tcmSchedule.getColumn(4).setCellRenderer(tScheduleCellRenderer); // 데이터 타입
 		tcmSchedule.getColumn(5).setCellRenderer(tScheduleCellRenderer); // 결 과
+		
+		if(pointList != null) {
+			int total = pointList.size();
+			int searched = table.getRowCount();
+			String text = String.format("모드버스 포인트  ( %d / %d )", searched, total);
+			TableUtil.setTableHeader(table, 1, text);
+		}else {
+			TableUtil.setTableHeader(table, 1, "모드버스 포인트");
+		}
+	}
+	
+	public void updateTable(JTable table) {
+		int rowCount = table.getRowCount();
+		int columnCount = table.getColumnCount();
+		
+		Object[][] content = new Object[rowCount][];
+		
+		for(int i = 0; i < rowCount; i++) {
+			content[i] = new Object[columnCount];
+			for(int j = 0; j < columnCount; j++) {
+				if(j == (columnCount-1)) {
+					ModbusWatchPoint point = (ModbusWatchPoint)table.getValueAt(i, 1);
+					content[i][j] = PerfData.getPerfLastContent(point, point.getData());
+				}else {
+					content[i][j] = table.getValueAt(i, j);
+				}
+			}
+		}
+		
+		resetTable(table, content);
+	}
+	
+	public void setFocusMultipleRows(JTable table, int[] rows) {
+		
+		if(table == null || rows == null || rows.length < 1) return;
+		
+		int columnCount = table.getColumnCount();
+		int firstRow = rows[0];
+		
+		for(int i = 0; i < columnCount; i++) {
+			table.changeSelection(firstRow, i, true, false);
+		}
+		
+		for(int i = 0; i < rows.length; i++) {
+			table.getSelectionModel().addSelectionInterval(rows[i], rows[i]);
+		}
 	}
 	
 	public static void doTableFilter() {
@@ -1231,7 +1264,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		boolean noSearch = (text == null || text.length() == 0 || text.equals(""));
 		
 		if(noSearch && !useFilter.isSelected()) {
-			resetTable(pointTable);
+			resetTable(pointTable, null);
 			addRecord(pointTable, pointList);
 			return;
 		}
@@ -1295,7 +1328,7 @@ public class ModbusMonitor_Panel extends JPanel {
 			
 		}// for loop
 
-		resetTable(pointTable);
+		resetTable(pointTable, null);
 		addRecord(pointTable, filterList);
 	}
 	
