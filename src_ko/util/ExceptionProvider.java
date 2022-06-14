@@ -215,4 +215,34 @@ public class ExceptionProvider {
 		}
 	}
 	
+	public static String getExceptionContent(RX_Info rx) {
+		String msg =  null;
+		
+		switch(rx.getExceptionCode()) {
+			// Illegal Function
+			case 0x01 : msg = "장비에서 지원하지 않는 기능코드를 요청하여 발생한 예외, 요청하신 기능코드 내용을 확인해주세요"; break;									
+			// Illegal Data Address
+			case 0x02 : msg = "장비에서 지원하지 않는 레지스터 주소를 요청하여 발생한 예외, 요청하신 주소 내용을 확인해주세요"; break;									
+			// Illegal Data Value
+			case 0x03 : msg = "장비에서 허용되지  않는 데이터가 포함되어 발생한 예외, 요청하신 주소의 데이터 내용을 확인해주세요"; break;									
+			// Slave Device Failure
+			case 0x04 : msg = "장비에서 요청을 처리하던 중 복구 할 수 없는 오류 발생"; break;
+			// Acknowledge
+			case 0x05 : msg = "장비에서 요청을 수신하여 처리 중이지만, 처리를 위하여 충분한 시간이 필요합니다 (주로 클라이언트 측의 타임아웃을 방지하기 위해 발생한 예외)"; break;
+			// Slave Device Busy
+			case 0x06 : msg = "장비가 지속적인 요청(TX)을 받고, 그에 대한 응답을 수행하는 도중 재요청(TX)이 전송 된 경우 발생하는 예외"; break;
+			// Negative Acknowledge
+			case 0x07 : msg = "요청받은 내용을 장비에서 처리 할 수 없습니다"; break;
+			// Memory Parity Error
+			case 0x08 : msg = "장비에서 요청 패킷 처리를 위하여 해석중 메모리에서 패리티 오류를 감지하였습니다"; break;
+			// Gateway Path Unavailable
+			case 0x0a :	msg = "Gateway 문제로 인한 예외, RCU 컨버터 통신 세팅을 확인해주세요"; break;
+			// Gateway Target Device Failed to Respond
+			case 0x0b : msg = "Gateway 문제로 인한 예외, RCU 컨버터 통신 세팅을 확인해주세요"; break;
+			
+			default : msg = null; break;
+		}
+		
+		return msg;
+	}
 }
