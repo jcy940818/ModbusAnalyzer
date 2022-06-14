@@ -323,57 +323,48 @@ public class ModbusAgent {
 	
 	
 	
-	public static String modbusCommunicate(ModbusMonitor monitor, int modbusType, Socket client, ArrayList<ModbusWatchPoint> pointList, int timeout) throws IOException, EOFException, SocketException {
-		timeout = (timeout >= 0) ? timeout : ClientSocket.RESPONSE_TIMEOUT;
-		RX_Info rx = null;
-		
-		clientSocket = client;
-		
-		if(clientSocket == null) {
-			return null;
-		}else {
-			clientSocket.setSoTimeout(timeout);	
-		}
-		
+	public static String modbusCommunicate(ModbusMonitor monitor, Socket client, ArrayList<ModbusWatchPoint> pointList, int timeout) throws IOException, EOFException, SocketException {
 		try {
+			ModbusMonitor.isRunning = true;
+			clientSocket = client;
 			TX_Info tx = null;
+			RX_Info rx = null;
+
+			if(clientSocket == null) {
+				return null;
+			}else {
+				clientSocket.setSoTimeout((timeout >= 0) ? timeout : ClientSocket.RESPONSE_TIMEOUT);
+			}
 			
 			for(ModbusWatchPoint point : pointList) {
 				monitor.parseCommand(point);
 			}
 			
-			monitor.init(modbusType, client.getInetAddress().getHostAddress(), client.getPort());
+			monitor.init(monitor.getType(), client.getInetAddress().getHostAddress(), client.getPort());
 			
 			List<ReadFunctionGroup> functionGroupList = monitor.getFuntionGroupList();
 			
 			for(ReadFunctionGroup fcGroup : functionGroupList) {
-				byte[] buff = new byte[8192];
-				PacketInputStream packetReader = new PacketInputStream(buff, clientSocket.getInputStream());
-				PacketOutputStream packetWriter = new PacketOutputStream(clientSocket.getOutputStream());
-				
-				monitor.sendCommand(fcGroup, packetWriter);
-				byte[] packet = packetWriter.toByteArray();
-				packetWriter.flush();
-				
-				String txPacket = monitor.getPacketString(packet, 0, packet.length);
+				String txPacket = monitor.sendCommand(fcGroup, clientSocket);
 				tx = new TX_Info();
 				tx.setContent(txPacket);
-				tx = (modbusType == ModbusMonitor.TYPE_RTU) ? new TX_Analyzer().rtuAnalysis(tx) : new TX_Analyzer().tcpAnalysis(tx);
+				tx = (monitor.getType() == ModbusMonitor.TYPE_RTU) ? new TX_Analyzer().rtuAnalysis(tx) : new TX_Analyzer().tcpAnalysis(tx);
+				System.out.printf("요청 내용  => 기능코드 : %d  /  시작주소 : %s  /  요청개수 :  %d\n", tx.getFunctionCode(), tx.getStartAddress(), tx.getRequestCount());
 				System.out.println("TX : " + txPacket);
 				
-				String rxPacket = monitor.parseResponsePacket(fcGroup, packetReader);
-				rx = new RX_Info();
-				rx.setTxInfo(tx);
-				rx.setContent(rxPacket);
-				rx = (modbusType == ModbusMonitor.TYPE_RTU) ? new RX_Analyzer().rtuAnalysis(rx) : new RX_Analyzer().tcpAnalysis(rx);
-				System.out.println();
-			
 				// 클라이언트 소켓 : TX 전송 완료 후 응답 대기중
 				if(ClientSocket.getCurrentTimeoutCount() >= 5) {
-					ClientSocket.setState(ClientSocket.NODE_CONDITION_COMMERR); // 통신 오류							
+					ClientSocket.setState(ClientSocket.NODE_CONDITION_COMMERR); // 통신 오류
 				}else {
 					ClientSocket.setState(ClientSocket.NODE_CONDITION_RESPONSE_WAITING); // 응답 대기중
 				}
+				
+				String rxPacket = monitor.parseResponsePacket(fcGroup, clientSocket);
+				rx = new RX_Info();
+				rx.setTxInfo(tx);
+				rx.setContent(rxPacket);
+				rx = (monitor.getType() == ModbusMonitor.TYPE_RTU) ? new RX_Analyzer().rtuAnalysis(rx) : new RX_Analyzer().tcpAnalysis(rx);
+				System.out.println();
 				
 				// 클라이언트 소켓 : 통신중 (요청패킷에 대한 응답패킷을 수신함)
 				ClientSocket.setState(ClientSocket.NODE_CONDITION_REGULAR);
@@ -393,7 +384,8 @@ public class ModbusAgent {
 			// 응답 패킷 수신하였지만 처리 할 수 없는 패킷이 있을 경우 패킷 내용 출력	 
 //				ModbusAgent.printRX(rx, tx.getAgentType());
 			
-			ModbusAgent.responseTimeoutDoNothing(e);
+			ClientSocket.incrementTimeoutCount();
+			
 			if(ClientSocket.getCurrentTimeoutCount() >= 5) {
 				ClientSocket.setState(ClientSocket.NODE_CONDITION_COMMERR); // 클라이언트 소켓 : 통신 오류
 			}
@@ -411,6 +403,10 @@ public class ModbusAgent {
 		} catch (Exception e) {
 			ModbusAgent.unknownException(e);
 			return null;
+			
+		}finally {
+			ModbusMonitor.isRunning = false;
+			
 		}
 			
 	}// modbusCommunicate
@@ -668,7 +664,6 @@ public class ModbusAgent {
 		clientSocket.close();			
 	}
 	
-	
 	public static void unknownException(Exception e) throws IOException {
 		// 응답을 대기하던 중 서버에서 커넥션을 끊을 때		
 		// 클라이언트 소켓 : 접속 끊김
@@ -683,5 +678,14 @@ public class ModbusAgent {
 		clientSocket.close();	
 	}
 	
+	public static void printSocketState(Socket clientSocket) {
+		System.out.println();
+		System.out.println("isBound : " + clientSocket.isBound());
+		System.out.println("isClosed : " + clientSocket.isClosed());
+		System.out.println("isConnected : " + clientSocket.isConnected());
+		System.out.println("isInputShutdown : " + clientSocket.isInputShutdown());
+		System.out.println("isOutputShutdown : " + clientSocket.isOutputShutdown());
+		System.out.println();
+	}
 
 }

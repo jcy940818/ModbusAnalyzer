@@ -391,24 +391,24 @@ public class ModbusMonitor_Panel extends JPanel {
 				// 수집 요청 TX 생성에 필요한 Form 에 정보가 모두 입력되어 있는지 체크
 				if(!checkReadRequestForm(isRTU)) return;
 				
-				try {						
-					
-					// 한번 초기화된 TX 내용으로 계속해서 수집
-//					tx = null;
-//					tx.setAgentType("ModbusMonitor"); // 패킷로그 에이전트 확인용
+				try {
 					
 					new Thread(new Runnable() {							
 						@Override
 						public void run() {
 							try {
 								
-								int modbusType = (isRTU) ? ModbusMonitor.TYPE_RTU : ModbusMonitor.TYPE_TCP;
+								// 현재 모니터가 통신중이라면 현재 요청은 무시
+								if(ModbusMonitor.isRunning) return;
+																
 								ArrayList<ModbusWatchPoint> pointList = getSelectedModbusPoint(pointTable);
 								
 								ModbusMonitor monitor = new ModbusMonitor();
-								if(modbusType == ModbusMonitor.TYPE_TCP) monitor.setTransactionID(getTid());
+								monitor.setType((isRTU) ? ModbusMonitor.TYPE_RTU : ModbusMonitor.TYPE_TCP);
+								monitor.setUnitID(getMonitorUnitID());
+								if(monitor.getType() == ModbusMonitor.TYPE_TCP) monitor.setTransactionID(getTid());
 																
-								ModbusAgent.modbusCommunicate(monitor, modbusType, socket_ko, pointList, ClientSocket.RESPONSE_TIMEOUT);
+								ModbusAgent.modbusCommunicate(monitor, socket_ko, pointList, ClientSocket.RESPONSE_TIMEOUT);
 								
 								doTableFilter();
 //								
@@ -1297,6 +1297,10 @@ public class ModbusMonitor_Panel extends JPanel {
 
 		resetTable(pointTable);
 		addRecord(pointTable, filterList);
+	}
+	
+	public int getMonitorUnitID() {
+		return Integer.parseInt(unitID_comboBox.getSelectedItem().toString().replace("번", "").trim());
 	}
 	
 	public static void addPointList(ArrayList<ModbusWatchPoint> list) {

@@ -32,68 +32,29 @@ import src_ko.util.PacketOutputStream;
 
 public class ModbusMonitor{
 
+	public static boolean isRunning = false;
+	
 	public static final int TYPE_RTU = 997;
 	public static final int TYPE_TCP = 998;
-
-	// 제어 타입 결정용
-	private static final int NUMERICTYPE_INT = 0;
-	private static final int NUMERICTYPE_FLOAT = 1;
-	private static final int NUMERICTYPE_BCD = 2;
-	
-	public static final String[] MODBUS_EXCEPTION_DESCRIPTION = {
-		"Illegal Function(0x01)",
-		"Illegal Data Address(0x02)",
-		"Illegal Data Value(0x03)",
-		"Slave Device Failure(0x04)",
-		"Acknowledge(0x05)",
-		"Slave Device Busy(0x06)",
-		"Negative Acknoowledge(0x07)",
-		"Memory Parity Error(0x08)",
-		"No definition",
-		"Gateway Path Unavailable(0x0A)",
-		"Gateway Target Device Failed to Respond(0x0B)"
-	};
 
 	private List locators = new ArrayList();
 	private List commands = new ArrayList();
 	private List<ModbusWatchPoint> points = new ArrayList<ModbusWatchPoint>();
 	
 	private int type;
-	private int currentCommand = 0;
 	private boolean partitioned = false;
 	private int transactionId = 0;
-	
 	private int unitID = 1;
 	
 	ModbusMaster master;
 	private BatchRead batchRead = new BatchRead();
 	
-	public void test(int modbusType, Socket socket, ArrayList<ModbusWatchPoint> pointList) {
-		try {
-			for(ModbusWatchPoint point : pointList) {
-				parseCommand(point);
-			}
-			
-			init(modbusType, socket.getInetAddress().getHostAddress(), socket.getPort());
-			
-			List<ReadFunctionGroup> functionGroupList = getFuntionGroupList();
-			
-			for(ReadFunctionGroup fcGroup : functionGroupList) {
-				byte[] buff = new byte[8192];
-				PacketInputStream packetReader = new PacketInputStream(buff, socket.getInputStream());
-				PacketOutputStream packetWriter = new PacketOutputStream(socket.getOutputStream());
-
-				sendCommand(fcGroup, packetWriter);
-				byte[] packet = packetWriter.toByteArray();
-				packetWriter.flush();
-				System.out.println("TX : " + getPacketString(packet, 0, packet.length));
-				parseResponsePacket(fcGroup, packetReader);
-				System.out.println();
-			}
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
+	public int getType() {
+		return type;
+	}
+	
+	public final void setType(int type) {
+		this.type = type;
 	}
 	
 	public int getUnitID() {
@@ -113,7 +74,6 @@ public class ModbusMonitor{
 	}
 	
 	public void init(int type, String ip, int port){
-		
 		this.type = type;
 		IpParameters params = new IpParameters();
 		params.setHost(ip);
@@ -173,9 +133,12 @@ public class ModbusMonitor{
 		return locators.size() - 1;
 	}
 
-	public synchronized void sendCommand(ReadFunctionGroup functionGroup, PacketOutputStream out) throws IOException {
+	public synchronized String sendCommand(ReadFunctionGroup functionGroup, Socket clientSocket) throws IOException {
+		byte[] buff = new byte[8192];
+		PacketInputStream in = new PacketInputStream(buff, clientSocket.getInputStream());
+		PacketOutputStream out = new PacketOutputStream(clientSocket.getOutputStream());
+		
 		ModbusRequest request = null;
-		String hashCode = null;
 		
 		int slaveId = this.getUnitID();
 		int startOffset = functionGroup.getStartOffset();
@@ -194,49 +157,37 @@ public class ModbusMonitor{
 				request = new ReadInputRegistersRequest(slaveId, startOffset, functionGroup.getLength());
 				
 			} else {
-				throw new IOException("Unsupported function");
+				throw new IOException("Unsupported Function");
 			}
 		} catch (ModbusTransportException e) {
-			throw new IOException("ModbusTransportException function.  " + e.toString());
-			
+			throw new IOException("ModbusTransportException Function " + e.toString());	
 		}
-
-		hashCode = functionGroup.getFunctionCode() + "_" + startOffset + "_" + functionGroup.getLength();
-		 
+		
 		out.write(getRequestPacket(request));
+		byte[] packet = out.toByteArray();
+		out.flush();
+		
+		return getPacketString(packet, 0, packet.length);
 	}
 
-	public int skipHeader(PacketInputStream in) throws IOException {
-		switch (type) {
-		case TYPE_RTU:
-			while (in.read() != getUnitID()) {
-			}
-			return 1;
-		case TYPE_TCP:
-			int tid = in.readUnsignedShort();
-			if (transactionId != tid){
-				// TID 안맞을 시 나머지 바이트를 다 읽어버린다
-				while (in.available() > 0) {
-					System.out.print(in.read() + " ");
-				}
-				return -1;
-			}
-			in.readShort(); // 0x00
-			return 2;
-		default:
-			System.out.println("unsupported modbus type");
-			return 0;
-		}
-	}
-
-	public synchronized String parseResponsePacket(ReadFunctionGroup functionGroup, PacketInputStream in) throws IOException {		
-		skipHeader(in);
-		if (type == TYPE_TCP) {
-			// Modubus 프레임 길이
-			in.readShort();
-			if (in.read() != getUnitID()) {
-				throw new IOException("incorrect unit id");
-			}
+	public synchronized String parseResponsePacket(ReadFunctionGroup functionGroup, Socket clientSocket) throws IOException {		
+		byte[] buff = new byte[8192];		
+		PacketInputStream in = new PacketInputStream(buff, clientSocket.getInputStream());
+		PacketOutputStream out = new PacketOutputStream(clientSocket.getOutputStream());
+		
+		int readUnitID = 0;
+		
+		switch(type) {
+			case TYPE_RTU :
+				readUnitID = in.readByte();
+				break;
+				
+			case TYPE_TCP :
+				int transactionID = in.readShort();
+				int protocolID = in.readShort();
+				int length = in.readShort();
+				readUnitID = in.readByte();
+				break;
 		}
 		
 		int funcCode = functionGroup.getFunctionCode();
@@ -244,12 +195,11 @@ public class ModbusMonitor{
 		
 		if (func != funcCode) {
 			if( func > 0x80 && func < 0x91){
-				int exceptionCode = in.read();
-				if (type == TYPE_RTU) {
-					in.skipCRC16();
-				}
-				throw new IOException("Modbus error. Function Code : "+func+" "+funcCode+", Error desc : " + MODBUS_EXCEPTION_DESCRIPTION[exceptionCode-1]);
-			} else throw new IOException("incorrect function code. " + func);
+				byte[] packet = in.debug_getBuffer();
+				String rxPacket = getPacketString(packet, 0, packet.length);
+				System.out.println("RX : " + rxPacket);
+				return rxPacket;
+			}
 		}
 		
 		int startOffset = functionGroup.getStartOffset();
@@ -285,10 +235,6 @@ public class ModbusMonitor{
 			else if (valueObj instanceof Boolean) {
 				value = ((Boolean) valueObj).booleanValue() ? 1 : 0;
 			}
-						
-			int fc = locator.getRange();
-			int addr = locator.getOffset() + 1;
-			int dataType = locator.getDataType();
 			
 			ModbusWatchPoint point = points.get(cmd);
 			PerfData perfData = new PerfData();
@@ -307,22 +253,14 @@ public class ModbusMonitor{
 		
 		return rxPacket;
 	}
-
-	
-	public final void setType(int type) {
-		this.type = type;
-	}
-	
 	
 	public final void setMaxReadRegisterCount(int maxReadRegisterCount) {
 		this.master.setMaxReadRegisterCount(maxReadRegisterCount);		
 	}
-	
 
 	public int getByteCount(PacketInputStream in) throws IOException {
 		return in.read();
 	}
-	
 
 	private synchronized ReadFunctionGroup getFuntionGroup(BaseLocator locator) throws IOException {
 		// 이 함수가 호출된 뒤에는 batchRead.addLocator()를 호출해도 소용이 없다.
@@ -348,21 +286,18 @@ public class ModbusMonitor{
 	public synchronized List<ReadFunctionGroup> getFuntionGroupList(){
 		return (List<ReadFunctionGroup>) batchRead.getReadFunctionGroups(master);
 	}
-	
 
 	private synchronized byte[] getRequestPacket(ModbusRequest request) {
 		switch (type) {
-		case TYPE_RTU:
-			return new RtuMessageRequest(request).getMessageData();
-		case TYPE_TCP:			
-			return new XaMessageRequest(request, getTransactionID()).getMessageData();
-		default:
-			System.out.println("unsupported modbus type");
-			return null;
+			case TYPE_RTU:
+				return new RtuMessageRequest(request).getMessageData();
+			case TYPE_TCP:
+				return new XaMessageRequest(request, getTransactionID()).getMessageData();
+			default:
+				System.out.println("Unsupported Modbus Type");
+				return null;
 		}
 	}
-	
-	
 	
 	private int getDataType(String dataTypeStr) {
 		int dataType = DataType.TWO_BYTE_INT_SIGNED;
@@ -407,8 +342,6 @@ public class ModbusMonitor{
 		return dataType;
 	}
 	
-	
-	
 	private String getDataTypeString(int dataTypeInt) {
 		String dataType = "TWO BYTE INT SIGNED";
 		
@@ -451,8 +384,6 @@ public class ModbusMonitor{
 
 		return dataType;
 	}
-	
-	
 	
 	/** 디버그용으로 쓰이는 패킷의 값을 return 한다. */
     public static String getPacketString(byte[] packet, int offset, int len) {
