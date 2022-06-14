@@ -65,25 +65,25 @@ public class CustomModbusMonitor extends MultiDropMonitor {
 	public static final int REGISTER_SIZE_D = 8;
 
 	// Modbuc TCP Header
-	private short tid = 0;
-	private static final short PROTOCOL_IDENTIFIER = 0;
+	protected short tid = 0;
+	protected static final short PROTOCOL_IDENTIFIER = 0;
 	
 	// Default Device uid, type
-	private int unitId = 1;
-	private String type = MODBUS_RTU;
+	protected int unitId = 1;
+	protected String type = MODBUS_RTU;
 	
 	// RX Data Check Enabled (Default : Not Use)
-	private boolean functionCheckEnabled = false;
-	private boolean lengthCheckEnabled = false;
-	private boolean retryCrcEnabled = false;
+	protected boolean functionCheckEnabled = false;
+	protected boolean lengthCheckEnabled = false;
+	protected boolean retryCrcEnabled = false;
 	
-    private int currentCommand;
-    private int maxRetryCrcCount = 3;
-    private final List<String> commandList = new ArrayList<>();
-    private final HashMap<Integer, Integer> crcErrCntMap = new HashMap<>();
+    protected int currentCommand;
+    protected int maxRetryCrcCount = 3;
+    protected final List<String> commandList = new ArrayList<>();
+    protected final HashMap<Integer, Integer> crcErrCntMap = new HashMap<>();
     
     // 워드 단위 제어용
- 	private HashMap<String, Integer> currentPerfMap = new HashMap();
+    protected HashMap<String, Integer> currentPerfMap = new HashMap();
     
     protected void init(ResultSet rs) throws SQLException {
         super.init(rs);
@@ -107,8 +107,8 @@ public class CustomModbusMonitor extends MultiDropMonitor {
     }
     
     public int getBaseUnitID() {
-        return unitId;
-    }
+		return 1;
+	}
             
     protected final void setType(String type) {
     	// 통신 방식 설정 파라미터가 잘못되었다면 기본 통신 방식으로 설정한다 
@@ -180,7 +180,7 @@ public class CustomModbusMonitor extends MultiDropMonitor {
 		if(function <= FC16 && functionCheckEnabled)
 			if(functionCheckEnabled) checkFunctionCode(commandList.get(currentCommand), function);
 		
-		if(function == FC05 || function == FC06) {
+		if(function == FC05 || function == FC06 || function == FC15 || function == FC16) {
 			// 제어
 			in.readShort();
 			in.readShort();
@@ -501,7 +501,7 @@ public class CustomModbusMonitor extends MultiDropMonitor {
 	
 	
 	// CRC 검사 결과에 문제가 있다면 maxRetryCount만큼 현재 요청(currentCommand)을 재시도
-	private boolean processCrcRetry(int currentCommand,IOException e) throws IOException{
+	protected boolean processCrcRetry(int currentCommand,IOException e) throws IOException{
 		int crcErrCnt = crcErrCntMap.get(currentCommand);
 
 		if(e.getMessage().contains("Incorrect CRC") && (crcErrCnt < maxRetryCrcCount)) {
@@ -524,12 +524,19 @@ public class CustomModbusMonitor extends MultiDropMonitor {
 	}
 	
 	
-	private void writePacketLog(String msg) {
+	protected void writePacketLog(String msg) {
 		if (packetLogEnable && packetLogger != null) {
 			packetLogger.error(msg);
 		}
 	}
 	
+	protected int hexStringToInteger(String hexString) {		
+		if (hexString.contains("0x") || hexString.contains("0X")) {
+			hexString = hexString.replace("0x", "").replace("0X", "");
+		}
+		
+		return Integer.parseInt(hexString, 16);
+	}
+	
 }
-
 */
