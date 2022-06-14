@@ -16,7 +16,7 @@ public class DataType {
 		DataType.typeMap.put("TWO BYTE INT SIGNED", "TWO BYTE INT SIGNED");
 		DataType.typeMap.put("TWO BYTE INT UNSIGNED", "TWO BYTE INT UNSIGNED");
 		DataType.typeMap.put("FOUR BYTE INT SIGNED (A B C D)", "FOUR BYTE INT SIGNED");
-		DataType.typeMap.put("FOUR BYTE INT SIGNED (C D A B)", "FOUR BYTE INT SWAPPED");
+		DataType.typeMap.put("FOUR BYTE INT SIGNED (C D A B)", "FOUR BYTE INT SIGNED SWAPPED");
 		DataType.typeMap.put("FOUR BYTE INT UNSIGNED (A B C D)", "FOUR BYTE INT UNSIGNED");
 		DataType.typeMap.put("FOUR BYTE INT UNSIGNED (C D A B)", "FOUR BYTE INT UNSIGNED SWAPPED");
 		DataType.typeMap.put("FOUR BYTE FLOAT (A B C D)", "FOUR BYTE FLOAT");
