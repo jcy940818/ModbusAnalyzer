@@ -255,8 +255,12 @@ public class ModbusMonitor{
 		return rxPacket;
 	}
 	
+	public final void setMaxReadBitCount(int maxReadBitCount) {
+		this.master.setMaxReadBitCount(maxReadBitCount);
+	}
+	
 	public final void setMaxReadRegisterCount(int maxReadRegisterCount) {
-		this.master.setMaxReadRegisterCount(maxReadRegisterCount);		
+		this.master.setMaxReadRegisterCount(maxReadRegisterCount);
 	}
 
 	public int getByteCount(PacketInputStream in) throws IOException {

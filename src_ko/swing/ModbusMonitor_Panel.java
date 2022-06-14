@@ -33,6 +33,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -58,6 +59,7 @@ public class ModbusMonitor_Panel extends JPanel {
 	public static int PORT;
 	
 	// Modbus Point List
+	private static JComboBox tableType;
 	public static JTable pointTable;
 	private static ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();	
 	
@@ -111,6 +113,8 @@ public class ModbusMonitor_Panel extends JPanel {
 	private static JComboBox addrTypeComboBox;
 	private ActionListener radioListener;
 	private JButton update_button;
+	private JTextField timeout_text;
+	private JTextField maxCount_text;
 	
 	/**
 	 * Create the panel.
@@ -166,7 +170,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		viewTypePanel.setBackground(Color.WHITE);
 		viewTypePanel.setBounds(12, 10, 140, 72);
 		viewTypePanel.setLayout(null);
-		resultPanel.add(viewTypePanel);
+//		resultPanel.add(viewTypePanel);
 		
 		radio_pointList = new JRadioButton("Point List");
 		radio_pointList.setBounds(8, 6, 125, 30);
@@ -203,7 +207,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		
 		modbusTypePanel = new JPanel();
 		modbusTypePanel.setBorder(new LineBorder(Color.BLACK, 2));
-		modbusTypePanel.setBounds(160, 10, 140, 72);
+		modbusTypePanel.setBounds(12, 10, 140, 74);
 		modbusTypePanel.setBackground(Color.WHITE);
 		modbusTypePanel.setLayout(null);
 		resultPanel.add(modbusTypePanel);
@@ -222,7 +226,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		radio_modbusRTU.setSelected(true);
 		radio_modbusRTU.setHorizontalAlignment(SwingConstants.LEFT);
 		radio_modbusRTU.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		radio_modbusRTU.setBounds(8, 35, 125, 30);
+		radio_modbusRTU.setBounds(8, 37, 125, 30);
 		modbusTypePanel.add(radio_modbusRTU);
 		
 		radioGroup = new ButtonGroup();
@@ -261,7 +265,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		addrTypePanel.setBorder(new LineBorder(Color.BLACK, 2));		
 		addrTypePanel.setBackground(Color.WHITE);
 		addrTypePanel.setLayout(null);
-		addrTypePanel.setBounds(308, 10, 150, 72);
+		addrTypePanel.setBounds(159, 10, 150, 74);
 		resultPanel.add(addrTypePanel);
 		
 		addrType = new JLabel("Address Type");
@@ -293,19 +297,32 @@ public class ModbusMonitor_Panel extends JPanel {
 		addrTypePanel.add(addrTypeComboBox);
 		
 		form_InputPanel = new JPanel();
-		form_InputPanel.setBounds(465, 10, 234, 72);
+		form_InputPanel.setBounds(316, 10, 385, 74);
 		form_InputPanel.setBorder(new LineBorder(Color.BLACK, 2));
 		form_InputPanel.setLayout(null);
 		form_InputPanel.setBackground(Color.WHITE);
 		resultPanel.add(form_InputPanel);
 		
 		transactionId_text = new JTextField();
+		transactionId_text.setForeground(Color.BLUE);
 		transactionId_text.setText("1");
 		transactionId_text.setHorizontalAlignment(SwingConstants.LEFT);
 		transactionId_text.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		transactionId_text.setColumns(10);
 		transactionId_text.setBorder(UIManager.getBorder("TextField.border"));
-		transactionId_text.setBounds(10, 34, 103, 31);
+		transactionId_text.setBounds(11, 34, 103, 31);
+		transactionId_text.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				try {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+						send_Button.doClick();
+					}
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
 		transactionId_text.addFocusListener(new FocusAdapter() {
 			public void focusLost(FocusEvent e) {
 				int transactionId = 0;
@@ -371,7 +388,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		
 		function_Panel = new JPanel();
 		function_Panel.setBackground(Color.WHITE);
-		function_Panel.setBounds(707, 10, 309, 72);
+		function_Panel.setBounds(707, 10, 309, 74);
 		function_Panel.setBorder(new LineBorder(Color.BLACK, 2));
 		function_Panel.setLayout(null);
 		resultPanel.add(function_Panel);
@@ -400,7 +417,38 @@ public class ModbusMonitor_Panel extends JPanel {
 								
 								// 현재 모니터가 통신중이라면 현재 요청은 무시
 								if(ModbusMonitor.isRunning) return;
-																
+								int timeout = Integer.parseInt(timeout_text.getText().trim());																
+								if(timeout == 0) {
+									StringBuilder sb = new StringBuilder();
+									sb.append(Util.colorRed("Infinite Timeout?\n"));
+									sb.append(String.format("타임아웃 설정값을 " + Util.colorBlue("0ms") + " 으로 설정하면 응답 패킷을 수신하기 전까지 무한히 대기합니다%s%s%s", Util.separator, Util.separator, "\n\n"));
+									sb.append(String.format("타임아웃 설정값을 무한으로 설정하고  통신하시겠습니까?%s%s%s",Util.separator, Util.separator, "\n"));
+									
+									int isInfiniteTimeout = Util.showConfirm(sb.toString());
+									
+									if(isInfiniteTimeout == JOptionPane.YES_OPTION) {
+										// YES
+									} else {
+										return; // NO
+									}
+								}
+								if(timeout < 0) {
+									StringBuilder sb = new StringBuilder();
+									sb.append(Util.colorRed("Timeout Field Error\n"));					
+									sb.append(String.format("응답 타임아웃은 " + Util.colorBlue("0ms") + " 이상의 정수만 입력 할 수 있습니다%s%s%s", Util.separator, Util.separator, "\n"));	
+									Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+									return;
+								}
+								
+								int maxCount = Integer.parseInt(maxCount_text.getText().trim());
+								if(maxCount < 0) {
+									StringBuilder sb = new StringBuilder();
+									sb.append(Util.colorRed("Max Request Count Error\n"));
+									sb.append(String.format("최대 요청 개수는 " + Util.colorBlue("0개") + " 이상의 정수만 입력 할 수 있습니다%s%s%s", Util.separator, Util.separator, "\n"));
+									Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+									return;
+								}
+								
 								int[] selectedRows = pointTable.getSelectedRows();
 								
 								ArrayList<ModbusWatchPoint> pointList = getSelectedModbusPoint(pointTable);
@@ -410,10 +458,14 @@ public class ModbusMonitor_Panel extends JPanel {
 								monitor.setUnitID(getMonitorUnitID());
 								if(monitor.getType() == ModbusMonitor.TYPE_TCP) monitor.setTransactionID(getTid());
 																
-								ModbusAgent.modbusCommunicate(monitor, socket_ko, pointList, ClientSocket.RESPONSE_TIMEOUT);
+								ModbusAgent.modbusCommunicate(monitor, socket_ko, pointList, timeout, maxCount);
 								
-								updateTable(pointTable);
-								setFocusMultipleRows(pointTable, selectedRows);
+								SwingUtilities.invokeLater(new Runnable() {
+								    @Override public void run() {
+								    	updateTable(pointTable);
+								    	setFocusMultipleRows(pointTable, selectedRows);
+								    }
+								});
 								
 							}catch(Exception e) {
 								e.printStackTrace();
@@ -451,9 +503,13 @@ public class ModbusMonitor_Panel extends JPanel {
 				
 				transactionId_text.setText("1");
 				transactionId_text.setForeground(Color.BLUE);
+				timeout_text.setText("5000");
+				timeout_text.setForeground(Color.BLUE);
+				maxCount_text.setText("125");
+				maxCount_text.setForeground(Color.BLUE);
 				
-				radio_pointList.doClick();
-				packetLog.setText(null);				
+//				radio_pointList.doClick();
+//				packetLog.setText(null);
 				addrTypeComboBox.setSelectedIndex(0);
 				unitID_comboBox.setSelectedIndex(0);
 				
@@ -549,7 +605,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		TID = new JLabel("Transaction ID");
 		TID.setForeground(Color.BLACK);
 		TID.setFont(new Font("맑은 고딕", Font.BOLD, 14));
-		TID.setBounds(11, 9, 100, 15);
+		TID.setBounds(12, 11, 100, 15);
 		form_InputPanel.add(TID);
 		
 		String[] unitIdValue = new String[255];
@@ -561,15 +617,191 @@ public class ModbusMonitor_Panel extends JPanel {
 		unitID_comboBox.setForeground(Color.BLACK);
 		unitID_comboBox.setBackground(Color.WHITE);
 		unitID_comboBox.setFont(new Font("맑은 고딕", Font.BOLD, 15));		
-		unitID_comboBox.setBounds(133, 34, 90, 30);
+		unitID_comboBox.setBounds(126, 34, 75, 30);
 		unitID_comboBox.setModel(new DefaultComboBoxModel(unitIdValue));
 		form_InputPanel.add(unitID_comboBox);
 		
 		UNIT_ID = new JLabel("Unit ID");
 		UNIT_ID.setForeground(Color.BLACK);
 		UNIT_ID.setFont(new Font("맑은 고딕", Font.BOLD, 14));
-		UNIT_ID.setBounds(134, 9, 57, 15);
+		UNIT_ID.setBounds(130, 11, 57, 15);
 		form_InputPanel.add(UNIT_ID);
+		
+		JLabel TIME_OUT = new JLabel("Timeout");
+		TIME_OUT.setForeground(Color.BLACK);
+		TIME_OUT.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+		TIME_OUT.setBounds(215, 11, 57, 15);
+		form_InputPanel.add(TIME_OUT);
+		
+		timeout_text = new JTextField();
+		timeout_text.setForeground(Color.BLUE);
+		timeout_text.setText("5000");
+		timeout_text.setHorizontalAlignment(SwingConstants.LEFT);
+		timeout_text.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		timeout_text.setColumns(10);
+		timeout_text.setBorder(UIManager.getBorder("TextField.border"));
+		timeout_text.setBounds(214, 34, 65, 31);
+		timeout_text.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				try {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+						send_Button.doClick();
+					}
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		timeout_text.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e) {
+				int timeout = 0;
+				
+				if(timeout_text.getText().startsWith("0x")||timeout_text.getText().startsWith("0X")) {
+					// 16진수 표기법 (0x0000)
+					try {
+						if(timeout_text.getText().startsWith("0x")) timeout = Integer.parseInt(timeout_text.getText().replaceAll("0x", ""),16); 
+						if(timeout_text.getText().startsWith("0X")) timeout = Integer.parseInt(timeout_text.getText().replaceAll("0X", ""),16);
+					}catch(NumberFormatException exception) {
+						timeout_text.setForeground(Color.RED);
+						return;
+					}
+				}else {
+					// 10진수 표기법
+					try {
+						timeout = Integer.parseInt(timeout_text.getText());
+					}catch(NumberFormatException exception) {
+						timeout_text.setForeground(Color.RED);
+						return;
+					}
+				}
+				
+				if(timeout > Short.MAX_VALUE || timeout < 0) {
+					timeout_text.setForeground(Color.RED);
+				}else {
+					timeout_text.setForeground(Color.BLUE);
+				}
+			}
+		});
+		timeout_text.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				int timeout = 0;
+				
+				if(timeout_text.getText().startsWith("0x")||timeout_text.getText().startsWith("0X")) {
+					// 16진수 표기법 (0x0000)
+					try {
+						if(timeout_text.getText().startsWith("0x")) timeout = Integer.parseInt(timeout_text.getText().replaceAll("0x", ""),16); 
+						if(timeout_text.getText().startsWith("0X")) timeout = Integer.parseInt(timeout_text.getText().replaceAll("0X", ""),16);
+					}catch(NumberFormatException exception) {
+						timeout_text.setForeground(Color.RED);
+						return;
+					}
+				}else {
+					// 10진수 표기법
+					try {
+						timeout = Integer.parseInt(timeout_text.getText());
+					}catch(NumberFormatException exception) {
+						timeout_text.setForeground(Color.RED);
+						return;
+					}
+				}
+				
+				if(timeout > Short.MAX_VALUE || timeout < 0) {
+					timeout_text.setForeground(Color.RED);
+				}else {
+					timeout_text.setForeground(Color.BLUE);
+				}
+			}
+		});
+		form_InputPanel.add(timeout_text);
+		
+		JLabel lblMaxReqCount = new JLabel("Max Count");
+		lblMaxReqCount.setForeground(Color.BLACK);
+		lblMaxReqCount.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+		lblMaxReqCount.setBounds(290, 11, 85, 15);
+		form_InputPanel.add(lblMaxReqCount);
+		
+		maxCount_text = new JTextField();
+		maxCount_text.setForeground(Color.BLUE);
+		maxCount_text.setText("125");
+		maxCount_text.setHorizontalAlignment(SwingConstants.LEFT);
+		maxCount_text.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		maxCount_text.setColumns(10);
+		maxCount_text.setBorder(UIManager.getBorder("TextField.border"));
+		maxCount_text.setBounds(290, 34, 84, 31);
+		maxCount_text.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				try {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+						send_Button.doClick();
+					}
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		maxCount_text.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e) {
+				int maxCount = 0;
+				
+				if(maxCount_text.getText().startsWith("0x")||maxCount_text.getText().startsWith("0X")) {
+					// 16진수 표기법 (0x0000)
+					try {
+						if(maxCount_text.getText().startsWith("0x")) maxCount = Integer.parseInt(maxCount_text.getText().replaceAll("0x", ""),16); 
+						if(maxCount_text.getText().startsWith("0X")) maxCount = Integer.parseInt(maxCount_text.getText().replaceAll("0X", ""),16);
+					}catch(NumberFormatException exception) {
+						maxCount_text.setForeground(Color.RED);
+						return;
+					}
+				}else {
+					// 10진수 표기법
+					try {
+						maxCount = Integer.parseInt(maxCount_text.getText());
+					}catch(NumberFormatException exception) {
+						maxCount_text.setForeground(Color.RED);
+						return;
+					}
+				}
+				
+				if(maxCount > 2000 || maxCount < 0) {
+					maxCount_text.setForeground(Color.RED);
+				}else {
+					maxCount_text.setForeground(Color.BLUE);
+				}
+			}
+		});
+		maxCount_text.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				int maxCount = 0;
+				
+				if(maxCount_text.getText().startsWith("0x")||maxCount_text.getText().startsWith("0X")) {
+					// 16진수 표기법 (0x0000)
+					try {
+						if(maxCount_text.getText().startsWith("0x")) maxCount = Integer.parseInt(maxCount_text.getText().replaceAll("0x", ""),16); 
+						if(maxCount_text.getText().startsWith("0X")) maxCount = Integer.parseInt(maxCount_text.getText().replaceAll("0X", ""),16);
+					}catch(NumberFormatException exception) {
+						maxCount_text.setForeground(Color.RED);
+						return;
+					}
+				}else {
+					// 10진수 표기법
+					try {
+						maxCount = Integer.parseInt(maxCount_text.getText());
+					}catch(NumberFormatException exception) {
+						maxCount_text.setForeground(Color.RED);
+						return;
+					}
+				}
+				
+				if(maxCount > 2000 || maxCount < 0) {
+					maxCount_text.setForeground(Color.RED);
+				}else {
+					maxCount_text.setForeground(Color.BLUE);
+				}
+			}
+		});
+		form_InputPanel.add(maxCount_text);
 		
 		pointList_ScrollPane = new JScrollPane();		
 		pointList_ScrollPane.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
@@ -580,6 +812,18 @@ public class ModbusMonitor_Panel extends JPanel {
 		pointTable = new JTable();
 		pointTable.setCellSelectionEnabled(true);
 		pointTable.setBackground(Color.WHITE);		
+		pointTable.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				try {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+						send_Button.doClick();
+					}
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
 		pointTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == 1) { } // 왼쪽 클릭
@@ -628,9 +872,9 @@ public class ModbusMonitor_Panel extends JPanel {
 		
 		search = new JLabel("검 색");
 		search.setForeground(Color.BLACK);
-		search.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		search.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		search.setBackground(Color.LIGHT_GRAY);
-		search.setBounds(15, 105, 57, 25);
+		search.setBounds(15, 103, 57, 25);
 		resultPanel.add(search);
 		
 		search_TextField = new JTextField();
@@ -657,7 +901,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				}
 			}
 		});
-		search_TextField.setBounds(71, 102, 374, 28);
+		search_TextField.setBounds(71, 102, 373, 28);
 		resultPanel.add(search_TextField);
 		
 		useFilter = new JCheckBox(" 필 터");
@@ -665,7 +909,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		useFilter.setForeground(Color.BLACK);
 		useFilter.setBackground(Color.LIGHT_GRAY);
 		useFilter.setHorizontalAlignment(SwingConstants.LEFT);
-		useFilter.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		useFilter.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		useFilter.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -680,7 +924,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				doTableFilter();
 			}
 		});
-		useFilter.setBounds(465, 105, 78, 25);
+		useFilter.setBounds(450, 103, 72, 25);
 		resultPanel.add(useFilter);
 		
 		fc_filter = new JComboBox();
@@ -695,13 +939,13 @@ public class ModbusMonitor_Panel extends JPanel {
 						"FC 03", 
 						"FC 04"
 						}));
-		fc_filter.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		fc_filter.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		fc_filter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				doTableFilter();
 			}
 		});
-		fc_filter.setBounds(548, 102, 92, 28);
+		fc_filter.setBounds(528, 102, 80, 28);
 		resultPanel.add(fc_filter);
 		
 		dataType_filter = new JComboBox();
@@ -729,14 +973,26 @@ public class ModbusMonitor_Panel extends JPanel {
 						"EIGHT BYTE INT SIGNED",
 						"EIGHT BYTE FLOAT"
 						}));
-		dataType_filter.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		dataType_filter.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		dataType_filter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				doTableFilter();
 			}
 		});
-		dataType_filter.setBounds(646, 102, 370, 28);
+		dataType_filter.setBounds(610, 102, 292, 28);
 		resultPanel.add(dataType_filter);
+		
+		tableType = new JComboBox();
+		tableType.setModel(new DefaultComboBoxModel(
+				new String[] {
+						"모드버스", 
+						"포인트"
+						}));
+		tableType.setForeground(Color.BLACK);
+		tableType.setBackground(Color.WHITE);
+		tableType.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		tableType.setBounds(914, 102, 102, 28);
+		resultPanel.add(tableType);
 			
 		currentState = new JLabel();
 		currentState.setOpaque(true);
@@ -1061,7 +1317,9 @@ public class ModbusMonitor_Panel extends JPanel {
 		int nullCount = 0;
 		int invalidCount = 0;
 				
-		if(!isRTU && transactionId_text.getText().length() == 0) {
+		if(!isRTU && transactionId_text.getText().length() == 0
+			|| timeout_text.getText().length() == 0
+			|| maxCount_text.getText().length() == 0) {
 			
 			StringBuilder sb = new StringBuilder("<font color='red'>입력 필드 양식 오류</font>\n");
 			
@@ -1069,6 +1327,26 @@ public class ModbusMonitor_Panel extends JPanel {
 			if(!isRTU && transactionId_text.getText().length() == 0) {
 				nullCount++;
 				sb.append(Util.colorBlue("트랜잭션 ID"));					
+			}
+			
+			// 타임아웃 null 검사
+			if(timeout_text.getText().length() == 0) {					
+				if(nullCount > 0)
+					sb.append(Util.colorBlue(", 타임아웃"));
+				else						
+					sb.append(Util.colorBlue("타임아웃"));
+				
+				nullCount++;
+			}
+			
+			// 최대 요청 개수 null 검사
+			if(maxCount_text.getText().length() == 0) {					
+				if(nullCount > 0)
+					sb.append(Util.colorBlue(", 최대 요청 개수"));
+				else						
+					sb.append(Util.colorBlue("최대 요청 개수"));
+				
+				nullCount++;
 			}
 			
 			sb.append(" 정보를 입력 해주세요" + Util.separator + "\n");
@@ -1079,7 +1357,9 @@ public class ModbusMonitor_Panel extends JPanel {
 		}
 		
 		// 유효하지 않은 startAddress 입력 시 메시지 출력 후 리턴
-		if(!isRTU && transactionId_text.getForeground() == Color.RED) {
+		if(!isRTU && transactionId_text.getForeground() == Color.RED
+				|| timeout_text.getForeground() == Color.RED
+				|| maxCount_text.getForeground() == Color.RED) {
 			
 			StringBuilder sb = new StringBuilder("<font color='red'>입력 필드 양식 오류</font>\n");
 			sb.append("입력하신 ");								
@@ -1088,6 +1368,26 @@ public class ModbusMonitor_Panel extends JPanel {
 			if(!isRTU && transactionId_text.getForeground() == Color.RED) {
 				invalidCount++;
 				sb.append(Util.colorBlue("트랜잭션 ID"));
+			}
+			
+			// 타임아웃 양식 검사
+			if(timeout_text.getForeground() == Color.RED) {
+				if(invalidCount > 0)
+					sb.append(Util.colorBlue(", 타임아웃"));
+				else
+					sb.append(Util.colorBlue("타임아웃"));
+				
+				invalidCount++;
+			}
+			
+			// 최대 요청 개수 양식 검사
+			if(maxCount_text.getForeground() == Color.RED) {
+				if(invalidCount > 0)
+					sb.append(Util.colorBlue(", 최대 요청 개수"));
+				else
+					sb.append(Util.colorBlue("최대 요청 개수"));
+				
+				invalidCount++;
 			}
 							
 			sb.append(" 정보를 확인 해주세요" + Util.separator + "\n");

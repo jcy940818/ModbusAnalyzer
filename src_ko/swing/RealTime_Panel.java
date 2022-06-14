@@ -631,7 +631,7 @@ public class RealTime_Panel extends JPanel {
 				
 				// 시작주소에 포커스
 				startAddress_text.requestFocus();
-			}						
+			}
 		});
 		
 		// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★

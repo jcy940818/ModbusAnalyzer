@@ -324,7 +324,7 @@ public class ModbusAgent {
 	
 	
 	
-	public static String modbusCommunicate(ModbusMonitor monitor, Socket client, ArrayList<ModbusWatchPoint> pointList, int timeout) throws IOException, EOFException, SocketException {
+	public static String modbusCommunicate(ModbusMonitor monitor, Socket client, ArrayList<ModbusWatchPoint> pointList, int timeout, int maxCount) throws IOException, EOFException, SocketException {
 		try {
 			ModbusMonitor.isRunning = true;
 			clientSocket = client;
@@ -342,6 +342,12 @@ public class ModbusAgent {
 			}
 			
 			monitor.init(monitor.getType(), client.getInetAddress().getHostAddress(), client.getPort());
+			if(!(maxCount > 2000) && !(maxCount < 0)) {
+				monitor.setMaxReadBitCount(maxCount);
+			}
+			if(!(maxCount > 125) && !(maxCount < 0)) {
+				monitor.setMaxReadRegisterCount(maxCount);	
+			}
 			
 			List<ReadFunctionGroup> functionGroupList = monitor.getFuntionGroupList();
 			
