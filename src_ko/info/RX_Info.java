@@ -295,4 +295,20 @@ public class RX_Info {
 		this.scanResult = scanResult;
 	}
 	
+	public static String getRxHandleContent(RX_Info rx) {
+		String content = "";
+		
+		if ((rx != null) && rx.isRTU() && rx.isCRCError()) {
+			content += String.format(" ( Read Incorrect CRC : 0x%04x / Expected CRC : 0x%04x )", rx.getCrc() & 0xffff , rx.getExpectedCrc() & 0xffff);
+		}
+
+		if (rx.isException()) {
+			content += String.format(" ( 0x%02x : %s )%s", rx.getExceptionCode(), rx.getExceptionContent(), System.lineSeparator());
+		} else {
+			content += String.format("%s", System.lineSeparator());
+		}
+		
+		return content;
+	}
+	
 }

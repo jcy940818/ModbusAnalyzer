@@ -211,7 +211,8 @@ public class ModbusMonitor{
 		}
 
 		if (type == TYPE_RTU) {
-			in.skipCRC16();
+//			in.skipCRC16();
+			in.readShort();
 		}
 
 		byte[] packet = in.debug_getBuffer();

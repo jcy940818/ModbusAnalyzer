@@ -22,6 +22,7 @@ import src_ko.swing.ExceptionScan_Panel;
 import src_ko.swing.ModbusAgent_Panel;
 import src_ko.swing.RealTime_Panel;
 import src_ko.swing.SimpleValueScan_Panel;
+import src_ko.util.ExceptionProvider;
 import src_ko.util.PacketInputStream;
 import src_ko.util.PacketOutputStream;
 import src_ko.util.Timer;
@@ -364,7 +365,13 @@ public class ModbusAgent {
 				rx.setTxInfo(tx);
 				rx.setContent(rxPacket);
 				rx = (monitor.getType() == ModbusMonitor.TYPE_RTU) ? new RX_Analyzer().rtuAnalysis(rx) : new RX_Analyzer().tcpAnalysis(rx);
+				System.out.println(RX_Info.getRxHandleContent(rx));
 				System.out.println();
+				
+				String content = ExceptionProvider.getCompareTxRxString(tx, rx);
+				if(content != null) {
+					System.out.println(content);
+				}
 				
 				// 클라이언트 소켓 : 통신중 (요청패킷에 대한 응답패킷을 수신함)
 				ClientSocket.setState(ClientSocket.NODE_CONDITION_REGULAR);
@@ -670,8 +677,8 @@ public class ModbusAgent {
 		ClientSocket.setState(ClientSocket.NODE_CONDITION_DISCONNECTED);
 		
 		StringBuilder msg = new StringBuilder();
-		msg.append("<font color='red'>Exception</font>\n");
-		msg.append("예상하지 못한 예외 발생으로 인한 통신 종료\n");
+		msg.append("<font color='red'>Unhandled Exception</font>\n");
+		msg.append("예상하지 못한 예외 발생으로 인한 통신 종료\n\n");
 		msg.append("커넥션 해제 : 장비와의 통신 소켓을 해제합니다" + Util.separator + "\n\n");			
 		msg.append(String.format("Exception Message : %s%s\n", e.getMessage(), Util.separator));
 		Util.showMessage(msg.toString(), JOptionPane.ERROR_MESSAGE);

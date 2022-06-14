@@ -89,8 +89,8 @@ public class RX_Analyzer {
 				}
 				
 				readByteCount = in.read();
-				registerCount = readByteCount / 2; // 데이터 타입에 따라 다르게 출력되도록 수정할까? 객체로 만들까? 고민해보자.
-				// TX 정보가 존재할 시 requestCount 와 registerCount를 비교해서 요청에 따른 응답인지 확인하자.
+				registerCount = readByteCount / 2;
+				
 			} catch (Exception e) {
 				throw new ModbusFormatException();
 			}
@@ -145,11 +145,9 @@ public class RX_Analyzer {
 			Util.showMessage("NumberFormatException\n" + e.getMessage(), JOptionPane.ERROR_MESSAGE);
 		}
 		
-		
 		if(!isCrcError) {
 			rx.setCrc(crc & 0xffff);
-		}
-				
+		}		
 		
 		try {
 			if(isCrcError) {				
@@ -161,7 +159,6 @@ public class RX_Analyzer {
 			System.out.println(e.getMessage());
 			return rx;
 		}
-		
 		
 		// rx 정보에 각 레지스터의 값 정보를 가지고 있는 Perf_Info 배열을 저장한다.
 		rx.setPerfInfo(perf);
@@ -253,14 +250,13 @@ public class RX_Analyzer {
 				}
 										
 				readByteCount = in.read();
-				registerCount = readByteCount / 2; // 데이터 타입에 따라 다르게 출력되도록 수정할까? 객체로 만들까? 고민해보자.
-				// TX 정보가 존재할 시 requestCount 와 registerCount를 비교해서 요청(TX)에 따른 응답인지 확인하자.
+				registerCount = readByteCount / 2;
 				
 				try {
 					if((protocolId != 0x0000)) {
-						// Modbus TCP RX Header length값은 요청의 길이에 따라 결정되므로 static하게 조건으로 설정할 수 없다.
-						// Modbus TCP Header : protocolID는 0x0000 으로 고정되어 있다.				
-						// Modbus TCP Header : Length는 0x0006 으로 고정되어 있다.
+						// Modbus TCP RX Header length값은 요청의 길이에 따라 결정되므로 static하게 조건으로 설정할 수 없다
+						// Modbus TCP Header : protocolID는 0x0000 으로 고정되어 있다
+						// Modbus TCP Header : Length는 0x0006 으로 고정되어 있다
 						throw new ModbusTCPFormatException();					
 					}
 				}catch(ModbusTCPFormatException e) {
@@ -293,9 +289,6 @@ public class RX_Analyzer {
 				for (int i = 0; i < registerCount; i++) {								
 					
 					int registerValue = in.readShort();
-	
-					// 레지스터에서 읽은 값을 성능 인스턴스에 저장한다.
-					// 나중에 이 부분을 데이터타입에 따라 적절하게 변경하자.
 					perf[i] = new Perf_Info();
 					perf[i].setIntValue(registerValue);
 					perf[i].setBinaryValue(registerValue);
@@ -312,7 +305,6 @@ public class RX_Analyzer {
 			return null;
 		}
 
-		// rx 정보에 각 레지스터의 값 정보를 가지고 있는 Perf_Info 배열을 저장한다.
 		rx.setPerfInfo(perf);
 
 		return rx;
