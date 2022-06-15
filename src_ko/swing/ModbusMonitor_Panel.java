@@ -55,7 +55,7 @@ public class ModbusMonitor_Panel extends JPanel {
 	public static int PORT;
 	
 	// Modbus Point List	
-	private static JComboBox tableType;
+	private static JComboBox resultType;
 	public static JScrollPane pointList_ScrollPane;
 	public static JTable pointTable;
 	private static ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();	
@@ -437,6 +437,8 @@ public class ModbusMonitor_Panel extends JPanel {
 		reset_Button.setBackground(Color.WHITE);
 		reset_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				resultType.setSelectedIndex(0);
+				
 				transactionId_text.setText("1");
 				transactionId_text.setForeground(Color.BLUE);
 				timeout_text.setText("5000");
@@ -908,17 +910,42 @@ public class ModbusMonitor_Panel extends JPanel {
 		dataType_filter.setBounds(610, 102, 310, 32);
 		resultPanel.add(dataType_filter);
 		
-		tableType = new JComboBox();
-		tableType.setModel(new DefaultComboBoxModel(
+		resultType = new JComboBox();
+		resultType.setModel(new DefaultComboBoxModel(
 				new String[] {
-						"Table 1", 
-						"Table 2"
+						"Point",
+						"Value"
 						}));
-		tableType.setForeground(Color.BLACK);
-		tableType.setBackground(Color.WHITE);
-		tableType.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		tableType.setBounds(922, 102, 102, 32);
-		resultPanel.add(tableType);
+		resultType.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				SwingUtilities.invokeLater(new Runnable() {
+				    @Override public void run() {
+				    	int[] selectedRows = pointTable.getSelectedRows();
+				    	updateTable(pointTable);
+				    	setFocusMultipleRows(pointTable, selectedRows);
+				    }
+				});
+			}
+		});		
+		resultType.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				try {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+						send_Button.doClick();
+					}
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		resultType.setForeground(Color.BLACK);
+		resultType.setBackground(Color.WHITE);
+		resultType.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		resultType.setBounds(922, 102, 102, 32);
+		resultType.setSelectedIndex(0);
+		resultPanel.add(resultType);
 			
 		currentState = new JLabel();
 		currentState.setOpaque(true);
@@ -1156,16 +1183,41 @@ public class ModbusMonitor_Panel extends JPanel {
 	
 	public static void resetTable(JTable table, Object[][] content){
 		
-		table.setModel(new DefaultTableModel(
-				content,
-				new String[] {
+		String[] header = null;
+		if(resultType != null) {
+			if(resultType.getSelectedIndex() == 0) {
+				// Point 기준
+				header = new String[] {
 						"순 서",
 						"모드버스 포인트",
 						"기능코드",
 						"주 소",
 						"데이터 타입",
 						"결 과"
-					}) {
+					};
+			}else {
+				// Value 기준
+				header = new String[] {
+						"순 서",
+						"모드버스 포인트",
+						"기능코드",
+						"주 소",
+						"응답 처리 시간",
+						"결 과"
+					};
+			}
+		}else {
+			header = new String[] {
+					"순 서",
+					"모드버스 포인트",
+					"기능코드",
+					"주 소",
+					"데이터 타입",
+					"결 과"
+				};
+		}
+		
+		table.setModel(new DefaultTableModel(content, header) {
 				boolean[] columnEditables = new boolean[] {
 						false, // 순 서 : 수정 불가
 						false, // 모드버스 포인트 : 수정 불가
@@ -1209,7 +1261,7 @@ public class ModbusMonitor_Panel extends JPanel {
 			int transactionId = 0;
 			
 			if(transactionId_text.getText().trim().startsWith("0x")){
-				transactionId = Integer.parseInt(transactionId_text.getText().trim().replaceAll("0x", ""),16);								
+				transactionId = Integer.parseInt(transactionId_text.getText().trim().replaceAll("0x", ""),16);
 			}else if(transactionId_text.getText().trim().startsWith("0X")) {
 				transactionId = Integer.parseInt(transactionId_text.getText().trim().replaceAll("0X", ""),16);
 			}else {
@@ -1325,6 +1377,7 @@ public class ModbusMonitor_Panel extends JPanel {
 			
 			// 기능코드, 주소, 보정식 순서로 정렬
 			Collections.sort(modbusWps);
+			boolean isPoint = resultType.getSelectedIndex() == 0;
 			
 			for(int i = 0; i < modbusWps.size(); i++) {
 				
@@ -1361,8 +1414,16 @@ public class ModbusMonitor_Panel extends JPanel {
 				}
 				
 				/* column[3] */ record.add(addr);  // 주소
-				/* column[4] */ record.add(modbusWp.getDataType()); // 데이터 타입
-				/* column[5] */ record.add(PerfData.getPerfContent(modbusWp, modbusWp.getData())); // 결 과
+				
+				if(isPoint) {
+					// Point 기준
+					/* column[4] */ record.add(modbusWp.getDataType()); // 데이터 타입
+					/* column[5] */ record.add(PerfData.getPerfContent(modbusWp, modbusWp.getData())); // 결 과
+				}else {
+					// Value 기준
+					/* column[4] */ record.add(modbusWp.getData().getTimeString()); // 응답 처리 시간
+					/* column[5] */ record.add(PerfData.getPerfPureValue(modbusWp.getData())); // 결 과
+				}
 				
 				model.addRow(record);
 			}
@@ -1402,8 +1463,19 @@ public class ModbusMonitor_Panel extends JPanel {
 		table.getColumnModel().getColumn(1).setPreferredWidth(350); // 모드버스 포인트
 		table.getColumnModel().getColumn(2).setPreferredWidth(65); // 기능코드
 		table.getColumnModel().getColumn(3).setPreferredWidth(80); // 주 소
-		table.getColumnModel().getColumn(4).setPreferredWidth(250); // 데이터 타입
-		table.getColumnModel().getColumn(5).setPreferredWidth(100); // 결 과
+		
+		if(resultType != null) {
+			if(resultType.getSelectedIndex() == 0) {
+				table.getColumnModel().getColumn(4).setPreferredWidth(250); // 데이터 타입
+				table.getColumnModel().getColumn(5).setPreferredWidth(100); // 결 과	
+			}else {
+				table.getColumnModel().getColumn(4).setPreferredWidth(150); // 데이터 타입
+				table.getColumnModel().getColumn(5).setPreferredWidth(200); // 결 과
+			}
+		}else {
+			table.getColumnModel().getColumn(4).setPreferredWidth(250); // 데이터 타입
+			table.getColumnModel().getColumn(5).setPreferredWidth(100); // 결 과	
+		}
 				
 		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
 		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
@@ -1437,13 +1509,19 @@ public class ModbusMonitor_Panel extends JPanel {
 		
 		Object[][] content = new Object[rowCount][];
 		
+		boolean isPoint = resultType.getSelectedIndex() == 0;
+		
 		for(int i = 0; i < rowCount; i++) {
 			content[i] = new Object[columnCount];
 			for(int j = 0; j < columnCount; j++) {
+				
 				if(j == (columnCount-1)) {
 					ModbusWatchPoint point = (ModbusWatchPoint)table.getValueAt(i, 1);
-					content[i][j] = PerfData.getPerfContent(point, point.getData());
-				}else {
+					content[i][j] = (isPoint) ? PerfData.getPerfContent(point, point.getData()) : PerfData.getPerfPureValue(point.getData());	
+				}else if(j == (columnCount-2)){
+					ModbusWatchPoint point = (ModbusWatchPoint)table.getValueAt(i, 1);
+					content[i][j] = (isPoint) ? point.getDataType() : point.getData().getTimeString();
+				}else{
 					content[i][j] = table.getValueAt(i, j);
 				}
 			}
@@ -1453,7 +1531,6 @@ public class ModbusMonitor_Panel extends JPanel {
 	}
 	
 	public void setFocusMultipleRows(JTable table, int[] rows) {
-		
 		if(table == null || rows == null || rows.length < 1) return;
 		
 		int columnCount = table.getColumnCount();
