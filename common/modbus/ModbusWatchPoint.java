@@ -17,7 +17,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	private int registerAddr;
 	private int modbusAddr;
 	private String dataType;
-	private PerfData data;
+	private PerfData data = new PerfData();
 	
 	private String decCounter;
 	private String hexCounter;
@@ -172,6 +172,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	public void setData(PerfData data) {
 		this.data = data;
 	}
+	
 	public String getDecCounter() {
 		return decCounter;
 	}

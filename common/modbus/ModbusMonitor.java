@@ -221,6 +221,8 @@ public class ModbusMonitor{
 		
 		List locators = functionGroup.getLocators();
 		
+		long curTime = System.currentTimeMillis();
+		
 		for (int i = 0; i < locators.size(); i++) {
 			KeyedModbusLocator keyLocator = (KeyedModbusLocator) locators.get(i);
 			BaseLocator locator = (BaseLocator) keyLocator.getLocator();
@@ -241,7 +243,7 @@ public class ModbusMonitor{
 			PerfData perfData = new PerfData();
 			perfData.setPureValue(value);
 			perfData.setValue(point.getComputedValue(value));
-			perfData.setTime(System.currentTimeMillis());
+			perfData.setTime(curTime);
 			point.setData(perfData);
 			
 			String measrue = null;

@@ -30,7 +30,11 @@ public class PerfData implements Comparable{
 		return time;
 	}
 	public String getTimeString() {
-		return timeString;
+		if(timeString != null) {
+			return timeString;
+		}else {
+			return "-";
+		}
 	}
 	public void setIndex(int index) {
 		this.index = index;
@@ -39,7 +43,7 @@ public class PerfData implements Comparable{
 		if(value.toString().equals("NaN")) {
 			this.value = "-";
 		}else {
-			this.value = value;	
+			this.value = value;
 		}
 	}
 	public void setPureValue(Object pureValue) {
@@ -79,7 +83,7 @@ public class PerfData implements Comparable{
 		Object pureValue = "-";
 		
 		try {
-			double doubleValue = Double.parseDouble(data.getValue().toString());
+			double doubleValue = Double.parseDouble(data.getPureValue().toString());
 			pureValue = (Math.round(doubleValue*1000)/1000.0);
 		}catch(Exception e) {
 			pureValue = "-";
