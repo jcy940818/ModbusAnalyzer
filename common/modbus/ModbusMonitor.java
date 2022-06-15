@@ -239,8 +239,8 @@ public class ModbusMonitor{
 			
 			ModbusWatchPoint point = points.get(cmd);
 			PerfData perfData = new PerfData();
-			value = point.getComputedValue(value);
-			perfData.setValue(value);
+			perfData.setPureValue(value);
+			perfData.setValue(point.getComputedValue(value));
 			perfData.setTime(System.currentTimeMillis());
 			point.setData(perfData);
 			
@@ -249,7 +249,7 @@ public class ModbusMonitor{
 				measrue = point.getMeasure().trim();
 			}
 			
-			System.out.printf("[ %s ] = " + (Math.round(value*1000)/1000.0) + "%s\n", point.getDecCounter(), (measrue != null) ? " " + point.getMeasure() : "");
+			System.out.printf("[ %s ] = " + PerfData.getPerfPureValue(perfData) + "\n", point.getDecCounter());
 		}
 		
 		return rxPacket;

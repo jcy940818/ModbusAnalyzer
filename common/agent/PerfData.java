@@ -75,6 +75,30 @@ public class PerfData implements Comparable{
 		}
 	}
 	
+	public static Object getPerfPureValue(PerfData data) {
+		Object pureValue = "-";
+		
+		try {
+			double doubleValue = Double.parseDouble(data.getValue().toString());
+			pureValue = (Math.round(doubleValue*1000)/1000.0);
+		}catch(Exception e) {
+			pureValue = "-";
+		}
+		
+		// 정수 데이터는 소숫점을 표시하지 않도록 하기 위해서 아래의 코드를 추가
+		Object temp = null;
+		try {
+			temp = pureValue.toString();
+			if (pureValue.toString().endsWith(".0")) {
+				pureValue = pureValue.toString().replace(".0", "");
+			}
+		} catch (Exception e) {
+			pureValue = temp;
+		}
+
+		return pureValue;
+	}
+	
 	public static Object getPerfContent(Perf perf, PerfData data) {
 		
 		Object content = "-";
