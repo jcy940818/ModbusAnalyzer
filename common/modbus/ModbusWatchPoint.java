@@ -189,7 +189,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	}
 
 	public Object getDataContent() {
-		return PerfData.getPerfLastContent(this, this.data);
+		return PerfData.getPerfContent(this, this.data);
 	}
 	
 	public void init() throws ModbusWatchPointInitException{

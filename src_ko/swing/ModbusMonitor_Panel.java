@@ -1362,7 +1362,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				
 				/* column[3] */ record.add(addr);  // 주소
 				/* column[4] */ record.add(modbusWp.getDataType()); // 데이터 타입
-				/* column[5] */ record.add(PerfData.getPerfLastContent(modbusWp, modbusWp.getData())); // 결 과
+				/* column[5] */ record.add(PerfData.getPerfContent(modbusWp, modbusWp.getData())); // 결 과
 				
 				model.addRow(record);
 			}
@@ -1442,7 +1442,7 @@ public class ModbusMonitor_Panel extends JPanel {
 			for(int j = 0; j < columnCount; j++) {
 				if(j == (columnCount-1)) {
 					ModbusWatchPoint point = (ModbusWatchPoint)table.getValueAt(i, 1);
-					content[i][j] = PerfData.getPerfLastContent(point, point.getData());
+					content[i][j] = PerfData.getPerfContent(point, point.getData());
 				}else {
 					content[i][j] = table.getValueAt(i, j);
 				}

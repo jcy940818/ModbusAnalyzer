@@ -13,6 +13,7 @@ public class PerfData implements Comparable{
 	
 	int index;
 	Object value;
+	Object pureValue;
 	long time;
 	String timeString;
 	
@@ -21,6 +22,9 @@ public class PerfData implements Comparable{
 	}
 	public Object getValue() {
 		return value;
+	}
+	public Object getPureValue() {
+		return pureValue;
 	}
 	public long getTime() {
 		return time;
@@ -36,6 +40,13 @@ public class PerfData implements Comparable{
 			this.value = "-";
 		}else {
 			this.value = value;	
+		}
+	}
+	public void setPureValue(Object pureValue) {
+		if(pureValue.toString().equals("NaN")) {
+			this.pureValue = "-";
+		}else {
+			this.pureValue = pureValue;	
 		}
 	}
 	public void setTime(long time) {
@@ -64,7 +75,7 @@ public class PerfData implements Comparable{
 		}
 	}
 	
-	public static Object getPerfLastContent(Perf perf, PerfData data) {
+	public static Object getPerfContent(Perf perf, PerfData data) {
 		
 		Object content = "-";
 		boolean labelMapping = false;

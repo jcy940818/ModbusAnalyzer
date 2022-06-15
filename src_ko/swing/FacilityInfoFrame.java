@@ -490,7 +490,7 @@ public class FacilityInfoFrame extends JFrame {
 							content[i] = new Object[3];
 							content[i][0] = i + 1;
 							content[i][1] = data.getTimeString();
-							content[i][2] = PerfData.getPerfLastContent(selectedPerf, data);
+							content[i][2] = PerfData.getPerfContent(selectedPerf, data);
 						}
 						
 						perfData_Table.setModel(new DefaultTableModel(
@@ -633,7 +633,7 @@ public class FacilityInfoFrame extends JFrame {
 							content[i] = new Object[3];
 							content[i][0] = i + 1;
 							content[i][1] = data.getTimeString();
-							content[i][2] = PerfData.getPerfLastContent(selectedPerf, data);
+							content[i][2] = PerfData.getPerfContent(selectedPerf, data);
 						}
 						
 						perfData_Table.setModel(new DefaultTableModel(
@@ -1278,7 +1278,7 @@ public class FacilityInfoFrame extends JFrame {
 					PerfData data = perfRealTimeDataMap.get(perf.getIndex());
 					
 					if(data != null && !data.getValue().equals("-")) {
-						content[i][2] = PerfData.getPerfLastContent(perf, data);
+						content[i][2] = PerfData.getPerfContent(perf, data);
 					}else {
 						content[i][2] = "-";
 					}
@@ -1677,7 +1677,7 @@ public class FacilityInfoFrame extends JFrame {
 					PerfData data = perfRealTimeDataMap.get(perf.getIndex());
 					
 					if(data != null && !data.getValue().equals("-")) {
-						content[i][2] = PerfData.getPerfLastContent(perf, data);
+						content[i][2] = PerfData.getPerfContent(perf, data);
 					}else {
 						content[i][2] = "-";
 					}
