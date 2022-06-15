@@ -1,7 +1,6 @@
 package src_ko.swing;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
@@ -30,7 +29,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -47,8 +45,6 @@ import common.modbus.ModbusWatchPoint;
 import common.util.TableUtil;
 import src_ko.agent.ClientSocket;
 import src_ko.agent.ModbusAgent;
-import src_ko.info.RX_Info;
-import src_ko.info.TX_Info;
 import src_ko.util.Util;
 
 public class ModbusMonitor_Panel extends JPanel {
@@ -58,48 +54,33 @@ public class ModbusMonitor_Panel extends JPanel {
 	public static String IP;
 	public static int PORT;
 	
-	// Modbus Point List
+	// Modbus Point List	
 	private static JComboBox tableType;
+	public static JScrollPane pointList_ScrollPane;
 	public static JTable pointTable;
 	private static ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();	
 	
 	// information Component
-	JPanel infoPanel; // 클라이언트 소켓이 서버와 연결 된 상태일때만 인포메이션 컴포넌트들을 활성화 시킨다.
-	JPanel viewTypePanel;
+	JPanel infoPanel; // 클라이언트 소켓이 서버와 연결 된 상태일때만 인포메이션 컴포넌트들을 활성화 시킨다.	
 	JPanel modbusTypePanel;
 	JPanel form_InputPanel;
 	JPanel function_Panel;
-	JPanel viewPanel;	
 	JPanel resultPanel;
 	JPanel imagePanel; /* ONION Image */
 	
 	private static JComboBox unitID_comboBox;
 	private JButton connectButton; // 연결 정보 입력버튼 (중요)
 	private static boolean isRTU = true; // Default : Modbus TCP (아주 중요한 변수)
-	private static RX_Info global_rx = null;
 	private static JLabel currentState;
 	private static JLabel TID;
 	private static JLabel UNIT_ID;
 	private static JTextField transactionId_text; // Modbus TCP : TransactionID 필드
 	
-	private static CardLayout cardLayout;
 	private JButton send_Button;
 	private static JButton reset_Button;
 	private static ButtonGroup radioGroup;
-	private static ButtonGroup radioGroup2;
-	private static JRadioButton radio_pointList;
-	private static JRadioButton radio_packetLog;	
 	private static JRadioButton radio_modbusTCP;
 	private static JRadioButton radio_modbusRTU;
-	
-	
-	// 통신 기록
-	public static JScrollPane packetLog_ScrollPane;
-	public static JScrollPane pointList_ScrollPane;
-	public static JTextArea packetLog;
-	public static MessageFrame packetlog_Frame;
-	public TX_Info tx;
-	public RX_Info rx;
 	
 	private JPanel addrTypePanel;
 	private JButton importButton;
@@ -165,46 +146,6 @@ public class ModbusMonitor_Panel extends JPanel {
 		resultPanel.setLayout(null);
 		infoPanel.add(resultPanel);
 		
-		viewTypePanel = new JPanel();
-		viewTypePanel.setBorder(new LineBorder(Color.BLACK, 2));
-		viewTypePanel.setBackground(Color.WHITE);
-		viewTypePanel.setBounds(12, 10, 140, 72);
-		viewTypePanel.setLayout(null);
-//		resultPanel.add(viewTypePanel);
-		
-		radio_pointList = new JRadioButton("Point List");
-		radio_pointList.setBounds(8, 6, 125, 30);
-		radio_pointList.setSelected(true);
-		radio_pointList.setHorizontalAlignment(SwingConstants.LEFT);
-		radio_pointList.setForeground(Color.BLACK);
-		radio_pointList.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		radio_pointList.setBackground(Color.WHITE);
-		radio_pointList.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(viewPanel, radio_pointList.getText());
-			}
-		});
-		viewTypePanel.add(radio_pointList);
-		
-		radio_packetLog = new JRadioButton("Packet Log");
-		radio_packetLog.setBounds(8, 35, 125, 30);
-		radio_packetLog.setHorizontalAlignment(SwingConstants.LEFT);
-		radio_packetLog.setForeground(Color.BLACK);
-		radio_packetLog.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		radio_packetLog.setBackground(Color.WHITE);
-		radio_packetLog.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(viewPanel, radio_packetLog.getText());
-			}
-		});
-		viewTypePanel.add(radio_packetLog);
-		
-		radioGroup2 = new ButtonGroup();		
-		radioGroup2.add(radio_pointList);
-		radioGroup2.add(radio_packetLog);
-		
 		modbusTypePanel = new JPanel();
 		modbusTypePanel.setBorder(new LineBorder(Color.BLACK, 2));
 		modbusTypePanel.setBounds(12, 10, 140, 74);
@@ -238,10 +179,7 @@ public class ModbusMonitor_Panel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				JRadioButton b = (JRadioButton)e.getSource();	
-				
-				// Modbus RTU, TCP 라디오 버튼 이동 시 
-				global_rx = null;			
+				JRadioButton b = (JRadioButton)e.getSource();
 
 				if (b.getText().contains("RTU")) {
 					isRTU = true;
@@ -499,8 +437,6 @@ public class ModbusMonitor_Panel extends JPanel {
 		reset_Button.setBackground(Color.WHITE);
 		reset_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				global_rx = null;
-				
 				transactionId_text.setText("1");
 				transactionId_text.setForeground(Color.BLUE);
 				timeout_text.setText("5000");
@@ -508,8 +444,6 @@ public class ModbusMonitor_Panel extends JPanel {
 				maxCount_text.setText("125");
 				maxCount_text.setForeground(Color.BLUE);
 				
-//				radio_pointList.doClick();
-//				packetLog.setText(null);
 				addrTypeComboBox.setSelectedIndex(0);
 				unitID_comboBox.setSelectedIndex(0);
 				
@@ -806,12 +740,14 @@ public class ModbusMonitor_Panel extends JPanel {
 		pointList_ScrollPane = new JScrollPane();		
 		pointList_ScrollPane.setFont(new Font("맑은 고딕", Font.PLAIN, 13));
 		pointList_ScrollPane.setBackground(Color.WHITE);
-		pointList_ScrollPane.setBounds(578, 360, 438, 172);
+		pointList_ScrollPane.setBounds(0, 137, 1028, 405);
+		pointList_ScrollPane.setBorder(new LineBorder(Color.BLACK, 2));
+		resultPanel.add(pointList_ScrollPane);
 		
 		// 테이블 생성 부분
 		pointTable = new JTable();
 		pointTable.setCellSelectionEnabled(true);
-		pointTable.setBackground(Color.WHITE);		
+		pointTable.setBackground(Color.WHITE);
 		pointTable.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -850,31 +786,13 @@ public class ModbusMonitor_Panel extends JPanel {
 		});
 				
 		resetTable(pointTable, null);
-		
 		pointList_ScrollPane.setViewportView(pointTable);
-		
-		packetLog_ScrollPane = new JScrollPane();		
-		packetLog_ScrollPane.setBounds(12, 360, 553, 172);
-		
-		packetLog = new JTextArea();		
-		packetLog.setFont(new Font("맑은 고딕", Font.PLAIN, 16));				
-		packetLog_ScrollPane.setViewportView(packetLog);				
-		
-		cardLayout = new CardLayout(0, 0);
-		viewPanel = new JPanel();
-		viewPanel.setBorder(new LineBorder(Color.BLACK, 2));
-		viewPanel.setBackground(Color.WHITE);
-		viewPanel.setBounds(0, 135, 1028, 407);
-		viewPanel.setLayout(cardLayout);
-		viewPanel.add(pointList_ScrollPane, radio_pointList.getText());
-		viewPanel.add(packetLog_ScrollPane, radio_packetLog.getText());
-		resultPanel.add(viewPanel);
 		
 		search = new JLabel("검 색");
 		search.setForeground(Color.BLACK);
 		search.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		search.setBackground(Color.LIGHT_GRAY);
-		search.setBounds(15, 103, 57, 25);
+		search.setBounds(15, 105, 57, 25);
 		resultPanel.add(search);
 		
 		search_TextField = new JTextField();
@@ -887,21 +805,29 @@ public class ModbusMonitor_Panel extends JPanel {
 		search_TextField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				try {
-					doTableFilter();
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+						send_Button.doClick();
+						return;
+					}else {
+						doTableFilter();	
+					}
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
 			}
-			
 			public void keyReleased(KeyEvent e) {
 				try {
-					doTableFilter();
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {						
+						return;
+					}else {
+						doTableFilter();	
+					}
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 		});
-		search_TextField.setBounds(71, 102, 373, 28);
+		search_TextField.setBounds(71, 102, 373, 32);
 		resultPanel.add(search_TextField);
 		
 		useFilter = new JCheckBox(" 필 터");
@@ -924,7 +850,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				doTableFilter();
 			}
 		});
-		useFilter.setBounds(450, 103, 72, 25);
+		useFilter.setBounds(450, 105, 72, 25);
 		resultPanel.add(useFilter);
 		
 		fc_filter = new JComboBox();
@@ -939,13 +865,13 @@ public class ModbusMonitor_Panel extends JPanel {
 						"FC 03", 
 						"FC 04"
 						}));
-		fc_filter.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		fc_filter.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		fc_filter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				doTableFilter();
 			}
 		});
-		fc_filter.setBounds(528, 102, 80, 28);
+		fc_filter.setBounds(528, 102, 80, 32);
 		resultPanel.add(fc_filter);
 		
 		dataType_filter = new JComboBox();
@@ -979,19 +905,19 @@ public class ModbusMonitor_Panel extends JPanel {
 				doTableFilter();
 			}
 		});
-		dataType_filter.setBounds(610, 102, 292, 28);
+		dataType_filter.setBounds(610, 102, 310, 32);
 		resultPanel.add(dataType_filter);
 		
 		tableType = new JComboBox();
 		tableType.setModel(new DefaultComboBoxModel(
 				new String[] {
-						"모드버스", 
-						"포인트"
+						"Table 1", 
+						"Table 2"
 						}));
 		tableType.setForeground(Color.BLACK);
 		tableType.setBackground(Color.WHITE);
 		tableType.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		tableType.setBounds(914, 102, 102, 28);
+		tableType.setBounds(922, 102, 102, 32);
 		resultPanel.add(tableType);
 			
 		currentState = new JLabel();
@@ -1222,11 +1148,6 @@ public class ModbusMonitor_Panel extends JPanel {
 		exportButton.setVisible(false);
 		exportButton.setEnabled(false);
 		
-		if(packetlog_Frame != null) {
-			packetlog_Frame.dispose();
-			packetlog_Frame = null;
-		}
-		
 		if (MainFrame.getMainFrame() != null) {
 			MainFrame.getMainFrame().setTitle("ModbusAnalyzer");
 		}
@@ -1271,16 +1192,8 @@ public class ModbusMonitor_Panel extends JPanel {
 		reset_Button.doClick();		
 	}
 	
-	public static JTextArea getPacketLog() {
-		return packetLog;
-	}
-	
 	public static JTable getViewTable() {
 		return pointTable;
-	}
-	
-	public static void scrollUp() {
-		packetLog_ScrollPane.getVerticalScrollBar().setValue(packetLog_ScrollPane.getVerticalScrollBar().getMaximum());		
 	}
 	
 	public void initTid(int tid) {
@@ -1473,8 +1386,8 @@ public class ModbusMonitor_Panel extends JPanel {
 		
 		// 이동 불가, 셀 크기 조절 불가
 		table.getTableHeader().setBackground(new Color(255, 255, 153));
-		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		table.getTableHeader().setForeground(Color.BLACK);
+		table.getTableHeader().setForeground(Color.BLACK);		
+		table.getTableHeader().setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		table.getTableHeader().setReorderingAllowed(false);
 		table.getTableHeader().setResizingAllowed(true);
 		
