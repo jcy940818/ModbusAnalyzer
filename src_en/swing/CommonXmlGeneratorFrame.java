@@ -2,7 +2,6 @@ package src_en.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -32,10 +31,10 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import common.util.Calculator;
 import src_en.agent.Perf;
 import src_en.util.ExcelAdapter;
 import src_en.util.Inspecter;
-import src_en.util.JavaScript;
 import src_en.util.MessageUtil_en;
 import src_en.util.Util;
 import src_en.util.XmlGenerator;
@@ -1005,7 +1004,7 @@ public class CommonXmlGeneratorFrame extends JFrame {
 			
 			try {
 				// 보정식 유효성 검사
-				JavaScript.eval(scaleFunction, "1");
+				Calculator.checkFormula(scaleFunction, 1);
 				if (scaleFunction.equalsIgnoreCase("") || scaleFunction.length() < 1 || !scaleFunction.contains("x"))
 					throw new Exception("Scale Validation Error");				
 			}catch(Exception e) {

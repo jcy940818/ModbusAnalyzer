@@ -12,9 +12,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -33,19 +31,14 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.plaf.basic.BasicBorders.RadioButtonBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-import src_en.agent.HttpAgent;
-import src_en.agent.ModbusFacility;
+import common.util.Calculator;
 import src_en.agent.Perf;
-import src_en.analyzer.RX.DataType;
-import src_en.info.AdminConsole_Info;
 import src_en.util.ExcelAdapter;
 import src_en.util.Inspecter;
-import src_en.util.JavaScript;
 import src_en.util.MessageUtil_en;
 import src_en.util.Util;
 import src_en.util.XmlGenerator;
@@ -1180,7 +1173,7 @@ public class CustomModbusXmlGeneratorFrame extends JFrame {
 			
 			try {
 				// 보정식 유효성 검사
-				JavaScript.eval(scaleFunction, "1");
+				Calculator.checkFormula(scaleFunction, 1);
 				if (scaleFunction.equalsIgnoreCase("") || scaleFunction.length() < 1 || !scaleFunction.contains("x"))
 					throw new Exception("Scale Validation Error");				
 			}catch(Exception e) {
