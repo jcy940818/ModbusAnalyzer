@@ -13,7 +13,7 @@ public class PerfData implements Comparable{
 	
 	int index;
 	Object value;
-	Object pureValue;
+	Object pureValue = Double.NaN;
 	long time;
 	String timeString;
 	

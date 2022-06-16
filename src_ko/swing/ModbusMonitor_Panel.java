@@ -57,8 +57,9 @@ public class ModbusMonitor_Panel extends JPanel {
 	// Modbus Point List	
 	private static JComboBox resultType;
 	public static JScrollPane pointList_ScrollPane;
-	public static JTable pointTable;
-	private static ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();	
+	public static JTable pointTable;	
+	private static ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();
+	public static String formula = null;
 	
 	// information Component
 	JPanel infoPanel; // 클라이언트 소켓이 서버와 연결 된 상태일때만 인포메이션 컴포넌트들을 활성화 시킨다.	
@@ -805,26 +806,24 @@ public class ModbusMonitor_Panel extends JPanel {
 		search_TextField.setHorizontalAlignment(SwingConstants.LEFT);
 		search_TextField.setFont(new Font("맑은 고딕", Font.PLAIN, 17));
 		search_TextField.setBorder(new LineBorder(Color.BLACK, 2));
+		search_TextField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(formula);
+				setTableStyle(pointTable, formula);
+			}
+		});
 		search_TextField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				try {
-					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-						send_Button.doClick();
-						return;
-					}else {
-						doTableFilter();	
-					}
+					doTableFilter();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 			public void keyReleased(KeyEvent e) {
 				try {
-					if (e.getKeyCode() == KeyEvent.VK_ENTER) {						
-						return;
-					}else {
-						doTableFilter();	
-					}
+					doTableFilter();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -1232,7 +1231,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				}
 		});
 		
-		setTableStyle(table);
+		setTableStyle(table, formula);
 	}
 	
 	public static void setConnectionInfo() {
@@ -1444,7 +1443,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		}
 	}
 	
-	public static void setTableStyle(JTable table) {
+	public static void setTableStyle(JTable table, String formula) {
 		
 		// 이동 불가, 셀 크기 조절 불가
 		table.getTableHeader().setBackground(new Color(255, 255, 153));
@@ -1487,12 +1486,25 @@ public class ModbusMonitor_Panel extends JPanel {
 		// 정렬할 테이블의 ColumnModel을 가져옴
 		TableColumnModel tcmSchedule = table.getColumnModel();
 		
+		ScanCellRenderer scanCellRenderer = null;
+		if(formula == null || formula.length() == 0 || formula.equalsIgnoreCase("") || !formula.contains("x")) {
+			scanCellRenderer = new ScanCellRenderer();
+		}else {
+			formula = formula.toLowerCase();
+			formula = formula.replace("X", "x");
+			formula = formula.replace("and", "&&").replace("or", "||");
+			formula = formula.replace("AND", "&&").replace("OR", "||");
+			
+			scanCellRenderer = new ScanCellRenderer(formula);
+		}
+		scanCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		
 		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
 //		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 모드버스 포인트
 		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 기능코드
 		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 주 소
 		tcmSchedule.getColumn(4).setCellRenderer(tScheduleCellRenderer); // 데이터 타입
-		tcmSchedule.getColumn(5).setCellRenderer(tScheduleCellRenderer); // 결 과
+		tcmSchedule.getColumn(5).setCellRenderer(scanCellRenderer); // 결 과
 		
 		if(pointList != null) {
 			int total = pointList.size();
@@ -1553,15 +1565,15 @@ public class ModbusMonitor_Panel extends JPanel {
 		String text = search_TextField.getText();
 		
 		boolean noSearch = (text == null || text.length() == 0 || text.equals(""));
+		boolean hasFormula = false;
 		
 		if(noSearch && !useFilter.isSelected()) {
 			resetTable(pointTable, null);
 			addRecord(pointTable, pointList);
 			return;
 		}
-		
 		if(!noSearch) {
-			text = text.toUpperCase().trim();
+			text = text.toLowerCase().trim();
 		}
 		
 		for(int i = 0; i < pointList.size(); i++) {
@@ -1569,7 +1581,7 @@ public class ModbusMonitor_Panel extends JPanel {
 			boolean isContain = false;
 			
 			if(!noSearch) {
-				String searchElement = modbusWp.toString().toUpperCase();
+				String searchElement = modbusWp.toString().toLowerCase();
 				
 				if(text.contains(",")) {
 					String[] textToken = text.split(",");
@@ -1578,9 +1590,23 @@ public class ModbusMonitor_Panel extends JPanel {
 						if(searchElement.contains(token)) {
 							isContain = true;
 						}
+						if(token.startsWith("[") && token.endsWith("]") && token.contains("x")) {
+							formula = token.replace("[", "").replace("]", "");
+							hasFormula = true;
+						}
 					}
-				}else if(searchElement.contains(text)) {
-					isContain = true;
+				}else{
+					if (searchElement.contains(text)) {
+						isContain = true;
+					}
+					if(text.startsWith("[") && text.endsWith("]") && text.contains("x")) {
+						formula = text.replace("[", "").replace("]", "");
+						hasFormula = true;
+						resetTable(pointTable, null);
+						addRecord(pointTable, pointList);
+						setTableStyle(pointTable, formula);
+						return;
+					}
 				}
 			}else {
 				isContain = true;
@@ -1601,8 +1627,8 @@ public class ModbusMonitor_Panel extends JPanel {
 				}
 				
 				if( !(dataType_filter.getSelectedItem().toString().equalsIgnoreCase("") || dataType_filter.getSelectedItem().toString().equalsIgnoreCase("ALL")) ) { 
-					String dataType = dataType_filter.getSelectedItem().toString().toUpperCase().trim();
-					if(modbusWp.getDataType().toUpperCase().trim().equalsIgnoreCase(dataType)) {
+					String dataType = dataType_filter.getSelectedItem().toString().toLowerCase().trim();
+					if(modbusWp.getDataType().toLowerCase().trim().equalsIgnoreCase(dataType)) {
 						dataTypePass = true;
 					}
 				}else {
@@ -1621,6 +1647,11 @@ public class ModbusMonitor_Panel extends JPanel {
 
 		resetTable(pointTable, null);
 		addRecord(pointTable, filterList);
+		if(hasFormula) {
+			setTableStyle(pointTable, formula);
+		}else {
+			formula = null;
+		}
 	}
 	
 	public int getMonitorUnitID() {

@@ -7,6 +7,7 @@ import java.awt.Font;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import common.modbus.ModbusWatchPoint;
 import src_ko.util.JavaScript;
 
 class ScanCellRenderer extends DefaultTableCellRenderer {
@@ -25,12 +26,17 @@ class ScanCellRenderer extends DefaultTableCellRenderer {
 				
 		String scanReulst = null;
 		
-		try {
-			scanReulst = table.getValueAt(row, 3).toString();
-		}catch(Exception e) {
-			// 테이블 셀에 내용이 없을 경우 (제어 성공 결과 등)						
-			return c;
-		}
+			try {
+				if(table.getValueAt(row, 1) instanceof ModbusWatchPoint) {
+					ModbusWatchPoint point = (ModbusWatchPoint)table.getValueAt(row, 1);
+					scanReulst = point.getData().getPureValue().toString();
+				}else {
+					scanReulst = table.getValueAt(row, 3).toString();	
+				}
+			}catch(Exception ex) {
+				// 테이블 셀에 내용이 없을 경우 (제어 성공 결과 등)						
+				return c;
+			}
 		
 			try {												
 				if (scanReulst.contains("Exception") ||
