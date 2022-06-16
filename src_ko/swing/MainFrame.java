@@ -324,8 +324,8 @@ public class MainFrame extends JFrame {
 				
 			}
 		});
-		xmlGeneratorMenu.add(xmlGenerator_Agent);
-		xmlGeneratorMenu.add(new JSeparator());
+//		xmlGeneratorMenu.add(xmlGenerator_Agent);
+//		xmlGeneratorMenu.add(new JSeparator());
 		
 		
 		// Util ¸Þ´º - XML Generator : Control
