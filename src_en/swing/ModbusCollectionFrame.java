@@ -35,6 +35,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import common.util.Calculator;
 import src_en.agent.HttpAgent;
 import src_en.agent.ModbusFacility;
 import src_en.agent.Perf;
@@ -42,7 +43,6 @@ import src_en.analyzer.RX.DataType;
 import src_en.info.AdminConsole_Info;
 import src_en.util.ExcelAdapter;
 import src_en.util.Inspecter;
-import src_en.util.JavaScript;
 import src_en.util.MessageUtil_en;
 import src_en.util.Util;
 
@@ -1101,7 +1101,7 @@ public class ModbusCollectionFrame extends JFrame {
 			
 			try {
 				// 보정식 유효성 검사
-				JavaScript.eval(scaleFunction, "1");
+				Calculator.checkFormula(scaleFunction, 1);
 				if (scaleFunction.equalsIgnoreCase("") || scaleFunction.length() < 1 || !scaleFunction.contains("x"))
 					throw new Exception("Scale Validation Error");				
 			}catch(Exception e) {

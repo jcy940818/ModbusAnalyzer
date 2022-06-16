@@ -2,7 +2,6 @@ package src_ko.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -12,9 +11,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -37,6 +34,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import common.util.Calculator;
 import src_ko.agent.HttpAgent;
 import src_ko.agent.ModbusFacility;
 import src_ko.agent.Perf;
@@ -44,7 +42,6 @@ import src_ko.analyzer.RX.DataType;
 import src_ko.info.AdminConsole_Info;
 import src_ko.util.ExcelAdapter;
 import src_ko.util.Inspecter;
-import src_ko.util.JavaScript;
 import src_ko.util.Util;
 
 public class ModbusCollectionFrame extends JFrame {
@@ -1087,7 +1084,7 @@ public class ModbusCollectionFrame extends JFrame {
 			
 			try {
 				// 보정식 유효성 검사
-				JavaScript.eval(scaleFunction, "1");
+				Calculator.checkFormula(scaleFunction, 1);
 				if (scaleFunction.equalsIgnoreCase("") || scaleFunction.length() < 1 || !scaleFunction.contains("x"))
 					throw new Exception("보정식 내용 오류");				
 			}catch(Exception e) {
