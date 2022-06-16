@@ -16,7 +16,7 @@ public class JavaScript {
 			return false;
 		}
 		
-		String operation = scaleFunction.replace("x", value);
+		String operation = scaleFunction.toLowerCase().replace("x", value);
 
 		ScriptEngineManager mgr = new ScriptEngineManager();
 		ScriptEngine engine = mgr.getEngineByName("JavaScript");
