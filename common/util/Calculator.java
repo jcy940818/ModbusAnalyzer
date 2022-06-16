@@ -2,9 +2,18 @@ package common.util;
 
 import java.util.Stack;
 
-public class Calculator
-{
+public class Calculator {
 
+	public static final boolean checkFormula(String fixFormula, double value) throws Exception {	
+        if (value != Double.NaN && !fixFormula.equals("x")) {
+            try {
+                value = Calculator.calculate(fixFormula.replaceAll("x", Double.toString(value)));
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+        return true;
+    }
 
     /** ¿¬»êÀÚ. */
     private static String operators = "+-*/()&|<>^=!" ;
