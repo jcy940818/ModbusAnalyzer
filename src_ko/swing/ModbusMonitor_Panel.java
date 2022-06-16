@@ -390,6 +390,7 @@ public class ModbusMonitor_Panel extends JPanel {
 								int[] selectedRows = pointTable.getSelectedRows();
 								
 								ArrayList<ModbusWatchPoint> pointList = getSelectedModbusPoint(pointTable);
+								pointDataClear(pointList);
 								
 								ModbusMonitor monitor = new ModbusMonitor();
 								monitor.setType((isRTU) ? ModbusMonitor.TYPE_RTU : ModbusMonitor.TYPE_TCP);
@@ -1633,6 +1634,16 @@ public class ModbusMonitor_Panel extends JPanel {
 		Collections.sort(pointList);
 	}
 	
+	public static void pointDataClear(ArrayList<ModbusWatchPoint> pointList) {
+		if(pointList == null || pointList.size() < 1) {
+			return;
+		}else {
+			for(ModbusWatchPoint point : pointList) {
+				point.setData(new PerfData());
+			}
+		}
+	}
+	
 	public static ArrayList<ModbusWatchPoint> getSelectedModbusPoint(JTable table) {
 		ArrayList<ModbusWatchPoint> selectedPointlist = new ArrayList<ModbusWatchPoint>();
 		int[] selectedIndex = table.getSelectedRows();
@@ -1642,4 +1653,5 @@ public class ModbusMonitor_Panel extends JPanel {
 		}
 		return selectedPointlist;
 	}
+	
 }
