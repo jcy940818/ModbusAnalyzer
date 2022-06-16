@@ -741,7 +741,7 @@ public class SnmpXmlGeneratorFrame extends JFrame {
 		int rowCount = table.getRowCount();
 		
 		for(int i = 0; i < rowCount; i++) {
-			Integer num = Integer.parseInt(table.getValueAt(i, 0).toString().trim());
+			int num = Integer.parseInt(table.getValueAt(i, 0).toString().trim());
 			if(rowNum == num) {
 				model.removeRow(i);				
 				return;
