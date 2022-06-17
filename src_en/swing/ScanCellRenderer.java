@@ -42,8 +42,8 @@ class ScanCellRenderer extends DefaultTableCellRenderer {
 					// Not Good
 					if (isSelected) {
 						c.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
-						c.setBackground(new Color(0, 120, 215));
-						c.setForeground(new Color(255, 255, 255));
+						c.setBackground(table.getSelectionBackground());
+						c.setForeground(table.getSelectionForeground());
 						return c;
 					}else{
 						c.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
@@ -54,8 +54,8 @@ class ScanCellRenderer extends DefaultTableCellRenderer {
 				}else {
 					// Good
 					if (isSelected) {				
-						c.setBackground(new Color(0, 120, 215));
-						c.setForeground(new Color(255, 255, 255));
+						c.setBackground(table.getSelectionBackground());
+						c.setForeground(table.getSelectionForeground());
 					}else{
 						c.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 15));
 						c.setForeground(new Color(0, 0, 0));
@@ -73,8 +73,8 @@ class ScanCellRenderer extends DefaultTableCellRenderer {
 					if(result) {
 						if (isSelected) {
 							c.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
-							c.setBackground(new Color(0, 120, 215));
-							c.setForeground(new Color(255, 255, 255));
+							c.setBackground(table.getSelectionBackground());
+							c.setForeground(table.getSelectionForeground());
 						}else{				
 							c.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 							c.setForeground(Color.BLACK);

@@ -35,8 +35,8 @@ public class FindTextRenderer extends DefaultTableCellRenderer {
 			if (search.length() < 1 || search.equalsIgnoreCase("")) {
 				// 검색어가 존재하지 않을 경우
 				if (isSelected) {				
-					c.setBackground(new Color(0, 120, 215));
-					c.setForeground(new Color(255, 255, 255));
+					c.setBackground(table.getSelectionBackground());
+					c.setForeground(table.getSelectionForeground());
 					return c;
 				}else{
 					c.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
@@ -53,8 +53,8 @@ public class FindTextRenderer extends DefaultTableCellRenderer {
 					// ★ 검색 문자열을 포함할 경우
 					if (isSelected) {
 						c.setFont(new Font("맑은 고딕", Font.BOLD, 16));
-						c.setBackground(new Color(0, 120, 215));
-						c.setForeground(new Color(255, 255, 255));
+						c.setBackground(table.getSelectionBackground());
+						c.setForeground(table.getSelectionForeground());
 						return c;
 					} else {
 						c.setFont(new Font("맑은 고딕", Font.BOLD, 16));
@@ -67,8 +67,8 @@ public class FindTextRenderer extends DefaultTableCellRenderer {
 					
 					// 검색 문자열을 포함하지 않을 경우
 					if (isSelected) {				
-						c.setBackground(new Color(0, 120, 215));
-						c.setForeground(new Color(255, 255, 255));
+						c.setBackground(table.getSelectionBackground());
+						c.setForeground(table.getSelectionForeground());
 						return c;
 					}else{
 						c.setFont(new Font("맑은 고딕", Font.PLAIN, 15));

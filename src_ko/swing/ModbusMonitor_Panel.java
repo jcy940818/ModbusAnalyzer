@@ -1462,7 +1462,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		table.getColumnModel().getColumn(0).setPreferredWidth(50); // 순 서
 		table.getColumnModel().getColumn(1).setPreferredWidth(350); // 모드버스 포인트
 		table.getColumnModel().getColumn(2).setPreferredWidth(65); // 기능코드
-		table.getColumnModel().getColumn(3).setPreferredWidth(80); // 주 소
+		table.getColumnModel().getColumn(3).setPreferredWidth(80); // 주 소		
 		
 		if(resultType != null) {
 			if(resultType.getSelectedIndex() == 0) {

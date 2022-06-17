@@ -37,8 +37,8 @@ public class SeverityRenderer extends DefaultTableCellRenderer {
 			if (severitys.size() < 1) {
 				if (isSelected) {
 					c.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
-					c.setBackground(new Color(0, 120, 215));
-					c.setForeground(new Color(255, 255, 255));
+					c.setBackground(table.getSelectionBackground());
+					c.setForeground(table.getSelectionForeground());
 					return c;
 				}else{
 					c.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
@@ -55,8 +55,8 @@ public class SeverityRenderer extends DefaultTableCellRenderer {
 					if(cellValue.equalsIgnoreCase(severity.getStrSeverity())) {
 						if (isSelected) {
 							c.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
-							c.setBackground(new Color(0, 120, 215));
-							c.setForeground(new Color(255, 255, 255));
+							c.setBackground(table.getSelectionBackground());
+							c.setForeground(table.getSelectionForeground());
 							return c;
 						} else {
 							c.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
@@ -69,8 +69,8 @@ public class SeverityRenderer extends DefaultTableCellRenderer {
 				
 				if (isSelected) {
 					c.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
-					c.setBackground(new Color(0, 120, 215));
-					c.setForeground(new Color(255, 255, 255));
+					c.setBackground(table.getSelectionBackground());
+					c.setForeground(table.getSelectionForeground());
 					return c;
 				}else{
 					c.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
