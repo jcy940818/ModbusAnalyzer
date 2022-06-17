@@ -231,7 +231,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		addrTypeComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				doTableFilter(true);
+				doTableFilter(false);
 			}
 		});
 		addrTypePanel.add(addrTypeComboBox);
@@ -460,7 +460,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				useFilter.setSelected(false);
 				
 				pointList.clear();
-				doTableFilter(true);
+				doTableFilter(false);
 			}
 		});
 		function_Panel.add(reset_Button);
@@ -504,7 +504,7 @@ public class ModbusMonitor_Panel extends JPanel {
 						pointList.remove(wp);
 					}
 
-					doTableFilter(true);
+					doTableFilter(false);
 				}
 			}
 		});
@@ -847,7 +847,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					dataType_filter.setEnabled(false);
 				}
 				
-				doTableFilter(true);
+				doTableFilter(false);
 			}
 		});
 		useFilter.setBounds(450, 105, 72, 25);
@@ -868,7 +868,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		fc_filter.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		fc_filter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				doTableFilter(true);
+				doTableFilter(false);
 			}
 		});
 		fc_filter.setBounds(528, 102, 80, 32);
@@ -902,7 +902,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		dataType_filter.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		dataType_filter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				doTableFilter(true);
+				doTableFilter(false);
 			}
 		});
 		dataType_filter.setBounds(610, 102, 310, 32);

@@ -211,7 +211,7 @@ public class AddModbusPointFrame extends JFrame {
 					}
 	
 					ModbusMonitor_Panel.addPointList(selectedPointList);
-					ModbusMonitor_Panel.doTableFilter(true);
+					ModbusMonitor_Panel.doTableFilter(false);
 					doTableFilter();
 					search_TextField.requestFocus();
 				}
