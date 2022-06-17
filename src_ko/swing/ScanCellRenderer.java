@@ -31,8 +31,20 @@ class ScanCellRenderer extends DefaultTableCellRenderer {
 					ModbusWatchPoint point = (ModbusWatchPoint)table.getValueAt(row, 1);
 					String pureData = point.getData().getPureValue().toString();
 					
-					if(ModbusMonitor_Panel.resultType != null &&  ModbusMonitor_Panel.resultType.getSelectedIndex() == 0) {
+					if(pureData.equalsIgnoreCase("none")) {
+						if (isSelected) {				
+							c.setBackground(table.getSelectionBackground());
+							c.setForeground(table.getSelectionForeground());
+						}else{
+							c.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 15));
+							c.setForeground(new Color(0, 0, 0));
+							c.setBackground(Color.WHITE);
+						}
+						return c;
+						
+					}else if(ModbusMonitor_Panel.resultType != null &&  ModbusMonitor_Panel.resultType.getSelectedIndex() == 0) {
 						scanReulst = String.valueOf(point.getComputedValue(Double.parseDouble(pureData)));
+						
 					}else {
 						scanReulst = pureData;
 					}
@@ -97,7 +109,7 @@ class ScanCellRenderer extends DefaultTableCellRenderer {
 				}
 			}catch(Exception e) {
 				// Search Value Scan Expression Error
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 	
 			return c;			

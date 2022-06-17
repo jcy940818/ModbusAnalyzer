@@ -677,7 +677,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				if(checkFormValidation() && checkStatusTable(table, dataFormat)) {
 					try {
 						updatePoint(selectedPoint);
-						ModbusMonitor_Panel.doTableFilter();
+						ModbusMonitor_Panel.doTableFilter(true);
 						ModifyModbusWatchPointFrame.doTableFilter();
 						
 						StringBuilder sb = new StringBuilder();
@@ -802,7 +802,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 							updatePoint(point);
 						}
 						
-						ModbusMonitor_Panel.doTableFilter();
+						ModbusMonitor_Panel.doTableFilter(true);
 						ModifyModbusWatchPointFrame.doTableFilter();
 						
 						sb = new StringBuilder();
@@ -2007,6 +2007,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		scale_var.addKeyListener(saveAndCloseAdpter);
 		dataFormat_var.addKeyListener(saveAndCloseAdpter);
 		search_TextField.addKeyListener(saveAndCloseAdpter);
+		pointTable.addKeyListener(saveAndCloseAdpter);
 	}
 	
 	@Override

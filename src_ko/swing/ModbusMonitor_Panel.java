@@ -45,6 +45,7 @@ import common.modbus.ModbusWatchPoint;
 import common.util.TableUtil;
 import src_ko.agent.ClientSocket;
 import src_ko.agent.ModbusAgent;
+import src_ko.util.JavaScript;
 import src_ko.util.Util;
 
 public class ModbusMonitor_Panel extends JPanel {
@@ -230,7 +231,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		addrTypeComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				doTableFilter();
+				doTableFilter(true);
 			}
 		});
 		addrTypePanel.add(addrTypeComboBox);
@@ -459,7 +460,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				useFilter.setSelected(false);
 				
 				pointList.clear();
-				doTableFilter();
+				doTableFilter(true);
 			}
 		});
 		function_Panel.add(reset_Button);
@@ -503,7 +504,7 @@ public class ModbusMonitor_Panel extends JPanel {
 						pointList.remove(wp);
 					}
 
-					doTableFilter();
+					doTableFilter(true);
 				}
 			}
 		});
@@ -806,24 +807,21 @@ public class ModbusMonitor_Panel extends JPanel {
 		search_TextField.setHorizontalAlignment(SwingConstants.LEFT);
 		search_TextField.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 17));
 		search_TextField.setBorder(new LineBorder(Color.BLACK, 2));
-		search_TextField.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println(formula);
-				setTableStyle(pointTable, formula);
-			}
-		});
 		search_TextField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				try {
-					doTableFilter();
+					doTableFilter(false);
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 			public void keyReleased(KeyEvent e) {
 				try {
-					doTableFilter();
+					
+					boolean enter = (e.getKeyCode() == KeyEvent.VK_ENTER);
+					doTableFilter(enter);					
+					if(enter)System.out.println("Formula  : " + formula);
+					
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -849,7 +847,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					dataType_filter.setEnabled(false);
 				}
 				
-				doTableFilter();
+				doTableFilter(true);
 			}
 		});
 		useFilter.setBounds(450, 105, 72, 25);
@@ -870,7 +868,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		fc_filter.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		fc_filter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				doTableFilter();
+				doTableFilter(true);
 			}
 		});
 		fc_filter.setBounds(528, 102, 80, 32);
@@ -904,7 +902,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		dataType_filter.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		dataType_filter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				doTableFilter();
+				doTableFilter(true);
 			}
 		});
 		dataType_filter.setBounds(610, 102, 310, 32);
@@ -921,9 +919,9 @@ public class ModbusMonitor_Panel extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				SwingUtilities.invokeLater(new Runnable() {
 				    @Override public void run() {
-				    	int[] selectedRows = pointTable.getSelectedRows();
+//				    	int[] selectedRows = pointTable.getSelectedRows();
 				    	updateTable(pointTable);
-				    	setFocusMultipleRows(pointTable, selectedRows);
+//				    	setFocusMultipleRows(pointTable, selectedRows);
 				    }
 				});
 			}
@@ -1486,9 +1484,9 @@ public class ModbusMonitor_Panel extends JPanel {
 		// Á¤·ÄÇÒ Å×ÀÌºíÀÇ ColumnModelÀ» °¡Á®¿È
 		TableColumnModel tcmSchedule = table.getColumnModel();
 		
-		ScanCellRenderer scanCellRenderer = null;
+		DefaultTableCellRenderer scanCellRenderer = null;
 		if(formula == null || formula.length() == 0 || formula.equalsIgnoreCase("") || !formula.contains("x")) {
-			scanCellRenderer = new ScanCellRenderer();
+			scanCellRenderer = new DefaultTableCellRenderer();
 		}else {
 			formula = formula.toLowerCase();
 			formula = formula.replace("X", "x");
@@ -1558,7 +1556,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		}
 	}
 	
-	public static void doTableFilter() {
+	public static void doTableFilter(boolean findFormula) {
 		if(search_TextField == null && useFilter == null) return;
 		
 		ArrayList<ModbusWatchPoint> filterList = new ArrayList<ModbusWatchPoint>();
@@ -1569,8 +1567,9 @@ public class ModbusMonitor_Panel extends JPanel {
 		boolean hasFormula = false;
 		
 		if(noSearch && !useFilter.isSelected()) {
+			formula = null;
 			resetTable(pointTable, null);
-			addRecord(pointTable, pointList);
+			addRecord(pointTable, pointList);			
 			return;
 		}
 		if(!noSearch) {
@@ -1585,36 +1584,57 @@ public class ModbusMonitor_Panel extends JPanel {
 				String searchElement = modbusWp.toString().toLowerCase();
 				
 				if(text.contains(",")) {
+					// ********************** °Ë»ö¾î¿¡ ÄÞ¸¶(,) Æ÷ÇÔ *****************************************************************
 					String[] textToken = text.split(",");
 					for(int i2 = 0; i2 < textToken.length; i2++) {
 						String token = textToken[i2].trim();
+						
 						if(searchElement.contains(token)) {
 							isContain = true;
 						}
-						if(token.startsWith("[") && token.endsWith("]") && token.contains("x")) {
-							formula = token.replace("[", "").replace("]", "");
+						
+						if(findFormula && token.startsWith("[") && token.endsWith("]") && token.contains("x") && token.contains("only")) {
 							hasFormula = true;
+							formula = token.replace("[", "").replace("]", "").replace("only", "").replace("*", "").replace("all", "").trim();
+							onlyFormulaPoint(formula);
+							return;
+							
+						}else if(findFormula && token.startsWith("[") && token.endsWith("]") && token.contains("x")) {
+							hasFormula = true;
+							formula = token.replace("[", "").replace("]", "").replace("only", "").replace("*", "").replace("all", "").trim();
 						}
+						
 						if(token.startsWith("[") && token.endsWith("]") && (token.contains("all") || token.contains("*"))) {
 							showAll = true;
 						}
 					}
+					
 				}else{
+					// ********************** °Ë»ö¾î¿¡ ÄÞ¸¶(,) ¹ÌÆ÷ÇÔ *****************************************************************
 					if (searchElement.contains(text)) {
 						isContain = true;
 					}
-					if(text.startsWith("[") && text.endsWith("]") && text.contains("x")) {
-						formula = text.replace("[", "").replace("]", "");
+					
+					if(findFormula && text.startsWith("[") && text.endsWith("]") && text.contains("x") && text.contains("only")) {
 						hasFormula = true;
+						formula = text.replace("[", "").replace("]", "").replace("only", "").replace("*", "").replace("all", "").trim();
+						onlyFormulaPoint(formula);
+						return;
+						
+					}else if(findFormula && text.startsWith("[") && text.endsWith("]") && text.contains("x")) {
+						hasFormula = true;
+						formula = text.replace("[", "").replace("]", "").replace("only", "").replace("*", "").replace("all", "").trim();
 						resetTable(pointTable, null);
 						addRecord(pointTable, pointList);
 						setTableStyle(pointTable, formula);
 						return;
 					}
+					
 					if(text.startsWith("[") && text.endsWith("]") && (text.contains("all") || text.contains("*"))) {
 						showAll = true;
 					}
 				}
+				// ****************************************************************************************************************
 			}else {
 				isContain = true;
 			}
@@ -1652,20 +1672,31 @@ public class ModbusMonitor_Panel extends JPanel {
 			
 		}// for loop
 
-		if(showAll) {
-			filterList.clear();
-			for(ModbusWatchPoint p : pointList) {
-				filterList.add(p);
+		if(!hasFormula) formula = null;
+		resetTable(pointTable, null);
+		addRecord(pointTable, (showAll) ? pointList : filterList);
+	}
+	
+	public static void onlyFormulaPoint(String formula) {
+    	ArrayList<ModbusWatchPoint> findPointList = new ArrayList<ModbusWatchPoint>();
+		
+		for(ModbusWatchPoint p : pointList) {
+			String pureData = p.getData().getPureValue().toString();
+			if(!pureData.equalsIgnoreCase("none")) {
+				if(resultType.getSelectedIndex() == 0) {
+					pureData = String.valueOf(p.getComputedValue(Double.parseDouble(pureData)));
+				}
+				try {
+					boolean validFormula =  (boolean)JavaScript.eval(formula, pureData);
+					if(validFormula) findPointList.add(p);
+				}catch(Exception exp) {
+					// Do Nothing
+				}
 			}
 		}
 		
 		resetTable(pointTable, null);
-		addRecord(pointTable, filterList);
-		if(hasFormula) {
-			setTableStyle(pointTable, formula);
-		}else {
-			formula = null;
-		}
+		addRecord(pointTable, findPointList);
 	}
 	
 	public int getMonitorUnitID() {
