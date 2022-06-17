@@ -55,7 +55,7 @@ public class ModbusMonitor_Panel extends JPanel {
 	public static int PORT;
 	
 	// Modbus Point List	
-	private static JComboBox resultType;
+	public static JComboBox resultType;
 	public static JScrollPane pointList_ScrollPane;
 	public static JTable pointTable;	
 	private static ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();
@@ -1565,6 +1565,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		String text = search_TextField.getText();
 		
 		boolean noSearch = (text == null || text.length() == 0 || text.equals(""));
+		boolean showAll = false;
 		boolean hasFormula = false;
 		
 		if(noSearch && !useFilter.isSelected()) {
@@ -1594,6 +1595,9 @@ public class ModbusMonitor_Panel extends JPanel {
 							formula = token.replace("[", "").replace("]", "");
 							hasFormula = true;
 						}
+						if(token.startsWith("[") && token.endsWith("]") && (token.contains("all") || token.contains("*"))) {
+							showAll = true;
+						}
 					}
 				}else{
 					if (searchElement.contains(text)) {
@@ -1606,6 +1610,9 @@ public class ModbusMonitor_Panel extends JPanel {
 						addRecord(pointTable, pointList);
 						setTableStyle(pointTable, formula);
 						return;
+					}
+					if(text.startsWith("[") && text.endsWith("]") && (text.contains("all") || text.contains("*"))) {
+						showAll = true;
 					}
 				}
 			}else {
@@ -1645,6 +1652,13 @@ public class ModbusMonitor_Panel extends JPanel {
 			
 		}// for loop
 
+		if(showAll) {
+			filterList.clear();
+			for(ModbusWatchPoint p : pointList) {
+				filterList.add(p);
+			}
+		}
+		
 		resetTable(pointTable, null);
 		addRecord(pointTable, filterList);
 		if(hasFormula) {

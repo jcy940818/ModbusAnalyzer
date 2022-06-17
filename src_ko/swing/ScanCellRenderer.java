@@ -29,9 +29,16 @@ class ScanCellRenderer extends DefaultTableCellRenderer {
 			try {
 				if(table.getValueAt(row, 1) instanceof ModbusWatchPoint) {
 					ModbusWatchPoint point = (ModbusWatchPoint)table.getValueAt(row, 1);
-					scanReulst = point.getData().getPureValue().toString();
+					String pureData = point.getData().getPureValue().toString();
+					
+					if(ModbusMonitor_Panel.resultType != null &&  ModbusMonitor_Panel.resultType.getSelectedIndex() == 0) {
+						scanReulst = String.valueOf(point.getComputedValue(Double.parseDouble(pureData)));
+					}else {
+						scanReulst = pureData;
+					}
+					
 				}else {
-					scanReulst = table.getValueAt(row, 3).toString();	
+					scanReulst = table.getValueAt(row, 3).toString();
 				}
 			}catch(Exception ex) {
 				// 테이블 셀에 내용이 없을 경우 (제어 성공 결과 등)						
