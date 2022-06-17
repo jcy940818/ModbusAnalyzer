@@ -299,10 +299,10 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			StringBuilder sb = new StringBuilder();
 			sb.append(String.format("%s%s%s\n", Util.colorGreen("Modbus Point Information"), Util.separator, Util.separator));
 			
-			sb.append(String.format("%s : %s", Util.colorBlue("1. Name"), wp.getDisplayName()));
+			sb.append(String.format("%s : %s", Util.colorBlue("1. 포인트 이름"), wp.getDisplayName()));
 			sb.append(Util.separator + Util.separator + "\n\n");
 			
-			sb.append(String.format("%s : %s", Util.colorBlue("2. Counter"), wp.getCounter()));
+			sb.append(String.format("%s : %s", Util.colorBlue("2. 카운터(드라이버 코드)"), wp.getCounter()));
 			sb.append(Util.separator + Util.separator + "\n");
 			
 			
@@ -312,33 +312,49 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			sb.append(String.format("%s : %s", Util.colorBlue("├&nbsp;&nbsp;Function Code"), wp.getFunctionCode()));
+			sb.append(String.format("%s : %s", Util.colorBlue("├&nbsp;&nbsp;기능코드"), wp.getFunctionCode()));
 			sb.append(Util.separator + Util.separator + "\n");
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			sb.append(String.format("%s : %s", Util.colorBlue("├&nbsp;&nbsp;Modbus Address ( DEC )"), wp.getModbusAddrString()));
+			sb.append(String.format("%s : %s", Util.colorBlue("├&nbsp;&nbsp;모드버스 주소 ( DEC )"), wp.getModbusAddrString()));
 			sb.append(Util.separator + Util.separator + "\n");
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			sb.append(String.format("%s : %d", Util.colorBlue("├&nbsp;&nbsp;Register Address ( DEC )"), wp.getRegisterAddr()));
+			sb.append(String.format("%s : %d", Util.colorBlue("├&nbsp;&nbsp;레지스터 주소 ( DEC )"), wp.getRegisterAddr()));
 			sb.append(Util.separator + Util.separator + "\n");
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			sb.append(String.format("%s : %s", Util.colorBlue("├&nbsp;&nbsp;Register Address ( HEX )"), wp.getRegisterAddrHexString()));
+			sb.append(String.format("%s : %s", Util.colorBlue("├&nbsp;&nbsp;레지스터 주소 ( HEX )"), wp.getRegisterAddrHexString()));
 			sb.append(Util.separator + Util.separator + "\n");
 			
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			sb.append(String.format("%s : %s", Util.colorBlue("└&nbsp;&nbsp;Data Type"), wp.getDataType()));
+			sb.append(String.format("%s : %s", Util.colorBlue("└&nbsp;&nbsp;데이터 타입"), wp.getDataType()));
 			sb.append(Util.separator + Util.separator + "\n\n");
 			
-			sb.append(String.format("%s : %s", Util.colorBlue("3. Measure"), wp.getMeasure()));
+			sb.append(String.format("%s : %s", Util.colorBlue("3. 측정 단위"), wp.getMeasure()));
 			sb.append(Util.separator + Util.separator + "\n\n");
 			
-			sb.append(String.format("%s : %s", Util.colorBlue("4. Scale Formula"), wp.getScaleFunction()));
+			sb.append(String.format("%s : %s", Util.colorBlue("4. 보정식"), wp.getScaleFunction()));
 			sb.append(Util.separator + Util.separator + "\n\n");
 			
-			sb.append(String.format("%s : %s", Util.colorBlue("5. Data Format"), wp.getDataFormat()));
+			String dataFormat = null;
+			switch(wp.getDataFormat()) {
+				case 1 : 
+					dataFormat = "1 ( DI : 이진 상태 )";
+					break;
+				case 2 : 
+					dataFormat = "2 ( Multiple : 다중 상태 )";
+					break;
+				case 3 : 
+					dataFormat = "3 ( Analog : 아날로그 )";
+					break;
+				default : 
+					dataFormat = "3 ( Analog : 아날로그 )";
+					break;
+			}
+			
+			sb.append(String.format("%s : %s", Util.colorBlue("5. 데이터 형식"), dataFormat));
 			sb.append(Util.separator + Util.separator + "\n");
 			
 			if(wp.getDataFormat() == 1) {
@@ -346,38 +362,49 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 				
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-				sb.append(String.format("%s%s : %s&nbsp;&nbsp;%s&nbsp;&nbsp;%s : %s",
-						Util.colorBlue("├&nbsp;&nbsp;"),
-						Util.colorBlue("Value"),
-						"0",
-						Util.colorRed("/"),
-						Util.colorBlue("Label"),
-						binLabel[0]));
+				sb.append(String.format("%s", Util.colorBlue("│")));
 				sb.append(Util.separator + Util.separator + "\n");
 				
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 				sb.append(String.format("%s%s : %s&nbsp;&nbsp;%s&nbsp;&nbsp;%s : %s",
+						Util.colorBlue("├&nbsp;&nbsp;"),
+						Util.colorBlue("값"),
+						"0",
+						Util.colorRed("/"),
+						Util.colorBlue("내용"),
+						binLabel[0]));
+				sb.append(Util.separator + Util.separator + "\n");
+								
+				
+				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+				sb.append(String.format("%s%s : %s&nbsp;&nbsp;%s&nbsp;&nbsp;%s : %s",
 						Util.colorBlue("└&nbsp;&nbsp;"),
-						Util.colorBlue("Value"),
+						Util.colorBlue("값"),
 						"1",
 						Util.colorRed("/"),
-						Util.colorBlue("Label"),
+						Util.colorBlue("내용"),
 						binLabel[1]));
 				sb.append(Util.separator + Util.separator + "\n");
 				
 			}else if(wp.getDataFormat() == 2) {
 				PerfLabelStatusBean[] labels = wp.getStatusLabels();
 				
+				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+				sb.append(String.format("%s", Util.colorBlue("│")));
+				sb.append(Util.separator + Util.separator + "\n");
+				
 				for(int i = 0; i < labels.length; i++) {
 					sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 					sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 					sb.append(String.format("%s%s : %s&nbsp;&nbsp;%s&nbsp;&nbsp;%s : %s",
 							Util.colorBlue((i != (labels.length - 1)) ? "├&nbsp;&nbsp;" : "└&nbsp;&nbsp;"),
-							Util.colorBlue("Value"),
+							Util.colorBlue("값"),
 							labels[i].value,
 							Util.colorRed("/"),
-							Util.colorBlue("Label"),
+							Util.colorBlue("내용"),
 							labels[i].label));
 					sb.append(Util.separator + Util.separator + "\n");
 				}
