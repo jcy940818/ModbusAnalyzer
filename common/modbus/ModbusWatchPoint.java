@@ -9,6 +9,7 @@ import common.perf.FmsPerfItem;
 import common.perf.Perf;
 import common.perf.PerfLabelStatusBean;
 import common.util.Calculator;
+import src_ko.agent.ModbusAgent;
 import src_ko.util.Util;
 
 public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
@@ -413,6 +414,98 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
+	
+	/**
+	 * 전달받은 ModbusWatchPoint 인스턴스의 비트 구조를 출력한다
+	 */
+	public static void showBitStatus(ModbusWatchPoint point, long lastValue) {
+		
+		String dataType = point.getDataType();
+		if(!dataType.contains(" INT ")){
+			StringBuilder sb = new StringBuilder();
+			sb.append("<font color='red'>Unsupported Data Type</font>\n");
+			sb.append(String.format("선택하신 포인트의 데이터 타입은 <font color='blue'>Check Bit Structure</font> 기능을 지원하지 않습니다%s\n", Util.separator));																				
+			sb.append(String.format("\n현재 선택된 포인트의 데이터 타입 : <font color='red'>%s</font>%s\n",dataType ,Util.separator));
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		int functionCode = point.getFunctionCode();
+		String currentFunctionCode = null;
+		
+		switch(functionCode) {
+			case 01 : currentFunctionCode = String.format("%d (%s)",functionCode ,ModbusAgent.FC01); break;
+			case 02 : currentFunctionCode = String.format("%d (%s)",functionCode ,ModbusAgent.FC02); break;
+			case 03 : currentFunctionCode = String.format("%d (%s)",functionCode ,ModbusAgent.FC03); break;
+			case 04 : currentFunctionCode = String.format("%d (%s)",functionCode ,ModbusAgent.FC04); break;
+			case 05 : currentFunctionCode = String.format("%d (%s)",functionCode ,ModbusAgent.FC05); break;
+			case 06 : currentFunctionCode = String.format("%d (%s)",functionCode ,ModbusAgent.FC06); break;
+			case 15 : currentFunctionCode = String.format("%d (%s)",functionCode ,ModbusAgent.FC15); break;
+			case 16 : currentFunctionCode = String.format("%d (%s)",functionCode ,ModbusAgent.FC16); break;
+		}
+		
+		if (!(functionCode == 3 || functionCode == 4)) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("<font color='red'>Unsupported Function Code</font>\n");
+			sb.append(String.format("현재 기능코드는 <font color='blue'>Check Bit Structure</font> 기능을 지원하지 않습니다%s\n", Util.separator));																				
+			sb.append(String.format("\n현재 선택된 기능코드 : <font color='red'>%s</font>%s\n",currentFunctionCode ,Util.separator));
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		int bitCount = 16; // Default : TWO BYTE (16Bit)
+		
+		if (point.getDataType().startsWith("TWO")) {
+			bitCount = 16;
+		}else if (point.getDataType().startsWith("FOUR")) {
+			bitCount = 32;
+		}else if (point.getDataType().startsWith("EIGHT")) {
+			bitCount = 64;
+		}else {
+			bitCount = 16;
+		}
+		
+		StringBuilder bitBuilder = new StringBuilder();
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("<font color='green'>Bit Structure</font>\n");
+		
+		sb.append(String.format(" <font color='blue'>포인트 이름</font> : %s%s%s\n",point.getDisplayName() ,Util.separator, Util.separator));
+		sb.append(String.format(" <font color='blue'>데이터 타입</font> : %s%s%s\n\n",dataType ,Util.separator, Util.separator));
+		
+		sb.append(String.format(" <font color='blue'>모드버스 주소 (DEC)</font> : %s%s%s\n",point.getModbusAddrString() ,Util.separator, Util.separator));
+		sb.append(String.format(" <font color='blue'>레지스터 주소 (DEC)</font> : %d%s%s\n", point.getRegisterAddr()  ,Util.separator, Util.separator));
+		sb.append(String.format(" <font color='blue'>레지스터 주소 (HEX)</font> : %s%s%s\n\n",point.getRegisterAddrHexString() ,Util.separator, Util.separator));
+		
+		sb.append(String.format(" <font color='blue'>Decimal</font> : %d%s%s\n",lastValue ,Util.separator, Util.separator));
+		sb.append(String.format(" <font color='blue'>Binary</font> : "));
+		for(int i = 0; i < bitCount; i++) {
+			long bitStatus = (lastValue >> i) & 1;
+			String content = (bitStatus == 1) ? "1" : "0";
+			
+			if (i % 4 == 0) {
+				bitBuilder.append(String.format(" %s", content));
+			}else{
+				bitBuilder.append(String.format("%s", content));
+			}						
+		}
+		sb.append(String.format("%s%s%s\n\n", bitBuilder.reverse().toString().replaceAll("1", Util.colorRed("1")), Util.separator, Util.separator));
+		
+		for(int i = 0; i < bitCount; i++) {
+			long bitStatus = (lastValue >> i) & 1;
+			String content = (bitStatus == 1) ? "1 ( ON )" : "0 ( OFF )";
+			
+			if(content.contains("ON")) {
+				sb.append(String.format("<font color='red'>BIT %d : %s%s%s</font>\n", i , content , Util.separator, Util.separator));	
+			}else {
+				sb.append(String.format("BIT %d : %s%s%s\n", i , content , Util.separator, Util.separator));
+			}
+		}
+		
+		Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	
 	
 	public final double getComputedValue(double value) {
 		String fixFormula = this.getScaleFunction(); 

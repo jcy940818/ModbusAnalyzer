@@ -770,22 +770,30 @@ public class ModbusMonitor_Panel extends JPanel {
 				if (e.getButton() == 1) { } // 왼쪽 클릭
 				if (e.getButton() == 1 && e.getClickCount() == 2) {
 					// 왼쪽 버튼 더블 클릭
+					
+					boolean isPoint = resultType.getSelectedIndex() == 0;
+					int row = pointTable.getSelectedRow();
+					ModbusWatchPoint point = (ModbusWatchPoint) pointTable.getValueAt(row, 1);
+					
+					String pureData = point.getData().getPureValue().toString();
+					if(!pureData.equalsIgnoreCase("none")) {
+						if(isPoint) pureData = String.valueOf(point.getComputedValue(Double.parseDouble(pureData)));						
+						try {
+							double doubleValue = Double.parseDouble(pureData);
+							long longValue = (long)doubleValue;
+							ModbusWatchPoint.showBitStatus(point, longValue);
+						}catch(Exception exp) {
+							// Do Nothing
+						}
+					}
 				}
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
 					
 					int row = pointTable.getSelectedRow();
-					ModbusWatchPoint wp = (ModbusWatchPoint) pointTable.getValueAt(row, 1);
-					ModbusWatchPoint.showInfo(wp);
+					ModbusWatchPoint point = (ModbusWatchPoint) pointTable.getValueAt(row, 1);
+					ModbusWatchPoint.showInfo(point);
 					
-					/* 비트구조 확인
-					int column = pointListTable.columnAtPoint(e.getPoint());
-					int row = pointListTable.rowAtPoint(e.getPoint());
-					pointListTable.changeSelection(row, column, false, false);
-					pointListTable.requestFocus();
-					int[] selectedIndex = pointListTable.getSelectedRows();
-					Perf.showBitStatus(pointListTable, selectedIndex, "TWO BYTE INT SIGNED");
-					*/
 				}
 			}
 		});
