@@ -231,7 +231,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		addrTypeComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				doTableFilter(false);
+				updateTable(pointTable);
 			}
 		});
 		addrTypePanel.add(addrTypeComboBox);
@@ -1514,7 +1514,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		}
 	}
 	
-	public void updateTable(JTable table) {
+	public static void updateTable(JTable table) {
 		int rowCount = table.getRowCount();
 		int columnCount = table.getColumnCount();
 		
@@ -1524,18 +1524,30 @@ public class ModbusMonitor_Panel extends JPanel {
 		
 		for(int i = 0; i < rowCount; i++) {
 			content[i] = new Object[columnCount];
-			for(int j = 0; j < columnCount; j++) {
-				
-				if(j == (columnCount-1)) {
-					ModbusWatchPoint point = (ModbusWatchPoint)table.getValueAt(i, 1);
-					content[i][j] = (isPoint) ? PerfData.getPerfContent(point, point.getData()) : PerfData.getPerfPureValue(point.getData());	
-				}else if(j == (columnCount-2)){
-					ModbusWatchPoint point = (ModbusWatchPoint)table.getValueAt(i, 1);
-					content[i][j] = (isPoint) ? point.getDataType() : point.getData().getTimeString();
-				}else{
-					content[i][j] = table.getValueAt(i, j);
-				}
+			
+			ModbusWatchPoint point = (ModbusWatchPoint)table.getValueAt(i, 1);
+			Object addr = null;
+			switch(addrTypeComboBox.getSelectedItem().toString()) {
+				case "Modbus (DEC)" :
+					addr = point.getModbusAddrString();
+					break;
+				case "Register (DEC)" :
+					addr = point.getRegisterAddr();
+					break;
+				case "Register (HEX)" :
+					addr = point.getRegisterAddrHexString();
+					break;
+				default : 
+					addr = point.getModbusAddrString();
+					break;
 			}
+			
+			content[i][0] = table.getValueAt(i, 0);
+			content[i][1] = point;
+			content[i][2] = point.getFunctionCode();
+			content[i][3] = addr;
+			content[i][4] = (isPoint) ? point.getDataType() : point.getData().getTimeString();
+			content[i][5] = (isPoint) ? PerfData.getPerfContent(point, point.getData()) : PerfData.getPerfPureValue(point.getData());
 		}
 		
 		resetTable(table, content);
