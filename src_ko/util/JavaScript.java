@@ -16,8 +16,9 @@ public class JavaScript {
 			return false;
 		}
 		
-		String operation = scaleFunction.toLowerCase().replace("x", value);
-
+		String operation = scaleFunction.toLowerCase();
+		operation = operation.replace("x", value).replace("and", "&&").replace("or", "||");		
+		
 		ScriptEngineManager mgr = new ScriptEngineManager();
 		ScriptEngine engine = mgr.getEngineByName("JavaScript");
 
