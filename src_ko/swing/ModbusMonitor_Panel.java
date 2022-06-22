@@ -40,12 +40,13 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import common.agent.PerfData;
+import common.modbus.ModbusCellRenderer;
 import common.modbus.ModbusMonitor;
 import common.modbus.ModbusWatchPoint;
+import common.util.JavaScript;
 import common.util.TableUtil;
 import src_ko.agent.ClientSocket;
 import src_ko.agent.ModbusAgent;
-import src_ko.util.JavaScript;
 import src_ko.util.Util;
 
 public class ModbusMonitor_Panel extends JPanel {
@@ -60,7 +61,10 @@ public class ModbusMonitor_Panel extends JPanel {
 	public static JScrollPane pointList_ScrollPane;
 	public static JTable pointTable;	
 	private static ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();
-	public static String formula = null;
+	
+	public static String fc_formula = null;
+	public static String addr_formula = null;
+	public static String value_formula = null;
 	
 	// information Component
 	JPanel infoPanel; // 클라이언트 소켓이 서버와 연결 된 상태일때만 인포메이션 컴포넌트들을 활성화 시킨다.	
@@ -93,7 +97,7 @@ public class ModbusMonitor_Panel extends JPanel {
 	private static JCheckBox useFilter;
 	private static JComboBox fc_filter;
 	private static JComboBox dataType_filter;
-	private static JComboBox addrTypeComboBox;
+	public static JComboBox addrTypeComboBox;
 	private ActionListener radioListener;
 	private JButton update_button;
 	private JTextField timeout_text;
@@ -828,7 +832,13 @@ public class ModbusMonitor_Panel extends JPanel {
 					
 					boolean enter = (e.getKeyCode() == KeyEvent.VK_ENTER);
 					doTableFilter(enter);					
-					if(enter)System.out.println("Formula  : " + formula);
+					
+					if(enter) {
+						System.out.println("Fc Formula  : " + fc_formula);
+						System.out.println("Addr Formula  : " + addr_formula);
+						System.out.println("Value Formula  : " + value_formula);
+						System.out.println();
+					}
 					
 				}catch(Exception ex) {
 					ex.printStackTrace();
@@ -1237,7 +1247,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				}
 		});
 		
-		setTableStyle(table, formula);
+		setTableStyle(table, fc_formula, addr_formula, value_formula);
 	}
 	
 	public static void setConnectionInfo() {
@@ -1449,7 +1459,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		}
 	}
 	
-	public static void setTableStyle(JTable table, String formula) {
+	public static void setTableStyle(JTable table, String fc, String addr, String value) {
 		
 		// 이동 불가, 셀 크기 조절 불가
 		table.getTableHeader().setBackground(new Color(255, 255, 153));
@@ -1492,25 +1502,39 @@ public class ModbusMonitor_Panel extends JPanel {
 		// 정렬할 테이블의 ColumnModel을 가져옴
 		TableColumnModel tcmSchedule = table.getColumnModel();
 		
-		DefaultTableCellRenderer scanCellRenderer = null;
-		if(formula == null || formula.length() == 0 || formula.equalsIgnoreCase("") || !formula.contains("x")) {
-			scanCellRenderer = new DefaultTableCellRenderer();
-		}else {
-			formula = formula.toLowerCase();
-			formula = formula.replace("X", "x");
-			formula = formula.replace("and", "&&").replace("or", "||");
-			formula = formula.replace("AND", "&&").replace("OR", "||");
-			
-			scanCellRenderer = new ScanCellRenderer(formula);
+		// 기능 코드
+		DefaultTableCellRenderer fcCellRenderer = null;
+		if(fc == null || fc.length() == 0 || fc.equalsIgnoreCase("") || !fc.contains("x")) {
+			fcCellRenderer = new DefaultTableCellRenderer();
+		}else {			
+			fcCellRenderer = new ModbusCellRenderer(fc, "fc");
 		}
-		scanCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		fcCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		// 주소
+		DefaultTableCellRenderer addrCellRenderer = null;
+		if(addr == null || addr.length() == 0 || addr.equalsIgnoreCase("") || !addr.contains("x")) {
+			addrCellRenderer = new DefaultTableCellRenderer();
+		}else {			
+			addrCellRenderer = new ModbusCellRenderer(addr, "addr");
+		}
+		addrCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		// 값
+		DefaultTableCellRenderer valueCellRenderer = null;
+		if(value == null || value.length() == 0 || value.equalsIgnoreCase("") || !value.contains("x")) {
+			valueCellRenderer = new DefaultTableCellRenderer();
+		}else {			
+			valueCellRenderer = new ModbusCellRenderer(value, "value");
+		}
+		valueCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
 //		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 모드버스 포인트
-		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 기능코드
-		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 주 소
+		tcmSchedule.getColumn(2).setCellRenderer(fcCellRenderer); // 기능코드
+		tcmSchedule.getColumn(3).setCellRenderer(addrCellRenderer); // 주 소
 		tcmSchedule.getColumn(4).setCellRenderer(tScheduleCellRenderer); // 데이터 타입
-		tcmSchedule.getColumn(5).setCellRenderer(scanCellRenderer); // 결 과
+		tcmSchedule.getColumn(5).setCellRenderer(valueCellRenderer); // 결 과
 		
 		if(pointList != null) {
 			int total = pointList.size();
@@ -1583,13 +1607,21 @@ public class ModbusMonitor_Panel extends JPanel {
 		String text = search_TextField.getText();
 		
 		boolean noSearch = (text == null || text.length() == 0 || text.equals(""));
+		
 		boolean showAll = false;
-		boolean hasFormula = false;
+		
+		boolean has_fc_Formula = false;
+		boolean has_addr_Formula = false;
+		boolean has_value_Formula = false;
+		
+//		boolean fc_only = false;
+//		boolean addr_only = false;
+//		boolean value_only = false;
 		
 		if(noSearch && !useFilter.isSelected()) {
-			formula = null;
+			value_formula = null;
 			resetTable(pointTable, null);
-			addRecord(pointTable, pointList);			
+			addRecord(pointTable, pointList);
 			return;
 		}
 		if(!noSearch) {
@@ -1609,19 +1641,85 @@ public class ModbusMonitor_Panel extends JPanel {
 					for(int i2 = 0; i2 < textToken.length; i2++) {
 						String token = textToken[i2].trim();
 						
+						// 포인트 이름
 						if(searchElement.contains(token)) {
 							isContain = true;
 						}
 						
+						// 기능코드
+						if(clickedEnter && token.startsWith("[") && token.endsWith("]") && token.contains("fc") && token.contains("only")) {
+							has_fc_Formula = true;							
+							fc_formula = token
+									.replace("[", "")
+									.replace("]", "")
+									.replace("only", "")
+									.replace("*", "")
+									.replace("all", "")
+									.replace("fc", "x")
+									.trim();
+							onlyFcFormulaPoint(fc_formula);
+							return;
+							
+						}else if(clickedEnter && token.startsWith("[") && token.endsWith("]") && token.contains("fc")) {
+							has_fc_Formula = true;
+							fc_formula = token
+									.replace("[", "")
+									.replace("]", "")
+									.replace("only", "")
+									.replace("*", "")
+									.replace("all", "")
+									.replace("fc", "x")
+									.trim();
+						}
+						
+						// 주소
+						if(clickedEnter && token.startsWith("[") && token.endsWith("]") && token.contains("addr") && token.contains("only")) {
+							has_addr_Formula = true;
+							addr_formula = token
+									.replace("[", "")
+									.replace("]", "")
+									.replace("only", "")
+									.replace("*", "")
+									.replace("all", "")
+									.replace("addr", "x")
+									.trim();
+							onlyAddrFormulaPoint(addr_formula);
+							return;
+							
+						}else if(clickedEnter && token.startsWith("[") && token.endsWith("]") && token.contains("addr")) {
+							has_addr_Formula = true;
+							addr_formula = token
+									.replace("[", "")
+									.replace("]", "")
+									.replace("only", "")
+									.replace("*", "")
+									.replace("all", "")
+									.replace("addr", "x")
+									.trim();
+						}
+						
+						// 값
 						if(clickedEnter && token.startsWith("[") && token.endsWith("]") && token.contains("x") && token.contains("only")) {
-							hasFormula = true;
-							formula = token.replace("[", "").replace("]", "").replace("only", "").replace("*", "").replace("all", "").trim();
-							onlyFormulaPoint(formula);
+							has_value_Formula = true;
+							value_formula = token
+									.replace("[", "")
+									.replace("]", "")
+									.replace("only", "")
+									.replace("*", "")
+									.replace("all", "")
+									.trim();
+							onlyValueFormulaPoint(value_formula);
 							return;
 							
 						}else if(clickedEnter && token.startsWith("[") && token.endsWith("]") && token.contains("x")) {
-							hasFormula = true;
-							formula = token.replace("[", "").replace("]", "").replace("only", "").replace("*", "").replace("all", "").trim();
+							has_value_Formula = true;
+							value_formula = token
+									.replace("[", "")
+									.replace("]", "")
+									.replace("only", "")
+									.replace("*", "")
+									.replace("all", "")
+									.trim();
 						}
 						
 						if(token.startsWith("[") && token.endsWith("]") && (token.contains("all") || token.contains("*"))) {
@@ -1631,22 +1729,100 @@ public class ModbusMonitor_Panel extends JPanel {
 					
 				}else{
 					// ********************** 검색어에 콤마(,) 미포함 *****************************************************************
+					
+					// 포인트 이름
 					if (searchElement.contains(text)) {
 						isContain = true;
 					}
 					
+					// 기능코드
+					if(clickedEnter && text.startsWith("[") && text.endsWith("]") && text.contains("fc") && text.contains("only")) {
+						has_fc_Formula = true;
+						fc_formula = text
+								.replace("[", "")
+								.replace("]", "")
+								.replace("only", "")
+								.replace("*", "")
+								.replace("all", "")
+								.replace("fc", "x")
+								.trim();
+						onlyFcFormulaPoint(fc_formula);
+						return;
+						
+					}else if(clickedEnter && text.startsWith("[") && text.endsWith("]") && text.contains("fc")) {
+						has_fc_Formula = true;
+						fc_formula = text
+								.replace("[", "")
+								.replace("]", "")
+								.replace("only", "")
+								.replace("*", "")
+								.replace("all", "")
+								.replace("fc", "x")
+								.trim();
+						
+						resetTable(pointTable, null);
+						addRecord(pointTable, pointList);
+						setTableStyle(pointTable, fc_formula, addr_formula, value_formula);
+						return;
+					}
+					
+					// 주소
+					if(clickedEnter && text.startsWith("[") && text.endsWith("]") && text.contains("addr") && text.contains("only")) {
+						has_addr_Formula = true;
+						addr_formula = text
+								.replace("[", "")
+								.replace("]", "")
+								.replace("only", "")
+								.replace("*", "")
+								.replace("all", "")
+								.replace("addr", "x")
+								.trim();
+						onlyAddrFormulaPoint(addr_formula);
+						return;
+						
+					}else if(clickedEnter && text.startsWith("[") && text.endsWith("]") && text.contains("addr")) {
+						has_addr_Formula = true;
+						addr_formula = text
+								.replace("[", "")
+								.replace("]", "")
+								.replace("only", "")
+								.replace("*", "")
+								.replace("all", "")
+								.replace("addr", "x")
+								.trim();
+						
+						resetTable(pointTable, null);
+						addRecord(pointTable, pointList);
+						setTableStyle(pointTable, fc_formula, addr_formula, value_formula);
+						return;
+					}
+					
+					// 값
 					if(clickedEnter && text.startsWith("[") && text.endsWith("]") && text.contains("x") && text.contains("only")) {
-						hasFormula = true;
-						formula = text.replace("[", "").replace("]", "").replace("only", "").replace("*", "").replace("all", "").trim();
-						onlyFormulaPoint(formula);
+						has_value_Formula = true;
+						value_formula = text
+								.replace("[", "")
+								.replace("]", "")
+								.replace("only", "")
+								.replace("*", "")
+								.replace("all", "")
+								.trim();
+						onlyValueFormulaPoint(value_formula);
 						return;
 						
 					}else if(clickedEnter && text.startsWith("[") && text.endsWith("]") && text.contains("x")) {
-						hasFormula = true;
-						formula = text.replace("[", "").replace("]", "").replace("only", "").replace("*", "").replace("all", "").trim();
+						has_value_Formula = true;
+						value_formula = text
+								.replace("[", "")
+								.replace("]", "")
+								.replace("only", "")
+								.replace("*", "")
+								.replace("all", "")
+								.trim();
+						
 						resetTable(pointTable, null);
 						addRecord(pointTable, pointList);
-						setTableStyle(pointTable, formula);
+						setTableStyle(pointTable, fc_formula, addr_formula, value_formula);
 						return;
 					}
 					
@@ -1692,12 +1868,64 @@ public class ModbusMonitor_Panel extends JPanel {
 			
 		}// for loop
 
-		if(!hasFormula) formula = null;
+		if(!has_fc_Formula) fc_formula = null;
+		if(!has_addr_Formula) addr_formula = null;
+		if(!has_value_Formula) value_formula = null;
 		resetTable(pointTable, null);
 		addRecord(pointTable, (showAll) ? pointList : filterList);
 	}
 	
-	public static void onlyFormulaPoint(String formula) {
+	public static void onlyFcFormulaPoint(String formula) {
+    	ArrayList<ModbusWatchPoint> findPointList = new ArrayList<ModbusWatchPoint>();
+		
+		for(ModbusWatchPoint p : pointList) {
+			String fc = String.valueOf(p.getFunctionCode());
+			try {
+				boolean validFormula =  (boolean)JavaScript.eval(formula, fc);
+				if(validFormula) findPointList.add(p);
+			}catch(Exception exp) {
+				// Do Nothing
+			}
+		}
+		
+		resetTable(pointTable, null);
+		addRecord(pointTable, findPointList);
+	}
+	
+	public static void onlyAddrFormulaPoint(String formula) {
+    	ArrayList<ModbusWatchPoint> findPointList = new ArrayList<ModbusWatchPoint>();
+		
+		for(ModbusWatchPoint p : pointList) {
+			String addr = null;
+			
+			switch(addrTypeComboBox.getSelectedItem().toString()) {
+				case "Modbus (DEC)" :
+					addr = p.getModbusAddrString();
+					break;
+				case "Register (DEC)" :
+					addr = String.valueOf(p.getRegisterAddr());
+					break;
+				case "Register (HEX)" :
+					addr = p.getRegisterAddrHexString();
+					break;
+				default : 
+					addr = p.getModbusAddrString();
+					break;
+			}
+			
+			try {
+				boolean validFormula =  (boolean)JavaScript.eval(formula, addr);
+				if(validFormula) findPointList.add(p);
+			}catch(Exception exp) {
+				// Do Nothing
+			}
+		}
+		
+		resetTable(pointTable, null);
+		addRecord(pointTable, findPointList);
+	}
+	
+	public static void onlyValueFormulaPoint(String formula) {
     	ArrayList<ModbusWatchPoint> findPointList = new ArrayList<ModbusWatchPoint>();
 		
 		for(ModbusWatchPoint p : pointList) {
