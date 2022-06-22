@@ -51,6 +51,8 @@ import src_ko.util.Util;
 
 public class ModbusMonitor_Panel extends JPanel {
 
+	private static boolean isRTU = true;
+	
 	// 클라이언트 소켓
 	public static Socket socket_ko = ModbusAgent.clientSocket;
 	public static String IP;
@@ -73,35 +75,36 @@ public class ModbusMonitor_Panel extends JPanel {
 	JPanel function_Panel;
 	JPanel resultPanel;
 	JPanel imagePanel; /* ONION Image */
+	JPanel addrTypePanel;
 	
-	private static JComboBox unitID_comboBox;
 	private JButton connectButton; // 연결 정보 입력버튼 (중요)
-	private static boolean isRTU = true; // Default : Modbus TCP (아주 중요한 변수)
+	private JButton send_Button;
+	private JButton update_button;
+	private JButton importButton;
+	private JButton exportButton;
+	private static JButton reset_Button;
+	private static ButtonGroup radioGroup;
+	private ActionListener radioListener;
+	
+	private JLabel search;
+	private JLabel addrType;
 	private static JLabel currentState;
 	private static JLabel TID;
 	private static JLabel UNIT_ID;
-	private static JTextField transactionId_text; // Modbus TCP : TransactionID 필드
 	
-	private JButton send_Button;
-	private static JButton reset_Button;
-	private static ButtonGroup radioGroup;
-	private static JRadioButton radio_modbusTCP;
-	private static JRadioButton radio_modbusRTU;
-	
-	private JPanel addrTypePanel;
-	private JButton importButton;
-	private JButton exportButton;
-	private JLabel search;
-	private JLabel addrType;
 	private static JTextField search_TextField;
 	private static JCheckBox useFilter;
 	private static JComboBox fc_filter;
-	private static JComboBox dataType_filter;
-	public static JComboBox addrTypeComboBox;
-	private ActionListener radioListener;
-	private JButton update_button;
-	private JTextField timeout_text;
-	private JTextField maxCount_text;
+	public static JComboBox dataType_filter;
+	
+	// 요청 정보 컴포넌트
+	public static JRadioButton radio_modbusTCP; // TCP 라디오 버튼
+	public static JRadioButton radio_modbusRTU; // RTU 라디오 버튼
+	public static JComboBox addrTypeComboBox; // 주소 형식 콤보박스
+	public static JTextField transactionId_text; // 트랜잭션 아이디 텍스트 필드
+	public static JComboBox unitID_comboBox; // 장비 번호 콤보박스
+	public static JTextField timeout_text; // 타임아웃 텍스트 필드
+	public static JTextField maxCount_text; // 최대 요청 개수 텍스트 필드
 	
 	/**
 	 * Create the panel.
@@ -138,7 +141,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		imagePanel.setBackground(Color.WHITE);
 		imagePanel.setBounds(0, 55, 1050, 551);
 		imagePanel.setLayout(new BorderLayout(0, 0));
-		infoPanel.add(imagePanel);
+//		infoPanel.add(imagePanel); 테스트
 		
 		JLabel imageLabel = new JLabel();
 		imagePanel.add(imageLabel, BorderLayout.CENTER);
@@ -160,6 +163,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		resultPanel.add(modbusTypePanel);
 		
 		radio_modbusTCP = new JRadioButton("Modbus TCP");
+		radio_modbusTCP.setFocusPainted(false);
 		radio_modbusTCP.setForeground(Color.BLACK);
 		radio_modbusTCP.setBackground(Color.WHITE);
 		radio_modbusTCP.setHorizontalAlignment(SwingConstants.LEFT);
@@ -168,6 +172,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		modbusTypePanel.add(radio_modbusTCP);
 		
 		radio_modbusRTU = new JRadioButton("Modbus RTU");
+		radio_modbusRTU.setFocusPainted(false);
 		radio_modbusRTU.setForeground(Color.BLACK);
 		radio_modbusRTU.setBackground(Color.WHITE);
 		radio_modbusRTU.setSelected(true);
@@ -212,7 +217,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		addrTypePanel.setBounds(159, 10, 150, 74);
 		resultPanel.add(addrTypePanel);
 		
-		addrType = new JLabel("Address Type");
+		addrType = new JLabel("Address Format");
 		addrType.setHorizontalAlignment(SwingConstants.LEFT);
 		addrType.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		addrType.setBackground(Color.WHITE);
@@ -1150,6 +1155,8 @@ public class ModbusMonitor_Panel extends JPanel {
 		}.start();
 				
 		radio_modbusRTU.doClick();
+		
+		panel_ON(); // 테스트
 		
 	}// end ModbusMonitor_Panel()
 	
