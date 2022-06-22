@@ -7,7 +7,6 @@ import java.awt.Font;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import common.modbus.ModbusWatchPoint;
 import src_ko.util.JavaScript;
 
 class ScanCellRenderer extends DefaultTableCellRenderer {
@@ -26,36 +25,12 @@ class ScanCellRenderer extends DefaultTableCellRenderer {
 				
 		String scanReulst = null;
 		
-			try {
-				if(table.getValueAt(row, 1) instanceof ModbusWatchPoint) {
-					ModbusWatchPoint point = (ModbusWatchPoint)table.getValueAt(row, 1);
-					String pureData = point.getData().getPureValue().toString();
-					
-					if(pureData.equalsIgnoreCase("none")) {
-						if (isSelected) {				
-							c.setBackground(table.getSelectionBackground());
-							c.setForeground(table.getSelectionForeground());
-						}else{
-							c.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
-							c.setForeground(new Color(0, 0, 0));
-							c.setBackground(Color.WHITE);
-						}
-						return c;
-						
-					}else if(ModbusMonitor_Panel.resultType != null &&  ModbusMonitor_Panel.resultType.getSelectedIndex() == 0) {
-						scanReulst = String.valueOf(point.getComputedValue(Double.parseDouble(pureData)));
-						
-					}else {
-						scanReulst = pureData;
-					}
-					
-				}else {
-					scanReulst = table.getValueAt(row, 3).toString();
-				}
-			}catch(Exception ex) {
-				// 테이블 셀에 내용이 없을 경우 (제어 성공 결과 등)						
-				return c;
-			}
+		try {
+			scanReulst = table.getValueAt(row, 3).toString();
+		}catch(Exception e) {
+			// 테이블 셀에 내용이 없을 경우 (제어 성공 결과 등)						
+			return c;
+		}
 		
 			try {												
 				if (scanReulst.contains("Exception") ||
@@ -109,7 +84,7 @@ class ScanCellRenderer extends DefaultTableCellRenderer {
 				}
 			}catch(Exception e) {
 				// Search Value Scan Expression Error
-//				e.printStackTrace();
+				e.printStackTrace();
 			}
 	
 			return c;			
