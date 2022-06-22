@@ -1610,13 +1610,13 @@ public class ModbusMonitor_Panel extends JPanel {
 		
 		boolean showAll = false;
 		
-		boolean has_fc_Formula = false;
-		boolean has_addr_Formula = false;
-		boolean has_value_Formula = false;
+		boolean fc_Formula = false;
+		boolean addr_Formula = false;
+		boolean value_Formula = false;
 		
-//		boolean fc_only = false;
-//		boolean addr_only = false;
-//		boolean value_only = false;
+		boolean fc_only = false;
+		boolean addr_only = false;
+		boolean value_only = false;
 		
 		if(noSearch && !useFilter.isSelected()) {
 			value_formula = null;
@@ -1648,7 +1648,8 @@ public class ModbusMonitor_Panel extends JPanel {
 						
 						// 기능코드
 						if(clickedEnter && token.startsWith("[") && token.endsWith("]") && token.contains("fc") && token.contains("only")) {
-							has_fc_Formula = true;							
+							fc_Formula = true;
+							fc_only = true;
 							fc_formula = token
 									.replace("[", "")
 									.replace("]", "")
@@ -1657,11 +1658,9 @@ public class ModbusMonitor_Panel extends JPanel {
 									.replace("all", "")
 									.replace("fc", "x")
 									.trim();
-							onlyFcFormulaPoint(fc_formula);
-							return;
 							
 						}else if(clickedEnter && token.startsWith("[") && token.endsWith("]") && token.contains("fc")) {
-							has_fc_Formula = true;
+							fc_Formula = true;
 							fc_formula = token
 									.replace("[", "")
 									.replace("]", "")
@@ -1674,7 +1673,8 @@ public class ModbusMonitor_Panel extends JPanel {
 						
 						// 주소
 						if(clickedEnter && token.startsWith("[") && token.endsWith("]") && token.contains("addr") && token.contains("only")) {
-							has_addr_Formula = true;
+							addr_Formula = true;
+							addr_only = true;
 							addr_formula = token
 									.replace("[", "")
 									.replace("]", "")
@@ -1683,11 +1683,9 @@ public class ModbusMonitor_Panel extends JPanel {
 									.replace("all", "")
 									.replace("addr", "x")
 									.trim();
-							onlyAddrFormulaPoint(addr_formula);
-							return;
 							
 						}else if(clickedEnter && token.startsWith("[") && token.endsWith("]") && token.contains("addr")) {
-							has_addr_Formula = true;
+							addr_Formula = true;
 							addr_formula = token
 									.replace("[", "")
 									.replace("]", "")
@@ -1700,7 +1698,8 @@ public class ModbusMonitor_Panel extends JPanel {
 						
 						// 값
 						if(clickedEnter && token.startsWith("[") && token.endsWith("]") && token.contains("x") && token.contains("only")) {
-							has_value_Formula = true;
+							value_Formula = true;
+							value_only = true;
 							value_formula = token
 									.replace("[", "")
 									.replace("]", "")
@@ -1708,11 +1707,9 @@ public class ModbusMonitor_Panel extends JPanel {
 									.replace("*", "")
 									.replace("all", "")
 									.trim();
-							onlyValueFormulaPoint(value_formula);
-							return;
 							
 						}else if(clickedEnter && token.startsWith("[") && token.endsWith("]") && token.contains("x")) {
-							has_value_Formula = true;
+							value_Formula = true;
 							value_formula = token
 									.replace("[", "")
 									.replace("]", "")
@@ -1727,6 +1724,19 @@ public class ModbusMonitor_Panel extends JPanel {
 						}
 					}
 					
+					if(fc_Formula && fc_only) {
+						onlyFcFormulaPoint(fc_formula);
+						return;
+						
+					}else if(addr_Formula && addr_only) {
+						onlyAddrFormulaPoint(addr_formula); 
+						return;
+						
+					}else if(value_Formula && value_only) {
+						onlyValueFormulaPoint(value_formula);
+						return;
+					}
+					
 				}else{
 					// ********************** 검색어에 콤마(,) 미포함 *****************************************************************
 					
@@ -1737,7 +1747,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					
 					// 기능코드
 					if(clickedEnter && text.startsWith("[") && text.endsWith("]") && text.contains("fc") && text.contains("only")) {
-						has_fc_Formula = true;
+						fc_Formula = true;
 						fc_formula = text
 								.replace("[", "")
 								.replace("]", "")
@@ -1750,7 +1760,7 @@ public class ModbusMonitor_Panel extends JPanel {
 						return;
 						
 					}else if(clickedEnter && text.startsWith("[") && text.endsWith("]") && text.contains("fc")) {
-						has_fc_Formula = true;
+						fc_Formula = true;
 						fc_formula = text
 								.replace("[", "")
 								.replace("]", "")
@@ -1768,7 +1778,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					
 					// 주소
 					if(clickedEnter && text.startsWith("[") && text.endsWith("]") && text.contains("addr") && text.contains("only")) {
-						has_addr_Formula = true;
+						addr_Formula = true;
 						addr_formula = text
 								.replace("[", "")
 								.replace("]", "")
@@ -1781,7 +1791,7 @@ public class ModbusMonitor_Panel extends JPanel {
 						return;
 						
 					}else if(clickedEnter && text.startsWith("[") && text.endsWith("]") && text.contains("addr")) {
-						has_addr_Formula = true;
+						addr_Formula = true;
 						addr_formula = text
 								.replace("[", "")
 								.replace("]", "")
@@ -1799,7 +1809,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					
 					// 값
 					if(clickedEnter && text.startsWith("[") && text.endsWith("]") && text.contains("x") && text.contains("only")) {
-						has_value_Formula = true;
+						value_Formula = true;
 						value_formula = text
 								.replace("[", "")
 								.replace("]", "")
@@ -1811,7 +1821,7 @@ public class ModbusMonitor_Panel extends JPanel {
 						return;
 						
 					}else if(clickedEnter && text.startsWith("[") && text.endsWith("]") && text.contains("x")) {
-						has_value_Formula = true;
+						value_Formula = true;
 						value_formula = text
 								.replace("[", "")
 								.replace("]", "")
@@ -1868,9 +1878,9 @@ public class ModbusMonitor_Panel extends JPanel {
 			
 		}// for loop
 
-		if(!has_fc_Formula) fc_formula = null;
-		if(!has_addr_Formula) addr_formula = null;
-		if(!has_value_Formula) value_formula = null;
+		if(!fc_Formula) fc_formula = null;
+		if(!addr_Formula) addr_formula = null;
+		if(!value_Formula) value_formula = null;
 		resetTable(pointTable, null);
 		addRecord(pointTable, (showAll) ? pointList : filterList);
 	}
@@ -1909,7 +1919,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					addr = p.getRegisterAddrHexString();
 					break;
 				default : 
-					addr = p.getModbusAddrString();
+					addr = String.valueOf(p.getRegisterAddr());
 					break;
 			}
 			

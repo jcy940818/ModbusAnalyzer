@@ -4,9 +4,9 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 public class JavaScript {
-	public static Object eval(String scaleFunction, String value) throws ScriptException {
+	public static Object eval(String formula, String value) throws ScriptException {
 		
-		String operation = scaleFunction.toLowerCase().trim();
+		String operation = formula.toLowerCase().trim();
 		operation = operation.replace("0x", "H");
 		operation = operation.replace("x", value).replace("and", "&&").replace("or", "||");		
 		operation = operation.replace("H", "0x");
