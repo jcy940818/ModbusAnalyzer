@@ -777,7 +777,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					
 					String pureData = point.getData().getPureValue().toString();
 					if(!pureData.equalsIgnoreCase("none")) {
-						if(isPoint) pureData = String.valueOf(point.getComputedValue(Double.parseDouble(pureData)));						
+//						if(isPoint) pureData = String.valueOf(point.getComputedValue(Double.parseDouble(pureData)));
 						try {
 							double doubleValue = Double.parseDouble(pureData);
 							long longValue = (long)doubleValue;
@@ -1467,8 +1467,8 @@ public class ModbusMonitor_Panel extends JPanel {
 		// 테이블 셀 크기 설정
 		table.getColumnModel().getColumn(0).setPreferredWidth(50); // 순 서
 		table.getColumnModel().getColumn(1).setPreferredWidth(350); // 모드버스 포인트
-		table.getColumnModel().getColumn(2).setPreferredWidth(65); // 기능코드
-		table.getColumnModel().getColumn(3).setPreferredWidth(80); // 주 소		
+		table.getColumnModel().getColumn(2).setPreferredWidth(50); // 기능코드
+		table.getColumnModel().getColumn(3).setPreferredWidth(50); // 주 소		
 		
 		if(resultType != null) {
 			if(resultType.getSelectedIndex() == 0) {
@@ -1563,7 +1563,7 @@ public class ModbusMonitor_Panel extends JPanel {
 	
 	public void setFocusMultipleRows(JTable table, int[] rows) {
 		if(table == null || rows == null || rows.length < 1) return;
-		
+
 		int columnCount = table.getColumnCount();
 		int firstRow = rows[0];
 		
@@ -1576,7 +1576,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		}
 	}
 	
-	public static void doTableFilter(boolean findFormula) {
+	public static void doTableFilter(boolean clickedEnter) {
 		if(search_TextField == null && useFilter == null) return;
 		
 		ArrayList<ModbusWatchPoint> filterList = new ArrayList<ModbusWatchPoint>();
@@ -1613,13 +1613,13 @@ public class ModbusMonitor_Panel extends JPanel {
 							isContain = true;
 						}
 						
-						if(findFormula && token.startsWith("[") && token.endsWith("]") && token.contains("x") && token.contains("only")) {
+						if(clickedEnter && token.startsWith("[") && token.endsWith("]") && token.contains("x") && token.contains("only")) {
 							hasFormula = true;
 							formula = token.replace("[", "").replace("]", "").replace("only", "").replace("*", "").replace("all", "").trim();
 							onlyFormulaPoint(formula);
 							return;
 							
-						}else if(findFormula && token.startsWith("[") && token.endsWith("]") && token.contains("x")) {
+						}else if(clickedEnter && token.startsWith("[") && token.endsWith("]") && token.contains("x")) {
 							hasFormula = true;
 							formula = token.replace("[", "").replace("]", "").replace("only", "").replace("*", "").replace("all", "").trim();
 						}
@@ -1635,13 +1635,13 @@ public class ModbusMonitor_Panel extends JPanel {
 						isContain = true;
 					}
 					
-					if(findFormula && text.startsWith("[") && text.endsWith("]") && text.contains("x") && text.contains("only")) {
+					if(clickedEnter && text.startsWith("[") && text.endsWith("]") && text.contains("x") && text.contains("only")) {
 						hasFormula = true;
 						formula = text.replace("[", "").replace("]", "").replace("only", "").replace("*", "").replace("all", "").trim();
 						onlyFormulaPoint(formula);
 						return;
 						
-					}else if(findFormula && text.startsWith("[") && text.endsWith("]") && text.contains("x")) {
+					}else if(clickedEnter && text.startsWith("[") && text.endsWith("]") && text.contains("x")) {
 						hasFormula = true;
 						formula = text.replace("[", "").replace("]", "").replace("only", "").replace("*", "").replace("all", "").trim();
 						resetTable(pointTable, null);

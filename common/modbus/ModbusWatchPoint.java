@@ -471,7 +471,8 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 		sb.append("<font color='green'>Bit Structure</font>\n");
 		
 		sb.append(String.format(" <font color='blue'>포인트 이름</font> : %s%s%s\n",point.getDisplayName() ,Util.separator, Util.separator));
-		sb.append(String.format(" <font color='blue'>데이터 타입</font> : %s%s%s\n\n",dataType ,Util.separator, Util.separator));
+		sb.append(String.format(" <font color='blue'>데이터 타입</font> : %s%s%s\n",dataType ,Util.separator, Util.separator));
+		sb.append(String.format(" <font color='blue'>보정식</font> : %s%s%s\n\n",point.getScaleFunction() ,Util.separator, Util.separator));
 		
 		sb.append(String.format(" <font color='blue'>모드버스 주소 (DEC)</font> : %s%s%s\n",point.getModbusAddrString() ,Util.separator, Util.separator));
 		sb.append(String.format(" <font color='blue'>레지스터 주소 (DEC)</font> : %d%s%s\n", point.getRegisterAddr()  ,Util.separator, Util.separator));
