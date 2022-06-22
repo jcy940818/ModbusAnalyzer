@@ -5,6 +5,10 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 public class JavaScript {
+	
+	public static ScriptEngineManager mgr = new ScriptEngineManager();
+	public static ScriptEngine engine = mgr.getEngineByName("JavaScript");
+	
 	public static Object eval(String scaleFunction, String value) throws ScriptException {
 				
 		if (value.contains("0x") ||
@@ -17,10 +21,7 @@ public class JavaScript {
 		}
 		
 		String operation = scaleFunction.toLowerCase();
-		operation = operation.replace("x", value).replace("and", "&&").replace("or", "||");		
-		
-		ScriptEngineManager mgr = new ScriptEngineManager();
-		ScriptEngine engine = mgr.getEngineByName("JavaScript");
+		operation = operation.replace("x", value).replace("and", "&&").replace("or", "||");	
 
 		return engine.eval(operation);
 	}
