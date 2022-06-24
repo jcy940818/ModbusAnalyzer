@@ -59,7 +59,7 @@ public class Moon {
 
 					// 테스트 코드 : 자동 사용자 인증
 					new PremiumLoginFrame(true).loginSuccess(true);
-					new ModbusMonitorFrame();
+
 					// **************** 프레임 제목 업데이트 스레드 *************************************************
 					new Thread(new Runnable() {
 						public void run() {

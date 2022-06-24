@@ -48,7 +48,8 @@ public class MainFrame extends JFrame {
 	private static JMenu utilMenu;
 	private static JMenu xmlGeneratorMenu;
 	
-	private static JMenuItem modbusMonitor;
+	private static JMenuItem modbusMonitor_V1;
+	private static JMenuItem modbusMonitor_V2;
 	private static JMenuItem exceptionScan;
 	private static JMenuItem simpleValueScan;
 	private static JMenuItem realTime;
@@ -156,10 +157,24 @@ public class MainFrame extends JFrame {
 		modbusAgent.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
 		connectionMenu.add(modbusAgent);
 		
-		// Connection 메뉴 - Modbus Monitor (모드버스 모니터)
-		modbusMonitor = new JMenuItem("Modbus Monitor : 모드버스 모니터");
-		modbusMonitor.setForeground(Color.BLACK);
-		modbusMonitor.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
+		// Connection 메뉴 - Modbus Monitor (모드버스 모니터 V1)
+		modbusMonitor_V1 = new JMenuItem("Modbus Monitor : 모드버스 모니터 V1");
+		modbusMonitor_V1.setForeground(Color.BLACK);
+		modbusMonitor_V1.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
+		modbusMonitor_V1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(!ModbusMonitorFrame.isExist) {
+					new ModbusMonitorFrame();							
+				 }else {
+					 ModbusMonitorFrame.existsFrame();
+				 }
+			}
+		});
+		
+		// Connection 메뉴 - Modbus Monitor (모드버스 모니터 V2)
+		modbusMonitor_V2 = new JMenuItem("Modbus Monitor : 모드버스 모니터 V2");
+		modbusMonitor_V2.setForeground(Color.BLACK);
+		modbusMonitor_V2.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
 		
 		// Connection 메뉴 - Simple Value Scan (조건식 스캔)
 		simpleValueScan = new JMenuItem("Simple Value Scan : 레지스터 값 스캔");
@@ -542,7 +557,7 @@ public class MainFrame extends JFrame {
 		/** ModbusMonitor_Panel ***********************************/
 		ModbusMonitor_Panel modbusMonitor_Panel = new ModbusMonitor_Panel();
 		actualPanel.add(modbusMonitor_Panel, "ModbusMonitor_Panel");
-		modbusMonitor.addActionListener(new ActionListener() {		
+		modbusMonitor_V2.addActionListener(new ActionListener() {		
 			public void actionPerformed(ActionEvent e) {
 				showModbusMonitor();
 			}
@@ -775,7 +790,9 @@ public class MainFrame extends JFrame {
 	
 	public static void activeConnection() {
 		connectionMenu.add(new JSeparator());
-		connectionMenu.add(modbusMonitor);
+		connectionMenu.add(modbusMonitor_V1);
+		connectionMenu.add(new JSeparator());
+		connectionMenu.add(modbusMonitor_V2);
 		connectionMenu.add(new JSeparator());
 		connectionMenu.add(simpleValueScan);
 		connectionMenu.add(new JSeparator());

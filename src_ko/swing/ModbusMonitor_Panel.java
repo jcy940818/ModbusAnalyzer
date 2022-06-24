@@ -363,7 +363,6 @@ public class ModbusMonitor_Panel extends JPanel {
 						@Override
 						public void run() {
 							try {
-								
 								// 현재 모니터가 통신중이라면 현재 요청은 무시
 								if(ModbusMonitor.isRunning) return;
 								

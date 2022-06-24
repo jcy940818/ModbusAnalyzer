@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -16,6 +15,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -57,6 +57,8 @@ public class ModbusMonitorFrame extends JFrame {
 	private JScrollPane scrollPane;
 	private JTextArea textArea;
 	private int fontSize = 18;
+	
+	private JButton connectButton;
 	
 	// 요청 정보 컴포넌트
 	public static JRadioButton radio_modbusTCP; // TCP 라디오 버튼
@@ -104,18 +106,18 @@ public class ModbusMonitorFrame extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ModbusMonitorFrame frame = new ModbusMonitorFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					ModbusMonitorFrame frame = new ModbusMonitorFrame();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the frame.
@@ -189,7 +191,7 @@ public class ModbusMonitorFrame extends JFrame {
 		Image_Panel image_panel = new Image_Panel();
 		image_panel.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent e) {
-								
+				connect();
 			}
 		});
 		cardPanel.add(image_panel, "image");
@@ -512,6 +514,12 @@ public class ModbusMonitorFrame extends JFrame {
 		startAddr_textField.setColumns(10);
 		startAddr_textField.setBorder(UIManager.getBorder("TextField.border"));
 		startAddr_textField.setBounds(156, 43, 120, 30);
+		startAddr_textField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sendButton.doClick();
+			}
+		});
 		startAddr_textField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -610,6 +618,12 @@ public class ModbusMonitorFrame extends JFrame {
 		method_textField.setColumns(10);
 		method_textField.setBorder(UIManager.getBorder("TextField.border"));
 		method_textField.setBounds(300, 43, 120, 30);
+		method_textField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sendButton.doClick();
+			}
+		});
 		method_textField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -672,61 +686,77 @@ public class ModbusMonitorFrame extends JFrame {
 				// 수집 요청 TX 생성에 필요한 Form 에 정보가 모두 입력되어 있는지 체크
 				if(!checkReadRequestForm(isRTU)) return;
 				
-				if(checkFormValidation()) {
-					try {
-						ArrayList<ModbusWatchPoint> pointList = getPointList();
-						
-						if(pointList != null) {
+				try {
+					if(checkFormValidation()) {
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								try {
+									// 현재 모니터가 통신중이라면 현재 요청은 무시
+									if(ModbusMonitor.isRunning) return;
+									
+									ArrayList<ModbusWatchPoint> pointList = getPointList();
+									
+									if(pointList != null) {
+										int timeout = Integer.parseInt(timeout_text.getText().trim());
+										if(timeout == 0) {
+											StringBuilder sb = new StringBuilder();
+											sb.append(Util.colorRed("Infinite Timeout?\n"));
+											sb.append(String.format("타임아웃 설정값을 " + Util.colorBlue("0ms") + " 으로 설정하면 응답 패킷을 수신하기 전까지 무한히 대기합니다%s%s%s", Util.separator, Util.separator, "\n\n"));
+											sb.append(String.format("타임아웃 설정값을 무한으로 설정하고  통신하시겠습니까?%s%s%s",Util.separator, Util.separator, "\n"));
+											
+											int isInfiniteTimeout = Util.showConfirm(sb.toString());
+											
+											if(isInfiniteTimeout == JOptionPane.YES_OPTION) {
+												// YES
+											} else {
+												return; // NO
+											}
+										}
+										if(timeout < 0) {
+											StringBuilder sb = new StringBuilder();
+											sb.append(Util.colorRed("Timeout Field Error\n"));					
+											sb.append(String.format("응답 타임아웃은 " + Util.colorBlue("0ms") + " 이상의 정수만 입력 할 수 있습니다%s%s%s", Util.separator, Util.separator, "\n"));	
+											Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+											return;
+										}
+										
+										int maxCount = Integer.parseInt(maxCount_text.getText().trim());
+										if(maxCount < 0) {
+											StringBuilder sb = new StringBuilder();
+											sb.append(Util.colorRed("Max Request Count Error\n"));
+											sb.append(String.format("최대 요청 개수는 " + Util.colorBlue("0개") + " 이상의 정수만 입력 할 수 있습니다%s%s%s", Util.separator, Util.separator, "\n"));
+											Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+											return;
+										}
+										
+										ModbusWatchPoint.pointDataClear(pointList);
+										
+										ModbusMonitor monitor = new ModbusMonitor();
+										monitor.setType((isRTU) ? ModbusMonitor.TYPE_RTU : ModbusMonitor.TYPE_TCP);
+										monitor.setUnitID(getMonitorUnitID());
+										if(monitor.getType() == ModbusMonitor.TYPE_TCP) monitor.setTransactionID(getTid());
+																		
+										ModbusMonitor.sendRequest(ModbusAgent_Panel.socket_ko, monitor, pointList, timeout, maxCount);
+									}
 							
-							// 현재 모니터가 통신중이라면 현재 요청은 무시
-							if(ModbusMonitor.isRunning) return;
-							
-							int timeout = Integer.parseInt(timeout_text.getText().trim());
-							if(timeout == 0) {
-								StringBuilder sb = new StringBuilder();
-								sb.append(Util.colorRed("Infinite Timeout?\n"));
-								sb.append(String.format("타임아웃 설정값을 " + Util.colorBlue("0ms") + " 으로 설정하면 응답 패킷을 수신하기 전까지 무한히 대기합니다%s%s%s", Util.separator, Util.separator, "\n\n"));
-								sb.append(String.format("타임아웃 설정값을 무한으로 설정하고  통신하시겠습니까?%s%s%s",Util.separator, Util.separator, "\n"));
-								
-								int isInfiniteTimeout = Util.showConfirm(sb.toString());
-								
-								if(isInfiniteTimeout == JOptionPane.YES_OPTION) {
-									// YES
-								} else {
-									return; // NO
+								}catch(Exception e) {
+									e.printStackTrace();
+									StringBuilder sb = new StringBuilder();
+									sb.append(Util.colorRed("Modbus Monitor Error\n"));
+									sb.append(Util.colorBlue("Modbus Monitor") + " 기능 수행중 처리 할 수 없는 예외가 발생하였습니다" + Util.separator + "\n\n");
+									sb.append(String.format("Exception Message : %s\n", e.getMessage()));
+									Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 								}
-							}
-							if(timeout < 0) {
-								StringBuilder sb = new StringBuilder();
-								sb.append(Util.colorRed("Timeout Field Error\n"));					
-								sb.append(String.format("응답 타임아웃은 " + Util.colorBlue("0ms") + " 이상의 정수만 입력 할 수 있습니다%s%s%s", Util.separator, Util.separator, "\n"));	
-								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-								return;
-							}
 							
-							int maxCount = Integer.parseInt(maxCount_text.getText().trim());
-							if(maxCount < 0) {
-								StringBuilder sb = new StringBuilder();
-								sb.append(Util.colorRed("Max Request Count Error\n"));
-								sb.append(String.format("최대 요청 개수는 " + Util.colorBlue("0개") + " 이상의 정수만 입력 할 수 있습니다%s%s%s", Util.separator, Util.separator, "\n"));
-								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-								return;
 							}
-							
-							ModbusWatchPoint.pointDataClear(pointList);
-							
-							ModbusMonitor monitor = new ModbusMonitor();
-							monitor.setType((isRTU) ? ModbusMonitor.TYPE_RTU : ModbusMonitor.TYPE_TCP);
-							monitor.setUnitID(getMonitorUnitID());
-							if(monitor.getType() == ModbusMonitor.TYPE_TCP) monitor.setTransactionID(getTid());
-															
-							ModbusMonitor.sendRequest(ModbusMonitor_Panel.socket_ko, monitor, pointList, timeout, maxCount);
-						}
-						
-					}catch(Exception ex) {
-						ex.printStackTrace();
+						}).start(); // 스레드 종료
 					}
+				
+				}catch(Exception ex) {
+					ex.printStackTrace();
 				}
+				
 			}
 		});
 		reqFormPanel.add(sendButton);
@@ -745,13 +775,18 @@ public class ModbusMonitorFrame extends JFrame {
 		});
 		reqFormPanel.add(resetButton);
 		
-		currentState = new JLabel("");
-		currentState.setHorizontalAlignment(SwingConstants.CENTER);
-		currentState.setForeground(Color.BLACK);
-		currentState.setFont(new Font("맑은 고딕", Font.BOLD, 17));
-		currentState.setBackground(Color.LIGHT_GRAY);
-		currentState.setBounds(828, 10, 207, 24);
-		reqFormPanel.add(currentState);
+		connectButton = new JButton("연결 정보 입력");
+		connectButton.setForeground(Color.BLACK);
+		connectButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		connectButton.setFocusPainted(false);
+		connectButton.setBackground(Color.WHITE);
+		connectButton.setBounds(828, 8, 207, 30);
+		connectButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				connect();
+			}
+		});
+		reqFormPanel.add(connectButton);
 		
 		fontSize_label = new JLabel("Font Size");
 		fontSize_label.setBounds(1055, 10, 100, 24);
@@ -794,10 +829,77 @@ public class ModbusMonitorFrame extends JFrame {
 		});
 		actualPanel.add(fontSize_text);
 		
-		textArea.requestFocus();
+		currentState = new JLabel("state");
+		currentState.setBounds(10, 48, 244, 24);
+		actualPanel.add(currentState);
+		currentState.setHorizontalAlignment(SwingConstants.CENTER);
+		currentState.setForeground(Color.BLACK);
+		currentState.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		currentState.setBackground(Color.LIGHT_GRAY);
 		
-		
-		
+		new Thread() {
+			public void run() {
+				String lastState = "";
+				
+				while (true) {					
+					try {
+						Thread.sleep(500);
+							
+						if(lastState.equalsIgnoreCase(ClientSocket.getCurrentState())) {
+							switch(lastState) {
+								case ClientSocket.SOCKET_STATUS_BEFORE_CONNECTING : setComponentEnabled(false); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTED : setComponentEnabled(true); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTING : setComponentEnabled(false); break;
+								case ClientSocket.SOCKET_STATUS_COMMUNICATING : setComponentEnabled(true); break;
+								case ClientSocket.SOCKET_STATUS_COMMUNICATION_ERROR : setComponentEnabled(true); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTION_CLOSED : setComponentEnabled(false); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTION_FAILED : setComponentEnabled(false); break;
+								case ClientSocket.SOCKET_STATUS_PING_FAILED : setComponentEnabled(false); break;
+								case ClientSocket.SOCKET_STATUS_WAITING_RESPONSE : setComponentEnabled(true); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTION_IS_CUT_OFF : setComponentEnabled(false); break;
+								default : setComponentEnabled(false);  break;
+							}
+						}
+						
+						switch(ClientSocket.getCurrentState()) {
+							case ClientSocket.SOCKET_STATUS_BEFORE_CONNECTING : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTED : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTING : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_COMMUNICATING : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_COMMUNICATION_ERROR : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTION_CLOSED : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTION_FAILED : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_PING_FAILED : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_WAITING_RESPONSE : lastState = ClientSocket.getCurrentState(); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTION_IS_CUT_OFF : lastState = ClientSocket.getCurrentState(); break;
+							default : lastState = ClientSocket.getCurrentState(); break;
+						}
+																
+						currentState.setText(ClientSocket.getCurrentState());
+						
+						switch(currentState.getText()) {
+							case ClientSocket.SOCKET_STATUS_BEFORE_CONNECTING : currentState.setForeground(Color.BLACK); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTED : currentState.setForeground(Color.BLUE); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTING : currentState.setForeground(Color.BLACK); break;
+							case ClientSocket.SOCKET_STATUS_COMMUNICATING : currentState.setForeground(Color.BLUE); break;
+							case ClientSocket.SOCKET_STATUS_COMMUNICATION_ERROR : currentState.setForeground(Color.RED); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTION_CLOSED : currentState.setForeground(Color.BLACK); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTION_FAILED : currentState.setForeground(Color.RED); break;
+							case ClientSocket.SOCKET_STATUS_PING_FAILED : currentState.setForeground(Color.RED); break;
+							case ClientSocket.SOCKET_STATUS_WAITING_RESPONSE : currentState.setForeground(Color.BLUE); break;
+							case ClientSocket.SOCKET_STATUS_CONNECTION_IS_CUT_OFF : currentState.setForeground(Color.RED); break;
+							default : currentState.setForeground(Color.BLACK); break;
+						}
+						
+						// ModbusAgent <=> ExceptionScan : Socket 동기화
+						socket_ko = ModbusAgent.clientSocket;
+						
+					} catch (InterruptedException e) {
+						return;
+					}
+				}
+			}
+		}.start();
 		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
@@ -1266,6 +1368,15 @@ public class ModbusMonitorFrame extends JFrame {
 	public void setComponentEnabled(boolean enabled) {
 		// 소켓 접속 전에는 컴포넌트들을 사용하지 않는다
 		
+		if(enabled) {
+			cardLayout.show(cardPanel, "actualPanel");
+		}else {
+			cardLayout.show(cardPanel, "image");
+		}
+		
+		currentState.setEnabled(enabled);
+		currentState.setVisible(enabled);
+		
 		reqFormPanel.setEnabled(enabled);
 		reqFormPanel.setVisible(enabled);
 		
@@ -1323,6 +1434,13 @@ public class ModbusMonitorFrame extends JFrame {
 		}
 	}
 	
+	public static void existsFrame() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(Util.colorRed("Modbus Monitor Frame Already Exists") + Util.separator + "\n");
+		sb.append("Modbus Monitor 프레임이 이미 열려있습니다" + Util.separator + "\n");
+		Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+		return;
+	}
 	
 	public void resetComponent() {		
 		addrTypeComboBox.setSelectedIndex(1);
@@ -1355,5 +1473,67 @@ public class ModbusMonitorFrame extends JFrame {
 		textArea.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));		
 		textArea.setText("");
 		textArea.requestFocus();
+	}
+	
+	public void connect() {
+		// 클라이언트 소켓의 마지막 커넥션 정보
+		String lastConnectionInfo = ClientSocket.getSimpleConnectedInfo();
+		
+		try {
+			socket_ko = ModbusAgent.clientSocket;
+			src_en.swing.ModbusAgent_Panel.socket_en = socket_ko;
+			
+			if( (socket_ko == null || socket_ko.isClosed()) && ClientSocket.getIsFirst()) {				
+				String[] connectionInfo = ClientSocket.getConnectionInfo();
+				IP = connectionInfo[0];
+				PORT = Integer.parseInt(connectionInfo[1]);
+				
+				src_en.swing.ModbusAgent_Panel.IP = IP;
+				src_en.swing.ModbusAgent_Panel.PORT = PORT;
+				
+			}else if(socket_ko == null) {
+				String[] connectionInfo = ClientSocket.getConnectionInfo();
+				IP = connectionInfo[0];
+				PORT = Integer.parseInt(connectionInfo[1]);
+				
+				src_en.swing.ModbusAgent_Panel.IP = IP;
+				src_en.swing.ModbusAgent_Panel.PORT = PORT;
+			}else {
+				// 기존 연결되어있는 소켓일 경우 연결을 끊고 재접속을 시도한다.						
+				// 클라이언트 소켓 : 접속 끊김
+				socket_ko.close();						
+				ClientSocket.setState(ClientSocket.NODE_CONDITION_DISCONNECTED);
+			}
+		}catch(IOException exception) {
+			return;
+		}
+		
+		try {
+			socket_ko = ClientSocket.getClientSocket(IP, PORT);
+			src_en.swing.ModbusAgent_Panel.socket_en = socket_ko;
+			
+		}catch(Exception exception) {
+			StringBuilder msg = new StringBuilder();
+			msg.append("<font color='red'>접속 실패</font>\n");
+			msg.append("입력하신 연결 정보를 확인해주세요" + Util.separator + "\n");					
+			Util.showMessage(msg.toString(), JOptionPane.ERROR_MESSAGE);
+		}				
+		
+		if(socket_ko != null || ClientSocket.isCurrentConnected(socket_ko)) {
+			// 접속 성공 : 컴포넌트 내용들을 모두 초기화한다	
+			ModbusAgent.clientSocket = socket_ko;
+			src_en.agent.ModbusAgent.clientSocket = socket_ko;
+			
+			setComponentEnabled(true);
+			
+			// 마지막 커넥션 정보와 다른 정보로 세션을  생성시 컴포넌트 초기화
+			if(!ClientSocket.getSimpleConnectedInfo().equalsIgnoreCase(lastConnectionInfo)) {
+				resetComponent();
+//				src_en.swing.ModbusAgent_Panel.componentAllClear(); 영문버전 추가시 주석 해제
+			}
+			
+			// 사용자가 입력한 IP, port를 클라이언트 소켓의 마지막 연결 성공 정보에 저장
+			ClientSocket.setHasLastConnectionInfo(true);
+		}
 	}
 }
