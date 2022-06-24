@@ -1,6 +1,7 @@
 package src_ko.swing;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -13,6 +14,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -50,7 +53,6 @@ public class ModbusMonitorFrame extends JFrame {
 	public static int PORT;
 
 	private JPanel actualPanel;
-	private JPanel imagePanel;
 	
 	private JScrollPane scrollPane;
 	private JTextArea textArea;
@@ -96,6 +98,9 @@ public class ModbusMonitorFrame extends JFrame {
 	private ButtonGroup radioGroup = null;
 	private Rectangle r = new Rectangle(100, 100, 1080, 720);
 	
+	private JPanel cardPanel;
+	private static CardLayout cardLayout;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -125,7 +130,6 @@ public class ModbusMonitorFrame extends JFrame {
 		setIconImage(new Util().getIconResource().getImage());
 		setResizable(true);
 				
-//		setBounds(100, 100, 1286, 720);
 		setBounds(100, 100, 1080, 720);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
@@ -147,7 +151,7 @@ public class ModbusMonitorFrame extends JFrame {
 					transactionId_text.setText("1");
 					transactionId_text.setForeground(Color.BLUE);
 				}
-			}						
+			}
 		};
 		
 		radioGroup = new ButtonGroup();
@@ -171,11 +175,25 @@ public class ModbusMonitorFrame extends JFrame {
             }
         });
 		
+		cardPanel = new JPanel();
+		cardLayout = new CardLayout(0, 0);
+		cardPanel.setLayout(cardLayout);	
+		contentPane.add(cardPanel, BorderLayout.CENTER);
+		
 		actualPanel = new JPanel();
 		actualPanel.setBorder(null);
 		actualPanel.setLayout(null);
 		actualPanel.setBackground(Color.WHITE);
-		contentPane.add(actualPanel, BorderLayout.CENTER);
+		cardPanel.add(actualPanel, "actualPanel");
+		
+		Image_Panel image_panel = new Image_Panel();
+		image_panel.addMouseListener(new MouseAdapter() {
+			public void mouseReleased(MouseEvent e) {
+								
+			}
+		});
+		cardPanel.add(image_panel, "image");
+		cardLayout.show(cardPanel, "image");
 		
 		JLabel currentFunction = new JLabel("Modbus Monitor");
 		currentFunction.setForeground(Color.BLACK);
@@ -185,18 +203,6 @@ public class ModbusMonitorFrame extends JFrame {
 		currentFunction.setBackground(Color.WHITE);
 		currentFunction.setBounds(0, 0, 267, 55);
 		actualPanel.add(currentFunction);
-		
-		imagePanel = new JPanel();
-		imagePanel.setBackground(Color.WHITE);
-		imagePanel.setLayout(new BorderLayout(0, 0));
-		imagePanel.setBounds(0, 0, 1044, 661);
-		actualPanel.add(imagePanel);
-		
-		JLabel imageLabel = new JLabel();
-		imageLabel.setOpaque(true);
-		imageLabel.setBackground(Color.WHITE);		
-		imageLabel.setIcon(new Util().getOnionScreenResource());
-		imagePanel.add(imageLabel, BorderLayout.CENTER);
 		
 		scrollPane = new JScrollPane();
 		scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
@@ -796,8 +802,6 @@ public class ModbusMonitorFrame extends JFrame {
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
-		
-		setComponentEnabled(false);
 	}
 
 	@Override
@@ -1313,10 +1317,10 @@ public class ModbusMonitorFrame extends JFrame {
 		fontSize_text.setVisible(enabled);
 		
 		if(enabled) {
-			setTitle(String.format("Modbus Monitor : %s", ClientSocket.getSimpleConnectedInfo()));	
+			setTitle(String.format("Modbus Monitor : %s", ClientSocket.getSimpleConnectedInfo()));
 		}else {
 			setTitle(String.format("Modbus Monitor"));
-		}	
+		}
 	}
 	
 	
