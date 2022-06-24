@@ -13,6 +13,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
@@ -33,13 +34,20 @@ import javax.swing.border.LineBorder;
 
 import common.modbus.ModbusMonitor;
 import common.modbus.ModbusWatchPoint;
+import src_ko.agent.ClientSocket;
+import src_ko.agent.ModbusAgent;
 import src_ko.util.Util;
 
 public class ModbusMonitorFrame extends JFrame {
 
-	public static StringBuilder log = new StringBuilder();
 	public static boolean isExist = false;
+	public static StringBuilder log = new StringBuilder();
 	private JPanel contentPane;
+	
+	// Å¬¶óÀÌ¾ðÆ® ¼ÒÄÏ
+	public static Socket socket_ko = ModbusAgent.clientSocket;
+	public static String IP;
+	public static int PORT;
 
 	private JScrollPane scrollPane;
 	private JTextArea textArea;
@@ -63,21 +71,27 @@ public class ModbusMonitorFrame extends JFrame {
 	private JTextField fontSize_text; // ±ÛÀÚÅ©±â : ÅØ½ºÆ® ÇÊµå
 	private JButton sendButton; // Àü¼Û ¹öÆ° : ¹öÆ°
 	private JButton resetButton; // ¸®¼Â ¹öÆ° : ¹öÆ°
-	
-	private Rectangle r = new Rectangle(100, 100, 1080, 720);
+		
+	// ¿äÃ» Á¤º¸ ·¹ÀÌºí
+	private JLabel addrFormat_label;
 	private JLabel transactionID_label;
 	private JLabel unitID_label;
 	private JLabel timeout_label;
 	private JLabel maxCount_label;
-	private JLabel fontSize_label;
-	private JLabel fc_label;
-	private JPanel reqFormPanel;
-	private JLabel range_label;
-	private JLabel dataType_label;
-	private ButtonGroup radioGroup = null;
-	private ActionListener radioListener;	
 	
-	private String lastAddrFormat = "Modbus (DEC)";
+	// ¸ðµå¹ö½º ¸ð´ÏÅÍ ·¹ÀÌºí
+	private JPanel reqFormPanel;
+	private JLabel fc_label;
+	private JLabel startAddr_label;
+	private JLabel dataType_label;
+	private JLabel range_label;
+	private JLabel fontSize_label;
+	private JLabel currentState;
+	
+	private String lastAddrFormat = "Register (DEC)";
+	private ActionListener radioListener;	
+	private ButtonGroup radioGroup = null;
+	private Rectangle r = new Rectangle(100, 100, 1080, 720);
 	
 	/**
 	 * Launch the application.
@@ -108,6 +122,7 @@ public class ModbusMonitorFrame extends JFrame {
 		setIconImage(new Util().getIconResource().getImage());
 		setResizable(true);
 				
+//		setBounds(100, 100, 1286, 720);
 		setBounds(100, 100, 1080, 720);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
@@ -184,7 +199,7 @@ public class ModbusMonitorFrame extends JFrame {
 		
 		
 		
-		JLabel addrFormat_label = new JLabel("Address Format");
+		addrFormat_label = new JLabel("Address Format");
 		addrFormat_label.setBackground(Color.WHITE);
 		addrFormat_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
 		addrFormat_label.setForeground(Color.BLACK);
@@ -198,7 +213,7 @@ public class ModbusMonitorFrame extends JFrame {
 						"Register (DEC)", 
 						"Register (HEX)"
 						}));
-		addrTypeComboBox.setSelectedIndex(0);
+		addrTypeComboBox.setSelectedIndex(1);
 		addrTypeComboBox.setForeground(Color.BLACK);
 		addrTypeComboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		addrTypeComboBox.setBackground(Color.WHITE);
@@ -460,7 +475,7 @@ public class ModbusMonitorFrame extends JFrame {
 		fc_comboBox.setBackground(Color.WHITE);
 		reqFormPanel.add(fc_comboBox);
 		
-		JLabel startAddr_label = new JLabel("Start Address");
+		startAddr_label = new JLabel("Start Address");
 		startAddr_label.setHorizontalAlignment(SwingConstants.LEFT);
 		startAddr_label.setForeground(Color.BLACK);
 		startAddr_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
@@ -469,7 +484,7 @@ public class ModbusMonitorFrame extends JFrame {
 		reqFormPanel.add(startAddr_label);
 		
 		startAddr_textField = new JTextField();
-		startAddr_textField.setText("1");
+		startAddr_textField.setText("0");
 		startAddr_textField.setHorizontalAlignment(SwingConstants.LEFT);
 		startAddr_textField.setForeground(Color.BLUE);
 		startAddr_textField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
@@ -621,47 +636,6 @@ public class ModbusMonitorFrame extends JFrame {
 		dataType_comboBox.setBounds(434, 43, 382, 30);
 		reqFormPanel.add(dataType_comboBox);
 		
-		fontSize_label = new JLabel("Font Size");
-		fontSize_label.setBounds(828, 10, 100, 24);
-		fontSize_label.setHorizontalAlignment(SwingConstants.RIGHT);
-		fontSize_label.setForeground(Color.BLACK);
-		fontSize_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
-		fontSize_label.setBackground(Color.WHITE);
-		reqFormPanel.add(fontSize_label);
-		
-		fontSize_text = new JTextField();
-		fontSize_text.setBounds(935, 7, 100, 30);
-		fontSize_text.setText("18");
-		fontSize_text.setHorizontalAlignment(SwingConstants.LEFT);
-		fontSize_text.setForeground(Color.BLACK);
-		fontSize_text.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
-		fontSize_text.setColumns(10);
-		fontSize_text.setBorder(UIManager.getBorder("TextField.border"));
-		fontSize_text.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				try {
-					int size = Integer.parseInt(fontSize_text.getText().trim());
-					fontSize = size;
-					textArea.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
-				}catch(Exception ex) {
-					ex.printStackTrace();
-					textArea.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
-				}
-			}
-			@Override
-			public void keyReleased(KeyEvent e) {
-				try {
-					int size = Integer.parseInt(fontSize_text.getText().trim());
-					fontSize = size;
-					textArea.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
-				}catch(Exception ex) {					
-					textArea.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
-				}
-			}
-		});
-		reqFormPanel.add(fontSize_text);
-		
 		sendButton = new JButton("Send");
 		sendButton.setForeground(Color.BLUE);
 		sendButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
@@ -745,12 +719,59 @@ public class ModbusMonitorFrame extends JFrame {
 		resetButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				textArea.setText("");
-				textArea.requestFocus();
+				resetComponent();
 			}
 		});
 		reqFormPanel.add(resetButton);
 		
+		currentState = new JLabel("");
+		currentState.setHorizontalAlignment(SwingConstants.CENTER);
+		currentState.setForeground(Color.BLACK);
+		currentState.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
+		currentState.setBackground(Color.LIGHT_GRAY);
+		currentState.setBounds(828, 10, 207, 24);
+		reqFormPanel.add(currentState);
+		
+		fontSize_label = new JLabel("Font Size");
+		fontSize_label.setBounds(1055, 10, 100, 24);
+		fontSize_label.setHorizontalAlignment(SwingConstants.LEFT);
+		fontSize_label.setForeground(Color.BLACK);
+		fontSize_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
+		fontSize_label.setBackground(Color.WHITE);
+		actualPanel.add(fontSize_label);
+		
+		fontSize_text = new JTextField();
+		fontSize_text.setBounds(1055, 40, 100, 30);
+		fontSize_text.setText("18");
+		fontSize_text.setHorizontalAlignment(SwingConstants.LEFT);
+		fontSize_text.setForeground(Color.BLACK);
+		fontSize_text.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
+		fontSize_text.setColumns(10);
+		fontSize_text.setBorder(UIManager.getBorder("TextField.border"));
+		fontSize_text.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				try {
+					int size = Integer.parseInt(fontSize_text.getText().trim());
+					fontSize = size;
+					textArea.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
+				}catch(Exception ex) {
+					ex.printStackTrace();
+					textArea.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
+				}
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {
+				try {
+					int size = Integer.parseInt(fontSize_text.getText().trim());
+					fontSize = size;
+					textArea.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
+				}catch(Exception ex) {					
+					textArea.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
+				}
+			}
+		});
+		actualPanel.add(fontSize_text);
 		
 		
 		// ÇÁ·¹ÀÓÀÌ È­¸é °¡¿îµ¥¿¡¼­ »ý¼ºµÈ´Ù
@@ -1219,4 +1240,91 @@ public class ModbusMonitorFrame extends JFrame {
 		}
 	}
 	
+	public void setComponentEnabled(boolean enabled) {
+		// ¼ÒÄÏ Á¢¼Ó Àü¿¡´Â ÄÄÆ÷³ÍÆ®µéÀ» »ç¿ëÇÏÁö ¾Ê´Â´Ù
+		
+		// ·¹ÀÌºí
+		addrFormat_label.setEnabled(enabled);
+		addrFormat_label.setVisible(enabled);
+		
+		transactionID_label.setEnabled(enabled);
+		transactionID_label.setVisible(enabled);
+		
+		unitID_label.setEnabled(enabled);
+		unitID_label.setVisible(enabled);
+		
+		timeout_label.setEnabled(enabled);
+		timeout_label.setVisible(enabled);
+
+		maxCount_label.setEnabled(enabled);
+		maxCount_label.setVisible(enabled);
+		
+		fontSize_label.setEnabled(enabled);
+		fontSize_label.setVisible(enabled);
+		
+		// ÄÄÆ÷³ÍÆ®
+		radio_modbusTCP.setEnabled(enabled);
+		radio_modbusTCP.setVisible(enabled);
+		
+		radio_modbusRTU.setEnabled(enabled);
+		radio_modbusRTU.setVisible(enabled);
+		
+		addrTypeComboBox.setEnabled(enabled);
+		addrTypeComboBox.setVisible(enabled);
+		
+		transactionId_text.setEnabled(enabled);
+		transactionId_text.setVisible(enabled);
+		
+		unitID_comboBox.setEnabled(enabled);
+		unitID_comboBox.setVisible(enabled);
+		
+		timeout_text.setEnabled(enabled);
+		timeout_text.setVisible(enabled);
+		
+		maxCount_text.setEnabled(enabled);
+		maxCount_text.setVisible(enabled);
+		
+		fontSize_text.setEnabled(enabled);
+		fontSize_text.setVisible(enabled);
+		
+		if(enabled) {
+			setTitle(String.format("Modbus Monitor : %s", ClientSocket.getSimpleConnectedInfo()));	
+		}else {
+			setTitle(String.format("Modbus Monitor"));
+		}	
+	}
+	
+	
+	public void resetComponent() {		
+		addrTypeComboBox.setSelectedIndex(1);
+		
+		transactionId_text.setText("1");
+		transactionId_text.setForeground(Color.BLUE);
+		
+		unitID_comboBox.setSelectedIndex(0);
+		
+		timeout_text.setText("5000");
+		timeout_text.setForeground(Color.BLUE);
+		
+		maxCount_text.setText("125");
+		maxCount_text.setForeground(Color.BLUE);
+		
+		fc_comboBox.setSelectedIndex(2);
+		
+		startAddr_textField.setText("0");
+		startAddr_textField.setForeground(Color.BLUE);
+				
+		method_Button.setText("Req Count");
+		method_textField.setText("1");
+		method_textField.setForeground(Color.BLUE);
+		
+		dataType_comboBox.setSelectedIndex(0);
+		
+		fontSize_text.setText("18");
+		
+		fontSize = 18;
+		textArea.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));		
+		textArea.setText("");
+		textArea.requestFocus();
+	}
 }
