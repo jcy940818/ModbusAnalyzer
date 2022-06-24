@@ -27,6 +27,7 @@ import com.serotonin.modbus4j.msg.ReadInputRegistersRequest;
 import com.serotonin.modbus4j.serial.rtu.RtuMessageRequest;
 
 import common.agent.PerfData;
+import src_ko.agent.ModbusAgent;
 import src_ko.util.PacketInputStream;
 import src_ko.util.PacketOutputStream;
 
@@ -84,6 +85,18 @@ public class ModbusMonitor{
 			master.init();
 		} catch (ModbusInitException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public static void sendRequest(Socket clientSocket, ModbusMonitor monitor, ArrayList<ModbusWatchPoint> pointList, int timeout, int maxCount) throws Exception{
+		try {
+			// 현재 모니터가 통신중이라면 현재 요청은 무시
+			if(ModbusMonitor.isRunning) return;
+											
+			ModbusAgent.modbusCommunicate(monitor, clientSocket, pointList, timeout, maxCount);
+			
+		}finally {
+			ModbusMonitor.isRunning = false;	
 		}
 	}
 

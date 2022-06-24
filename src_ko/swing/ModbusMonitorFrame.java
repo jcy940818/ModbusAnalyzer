@@ -13,6 +13,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -20,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -29,6 +31,8 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 
+import common.modbus.ModbusMonitor;
+import common.modbus.ModbusWatchPoint;
 import src_ko.util.Util;
 
 public class ModbusMonitorFrame extends JFrame {
@@ -70,7 +74,8 @@ public class ModbusMonitorFrame extends JFrame {
 	private JPanel reqFormPanel;
 	private JLabel range_label;
 	private JLabel dataType_label;
-	ButtonGroup radioGroup = null;
+	private ButtonGroup radioGroup = null;
+	private ActionListener radioListener;	
 	
 	private String lastAddrFormat = "Modbus (DEC)";
 	
@@ -135,6 +140,23 @@ public class ModbusMonitorFrame extends JFrame {
 		textArea.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));
 		scrollPane.setViewportView(textArea);
 		
+		radioListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JRadioButton b = (JRadioButton)e.getSource();
+
+				if (b.getText().contains("RTU")) {					
+					transactionID_label.setEnabled(false);
+					transactionId_text.setEnabled(false);
+				} else {
+					transactionID_label.setEnabled(true);
+					transactionId_text.setEnabled(true);
+					transactionId_text.setText("1");
+					transactionId_text.setForeground(Color.BLUE);
+				}
+			}						
+		};
+		
 		radio_modbusTCP = new JRadioButton("Modbus TCP");
 		radio_modbusTCP.setFocusPainted(false);
 		radio_modbusTCP.setForeground(Color.BLACK);
@@ -142,6 +164,7 @@ public class ModbusMonitorFrame extends JFrame {
 		radio_modbusTCP.setHorizontalAlignment(SwingConstants.LEFT);
 		radio_modbusTCP.setFont(new Font("맑은 고딕", Font.BOLD, 16));		
 		radio_modbusTCP.setBounds(262, 11, 135, 23);
+		radio_modbusTCP.addActionListener(radioListener);
 		actualPanel.add(radio_modbusTCP);
 		
 		radio_modbusRTU = new JRadioButton("Modbus RTU");
@@ -151,12 +174,15 @@ public class ModbusMonitorFrame extends JFrame {
 		radio_modbusRTU.setSelected(true);
 		radio_modbusRTU.setHorizontalAlignment(SwingConstants.LEFT);
 		radio_modbusRTU.setFont(new Font("맑은 고딕", Font.BOLD, 16));		
-		radio_modbusRTU.setBounds(262, 45, 135, 23);
+		radio_modbusRTU.setBounds(262, 45, 135, 23);		
+		radio_modbusRTU.addActionListener(radioListener);
 		actualPanel.add(radio_modbusRTU);
 		
 		radioGroup = new ButtonGroup();
 		radioGroup.add(radio_modbusTCP);
 		radioGroup.add(radio_modbusRTU);
+		
+		
 		
 		JLabel addrFormat_label = new JLabel("Address Format");
 		addrFormat_label.setBackground(Color.WHITE);
@@ -196,6 +222,7 @@ public class ModbusMonitorFrame extends JFrame {
 		transactionID_label.setForeground(Color.BLACK);
 		transactionID_label.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		transactionID_label.setBounds(576, 10, 120, 24);
+		transactionID_label.setEnabled(false);		
 		actualPanel.add(transactionID_label);
 		
 		transactionId_text = new JTextField();
@@ -207,13 +234,43 @@ public class ModbusMonitorFrame extends JFrame {
 		transactionId_text.setColumns(10);
 		transactionId_text.setBorder(UIManager.getBorder("TextField.border"));
 		transactionId_text.setBounds(575, 40, 120, 30);
+		transactionId_text.setEnabled(false);
+		transactionId_text.addKeyListener(new KeyAdapter() {						
+			public void keyReleased(KeyEvent e) {
+				int transactionId = 0;
+			
+				if(transactionId_text.getText().startsWith("0x")||transactionId_text.getText().startsWith("0X")) {
+					// 16진수 표기법 (0x0000)
+					try {
+						if(transactionId_text.getText().startsWith("0x")) transactionId = Integer.parseInt(transactionId_text.getText().replaceAll("0x", ""),16); 
+						if(transactionId_text.getText().startsWith("0X")) transactionId = Integer.parseInt(transactionId_text.getText().replaceAll("0X", ""),16);
+					}catch(NumberFormatException exception) {
+						transactionId_text.setForeground(Color.RED);
+						return;
+					}
+				}else {
+					// 10진수 표기법
+					try {
+						transactionId = Integer.parseInt(transactionId_text.getText());
+					}catch(NumberFormatException exception) {
+						transactionId_text.setForeground(Color.RED);
+						return;
+					}
+				}
+				
+				if(transactionId > Short.MAX_VALUE) {
+					transactionId_text.setForeground(Color.RED);
+				}else {
+					transactionId_text.setForeground(Color.BLUE);
+				}
+			}
+		});
 		actualPanel.add(transactionId_text);
-		
 		
 		String[] unitIdValue = new String[255];
 		for(int i = 0; i < 255; i++) {
 			unitIdValue[i] = String.valueOf(i+1) + "번";
-		}	
+		}
 		
 		unitID_label = new JLabel("Unit ID");
 		unitID_label.setForeground(Color.BLACK);
@@ -237,7 +294,37 @@ public class ModbusMonitorFrame extends JFrame {
 		timeout_text.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		timeout_text.setColumns(10);
 		timeout_text.setBorder(UIManager.getBorder("TextField.border"));
-		timeout_text.setBounds(825, 40, 90, 30);		
+		timeout_text.setBounds(825, 40, 90, 30);
+		timeout_text.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				int timeout = 0;
+				
+				if(timeout_text.getText().startsWith("0x")||timeout_text.getText().startsWith("0X")) {
+					// 16진수 표기법 (0x0000)
+					try {
+						if(timeout_text.getText().startsWith("0x")) timeout = Integer.parseInt(timeout_text.getText().replaceAll("0x", ""),16); 
+						if(timeout_text.getText().startsWith("0X")) timeout = Integer.parseInt(timeout_text.getText().replaceAll("0X", ""),16);
+					}catch(NumberFormatException exception) {
+						timeout_text.setForeground(Color.RED);
+						return;
+					}
+				}else {
+					// 10진수 표기법
+					try {
+						timeout = Integer.parseInt(timeout_text.getText());
+					}catch(NumberFormatException exception) {
+						timeout_text.setForeground(Color.RED);
+						return;
+					}
+				}
+				
+				if(timeout > Short.MAX_VALUE || timeout < 0) {
+					timeout_text.setForeground(Color.RED);
+				}else {
+					timeout_text.setForeground(Color.BLUE);
+				}
+			}
+		});
 		actualPanel.add(timeout_text);
 		
 		timeout_label = new JLabel("Timeout");
@@ -262,6 +349,36 @@ public class ModbusMonitorFrame extends JFrame {
 		maxCount_text.setColumns(10);
 		maxCount_text.setBorder(UIManager.getBorder("TextField.border"));
 		maxCount_text.setBounds(933, 40, 100, 30);
+		maxCount_text.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				int maxCount = 0;
+				
+				if(maxCount_text.getText().startsWith("0x")||maxCount_text.getText().startsWith("0X")) {
+					// 16진수 표기법 (0x0000)
+					try {
+						if(maxCount_text.getText().startsWith("0x")) maxCount = Integer.parseInt(maxCount_text.getText().replaceAll("0x", ""),16); 
+						if(maxCount_text.getText().startsWith("0X")) maxCount = Integer.parseInt(maxCount_text.getText().replaceAll("0X", ""),16);
+					}catch(NumberFormatException exception) {
+						maxCount_text.setForeground(Color.RED);
+						return;
+					}
+				}else {
+					// 10진수 표기법
+					try {
+						maxCount = Integer.parseInt(maxCount_text.getText());
+					}catch(NumberFormatException exception) {
+						maxCount_text.setForeground(Color.RED);
+						return;
+					}
+				}
+				
+				if(maxCount > 2000 || maxCount < 0) {
+					maxCount_text.setForeground(Color.RED);
+				}else {
+					maxCount_text.setForeground(Color.BLUE);
+				}
+			}
+		});
 		actualPanel.add(maxCount_text);
 		
 		reqFormPanel = new JPanel();
@@ -396,18 +513,40 @@ public class ModbusMonitorFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(method_Button.getText().equals("Req Count")) {
-					method_Button.setText("End Address");
-					method_textField.setText(startAddr_textField.getText().trim());
 					range_label.setEnabled(true);
 					range_label.setVisible(true);
+					
+					int startAddr = getAddress(startAddr_textField);
+					int reqCount = getMethodValue();
+					int endAddress = (startAddr + reqCount) - 1;
+					
+					if(reqCount != -1) {
+						String endAddrString = getIntegerAddress(endAddress, "Register (DEC)");
+						method_textField.setText(endAddrString);
+					}else {
+						method_textField.setText("Invalid");
+						method_textField.setForeground(Color.RED);
+					}
+					method_Button.setText("End Address");
+					
 				}else {
-					method_Button.setText("Req Count");
-					method_textField.setText("1");
 					range_label.setEnabled(false);
 					range_label.setVisible(false);
+					
+					int reqCount = getMethodValue();
+					if(reqCount != -1) {
+						method_textField.setText(String.valueOf(reqCount));
+					}else {
+						method_textField.setText("Invalid");
+						method_textField.setForeground(Color.RED);
+					}
+					
+					method_Button.setText("Req Count");
 				}
 				
+				syncAddr();
 				getMethodValue();
+				method_textField.requestFocus();
 			}
 		});
 		reqFormPanel.add(method_Button);
@@ -459,27 +598,7 @@ public class ModbusMonitorFrame extends JFrame {
 						"",
 						"EIGHT BYTE INT SIGNED",
 						"EIGHT BYTE FLOAT"
-						}));
-		dataType_comboBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String dataType = dataType_comboBox.getSelectedItem().toString().toUpperCase().trim();
-				if(dataType.length() < 1 || dataType.equals("")) dataType_comboBox.setSelectedIndex(0);
-				
-				int step = 1;
-				
-				if(dataType.startsWith("BIN") || dataType.startsWith("TWO")) {
-					step  = 1;			
-				}else if(dataType.startsWith("FOUR")) {
-					step = 2;
-				}else if(dataType.startsWith("EIGHT")) {
-					step = 4;
-				}else {
-					step = 1;
-				}
-				
-			}
-		});
+						}));		
 		dataType_comboBox.setSelectedIndex(0);
 		dataType_comboBox.setForeground(Color.BLACK);
 		dataType_comboBox.setFont(new Font("맑은 고딕", Font.BOLD, 16));
@@ -534,6 +653,72 @@ public class ModbusMonitorFrame extends JFrame {
 		sendButton.setFocusPainted(false);
 		sendButton.setBackground(Color.WHITE);
 		sendButton.setBounds(828, 43, 100, 30);
+		sendButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				boolean isRTU = radio_modbusRTU.isSelected();
+				
+				// 수집 요청 TX 생성에 필요한 Form 에 정보가 모두 입력되어 있는지 체크
+				if(!checkReadRequestForm(isRTU)) return;
+				
+				if(checkFormValidation()) {
+					try {
+						ArrayList<ModbusWatchPoint> pointList = getPointList();
+						
+						if(pointList != null) {
+							
+							// 현재 모니터가 통신중이라면 현재 요청은 무시
+							if(ModbusMonitor.isRunning) return;
+							
+							int timeout = Integer.parseInt(timeout_text.getText().trim());
+							if(timeout == 0) {
+								StringBuilder sb = new StringBuilder();
+								sb.append(Util.colorRed("Infinite Timeout?\n"));
+								sb.append(String.format("타임아웃 설정값을 " + Util.colorBlue("0ms") + " 으로 설정하면 응답 패킷을 수신하기 전까지 무한히 대기합니다%s%s%s", Util.separator, Util.separator, "\n\n"));
+								sb.append(String.format("타임아웃 설정값을 무한으로 설정하고  통신하시겠습니까?%s%s%s",Util.separator, Util.separator, "\n"));
+								
+								int isInfiniteTimeout = Util.showConfirm(sb.toString());
+								
+								if(isInfiniteTimeout == JOptionPane.YES_OPTION) {
+									// YES
+								} else {
+									return; // NO
+								}
+							}
+							if(timeout < 0) {
+								StringBuilder sb = new StringBuilder();
+								sb.append(Util.colorRed("Timeout Field Error\n"));					
+								sb.append(String.format("응답 타임아웃은 " + Util.colorBlue("0ms") + " 이상의 정수만 입력 할 수 있습니다%s%s%s", Util.separator, Util.separator, "\n"));	
+								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+							
+							int maxCount = Integer.parseInt(maxCount_text.getText().trim());
+							if(maxCount < 0) {
+								StringBuilder sb = new StringBuilder();
+								sb.append(Util.colorRed("Max Request Count Error\n"));
+								sb.append(String.format("최대 요청 개수는 " + Util.colorBlue("0개") + " 이상의 정수만 입력 할 수 있습니다%s%s%s", Util.separator, Util.separator, "\n"));
+								Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+							
+							ModbusWatchPoint.pointDataClear(pointList);
+							
+							ModbusMonitor monitor = new ModbusMonitor();
+							monitor.setType((isRTU) ? ModbusMonitor.TYPE_RTU : ModbusMonitor.TYPE_TCP);
+							monitor.setUnitID(getMonitorUnitID());
+							if(monitor.getType() == ModbusMonitor.TYPE_TCP) monitor.setTransactionID(getTid());
+															
+							ModbusMonitor.sendRequest(ModbusMonitor_Panel.socket_ko, monitor, pointList, timeout, maxCount);
+						}
+						
+					}catch(Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+		});
 		reqFormPanel.add(sendButton);
 		
 		resetButton = new JButton("Reset");
@@ -582,8 +767,13 @@ public class ModbusMonitorFrame extends JFrame {
 				if(startAddr != -1) {
 					if(startAddr > methodValue) {
 						method_textField.setForeground(Color.RED);
+						return -1;
+					}else {
+						// 실제 요청 개수
+						methodValue = (methodValue - startAddr) + 1;
 					}
 				}
+				
 			}
 		}catch(Exception e) {
 			method_textField.setForeground(Color.RED);
@@ -591,6 +781,10 @@ public class ModbusMonitorFrame extends JFrame {
 		}
 			
 		return methodValue;
+	}
+	
+	public int getMonitorUnitID() {
+		return Integer.parseInt(unitID_comboBox.getSelectedItem().toString().replace("번", "").trim());
 	}
 	
 	public int getAddress(JTextField addr_textField) {
@@ -656,6 +850,66 @@ public class ModbusMonitorFrame extends JFrame {
 		}catch(NumberFormatException e) {
 			addr_textField.setForeground(Color.RED);
 			return -1;
+		}
+	}
+	
+	public String getIntegerAddress(int address, String addrFormat) {
+		int fc = Integer.parseInt(fc_comboBox.getSelectedItem().toString().split(" ")[1]);		
+		String modbusAddress = "";
+		String addr = String.valueOf(address);
+		
+		switch(fc) {
+			case 1: modbusAddress = "0"; break;
+			case 2: modbusAddress = "1"; break;
+			case 3: modbusAddress = "4"; break;
+			case 4: modbusAddress = "3"; break;
+		}
+		
+		try {
+			switch(addrFormat) {
+				case "Modbus (DEC)" :					
+					if(addr.length() < 1 || addr.equals("")) return "Invalid";
+					address = Integer.parseInt(addr);
+					address = (address % 10000) - 1;
+					if(address > 0xffff || address < 0) throw new NumberFormatException();
+					break;
+					
+				case "Register (DEC)" :
+					if(addr.length() < 1 || addr.equals("")) return "Invalid";			
+					address = Integer.parseInt(addr);
+					if(address > 0xffff || address < 0) throw new NumberFormatException();
+					break;
+					
+				case "Register (HEX)" :					
+					if(addr.length() < 1 || addr.equals("")) return "Invalid";
+					
+					if(addr.startsWith("0x")||addr.startsWith("0X")) {
+						address = Integer.parseInt(addr.replaceAll("0x", "").replaceAll("0X", ""),16);
+					}else {						
+						address = Integer.parseInt(addr.replaceAll("0x", "").replaceAll("0X", ""),16);
+					}
+					if(address > 0xffff || address < 0) throw new NumberFormatException();
+					break;
+			}
+		
+			String modbusAddr = String.format("%s%04d", modbusAddress, (address & 0xffff) + 1);
+			String registerAddr_Hex = String.format("0x%04X", address);
+			
+			switch(addrTypeComboBox.getSelectedItem().toString()) {
+				case "Modbus (DEC)" :
+					return modbusAddr;
+					
+				case "Register (DEC)" :
+					return String.valueOf(address);
+					
+				case "Register (HEX)" :
+					return registerAddr_Hex;
+			}
+			
+			return "Invalid";
+		
+		}catch(NumberFormatException e) {
+			return "Invalid";
 		}
 	}
 	
@@ -731,4 +985,223 @@ public class ModbusMonitorFrame extends JFrame {
 			method_textField.setText(getStringAddress(method_textField, lastAddrFormat));
 		}
 	}
+	
+	public int getTid() {
+		try {
+			int transactionId = 0;
+			
+			if(transactionId_text.getText().trim().startsWith("0x")){
+				transactionId = Integer.parseInt(transactionId_text.getText().trim().replaceAll("0x", ""),16);
+			}else if(transactionId_text.getText().trim().startsWith("0X")) {
+				transactionId = Integer.parseInt(transactionId_text.getText().trim().replaceAll("0X", ""),16);
+			}else {
+				transactionId = Integer.parseInt(transactionId_text.getText());
+			}
+			
+			return transactionId;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+	
+	// 수집 요청 패킷 생성 정보 유효성 확인
+	public boolean checkReadRequestForm(boolean isRTU) {
+		boolean isValid = true;				
+		int nullCount = 0;
+		int invalidCount = 0;
+				
+		if(!isRTU && transactionId_text.getText().length() == 0
+			|| timeout_text.getText().length() == 0
+			|| maxCount_text.getText().length() == 0) {
+			
+			StringBuilder sb = new StringBuilder("<font color='red'>입력 필드 양식 오류</font>\n");
+			
+			// 트랜잭션 ID null 검사
+			if(!isRTU && transactionId_text.getText().length() == 0) {
+				nullCount++;
+				sb.append(Util.colorBlue("트랜잭션 ID"));					
+			}
+			
+			// 타임아웃 null 검사
+			if(timeout_text.getText().length() == 0) {					
+				if(nullCount > 0)
+					sb.append(Util.colorBlue(", 타임아웃"));
+				else						
+					sb.append(Util.colorBlue("타임아웃"));
+				
+				nullCount++;
+			}
+			
+			// 최대 요청 개수 null 검사
+			if(maxCount_text.getText().length() == 0) {					
+				if(nullCount > 0)
+					sb.append(Util.colorBlue(", 최대 요청 개수"));
+				else						
+					sb.append(Util.colorBlue("최대 요청 개수"));
+				
+				nullCount++;
+			}
+			
+			sb.append(" 정보를 입력 해주세요" + Util.separator + "\n");
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			isValid = false;			
+			
+			return isValid;
+		}
+		
+		// 유효하지 않은 startAddress 입력 시 메시지 출력 후 리턴
+		if(!isRTU && transactionId_text.getForeground() == Color.RED
+				|| timeout_text.getForeground() == Color.RED
+				|| maxCount_text.getForeground() == Color.RED) {
+			
+			StringBuilder sb = new StringBuilder("<font color='red'>입력 필드 양식 오류</font>\n");
+			sb.append("입력하신 ");								
+			
+			// 시작주소 양식 검사
+			if(!isRTU && transactionId_text.getForeground() == Color.RED) {
+				invalidCount++;
+				sb.append(Util.colorBlue("트랜잭션 ID"));
+			}
+			
+			// 타임아웃 양식 검사
+			if(timeout_text.getForeground() == Color.RED) {
+				if(invalidCount > 0)
+					sb.append(Util.colorBlue(", 타임아웃"));
+				else
+					sb.append(Util.colorBlue("타임아웃"));
+				
+				invalidCount++;
+			}
+			
+			// 최대 요청 개수 양식 검사
+			if(maxCount_text.getForeground() == Color.RED) {
+				if(invalidCount > 0)
+					sb.append(Util.colorBlue(", 최대 요청 개수"));
+				else
+					sb.append(Util.colorBlue("최대 요청 개수"));
+				
+				invalidCount++;
+			}
+							
+			sb.append(" 정보를 확인 해주세요" + Util.separator + "\n");
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			isValid = false;					
+			
+			return isValid;
+		}
+		
+		return isValid;
+	}
+		
+	public String getRegisterAddrHex(int registerAddr) {
+		return String.format("0x%04X", registerAddr);
+	}
+	
+	public boolean checkFormValidation() {
+		boolean formValid = true;
+		formValid = formValid && !(startAddr_textField.getForeground() == Color.RED);
+		formValid = formValid && !(startAddr_textField.getText().length() < 1 || startAddr_textField.getText().equals(""));
+		formValid = formValid && !(startAddr_textField.getText().trim().equals("Invalid"));
+		
+		if(!formValid) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("%s%s%s\n", Util.colorRed("Form Validation Error"), Util.separator, Util.separator));
+			sb.append(String.format("%s", "모드버스 포인트의 " + Util.colorBlue("요청 시작 주소(Start Address)") +  " 정보를 확인해주세요"));
+			sb.append(Util.separator + Util.separator + Util.separator + "\n");
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			startAddr_textField.requestFocus();
+			return formValid;
+		}
+		
+		formValid = formValid && !(method_textField.getText().length() < 1 || method_textField.getText().equals(""));
+		formValid = formValid && !(method_textField.getForeground() == Color.RED);
+
+		if(!formValid) {
+			String method = (method_Button.getText().equals("Req Count")) ? "요청 개수(Req Count)" : "마지막 요청 주소(End Address)";
+			StringBuilder sb = new StringBuilder();
+			
+			sb.append(String.format("%s%s%s\n", Util.colorRed("Form Validation Error"), Util.separator, Util.separator));
+			sb.append(String.format("%s", "모드버스 포인트의 " + Util.colorBlue(method) + " 정보를 확인해주세요"));
+			sb.append(Util.separator + Util.separator + Util.separator + "\n");
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			
+			method_textField.requestFocus();
+			return formValid;
+		}
+		
+		return formValid;
+	}
+	
+	public ArrayList<ModbusWatchPoint> getPointList() {
+		int fc = Integer.parseInt(fc_comboBox.getSelectedItem().toString().split(" ")[1]);
+		
+		String dataType = dataType_comboBox.getSelectedItem().toString().toUpperCase().trim();
+		int step = 1;
+		if(dataType.startsWith("BIN") || dataType.startsWith("TWO")) {
+			step  = 1;			
+		}else if(dataType.startsWith("FOUR")) {
+			step = 2;
+		}else if(dataType.startsWith("EIGHT")) {
+			step = 4;
+		}
+		
+		try {
+			int addr = getAddress(startAddr_textField);
+			if(addr < 0) throw new Exception();
+			
+			int count = getMethodValue();
+			if(count == -1) { 
+				throw new Exception();
+				
+			}else if(method_Button.getText().equalsIgnoreCase("End Address")){
+				boolean isEven = (count % step) == 0;
+				count = isEven ? (count / step) : (count / step) + 1;
+			}
+			
+			int[] addrArray = new int[count];
+			addrArray[0] = addr;
+			
+			for(int i = 1; i < addrArray.length; i++) {
+				addrArray[i] = addrArray[i-1] + step;
+			}
+			
+			ArrayList<ModbusWatchPoint> list = new ArrayList<ModbusWatchPoint>();
+			for(int i = 0; i < addrArray.length; i++) {
+				ModbusWatchPoint wp = new ModbusWatchPoint();
+				wp.displayName = "";
+				wp.scaleFunc = "x";
+				wp.interval = 60;
+				wp.measure = "";
+				wp.dataFormat = 3;
+				String counter = fc + "_" + getRegisterAddrHex(addrArray[i]) + "_" + dataType;
+				wp.setCounter(counter);
+				wp.init();
+				list.add(wp);
+			}
+			
+//			if(method_Button.getText().equalsIgnoreCase("End Address") && list.size() > 1) {
+//				ModbusWatchPoint wp = list.get(list.size() - 1);
+//				int endAddress = getAddress(method_textField);
+//				if(endAddress != -1 && (wp.getRegisterAddr() != endAddress)) {
+//					ModbusWatchPoint lastWp = new ModbusWatchPoint();
+//					lastWp.displayName = "";
+//					lastWp.scaleFunc = "x";
+//					lastWp.interval = 60;
+//					lastWp.measure = "";
+//					lastWp.dataFormat = 3;
+//					String counter = fc + "_" + getRegisterAddrHex(endAddress) + "_" + dataType;
+//					lastWp.setCounter(counter);
+//					lastWp.init();
+//					list.add(lastWp);
+//				}
+//			}
+			
+			return list;
+		}catch(Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	
 }

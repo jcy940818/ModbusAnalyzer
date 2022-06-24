@@ -366,6 +366,7 @@ public class ModbusMonitor_Panel extends JPanel {
 								
 								// 현재 모니터가 통신중이라면 현재 요청은 무시
 								if(ModbusMonitor.isRunning) return;
+								
 								int timeout = Integer.parseInt(timeout_text.getText().trim());																
 								if(timeout == 0) {
 									StringBuilder sb = new StringBuilder();
@@ -401,14 +402,14 @@ public class ModbusMonitor_Panel extends JPanel {
 								int[] selectedRows = pointTable.getSelectedRows();
 								
 								ArrayList<ModbusWatchPoint> pointList = getSelectedModbusPoint(pointTable);
-								pointDataClear(pointList);
+								ModbusWatchPoint.pointDataClear(pointList);
 								
 								ModbusMonitor monitor = new ModbusMonitor();
 								monitor.setType((isRTU) ? ModbusMonitor.TYPE_RTU : ModbusMonitor.TYPE_TCP);
 								monitor.setUnitID(getMonitorUnitID());
 								if(monitor.getType() == ModbusMonitor.TYPE_TCP) monitor.setTransactionID(getTid());
 																
-								ModbusAgent.modbusCommunicate(monitor, socket_ko, pointList, timeout, maxCount);
+								ModbusMonitor.sendRequest(socket_ko, monitor, pointList, timeout, maxCount);
 								
 								SwingUtilities.invokeLater(new Runnable() {
 								    @Override public void run() {
@@ -1270,14 +1271,6 @@ public class ModbusMonitor_Panel extends JPanel {
 		return pointTable;
 	}
 	
-	public void initTid(int tid) {
-		if(transactionId_text.getText().trim().startsWith("0x") || transactionId_text.getText().trim().startsWith("0X")){
-			transactionId_text.setText(String.format("0x%04X",tid));
-		}else {
-			transactionId_text.setText(String.format("%d",tid));
-		}
-	}
-	
 	public int getTid() {
 		try {
 			int transactionId = 0;
@@ -1972,16 +1965,6 @@ public class ModbusMonitor_Panel extends JPanel {
 			pointList.add(wp);
 		}
 		Collections.sort(pointList);
-	}
-	
-	public static void pointDataClear(ArrayList<ModbusWatchPoint> pointList) {
-		if(pointList == null || pointList.size() < 1) {
-			return;
-		}else {
-			for(ModbusWatchPoint point : pointList) {
-				point.setData(new PerfData());
-			}
-		}
 	}
 	
 	public static ArrayList<ModbusWatchPoint> getSelectedModbusPoint(JTable table) {

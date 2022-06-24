@@ -507,6 +507,16 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	}
 	
 	
+	public static void pointDataClear(ArrayList<ModbusWatchPoint> pointList) {
+		if(pointList == null || pointList.size() < 1) {
+			return;
+		}else {
+			for(ModbusWatchPoint point : pointList) {
+				point.setData(new PerfData());
+			}
+		}
+	}
+	
 	
 	public final double getComputedValue(double value) {
 		String fixFormula = this.getScaleFunction(); 
