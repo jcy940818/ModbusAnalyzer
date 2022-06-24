@@ -1368,10 +1368,14 @@ public class ModbusMonitorFrame extends JFrame {
 	public void setComponentEnabled(boolean enabled) {
 		// 소켓 접속 전에는 컴포넌트들을 사용하지 않는다
 		
-		if(enabled) {
-			cardLayout.show(cardPanel, "actualPanel");
-		}else {
-			cardLayout.show(cardPanel, "image");
+		try {
+			if(enabled) {
+				cardLayout.show(cardPanel, "actualPanel");
+			}else {
+				cardLayout.show(cardPanel, "image");
+			}
+		}catch(Exception e) {
+			// Do nothing
 		}
 		
 		currentState.setEnabled(enabled);
