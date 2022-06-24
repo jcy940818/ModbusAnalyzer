@@ -49,6 +49,9 @@ public class ModbusMonitorFrame extends JFrame {
 	public static String IP;
 	public static int PORT;
 
+	private JPanel actualPanel;
+	private JPanel imagePanel;
+	
 	private JScrollPane scrollPane;
 	private JTextArea textArea;
 	private int fontSize = 18;
@@ -130,31 +133,6 @@ public class ModbusMonitorFrame extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));		
 		setContentPane(contentPane);
 		
-		JPanel actualPanel = new JPanel();
-		actualPanel.setBorder(null);
-		actualPanel.setBackground(Color.WHITE);
-		contentPane.add(actualPanel, BorderLayout.CENTER);		
-		actualPanel.setLayout(null);
-		
-		JLabel currentFunction = new JLabel("Modbus Monitor");
-		currentFunction.setForeground(Color.BLACK);
-		currentFunction.setIcon(new Util().getSubLogoResource());
-		currentFunction.setHorizontalAlignment(SwingConstants.LEFT);
-		currentFunction.setFont(new Font("맑은 고딕", Font.BOLD, 22));
-		currentFunction.setBackground(Color.WHITE);
-		currentFunction.setBounds(0, 0, 267, 55);
-		actualPanel.add(currentFunction);
-		
-		scrollPane = new JScrollPane();
-		scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
-		scrollPane.setBounds(0, 154, 1044, 507);
-		actualPanel.add(scrollPane);
-		
-		textArea = new JTextArea();
-		textArea.setForeground(Color.BLACK);
-		textArea.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));
-		scrollPane.setViewportView(textArea);
-		
 		radioListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -171,6 +149,64 @@ public class ModbusMonitorFrame extends JFrame {
 				}
 			}						
 		};
+		
+		radioGroup = new ButtonGroup();
+		
+		transactionId_text = new JTextField();
+		
+		String[] unitIdValue = new String[255];
+		for(int i = 0; i < 255; i++) {
+			unitIdValue[i] = String.valueOf(i+1) + "번";
+		}
+		this.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+    			addComponentListener(new ComponentAdapter() {
+    				@Override
+    				public void componentResized(ComponentEvent e) {
+    					scrollPane.setSize(contentPane.getWidth() - (scrollPane.getX() + 20), contentPane.getHeight() - (scrollPane.getY() + 20));
+    					reqFormPanel.setSize(scrollPane.getWidth(), reqFormPanel.getHeight());
+    					super.componentResized(e);
+    				}
+    			});
+            }
+        });
+		
+		actualPanel = new JPanel();
+		actualPanel.setBorder(null);
+		actualPanel.setLayout(null);
+		actualPanel.setBackground(Color.WHITE);
+		contentPane.add(actualPanel, BorderLayout.CENTER);
+		
+		JLabel currentFunction = new JLabel("Modbus Monitor");
+		currentFunction.setForeground(Color.BLACK);
+		currentFunction.setIcon(new Util().getSubLogoResource());
+		currentFunction.setHorizontalAlignment(SwingConstants.LEFT);
+		currentFunction.setFont(new Font("맑은 고딕", Font.BOLD, 22));
+		currentFunction.setBackground(Color.WHITE);
+		currentFunction.setBounds(0, 0, 267, 55);
+		actualPanel.add(currentFunction);
+		
+		imagePanel = new JPanel();
+		imagePanel.setBackground(Color.WHITE);
+		imagePanel.setLayout(new BorderLayout(0, 0));
+		imagePanel.setBounds(0, 0, 1044, 661);
+		actualPanel.add(imagePanel);
+		
+		JLabel imageLabel = new JLabel();
+		imageLabel.setOpaque(true);
+		imageLabel.setBackground(Color.WHITE);		
+		imageLabel.setIcon(new Util().getOnionScreenResource());
+		imagePanel.add(imageLabel, BorderLayout.CENTER);
+		
+		scrollPane = new JScrollPane();
+		scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
+		scrollPane.setBounds(0, 154, 1044, 507);
+		actualPanel.add(scrollPane);
+		
+		textArea = new JTextArea();
+		textArea.setForeground(Color.BLACK);
+		textArea.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));
+		scrollPane.setViewportView(textArea);
 		
 		radio_modbusTCP = new JRadioButton("Modbus TCP");
 		radio_modbusTCP.setFocusPainted(false);
@@ -192,8 +228,6 @@ public class ModbusMonitorFrame extends JFrame {
 		radio_modbusRTU.setBounds(262, 45, 135, 23);		
 		radio_modbusRTU.addActionListener(radioListener);
 		actualPanel.add(radio_modbusRTU);
-		
-		radioGroup = new ButtonGroup();
 		radioGroup.add(radio_modbusTCP);
 		radioGroup.add(radio_modbusRTU);
 		
@@ -239,8 +273,6 @@ public class ModbusMonitorFrame extends JFrame {
 		transactionID_label.setBounds(576, 10, 120, 24);
 		transactionID_label.setEnabled(false);		
 		actualPanel.add(transactionID_label);
-		
-		transactionId_text = new JTextField();
 		transactionId_text = new JTextField();
 		transactionId_text.setForeground(Color.BLUE);
 		transactionId_text.setText("1");
@@ -281,11 +313,6 @@ public class ModbusMonitorFrame extends JFrame {
 			}
 		});
 		actualPanel.add(transactionId_text);
-		
-		String[] unitIdValue = new String[255];
-		for(int i = 0; i < 255; i++) {
-			unitIdValue[i] = String.valueOf(i+1) + "번";
-		}
 		
 		unitID_label = new JLabel("Unit ID");
 		unitID_label.setForeground(Color.BLACK);
@@ -402,18 +429,6 @@ public class ModbusMonitorFrame extends JFrame {
 		reqFormPanel.setBounds(0, 76, 1044, 80);
 		reqFormPanel.setLayout(null);
 		actualPanel.add(reqFormPanel);
-		this.addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent e) {
-    			addComponentListener(new ComponentAdapter() {
-    				@Override
-    				public void componentResized(ComponentEvent e) {
-    					scrollPane.setSize(contentPane.getWidth() - (scrollPane.getX() + 20), contentPane.getHeight() - (scrollPane.getY() + 20));
-    					reqFormPanel.setSize(scrollPane.getWidth(), reqFormPanel.getHeight());    					
-    					super.componentResized(e);
-    				}
-    			});
-            }
-        });
 		
 		fc_label = new JLabel("Function Code");
 		fc_label.setHorizontalAlignment(SwingConstants.LEFT);
@@ -773,12 +788,16 @@ public class ModbusMonitorFrame extends JFrame {
 		});
 		actualPanel.add(fontSize_text);
 		
+		textArea.requestFocus();
+		
+		
+		
 		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
 		setVisible(true);
 		
-		textArea.requestFocus();
+		setComponentEnabled(false);
 	}
 
 	@Override
@@ -1242,6 +1261,12 @@ public class ModbusMonitorFrame extends JFrame {
 	
 	public void setComponentEnabled(boolean enabled) {
 		// 소켓 접속 전에는 컴포넌트들을 사용하지 않는다
+		
+		reqFormPanel.setEnabled(enabled);
+		reqFormPanel.setVisible(enabled);
+		
+		scrollPane.setEnabled(enabled);
+		scrollPane.setVisible(enabled);
 		
 		// 레이블
 		addrFormat_label.setEnabled(enabled);

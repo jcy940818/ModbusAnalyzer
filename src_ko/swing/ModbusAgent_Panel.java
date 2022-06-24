@@ -158,16 +158,16 @@ public class ModbusAgent_Panel extends JPanel {
 		infoPanel.add(imagePanel);
 		
 		JLabel imageLabel = new JLabel();
-		imagePanel.add(imageLabel, BorderLayout.CENTER);
 		imageLabel.setOpaque(true);
 		imageLabel.setBackground(Color.WHITE);		
 		imageLabel.setIcon(new Util().getOnionScreenResource());
+		imagePanel.add(imageLabel, BorderLayout.CENTER);
 		
 		resultPanel = new JPanel();
 		resultPanel.setBounds(10, 56, 1028, 425);
-		infoPanel.add(resultPanel);
 		resultPanel.setBackground(Color.LIGHT_GRAY);
 		resultPanel.setLayout(null);
+		infoPanel.add(resultPanel);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBorder(new LineBorder(Color.BLACK, 3));
