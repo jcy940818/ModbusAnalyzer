@@ -33,6 +33,7 @@ import src_ko.util.Util;
 
 public class ModbusMonitorFrame extends JFrame {
 
+	public static StringBuilder log = new StringBuilder();
 	public static boolean isExist = false;
 	private JPanel contentPane;
 
@@ -71,6 +72,8 @@ public class ModbusMonitorFrame extends JFrame {
 	private JLabel dataType_label;
 	ButtonGroup radioGroup = null;
 	
+	private String lastAddrFormat = "Modbus (DEC)";
+	
 	/**
 	 * Launch the application.
 	 */
@@ -92,6 +95,8 @@ public class ModbusMonitorFrame extends JFrame {
 	 */
 	public ModbusMonitorFrame() {
 		ModbusMonitorFrame.isExist = true;
+		log = new StringBuilder();
+		
 		setTitle("Modbus Monitor");
 		setMinimumSize(new Dimension(r.width, r.height));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -172,6 +177,18 @@ public class ModbusMonitorFrame extends JFrame {
 		addrTypeComboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		addrTypeComboBox.setBackground(Color.WHITE);
 		addrTypeComboBox.setBounds(405, 40, 150, 30);
+		addrTypeComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				syncAddr();
+				
+				getAddress(startAddr_textField);
+				getMethodValue();
+				
+				lastAddrFormat = addrTypeComboBox.getSelectedItem().toString();
+			}
+		});
 		actualPanel.add(addrTypeComboBox);
 		
 		transactionID_label = new JLabel("Transaction ID");
@@ -283,7 +300,44 @@ public class ModbusMonitorFrame extends JFrame {
 						"FC 03",
 						"FC 04"
 						}));
-		fc_comboBox.setSelectedIndex(0);
+		fc_comboBox.setSelectedIndex(2);
+		fc_comboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				syncAddr();
+				getAddress(startAddr_textField);
+				getMethodValue();
+				
+				int fc = Integer.parseInt(fc_comboBox.getSelectedItem().toString().split(" ")[1]);
+				
+				if(fc >= 3) {
+					dataType_comboBox.setModel(new DefaultComboBoxModel(
+							new String[] {
+									"TWO BYTE INT SIGNED",
+									"TWO BYTE INT UNSIGNED",
+									"",
+									"FOUR BYTE INT SIGNED",
+									"FOUR BYTE INT UNSIGNED",
+									"FOUR BYTE INT SIGNED SWAPPED",
+									"FOUR BYTE INT UNSIGNED SWAPPED",
+									"",
+									"FOUR BYTE FLOAT",
+									"FOUR BYTE FLOAT SWAPPED",
+									"",
+									"EIGHT BYTE INT SIGNED",
+									"EIGHT BYTE FLOAT"
+									}));
+				}else {
+					dataType_comboBox.setModel(new DefaultComboBoxModel(
+							new String[] {
+									"BINARY"
+									}));
+				}
+								
+				dataType_comboBox.setSelectedIndex(0);
+			}
+		});
 		fc_comboBox.setForeground(Color.BLACK);
 		fc_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
 		fc_comboBox.setBackground(Color.WHITE);
@@ -298,13 +352,27 @@ public class ModbusMonitorFrame extends JFrame {
 		reqFormPanel.add(startAddr_label);
 		
 		startAddr_textField = new JTextField();
-		startAddr_textField.setText("0");
+		startAddr_textField.setText("1");
 		startAddr_textField.setHorizontalAlignment(SwingConstants.LEFT);
 		startAddr_textField.setForeground(Color.BLUE);
 		startAddr_textField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
 		startAddr_textField.setColumns(10);
 		startAddr_textField.setBorder(UIManager.getBorder("TextField.border"));
 		startAddr_textField.setBounds(156, 43, 120, 30);
+		startAddr_textField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				getAddress(startAddr_textField);
+				getMethodValue();
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				getAddress(startAddr_textField);
+				getMethodValue();
+			}
+			
+		});
 		reqFormPanel.add(startAddr_textField);
 		
 		range_label = new JLabel("~");
@@ -329,26 +397,41 @@ public class ModbusMonitorFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				if(method_Button.getText().equals("Req Count")) {
 					method_Button.setText("End Address");
+					method_textField.setText(startAddr_textField.getText().trim());
 					range_label.setEnabled(true);
 					range_label.setVisible(true);
 				}else {
 					method_Button.setText("Req Count");
+					method_textField.setText("1");
 					range_label.setEnabled(false);
 					range_label.setVisible(false);
 				}
 				
+				getMethodValue();
 			}
 		});
 		reqFormPanel.add(method_Button);
 		
 		method_textField = new JTextField();
-		method_textField.setText("0");
+		method_textField.setText("1");
 		method_textField.setHorizontalAlignment(SwingConstants.LEFT);
 		method_textField.setForeground(Color.BLUE);
 		method_textField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
 		method_textField.setColumns(10);
 		method_textField.setBorder(UIManager.getBorder("TextField.border"));
 		method_textField.setBounds(300, 43, 120, 30);
+		method_textField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				getMethodValue();
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				getMethodValue();
+			}
+			
+		});
 		reqFormPanel.add(method_textField);
 		
 		dataType_label = new JLabel("Data Type");
@@ -363,12 +446,10 @@ public class ModbusMonitorFrame extends JFrame {
 		dataType_comboBox.setMaximumRowCount(30);
 		dataType_comboBox.setModel(new DefaultComboBoxModel(
 				new String[] {
-						"BINARY",
-						"",
-						"TWO BYTE INT SIGNED", 
+						"TWO BYTE INT SIGNED",
 						"TWO BYTE INT UNSIGNED",
 						"",						
-						"FOUR BYTE INT SIGNED", 
+						"FOUR BYTE INT SIGNED",
 						"FOUR BYTE INT UNSIGNED",
 						"FOUR BYTE INT SIGNED SWAPPED",
 						"FOUR BYTE INT UNSIGNED SWAPPED",
@@ -379,6 +460,26 @@ public class ModbusMonitorFrame extends JFrame {
 						"EIGHT BYTE INT SIGNED",
 						"EIGHT BYTE FLOAT"
 						}));
+		dataType_comboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String dataType = dataType_comboBox.getSelectedItem().toString().toUpperCase().trim();
+				if(dataType.length() < 1 || dataType.equals("")) dataType_comboBox.setSelectedIndex(0);
+				
+				int step = 1;
+				
+				if(dataType.startsWith("BIN") || dataType.startsWith("TWO")) {
+					step  = 1;			
+				}else if(dataType.startsWith("FOUR")) {
+					step = 2;
+				}else if(dataType.startsWith("EIGHT")) {
+					step = 4;
+				}else {
+					step = 1;
+				}
+				
+			}
+		});
 		dataType_comboBox.setSelectedIndex(0);
 		dataType_comboBox.setForeground(Color.BLACK);
 		dataType_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
@@ -420,8 +521,7 @@ public class ModbusMonitorFrame extends JFrame {
 					int size = Integer.parseInt(fontSize_text.getText().trim());
 					fontSize = size;
 					textArea.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
-				}catch(Exception ex) {
-					ex.printStackTrace();
+				}catch(Exception ex) {					
 					textArea.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
 				}
 			}
@@ -464,5 +564,171 @@ public class ModbusMonitorFrame extends JFrame {
 	public void dispose() {
 		ModbusMonitorFrame.isExist = false;
 		super.dispose();
+	}
+	
+	public int getMethodValue() {
+		int methodValue = -1;
+		
+		try {
+			if(method_Button.getText().equals("Req Count")) {
+				methodValue = Integer.parseInt(method_textField.getText().trim());
+				method_textField.setForeground(Color.BLUE);
+				if(methodValue < 1 || methodValue > 10000) throw new NumberFormatException();
+
+			}else {
+				methodValue = getAddress(method_textField);
+				int startAddr = getAddress(startAddr_textField);
+				
+				if(startAddr != -1) {
+					if(startAddr > methodValue) {
+						method_textField.setForeground(Color.RED);
+					}
+				}
+			}
+		}catch(Exception e) {
+			method_textField.setForeground(Color.RED);
+			methodValue = -1;
+		}
+			
+		return methodValue;
+	}
+	
+	public int getAddress(JTextField addr_textField) {
+		int fc = Integer.parseInt(fc_comboBox.getSelectedItem().toString().split(" ")[1]);
+		int startAddress = 0;
+		String modbusAddress = "";
+		String addr;
+		
+		switch(fc) {
+			case 1: modbusAddress = "0"; break;
+			case 2: modbusAddress = "1"; break;
+			case 3: modbusAddress = "4"; break;
+			case 4: modbusAddress = "3"; break;
+		}
+		
+		try {
+			
+			switch(addrTypeComboBox.getSelectedItem().toString()) {
+				case "Modbus (DEC)" :
+					addr = addr_textField.getText().trim();
+					if(addr.length() < 1 || addr.equals("")) return -1;
+					startAddress = Integer.parseInt(addr);
+					startAddress = (startAddress % 10000) - 1;
+					if(startAddress > 0xffff || startAddress < 0) throw new NumberFormatException();
+					break;
+					
+				case "Register (DEC)" :
+					addr = addr_textField.getText().trim();
+					if(addr.length() < 1 || addr.equals("")) return -1;				
+					startAddress = Integer.parseInt(addr);
+					if(startAddress > 0xffff || startAddress < 0) throw new NumberFormatException();
+					break;
+					
+				case "Register (HEX)" :
+					addr = addr_textField.getText().trim();
+					if(addr.length() < 1 || addr.equals("")) return -1;
+					
+					if(addr.startsWith("0x")||addr.startsWith("0X")) {
+						startAddress = Integer.parseInt(addr.replaceAll("0x", "").replaceAll("0X", ""),16);
+					}else {
+						addr_textField.setText("0x" + addr);
+						startAddress = Integer.parseInt(addr.replaceAll("0x", "").replaceAll("0X", ""),16);
+					}
+					if(startAddress > 0xffff || startAddress < 0) throw new NumberFormatException();
+					break;
+					
+				default :
+					addr = addr_textField.getText().trim();
+					if(addr.length() < 1 || addr.equals("")) return -1;
+					startAddress = Integer.parseInt(addr);
+					startAddress = (startAddress % 10000) - 1;
+					if(startAddress > 0xffff || startAddress < 0) throw new NumberFormatException();
+					break;
+			}
+		
+			String modbusAddr = String.format("%s%04d", modbusAddress, (startAddress & 0xffff) + 1);
+			String registerAddr_Hex = String.format("0x%04X", startAddress);
+			
+			addr_textField.setForeground(Color.BLUE);
+			
+			return startAddress;
+		
+		}catch(NumberFormatException e) {
+			addr_textField.setForeground(Color.RED);
+			return -1;
+		}
+	}
+	
+	public String getStringAddress(JTextField addr_textField, String addrFormat) {
+		int fc = Integer.parseInt(fc_comboBox.getSelectedItem().toString().split(" ")[1]);
+		int address = 0;
+		String modbusAddress = "";
+		String addr;
+		
+		switch(fc) {
+			case 1: modbusAddress = "0"; break;
+			case 2: modbusAddress = "1"; break;
+			case 3: modbusAddress = "4"; break;
+			case 4: modbusAddress = "3"; break;
+		}
+		
+		try {
+			switch(addrFormat) {
+				case "Modbus (DEC)" :
+					addr = addr_textField.getText().trim();
+					if(addr.length() < 1 || addr.equals("")) return "Invalid";
+					address = Integer.parseInt(addr);
+					address = (address % 10000) - 1;
+					if(address > 0xffff || address < 0) throw new NumberFormatException();
+					break;
+					
+				case "Register (DEC)" :
+					addr = addr_textField.getText().trim();
+					if(addr.length() < 1 || addr.equals("")) return "Invalid";			
+					address = Integer.parseInt(addr);
+					if(address > 0xffff || address < 0) throw new NumberFormatException();
+					break;
+					
+				case "Register (HEX)" :
+					addr = addr_textField.getText().trim();
+					if(addr.length() < 1 || addr.equals("")) return "Invalid";
+					
+					if(addr.startsWith("0x")||addr.startsWith("0X")) {
+						address = Integer.parseInt(addr.replaceAll("0x", "").replaceAll("0X", ""),16);
+					}else {
+						addr_textField.setText("0x" + addr);
+						address = Integer.parseInt(addr.replaceAll("0x", "").replaceAll("0X", ""),16);
+					}
+					if(address > 0xffff || address < 0) throw new NumberFormatException();
+					break;
+			}
+		
+			String modbusAddr = String.format("%s%04d", modbusAddress, (address & 0xffff) + 1);
+			String registerAddr_Hex = String.format("0x%04X", address);
+			
+			switch(addrTypeComboBox.getSelectedItem().toString()) {
+				case "Modbus (DEC)" :
+					return modbusAddr;
+					
+				case "Register (DEC)" :
+					return String.valueOf(address);
+					
+				case "Register (HEX)" :
+					return registerAddr_Hex;
+			}
+			
+			return "Invalid";
+		
+		}catch(NumberFormatException e) {
+			return "Invalid";
+		}
+	}
+	
+	public void syncAddr() {
+		startAddr_textField.setText(getStringAddress(startAddr_textField, lastAddrFormat));
+		
+		if(method_Button.getText().equalsIgnoreCase("End Address")) {
+			method_textField.setText(getStringAddress(method_textField, lastAddrFormat));
+		}
 	}
 }
