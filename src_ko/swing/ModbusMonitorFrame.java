@@ -512,15 +512,28 @@ public class ModbusMonitorFrame extends JFrame {
 		method_Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				String dataType = dataType_comboBox.getSelectedItem().toString().toUpperCase().trim();
+				int step = 1;
+				
+				if(dataType.startsWith("BIN") || dataType.startsWith("TWO")) {
+					step  = 1;			
+				}else if(dataType.startsWith("FOUR")) {
+					step = 2;
+				}else if(dataType.startsWith("EIGHT")) {
+					step = 4;
+				}
+				
 				if(method_Button.getText().equals("Req Count")) {
 					range_label.setEnabled(true);
 					range_label.setVisible(true);
 					
 					int startAddr = getAddress(startAddr_textField);
 					int reqCount = getMethodValue();
-					int endAddress = (startAddr + reqCount) - 1;
 					
 					if(reqCount != -1) {
+						reqCount *= step;
+						int endAddress = (startAddr + reqCount) - 1;
+						endAddress -= (step - 1); // 테스트
 						String endAddrString = getIntegerAddress(endAddress, "Register (DEC)");
 						method_textField.setText(endAddrString);
 					}else {
@@ -535,6 +548,8 @@ public class ModbusMonitorFrame extends JFrame {
 					
 					int reqCount = getMethodValue();
 					if(reqCount != -1) {
+						reqCount /= step;
+						if(step > 1) reqCount++; // 테스트
 						method_textField.setText(String.valueOf(reqCount));
 					}else {
 						method_textField.setText("Invalid");
