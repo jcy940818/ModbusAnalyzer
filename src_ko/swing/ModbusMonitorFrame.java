@@ -44,6 +44,7 @@ import common.agent.PerfData;
 import common.modbus.ModbusCellRenderer;
 import common.modbus.ModbusMonitor;
 import common.modbus.ModbusWatchPoint;
+import common.util.JavaScript;
 import common.util.TableUtil;
 import src_ko.agent.ClientSocket;
 import src_ko.agent.ModbusAgent;
@@ -55,8 +56,7 @@ import javax.swing.JTable;
 public class ModbusMonitorFrame extends JFrame {
 
 	public static ArrayList<ModbusWatchPoint> pointList;
-	public static JTable pointTable;
-	public static String value_formula = null;
+	public static JTable pointTable;	
 	
 	public static boolean isExist = false;
 	
@@ -117,7 +117,7 @@ public class ModbusMonitorFrame extends JFrame {
 	
 	private JPanel cardPanel;
 	private static CardLayout cardLayout;
-	private JTextField search_textField;
+	public static JTextField search_textField;
 	
 	
 	/**
@@ -244,7 +244,7 @@ public class ModbusMonitorFrame extends JFrame {
 		pointTable.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				int row = pointTable.getSelectedRow();
-				String index = (String)pointTable.getValueAt(row, 0);					
+				String index = pointTable.getValueAt(row, 0).toString().trim();						
 				
 				String findIndex = String.format("%s.", index);
 				int textLength = findIndex.length();
@@ -258,7 +258,7 @@ public class ModbusMonitorFrame extends JFrame {
 						
 			public void keyReleased(KeyEvent e) {
 				int row = pointTable.getSelectedRow();
-				String index = (String)pointTable.getValueAt(row, 0);					
+				String index = pointTable.getValueAt(row, 0).toString().trim();					
 				
 				String findIndex = String.format("%s.", index);
 				int textLength = findIndex.length();
@@ -280,7 +280,7 @@ public class ModbusMonitorFrame extends JFrame {
 					pointTable.requestFocus();
 					int[] selectedIndex = pointTable.getSelectedRows();
 					
-					String index = (String)pointTable.getValueAt(selectedIndex[0], 0);					
+					String index = pointTable.getValueAt(selectedIndex[0], 0).toString().trim();
 					
 					String findIndex = String.format("%s.", index);
 					int textLength = findIndex.length();
@@ -967,6 +967,10 @@ public class ModbusMonitorFrame extends JFrame {
 		search_textField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				try {
+					if(pointList != null && (pointList.size() != pointTable.getRowCount())) {
+						resetTable(pointTable, null);
+						addRecord(pointTable, pointList);
+					}
 					
 					setTableStyle(pointTable, search_textField.getText());
 					
@@ -976,9 +980,30 @@ public class ModbusMonitorFrame extends JFrame {
 			}
 			public void keyReleased(KeyEvent e) {
 				try {
+					if(pointList != null && (pointList.size() != pointTable.getRowCount())) {
+						resetTable(pointTable, null);
+						addRecord(pointTable, pointList);
+					}
 					
-					setTableStyle(pointTable, search_textField.getText());
+					String formula = search_textField.getText().toLowerCase();
 					
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+						if(formula.contains("only")) {
+							formula = formula.replace("only", "");
+							if(!formula.contains("x")) {
+								try {
+									int value = Integer.parseInt(formula.trim());
+									formula = ("x == " + formula);
+								}catch(Exception exception) {
+									// do nothing
+								}
+							}
+							onlyValueFormulaPoint(formula);
+						}
+						
+					}else {
+						setTableStyle(pointTable, formula);	
+					}
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -1514,6 +1539,7 @@ public class ModbusMonitorFrame extends JFrame {
 				cardLayout.show(cardPanel, "actualPanel");
 			}else {
 				cardLayout.show(cardPanel, "image");
+				search_textField.setText("");
 			}
 		}catch(Exception e) {
 			// Do nothing
@@ -1618,6 +1644,11 @@ public class ModbusMonitorFrame extends JFrame {
 		log.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));		
 		log.setText("");
 		log.requestFocus();
+		
+		search_textField.setText("");
+		
+		pointList = null;
+		resetTable(pointTable, null);
 	}
 	
 	public static void resetTable(JTable table, Object[][] content){
@@ -1634,7 +1665,7 @@ public class ModbusMonitorFrame extends JFrame {
 				}
 		});
 		
-		setTableStyle(table, value_formula);
+		setTableStyle(table, null);
 	}
 	
 	public static void setTableStyle(JTable table, String valueFormula) {
@@ -1694,50 +1725,40 @@ public class ModbusMonitorFrame extends JFrame {
 	/**
 	 * 	레코드 추가
 	 */
-	public static void addRecord(JTable table, ArrayList<ModbusWatchPoint> modbusWps) {
+	public static void addRecord(JTable table, ArrayList<ModbusWatchPoint> pointList) {
 		try {
 			Vector record;
 			
 			DefaultTableModel model = (DefaultTableModel)table.getModel();
 			
 			// 기능코드, 주소, 보정식 순서로 정렬
-			Collections.sort(modbusWps);			
+			Collections.sort(pointList);			
 			
-			for(int i = 0; i < modbusWps.size(); i++) {
+			for(int i = 0; i < pointList.size(); i++) {
 				
-				ModbusWatchPoint modbusWp = modbusWps.get(i);
+				ModbusWatchPoint point = pointList.get(i);
 				record = new Vector();
-				int index = 0;
-				
-				if(table.getRowCount() <= 0) {
-					// 테이블의 행 개수가 0개 일 경우 : index = 1
-					index = 1;
-				}else if(table.getRowCount() >= 1){
-					// 테이블의 행 개수가 최소 1개 이상 일 경우 마지막 레코드의 ( 순서 컬럼 값 + 1 )
-					index = Integer.parseInt(String.valueOf(table.getValueAt(table.getRowCount()-1, 0))) + 1;				
-				}
-				
-				/* column[0] */ record.add(String.valueOf(index)); // 순 서
-				/* column[1] */ record.add(modbusWp.getFunctionCode()); // 기능코드
+				/* column[0] */ record.add(point.getIndex()); // 순 서
+				/* column[1] */ record.add(point.getFunctionCode()); // 기능코드
 				
 				Object addr = null;
 				switch(addrTypeComboBox.getSelectedItem().toString()) {
 					case "Modbus (DEC)" :
-						addr = modbusWp.getModbusAddrString();
+						addr = point.getModbusAddrString();
 						break;
 					case "Register (DEC)" :
-						addr = modbusWp.getRegisterAddr();
+						addr = point.getRegisterAddr();
 						break;
 					case "Register (HEX)" :
-						addr = modbusWp.getRegisterAddrHexString();
+						addr = point.getRegisterAddrHexString();
 						break;
 					default : 
-						addr = modbusWp.getModbusAddrString();
+						addr = point.getModbusAddrString();
 						break;
 				}
 				
 				/* column[2] */ record.add(addr);  // 주소
-				/* column[3] */ record.add(PerfData.getPerfPureValue(modbusWp.getData())); // 결 과
+				/* column[3] */ record.add(PerfData.getPerfPureValue(point.getData())); // 결 과
 				
 				model.addRow(record);
 			}
@@ -1787,6 +1808,26 @@ public class ModbusMonitorFrame extends JFrame {
 		}
 		
 		resetTable(table, content);
+	}
+	
+	public static void onlyValueFormulaPoint(String formula) {
+    	ArrayList<ModbusWatchPoint> findPointList = new ArrayList<ModbusWatchPoint>();
+		
+		for(ModbusWatchPoint p : pointList) {
+			String pureData = p.getData().getPureValue().toString();
+			if(!pureData.equalsIgnoreCase("none")) {
+				try {
+					boolean validFormula =  (boolean)JavaScript.eval(formula, pureData);
+					if(validFormula) findPointList.add(p);
+				}catch(Exception exp) {
+					// Do Nothing
+				}
+			}
+		}
+		
+		resetTable(pointTable, null);
+		addRecord(pointTable, findPointList);
+		setTableStyle(pointTable, formula);
 	}
 	
 	public void connect() {

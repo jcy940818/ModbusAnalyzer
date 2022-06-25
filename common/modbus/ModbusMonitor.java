@@ -2,6 +2,7 @@ package common.modbus;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +29,8 @@ import com.serotonin.modbus4j.serial.rtu.RtuMessageRequest;
 
 import common.agent.PerfData;
 import src_ko.agent.ModbusAgent;
-import src_ko.swing.ModbusMonitorFrame;
 import src_ko.util.PacketInputStream;
 import src_ko.util.PacketOutputStream;
-import src_ko.util.Timer;
 
 public class ModbusMonitor{
 
@@ -181,82 +180,89 @@ public class ModbusMonitor{
 		return getPacketString(packet, 0, packet.length);
 	}
 
-	public synchronized String parseResponsePacket(ReadFunctionGroup functionGroup, Socket clientSocket) throws IOException {		
+	public synchronized String parseResponsePacket(ReadFunctionGroup functionGroup, Socket clientSocket) throws IOException, SocketTimeoutException {		
 		byte[] buff = new byte[8192];		
 		PacketInputStream in = new PacketInputStream(buff, clientSocket.getInputStream());
 		PacketOutputStream out = new PacketOutputStream(clientSocket.getOutputStream());
 		
-		int readUnitID = 0;
-		
-		switch(type) {
-			case TYPE_RTU :
-				readUnitID = in.readByte();
-				break;
+		try {
+			int readUnitID = 0;
+			
+			switch(type) {
+				case TYPE_RTU :
+					readUnitID = in.readByte();
+					break;
+					
+				case TYPE_TCP :
+					int transactionID = in.readShort();
+					int protocolID = in.readShort();
+					int length = in.readShort();
+					readUnitID = in.readByte();
+					break;
+			}
+			
+			int funcCode = functionGroup.getFunctionCode();
+			int func = in.read();
+			
+			if (func != funcCode) {
+				if( func > 0x80 && func < 0x91){
+					byte[] packet = in.debug_getBuffer();
+					String rxPacket = getPacketString(packet, 0, packet.length);
+					System.out.println("RX : " + rxPacket);
+					return rxPacket;
+				}
+			}
+			
+			int startOffset = functionGroup.getStartOffset();
+			int byteCount = getByteCount(in);
+			
+			byte[] data = new byte[byteCount];
+			for (int i = 0; i < data.length; i++) {
+				data[i] = (byte)in.read();
+			}
+	
+			if (type == TYPE_RTU) {
+	//			in.skipCRC16();
+				in.readShort();
+			}
+	
+			byte[] packet = in.debug_getBuffer();
+			String rxPacket = getPacketString(packet, 0, packet.length);
+			List locators = functionGroup.getLocators();
+			
+			long curTime = System.currentTimeMillis();
+			
+			for (int i = 0; i < locators.size(); i++) {
+				KeyedModbusLocator keyLocator = (KeyedModbusLocator) locators.get(i);
+				BaseLocator locator = (BaseLocator) keyLocator.getLocator();
+				int cmd = this.locators.indexOf(locator);
+				Object valueObj = keyLocator.bytesToValue(data, startOffset);
 				
-			case TYPE_TCP :
-				int transactionID = in.readShort();
-				int protocolID = in.readShort();
-				int length = in.readShort();
-				readUnitID = in.readByte();
-				break;
-		}
-		
-		int funcCode = functionGroup.getFunctionCode();
-		int func = in.read();
-		
-		if (func != funcCode) {
-			if( func > 0x80 && func < 0x91){
-				byte[] packet = in.debug_getBuffer();
-				String rxPacket = getPacketString(packet, 0, packet.length);
-				System.out.println("RX : " + rxPacket);
-				return rxPacket;
-			}
-		}
-		
-		int startOffset = functionGroup.getStartOffset();
-		int byteCount = getByteCount(in);
-		
-		byte[] data = new byte[byteCount];
-		for (int i = 0; i < data.length; i++) {
-			data[i] = (byte)in.read();
-		}
-
-		if (type == TYPE_RTU) {
-//			in.skipCRC16();
-			in.readShort();
-		}
-
-		byte[] packet = in.debug_getBuffer();
-		String rxPacket = getPacketString(packet, 0, packet.length);
-		List locators = functionGroup.getLocators();
-		
-		long curTime = System.currentTimeMillis();
-		
-		for (int i = 0; i < locators.size(); i++) {
-			KeyedModbusLocator keyLocator = (KeyedModbusLocator) locators.get(i);
-			BaseLocator locator = (BaseLocator) keyLocator.getLocator();
-			int cmd = this.locators.indexOf(locator);
-			Object valueObj = keyLocator.bytesToValue(data, startOffset);
-			
-			double value = Double.NaN;
-			
-			// 수집값 처리 단위 : double
-			if (valueObj instanceof Number) {
-				value = ((Number) valueObj).doubleValue();
-			}
-			else if (valueObj instanceof Boolean) {
-				value = ((Boolean) valueObj).booleanValue() ? 1 : 0;
+				double value = Double.NaN;
+				
+				// 수집값 처리 단위 : double
+				if (valueObj instanceof Number) {
+					value = ((Number) valueObj).doubleValue();
+				}
+				else if (valueObj instanceof Boolean) {
+					value = ((Boolean) valueObj).booleanValue() ? 1 : 0;
+				}
+				
+				ModbusWatchPoint point = points.get(cmd);
+				PerfData perfData = new PerfData();
+				perfData.setPureValue(value);
+				perfData.setValue(point.getComputedValue(value));
+				perfData.setTime(curTime);
+				point.setData(perfData);
 			}
 			
-			ModbusWatchPoint point = points.get(cmd);
-			PerfData perfData = new PerfData();
-			perfData.setPureValue(value);
-			perfData.setValue(point.getComputedValue(value));
-			perfData.setTime(curTime);
-			point.setData(perfData);
+			return rxPacket;
+			
+		}catch(SocketTimeoutException e) {
+			byte[] packet = in.debug_getBuffer();
+			String rxPacket = getPacketString(packet, 0, packet.length);
+			throw new SocketTimeoutException(rxPacket);
 		}
-		
-		return rxPacket;
 	}
 	
 	public final void setMaxReadBitCount(int maxReadBitCount) {

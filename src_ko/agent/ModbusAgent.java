@@ -403,6 +403,22 @@ public class ModbusAgent {
 				String rxPacket = monitor.parseResponsePacket(fcGroup, clientSocket);
 				ModbusMonitorFrame.writeLog(Timer.getServerTime() + " [ RX ] : " + rxPacket);
 				
+				rx = new RX_Info();
+				rx.setTxInfo(tx);
+				rx.setContent(rxPacket);
+				rx = (monitor.getType() == ModbusMonitor.TYPE_RTU) ? new RX_Analyzer().rtuAnalysis(rx) : new RX_Analyzer().tcpAnalysis(rx);
+				
+				String error = RX_Info.getRxHandleContent(rx);
+				if(!error.equalsIgnoreCase("") && error.length() >= 1) {
+					ModbusMonitorFrame.writeLog(error);
+				}
+				
+				// ★ ★★ 정보 비교 ★★★
+				String content = ExceptionProvider.getCompareTxRxString(tx, rx);
+				if(content != null) {
+					System.out.println(content);
+				}
+				
 				// 데이터 로그 기록
 				List locators = fcGroup.getLocators();
 				for (int i = 0; i < locators.size(); i++) {
@@ -410,23 +426,12 @@ public class ModbusAgent {
 					BaseLocator locator = (BaseLocator) keyLocator.getLocator();
 					int cmd = monitor.locators.indexOf(locator);
 					ModbusWatchPoint point = monitor.points.get(cmd);
+					point.setIndex(monitor.index++);
 					PerfData perfData = point.getData();
-					ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData) ,monitor.index++, point.getDecCounter()));
+					ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), point.getIndex(), point.getDecCounter()));
 				}
-				
-				rx = new RX_Info();
-				rx.setTxInfo(tx);
-				rx.setContent(rxPacket);
-				rx = (monitor.getType() == ModbusMonitor.TYPE_RTU) ? new RX_Analyzer().rtuAnalysis(rx) : new RX_Analyzer().tcpAnalysis(rx);
-				System.out.println(RX_Info.getRxHandleContent(rx));
-				System.out.println();
 				
 				ModbusMonitorFrame.writeLog(System.lineSeparator() + System.lineSeparator() + System.lineSeparator() + System.lineSeparator());
-				
-				String content = ExceptionProvider.getCompareTxRxString(tx, rx);
-				if(content != null) {
-					System.out.println(content);
-				}
 				
 				// 클라이언트 소켓 : 통신중 (요청패킷에 대한 응답패킷을 수신함)
 				ClientSocket.setState(ClientSocket.NODE_CONDITION_REGULAR);
@@ -443,8 +448,7 @@ public class ModbusAgent {
 			return null;
 			
 		}catch (SocketTimeoutException e) {
-			// 응답 패킷 수신하였지만 처리 할 수 없는 패킷이 있을 경우 패킷 내용 출력	 
-//				ModbusAgent.printRX(rx, tx.getAgentType());
+			ModbusMonitorFrame.writeLog(Timer.getServerTime() + " [ Timeout Packet ] : " + e.getMessage());
 			
 			ClientSocket.incrementTimeoutCount();
 			
@@ -473,6 +477,13 @@ public class ModbusAgent {
 			if(ModbusMonitorFrame.pointList != null && ModbusMonitorFrame.pointList.size() > 0) {
 				ModbusMonitorFrame.addRecord(ModbusMonitorFrame.pointTable, ModbusMonitorFrame.pointList);
 			}
+			
+			try {
+				ModbusMonitorFrame.setTableStyle(ModbusMonitorFrame.pointTable, ModbusMonitorFrame.search_textField.getText());
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
+			
 		}
 			
 	}// modbusCommunicate

@@ -299,16 +299,22 @@ public class RX_Info {
 		String content = "";
 		
 		if ((rx != null) && rx.isRTU() && rx.isCRCError()) {
-			content += String.format(" ( Read Incorrect CRC : 0x%04x / Expected CRC : 0x%04x )", rx.getCrc() & 0xffff , rx.getExpectedCrc() & 0xffff);
+			content += String.format("[  Warning!  Incorrect CRC : 0x%04x", rx.getCrc() & 0xffff);
+			
+			if((rx.getExpectedCrc() & 0xffff) != 0x0000) {
+				content += String.format("  /  Correct CRC : 0x%04x  ]", rx.getExpectedCrc() & 0xffff);
+			}else {
+				content += "  ]";
+			}
 		}
 
 		if (rx.isException()) {
-			content += String.format(" ( 0x%02x : %s )%s", rx.getExceptionCode(), rx.getExceptionContent(), System.lineSeparator());
-		} else {
-			content += String.format("%s", System.lineSeparator());
+			if ((rx != null) && rx.isRTU() && rx.isCRCError()) {
+				content += System.lineSeparator();
+			}
+			content += String.format("[  Warning!  RX is Exception Response = 0x%02x : %s  ]", rx.getExceptionCode(), rx.getExceptionContent());
 		}
 		
 		return content;
 	}
-	
 }
