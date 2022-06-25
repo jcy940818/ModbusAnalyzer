@@ -40,9 +40,9 @@ public class ModbusMonitor{
 	public static final int TYPE_RTU = 997;
 	public static final int TYPE_TCP = 998;
 
-	private List locators = new ArrayList();
-	private List commands = new ArrayList();
-	private List<ModbusWatchPoint> points = new ArrayList<ModbusWatchPoint>();
+	public List locators = new ArrayList();
+	public List commands = new ArrayList();
+	public List<ModbusWatchPoint> points = new ArrayList<ModbusWatchPoint>();
 	
 	private int type;
 	private boolean partitioned = false;
@@ -50,7 +50,7 @@ public class ModbusMonitor{
 	private int unitID = 1;
 	
 	ModbusMaster master;
-	private int index = 1;
+	public int index = 1;
 	
 	private BatchRead batchRead = new BatchRead();
 	
@@ -228,8 +228,6 @@ public class ModbusMonitor{
 
 		byte[] packet = in.debug_getBuffer();
 		String rxPacket = getPacketString(packet, 0, packet.length);
-		ModbusMonitorFrame.writeLog(Timer.getServerTime() + " [ RX ] : " + rxPacket);
-		
 		List locators = functionGroup.getLocators();
 		
 		long curTime = System.currentTimeMillis();
@@ -256,14 +254,6 @@ public class ModbusMonitor{
 			perfData.setValue(point.getComputedValue(value));
 			perfData.setTime(curTime);
 			point.setData(perfData);
-			
-			String measrue = null;
-			if(point.getMeasure() != null && !point.getMeasure().trim().equals("") && point.getMeasure().trim().length() >= 1) {
-				measrue = point.getMeasure().trim();
-			}
-			
-			System.out.printf("[ %s ] = " + PerfData.getPerfPureValue(perfData) + "\n", point.getDecCounter());
-			ModbusMonitorFrame.writeLog(String.format("%d. [ %s ] = " + PerfData.getPerfPureValue(perfData) ,index++, point.getDecCounter()));
 		}
 		
 		return rxPacket;

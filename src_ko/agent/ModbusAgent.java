@@ -10,8 +10,11 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import com.serotonin.modbus4j.base.KeyedModbusLocator;
 import com.serotonin.modbus4j.base.ReadFunctionGroup;
+import com.serotonin.modbus4j.locator.BaseLocator;
 
+import common.agent.PerfData;
 import common.modbus.ModbusMonitor;
 import common.modbus.ModbusWatchPoint;
 import src_ko.analyzer.RX.RX_Analyzer;
@@ -352,6 +355,12 @@ public class ModbusAgent {
 			
 			List<ReadFunctionGroup> functionGroupList = monitor.getFuntionGroupList();
 			
+			// 요청 패킷 전송전에 포인트들의 데이터를 초기화
+			ModbusWatchPoint.pointDataClear(pointList);
+			
+			// 포인트 리스트 저장
+			ModbusMonitorFrame.pointList = pointList;
+			
 			// 모드버스 모니터 프레임 패킷 로그 초기화
 			ModbusMonitorFrame.cleaerLog();
 			
@@ -392,6 +401,19 @@ public class ModbusAgent {
 				}
 				
 				String rxPacket = monitor.parseResponsePacket(fcGroup, clientSocket);
+				ModbusMonitorFrame.writeLog(Timer.getServerTime() + " [ RX ] : " + rxPacket);
+				
+				// 데이터 로그 기록
+				List locators = fcGroup.getLocators();
+				for (int i = 0; i < locators.size(); i++) {
+					KeyedModbusLocator keyLocator = (KeyedModbusLocator) locators.get(i);
+					BaseLocator locator = (BaseLocator) keyLocator.getLocator();
+					int cmd = monitor.locators.indexOf(locator);
+					ModbusWatchPoint point = monitor.points.get(cmd);
+					PerfData perfData = point.getData();
+					ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData) ,monitor.index++, point.getDecCounter()));
+				}
+				
 				rx = new RX_Info();
 				rx.setTxInfo(tx);
 				rx.setContent(rxPacket);
@@ -447,6 +469,10 @@ public class ModbusAgent {
 		}finally {
 			ModbusMonitor.isRunning = false;
 			
+			ModbusMonitorFrame.resetTable(ModbusMonitorFrame.pointTable, null);
+			if(ModbusMonitorFrame.pointList != null && ModbusMonitorFrame.pointList.size() > 0) {
+				ModbusMonitorFrame.addRecord(ModbusMonitorFrame.pointTable, ModbusMonitorFrame.pointList);
+			}
 		}
 			
 	}// modbusCommunicate

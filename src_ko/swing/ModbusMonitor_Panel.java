@@ -401,8 +401,7 @@ public class ModbusMonitor_Panel extends JPanel {
 								
 								int[] selectedRows = pointTable.getSelectedRows();
 								
-								ArrayList<ModbusWatchPoint> pointList = getSelectedModbusPoint(pointTable);
-								ModbusWatchPoint.pointDataClear(pointList);
+								ArrayList<ModbusWatchPoint> pointList = getSelectedModbusPoint(pointTable);								
 								
 								ModbusMonitor monitor = new ModbusMonitor();
 								monitor.setType((isRTU) ? ModbusMonitor.TYPE_RTU : ModbusMonitor.TYPE_TCP);
@@ -780,14 +779,12 @@ public class ModbusMonitor_Panel extends JPanel {
 				if (e.getButton() == 1) { } // 왼쪽 클릭
 				if (e.getButton() == 1 && e.getClickCount() == 2) {
 					// 왼쪽 버튼 더블 클릭
-					
-					boolean isPoint = resultType.getSelectedIndex() == 0;
+
 					int row = pointTable.getSelectedRow();
 					ModbusWatchPoint point = (ModbusWatchPoint) pointTable.getValueAt(row, 1);
 					
 					String pureData = point.getData().getPureValue().toString();
 					if(!pureData.equalsIgnoreCase("none")) {
-//						if(isPoint) pureData = String.valueOf(point.getComputedValue(Double.parseDouble(pureData)));
 						try {
 							double doubleValue = Double.parseDouble(pureData);
 							long longValue = (long)doubleValue;
