@@ -169,6 +169,21 @@ public class TX_Info{
 	public void setStartAddress(int startAddress) {
 		this.startAddress = startAddress & 0xffff;
 	}
+	
+	public String getRegisterAddrHexString() {
+		return String.format("0x%04X", getStartAddress());
+	}
+	
+	public String getModbusAddrString() {
+		String modbusAddress = "";
+		switch(getFunctionCode()) {
+			case 1: modbusAddress = "0"; break;
+			case 2: modbusAddress = "1"; break;
+			case 3: modbusAddress = "4"; break;
+			case 4: modbusAddress = "3"; break;
+		}
+		return String.format("%s%04d", modbusAddress, (getStartAddress() & 0xffff) + 1);
+	}
 
 	public int getRequestCount() {
 		return requestCount;
