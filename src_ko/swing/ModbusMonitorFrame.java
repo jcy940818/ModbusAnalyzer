@@ -1784,7 +1784,9 @@ public class ModbusMonitorFrame extends JFrame {
 		for(int i = 0; i < rowCount; i++) {
 			content[i] = new Object[columnCount];
 			
-			ModbusWatchPoint point = pointList.get(i);
+			int index = Integer.parseInt(pointTable.getValueAt(i, 0).toString());
+			ModbusWatchPoint point = pointList.get(index-1);
+			
 			Object addr = null;
 			switch(addrTypeComboBox.getSelectedItem().toString()) {
 				case "Modbus (DEC)" :
