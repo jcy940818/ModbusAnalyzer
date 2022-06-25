@@ -228,7 +228,7 @@ public class ModbusMonitor{
 
 		byte[] packet = in.debug_getBuffer();
 		String rxPacket = getPacketString(packet, 0, packet.length);
-		System.out.println(Timer.getServerTime() + " [ RX ] : " + rxPacket);
+		ModbusMonitorFrame.writeLog(Timer.getServerTime() + " [ RX ] : " + rxPacket);
 		
 		List locators = functionGroup.getLocators();
 		

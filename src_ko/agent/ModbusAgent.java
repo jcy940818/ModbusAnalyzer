@@ -352,6 +352,9 @@ public class ModbusAgent {
 			
 			List<ReadFunctionGroup> functionGroupList = monitor.getFuntionGroupList();
 			
+			// 모드버스 모니터 프레임 패킷 로그 초기화
+			ModbusMonitorFrame.cleaerLog();
+			
 			for(ReadFunctionGroup fcGroup : functionGroupList) {
 				String txPacket = monitor.sendCommand(fcGroup, clientSocket);
 				tx = new TX_Info();
@@ -375,13 +378,11 @@ public class ModbusAgent {
 				sb.append(System.lineSeparator());
 				sb.append(String.format("│ 요청 개수 : %s\t\t│", tx.getRequestCount()));
 				sb.append(System.lineSeparator());
-				sb.append(String.format("└────────────────────┘", tx.getRequestCount()));
-				sb.append(System.lineSeparator());
-				
-				System.out.printf(sb.toString());
-				System.out.println(Timer.getServerTime() + " [ TX ] : " + txPacket);
+				sb.append(String.format("└────────────────────┘", tx.getRequestCount()));				
 				
 				ModbusMonitorFrame.writeLog(sb.toString());
+				ModbusMonitorFrame.writeLog(Timer.getServerTime() + " [ TX ] : " + txPacket);				
+				
 				
 				// 클라이언트 소켓 : TX 전송 완료 후 응답 대기중
 				if(ClientSocket.getCurrentTimeoutCount() >= 5) {
@@ -397,6 +398,8 @@ public class ModbusAgent {
 				rx = (monitor.getType() == ModbusMonitor.TYPE_RTU) ? new RX_Analyzer().rtuAnalysis(rx) : new RX_Analyzer().tcpAnalysis(rx);
 				System.out.println(RX_Info.getRxHandleContent(rx));
 				System.out.println();
+				
+				ModbusMonitorFrame.writeLog(System.lineSeparator() + System.lineSeparator() + System.lineSeparator() + System.lineSeparator());
 				
 				String content = ExceptionProvider.getCompareTxRxString(tx, rx);
 				if(content != null) {

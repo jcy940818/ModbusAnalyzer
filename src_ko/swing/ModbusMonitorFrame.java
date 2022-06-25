@@ -838,7 +838,7 @@ public class ModbusMonitorFrame extends JFrame {
 		currentState.setBounds(10, 48, 244, 24);
 		currentState.setHorizontalAlignment(SwingConstants.CENTER);
 		currentState.setForeground(Color.BLACK);
-		currentState.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
+		currentState.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
 		currentState.setBackground(Color.LIGHT_GRAY);
 		actualPanel.add(currentState);
 		
