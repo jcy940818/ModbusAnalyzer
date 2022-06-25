@@ -56,8 +56,6 @@ public class ModbusMonitorFrame extends JFrame {
 
 	public static ArrayList<ModbusWatchPoint> pointList;
 	public static JTable pointTable;
-	public static String fc_formula = null;
-	public static String addr_formula = null;
 	public static String value_formula = null;
 	
 	public static boolean isExist = false;
@@ -966,6 +964,26 @@ public class ModbusMonitorFrame extends JFrame {
 		search_textField.setBorder(new LineBorder(Color.BLACK, 2));
 		search_textField.setBackground(Color.WHITE);
 		search_textField.setBounds(0, 154, 437, 32);
+		search_textField.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				try {
+					
+					setTableStyle(pointTable, search_textField.getText());
+					
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			public void keyReleased(KeyEvent e) {
+				try {
+					
+					setTableStyle(pointTable, search_textField.getText());
+					
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
 		actualPanel.add(search_textField);
 		
 		new Thread() {
@@ -1603,7 +1621,7 @@ public class ModbusMonitorFrame extends JFrame {
 	}
 	
 	public static void resetTable(JTable table, Object[][] content){
-		String[] header = new String[] {"순 서", "기능코드", "주 소", "값" };
+		String[] header = new String[] { "순 서", "기능코드", "주 소", "값" };
 		table.setModel(new DefaultTableModel(content, header) {
 				boolean[] columnEditables = new boolean[] {
 						false, // 순 서 : 수정 불가
@@ -1616,10 +1634,10 @@ public class ModbusMonitorFrame extends JFrame {
 				}
 		});
 		
-		setTableStyle(table, fc_formula, addr_formula, value_formula);
+		setTableStyle(table, value_formula);
 	}
 	
-	public static void setTableStyle(JTable table, String fc, String addr, String value) {
+	public static void setTableStyle(JTable table, String valueFormula) {
 		// 이동 불가, 셀 크기 조절 불가
 		table.getTableHeader().setBackground(new Color(255, 255, 153));
 		table.getTableHeader().setForeground(Color.BLACK);		
@@ -1648,36 +1666,28 @@ public class ModbusMonitorFrame extends JFrame {
 		// 정렬할 테이블의 ColumnModel을 가져옴
 		TableColumnModel tcmSchedule = table.getColumnModel();
 		
-		// 기능 코드
-		DefaultTableCellRenderer fcCellRenderer = null;
-		if(fc == null || fc.length() == 0 || fc.equalsIgnoreCase("") || !fc.contains("x")) {
-			fcCellRenderer = new DefaultTableCellRenderer();
-		}else {			
-			fcCellRenderer = new ModbusCellRenderer(fc, "fc");
-		}
-		fcCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		
-		// 주소
-		DefaultTableCellRenderer addrCellRenderer = null;
-		if(addr == null || addr.length() == 0 || addr.equalsIgnoreCase("") || !addr.contains("x")) {
-			addrCellRenderer = new DefaultTableCellRenderer();
-		}else {			
-			addrCellRenderer = new ModbusCellRenderer(addr, "addr");
-		}
-		addrCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		
 		// 값
 		DefaultTableCellRenderer valueCellRenderer = null;
-		if(value == null || value.length() == 0 || value.equalsIgnoreCase("") || !value.contains("x")) {
+		if(valueFormula == null || valueFormula.length() == 0 || valueFormula.equalsIgnoreCase("")) {
 			valueCellRenderer = new DefaultTableCellRenderer();
-		}else {			
-			valueCellRenderer = new ModbusCellRenderer(value, "value");
+			
+		}else {
+			if(!valueFormula.toLowerCase().contains("x")) {
+				try {
+					int value = Integer.parseInt(valueFormula.trim());
+					valueFormula = ("x == " + valueFormula);
+				}catch(Exception e) {
+					// do nothing
+				}
+			}
+			
+			valueCellRenderer = new ModbusCellRenderer(valueFormula, "value", pointList);
 		}
 		valueCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
-		tcmSchedule.getColumn(1).setCellRenderer(fcCellRenderer); // 기능코드
-		tcmSchedule.getColumn(2).setCellRenderer(addrCellRenderer); // 주소
+		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 기능코드
+		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 주소
 		tcmSchedule.getColumn(3).setCellRenderer(valueCellRenderer); // 값		
 	}
 	

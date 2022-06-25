@@ -3,6 +3,7 @@ package common.modbus;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.util.ArrayList;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -12,6 +13,7 @@ import src_ko.swing.ModbusMonitor_Panel;
 
 public class ModbusCellRenderer extends DefaultTableCellRenderer {
 	
+	private ArrayList<ModbusWatchPoint> pointList = null;
 	private String formula = null;
 	private String item = null;
 	
@@ -22,11 +24,24 @@ public class ModbusCellRenderer extends DefaultTableCellRenderer {
 		this.item = item;
 	}
 	
+	public ModbusCellRenderer(String formula, String item, ArrayList<ModbusWatchPoint> pointList){
+		this.formula = formula;
+		this.item = item;
+		this.pointList = pointList;
+	}
+	
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row, int column) {
 		
 		Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		String scanReulst = null;
-		ModbusWatchPoint point = (ModbusWatchPoint)table.getValueAt(row, 1);
+		ModbusWatchPoint point = null;
+		
+		if(pointList != null) {
+			int index = Integer.parseInt(table.getValueAt(row, 0).toString());
+			point = pointList.get(index-1);
+		}else {
+			point = (ModbusWatchPoint)table.getValueAt(row, 1);
+		}
 		
 		switch(item) {
 			case "fc" :
