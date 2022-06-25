@@ -54,7 +54,7 @@ public class ModbusMonitorFrame extends JFrame {
 	public static String IP;
 	public static int PORT;
 	
-	private static JScrollPane scrollPane;
+	public static JScrollPane scrollPane;
 	public static JTextArea log;	
 	private int fontSize = 18;
 	
@@ -1377,7 +1377,6 @@ public class ModbusMonitorFrame extends JFrame {
 	public static void writeLog(String content) {
 		content = String.format("%s%s", content, System.lineSeparator());
 		log.append(content);
-		scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
 	}
 	
 	public void setComponentEnabled(boolean enabled) {

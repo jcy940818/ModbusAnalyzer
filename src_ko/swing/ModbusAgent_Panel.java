@@ -1715,8 +1715,6 @@ public class ModbusAgent_Panel extends JPanel {
 	
 	
 	public static void scrollUp() {
-//		int pos = packetLog.getText().length();
-//		packetLog.setCaretPosition(pos);
 		packetLog_scrollPane.getVerticalScrollBar().setValue(packetLog_scrollPane.getVerticalScrollBar().getMaximum());		
 	}
 	

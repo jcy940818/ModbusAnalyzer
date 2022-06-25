@@ -80,6 +80,7 @@ public class ModbusMonitor_Panel extends JPanel {
 	private JButton connectButton; // 연결 정보 입력버튼 (중요)
 	private JButton send_Button;
 	private JButton update_button;
+	private JButton monitorV1Button;
 	private JButton importButton;
 	private JButton exportButton;
 	private static JButton reset_Button;
@@ -1085,6 +1086,26 @@ public class ModbusMonitor_Panel extends JPanel {
 		exportButton.setBackground(Color.WHITE);
 		exportButton.setBounds(918, 11, 120, 36);
 		infoPanel.add(exportButton);
+		
+		monitorV1Button = new JButton("Monitor V1");
+		monitorV1Button.setForeground(Color.BLACK);
+		monitorV1Button.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		monitorV1Button.setFocusPainted(false);
+		monitorV1Button.setContentAreaFilled(false);
+		monitorV1Button.setBorder(UIManager.getBorder("Button.border"));
+		monitorV1Button.setBackground(Color.WHITE);
+		monitorV1Button.setBounds(621, 11, 160, 36);
+		monitorV1Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(!ModbusMonitorFrame.isExist) {
+					new ModbusMonitorFrame();							
+				 }else {
+					 ModbusMonitorFrame.existsFrame();
+				 }
+			}
+		});
+		infoPanel.add(monitorV1Button);
 	
 		panel_OFF();
 		
@@ -1175,7 +1196,8 @@ public class ModbusMonitor_Panel extends JPanel {
 		importButton.setEnabled(true);
 		exportButton.setVisible(true);
 		exportButton.setEnabled(true);
-		
+		monitorV1Button.setVisible(true);
+		monitorV1Button.setEnabled(true);		
 		if (MainFrame.getMainFrame() != null) {
 			MainFrame.getMainFrame().setTitle(String.format("ModbusAnalyzer : %s", ClientSocket.getSimpleConnectedInfo()));
 		}
@@ -1196,7 +1218,8 @@ public class ModbusMonitor_Panel extends JPanel {
 		importButton.setEnabled(false);
 		exportButton.setVisible(false);
 		exportButton.setEnabled(false);
-		
+		monitorV1Button.setVisible(false);
+		monitorV1Button.setEnabled(false);
 		if (MainFrame.getMainFrame() != null) {
 			MainFrame.getMainFrame().setTitle("ModbusAnalyzer");
 		}
@@ -1975,5 +1998,4 @@ public class ModbusMonitor_Panel extends JPanel {
 		}
 		return selectedPointlist;
 	}
-	
 }
