@@ -39,23 +39,23 @@ import common.modbus.ModbusMonitor;
 import common.modbus.ModbusWatchPoint;
 import src_ko.agent.ClientSocket;
 import src_ko.agent.ModbusAgent;
+import src_ko.util.Timer;
 import src_ko.util.Util;
 
 public class ModbusMonitorFrame extends JFrame {
 
 	public static boolean isExist = false;
-	public static StringBuilder log = new StringBuilder();
+	
 	private JPanel contentPane;
+	private JPanel actualPanel;
 	
 	// 클라이언트 소켓
 	public static Socket socket_ko = ModbusAgent.clientSocket;
 	public static String IP;
 	public static int PORT;
-
-	private JPanel actualPanel;
 	
-	private JScrollPane scrollPane;
-	private JTextArea textArea;
+	private static JScrollPane scrollPane;
+	public static JTextArea log;	
 	private int fontSize = 18;
 	
 	private JButton connectButton;
@@ -123,9 +123,7 @@ public class ModbusMonitorFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public ModbusMonitorFrame() {
-		ModbusMonitorFrame.isExist = true;
-		log = new StringBuilder();
-		
+		ModbusMonitorFrame.isExist = true;		
 		setTitle("Modbus Monitor");
 		setMinimumSize(new Dimension(r.width, r.height));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -211,10 +209,10 @@ public class ModbusMonitorFrame extends JFrame {
 		scrollPane.setBounds(0, 154, 1044, 507);
 		actualPanel.add(scrollPane);
 		
-		textArea = new JTextArea();
-		textArea.setForeground(Color.BLACK);
-		textArea.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));
-		scrollPane.setViewportView(textArea);
+		log = new JTextArea();
+		log.setForeground(Color.BLACK);
+		log.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));
+		scrollPane.setViewportView(log);
 		
 		radio_modbusTCP = new JRadioButton("Modbus TCP");
 		radio_modbusTCP.setFocusPainted(false);
@@ -671,7 +669,7 @@ public class ModbusMonitorFrame extends JFrame {
 		dataType_comboBox.setBounds(434, 43, 382, 30);
 		reqFormPanel.add(dataType_comboBox);
 		
-		sendButton = new JButton("Send");
+		sendButton = new JButton("전 송");
 		sendButton.setForeground(Color.BLUE);
 		sendButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		sendButton.setFocusPainted(false);
@@ -730,14 +728,18 @@ public class ModbusMonitorFrame extends JFrame {
 											return;
 										}
 										
+										// 요청 패킷 전송전에 포인트들의 데이터를 초기화
 										ModbusWatchPoint.pointDataClear(pointList);
 										
+										// 모드버스 통신 설정 정보
 										ModbusMonitor monitor = new ModbusMonitor();
 										monitor.setType((isRTU) ? ModbusMonitor.TYPE_RTU : ModbusMonitor.TYPE_TCP);
 										monitor.setUnitID(getMonitorUnitID());
 										if(monitor.getType() == ModbusMonitor.TYPE_TCP) monitor.setTransactionID(getTid());
-																		
-										ModbusMonitor.sendRequest(ModbusAgent_Panel.socket_ko, monitor, pointList, timeout, maxCount);
+															
+										// 모드버스 요청 전송
+										ModbusMonitor.sendRequest(socket_ko, monitor, pointList, timeout, maxCount);
+										
 									}
 							
 								}catch(Exception e) {
@@ -747,6 +749,9 @@ public class ModbusMonitorFrame extends JFrame {
 									sb.append(Util.colorBlue("Modbus Monitor") + " 기능 수행중 처리 할 수 없는 예외가 발생하였습니다" + Util.separator + "\n\n");
 									sb.append(String.format("Exception Message : %s\n", e.getMessage()));
 									Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+									
+								}finally {
+									ModbusMonitor.isRunning = false;	
 								}
 							
 							}
@@ -761,7 +766,7 @@ public class ModbusMonitorFrame extends JFrame {
 		});
 		reqFormPanel.add(sendButton);
 		
-		resetButton = new JButton("Reset");
+		resetButton = new JButton("초기화");
 		resetButton.setBounds(935, 43, 100, 30);
 		resetButton.setFocusPainted(false);
 		resetButton.setBackground(Color.WHITE);
@@ -798,7 +803,7 @@ public class ModbusMonitorFrame extends JFrame {
 		
 		fontSize_text = new JTextField();
 		fontSize_text.setBounds(1055, 40, 100, 30);
-		fontSize_text.setText("18");
+		fontSize_text.setText("16");
 		fontSize_text.setHorizontalAlignment(SwingConstants.LEFT);
 		fontSize_text.setForeground(Color.BLACK);
 		fontSize_text.setFont(new Font("맑은 고딕", Font.BOLD, 16));
@@ -810,10 +815,10 @@ public class ModbusMonitorFrame extends JFrame {
 				try {
 					int size = Integer.parseInt(fontSize_text.getText().trim());
 					fontSize = size;
-					textArea.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));
+					log.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));
 				}catch(Exception ex) {
 					ex.printStackTrace();
-					textArea.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));
+					log.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));
 				}
 			}
 			@Override
@@ -821,21 +826,21 @@ public class ModbusMonitorFrame extends JFrame {
 				try {
 					int size = Integer.parseInt(fontSize_text.getText().trim());
 					fontSize = size;
-					textArea.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));
+					log.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));
 				}catch(Exception ex) {					
-					textArea.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));
+					log.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));
 				}
 			}
 		});
 		actualPanel.add(fontSize_text);
 		
-		currentState = new JLabel("state");
+		currentState = new JLabel("state");		
 		currentState.setBounds(10, 48, 244, 24);
-		actualPanel.add(currentState);
 		currentState.setHorizontalAlignment(SwingConstants.CENTER);
 		currentState.setForeground(Color.BLACK);
 		currentState.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		currentState.setBackground(Color.LIGHT_GRAY);
+		actualPanel.add(currentState);
 		
 		new Thread() {
 			public void run() {
@@ -1365,6 +1370,16 @@ public class ModbusMonitorFrame extends JFrame {
 		}
 	}
 	
+	public static void cleaerLog() {
+		log.setText("");
+	}
+	
+	public static void writeLog(String content) {
+		content = String.format("%s%s", content, System.lineSeparator());
+		log.append(content);
+		scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+	}
+	
 	public void setComponentEnabled(boolean enabled) {
 		// 소켓 접속 전에는 컴포넌트들을 사용하지 않는다
 		
@@ -1471,12 +1486,12 @@ public class ModbusMonitorFrame extends JFrame {
 		
 		dataType_comboBox.setSelectedIndex(0);
 		
-		fontSize_text.setText("18");
+		fontSize_text.setText("16");
 		
-		fontSize = 18;
-		textArea.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));		
-		textArea.setText("");
-		textArea.requestFocus();
+		fontSize = 16;
+		log.setFont(new Font("맑은 고딕", Font.PLAIN, fontSize));		
+		log.setText("");
+		log.requestFocus();
 	}
 	
 	public void connect() {
@@ -1533,7 +1548,7 @@ public class ModbusMonitorFrame extends JFrame {
 			// 마지막 커넥션 정보와 다른 정보로 세션을  생성시 컴포넌트 초기화
 			if(!ClientSocket.getSimpleConnectedInfo().equalsIgnoreCase(lastConnectionInfo)) {
 				resetComponent();
-//				src_en.swing.ModbusAgent_Panel.componentAllClear(); 영문버전 추가시 주석 해제
+//				src_en.swing.ModbusMonitorFrame.resetComponent(); 영문버전 추가시 주석 해제
 			}
 			
 			// 사용자가 입력한 IP, port를 클라이언트 소켓의 마지막 연결 성공 정보에 저장

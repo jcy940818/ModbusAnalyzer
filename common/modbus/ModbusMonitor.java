@@ -28,8 +28,10 @@ import com.serotonin.modbus4j.serial.rtu.RtuMessageRequest;
 
 import common.agent.PerfData;
 import src_ko.agent.ModbusAgent;
+import src_ko.swing.ModbusMonitorFrame;
 import src_ko.util.PacketInputStream;
 import src_ko.util.PacketOutputStream;
+import src_ko.util.Timer;
 
 public class ModbusMonitor{
 
@@ -48,6 +50,8 @@ public class ModbusMonitor{
 	private int unitID = 1;
 	
 	ModbusMaster master;
+	private int index = 1;
+	
 	private BatchRead batchRead = new BatchRead();
 	
 	public int getType() {
@@ -89,15 +93,9 @@ public class ModbusMonitor{
 	}
 	
 	public static void sendRequest(Socket clientSocket, ModbusMonitor monitor, ArrayList<ModbusWatchPoint> pointList, int timeout, int maxCount) throws Exception{
-		try {
 			// 현재 모니터가 통신중이라면 현재 요청은 무시
 			if(ModbusMonitor.isRunning) return;
-											
 			ModbusAgent.modbusCommunicate(monitor, clientSocket, pointList, timeout, maxCount);
-			
-		}finally {
-			ModbusMonitor.isRunning = false;	
-		}
 	}
 
 	public synchronized int parseCommand(ModbusWatchPoint point) {
@@ -230,7 +228,7 @@ public class ModbusMonitor{
 
 		byte[] packet = in.debug_getBuffer();
 		String rxPacket = getPacketString(packet, 0, packet.length);
-		System.out.println("RX : " + rxPacket);
+		System.out.println(Timer.getServerTime() + " [ RX ] : " + rxPacket);
 		
 		List locators = functionGroup.getLocators();
 		
@@ -265,6 +263,7 @@ public class ModbusMonitor{
 			}
 			
 			System.out.printf("[ %s ] = " + PerfData.getPerfPureValue(perfData) + "\n", point.getDecCounter());
+			ModbusMonitorFrame.writeLog(String.format("%d. [ %s ] = " + PerfData.getPerfPureValue(perfData) ,index++, point.getDecCounter()));
 		}
 		
 		return rxPacket;

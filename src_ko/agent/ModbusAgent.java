@@ -20,6 +20,7 @@ import src_ko.info.RX_Info;
 import src_ko.info.TX_Info;
 import src_ko.swing.ExceptionScan_Panel;
 import src_ko.swing.ModbusAgent_Panel;
+import src_ko.swing.ModbusMonitorFrame;
 import src_ko.swing.RealTime_Panel;
 import src_ko.swing.SimpleValueScan_Panel;
 import src_ko.util.ExceptionProvider;
@@ -356,8 +357,31 @@ public class ModbusAgent {
 				tx = new TX_Info();
 				tx.setContent(txPacket);
 				tx = (monitor.getType() == ModbusMonitor.TYPE_RTU) ? new TX_Analyzer().rtuAnalysis(tx) : new TX_Analyzer().tcpAnalysis(tx);
-				System.out.printf("요청 내용  => 기능코드 : %d  /  시작주소 : %s  /  요청개수 :  %d\n", tx.getFunctionCode(), tx.getStartAddress(), tx.getRequestCount());
-				System.out.println("TX : " + txPacket);
+				
+				String modbusType = (monitor.getType() == ModbusMonitor.TYPE_RTU) ? "Modbus-RTU" : "Modbus-TCP";
+				StringBuilder sb = new StringBuilder("┌─────── 요청 내용 ────────┐");
+				sb.append(System.lineSeparator());
+				sb.append(String.format("│ 모드버스 타입 : %s\t│", modbusType));
+				sb.append(System.lineSeparator());
+				sb.append(String.format("│ 장비번호 : %s번\t\t│", tx.getUnitId()));
+				sb.append(System.lineSeparator());
+				sb.append(String.format("│ 기능코드 : %d\t\t\t│", tx.getFunctionCode()));
+				sb.append(System.lineSeparator());
+				sb.append(String.format("│ 요청 시작주소 (Modbus DEC) : %s\t│", tx.getModbusAddrString()));
+				sb.append(System.lineSeparator());
+				sb.append(String.format("│ 요청 시작주소 (Register DEC) : %s\t│", tx.getStartAddress()));
+				sb.append(System.lineSeparator());
+				sb.append(String.format("│ 요청 시작주소 (Register HEX) : %s\t│", tx.getRegisterAddrHexString()));
+				sb.append(System.lineSeparator());
+				sb.append(String.format("│ 요청 개수 : %s\t\t│", tx.getRequestCount()));
+				sb.append(System.lineSeparator());
+				sb.append(String.format("└────────────────────┘", tx.getRequestCount()));
+				sb.append(System.lineSeparator());
+				
+				System.out.printf(sb.toString());
+				System.out.println(Timer.getServerTime() + " [ TX ] : " + txPacket);
+				
+				ModbusMonitorFrame.writeLog(sb.toString());
 				
 				// 클라이언트 소켓 : TX 전송 완료 후 응답 대기중
 				if(ClientSocket.getCurrentTimeoutCount() >= 5) {
