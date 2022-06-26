@@ -92,6 +92,7 @@ public class ModbusMonitorFrame extends JFrame {
 	private JTextField fontSize_text; // 글자크기 : 텍스트 필드
 	private JButton sendButton; // 전송 버튼 : 버튼
 	private JButton resetButton; // 리셋 버튼 : 버튼
+	private JButton addSelectedPointList_Button;
 		
 	// 요청 정보 레이블
 	private JLabel addrFormat_label;
@@ -905,6 +906,30 @@ public class ModbusMonitorFrame extends JFrame {
 		});
 		reqFormPanel.add(connectButton);
 		
+		addSelectedPointList_Button = new JButton("<html>ModbusMonitor V2<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color='green'>포인트 추가</font></html>");
+		addSelectedPointList_Button.setForeground(Color.BLACK);
+		addSelectedPointList_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		addSelectedPointList_Button.setFocusPainted(false);
+		addSelectedPointList_Button.setBackground(Color.WHITE);
+		addSelectedPointList_Button.setBounds(1055, 8, 207, 65);
+		addSelectedPointList_Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ArrayList<ModbusWatchPoint> selectedPointList = getSelectedPointList();
+				if(selectedPointList != null && selectedPointList.size() > 0) {
+					ModbusMonitor_Panel.addPointList(selectedPointList);
+					ModbusMonitor_Panel.doTableFilter(false);
+					
+					StringBuilder sb = new StringBuilder();
+					sb.append(String.format("%s%s%s\n", Util.colorGreen("Modbus Point Added Successfully"), Util.separator, Util.separator));
+					sb.append(String.format("모드버스 포인트 %s개 항목을 추가 완료하였습니다", Util.colorBlue("" + selectedPointList.size())));
+					sb.append(Util.separator + Util.separator + Util.separator + "\n");
+					Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+		});
+		reqFormPanel.add(addSelectedPointList_Button);
+		
 		fontSize_label = new JLabel("Font Size");
 		fontSize_label.setBounds(1055, 10, 100, 24);
 		fontSize_label.setHorizontalAlignment(SwingConstants.LEFT);
@@ -1601,6 +1626,9 @@ public class ModbusMonitorFrame extends JFrame {
 		fontSize_text.setEnabled(enabled);
 		fontSize_text.setVisible(enabled);
 		
+		addSelectedPointList_Button.setEnabled(enabled);
+		addSelectedPointList_Button.setVisible(enabled);
+		
 		if(enabled) {
 			setTitle(String.format("Modbus Monitor : %s", ClientSocket.getSimpleConnectedInfo()));
 		}else {
@@ -1865,6 +1893,7 @@ public class ModbusMonitorFrame extends JFrame {
 			
 			if(pointList != null
 				&& pointList.size() >= 1
+				&& pointTable.getRowCount() >= 1
 				&& pointTable.getSelectedRows() != null
 				&& pointTable.getSelectedRows().length >= 1) {
 				
@@ -1872,6 +1901,7 @@ public class ModbusMonitorFrame extends JFrame {
 				
 				for(int row : pointTable.getSelectedRows()) {
 					int index = Integer.parseInt(pointTable.getValueAt(row, 0).toString());
+					// 새로운 포인트를 생성해서 Copy 하는 이유는 새로 생성한 포인트 객체의 주소를 참조하기 위해서임
 					ModbusWatchPoint point = new ModbusWatchPoint();
 					ModbusWatchPoint selectedPoint = pointList.get(index-1);
 					point.copy(selectedPoint);
