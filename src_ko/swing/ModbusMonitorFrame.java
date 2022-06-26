@@ -31,11 +31,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -46,13 +48,9 @@ import common.modbus.ModbusCellRenderer;
 import common.modbus.ModbusMonitor;
 import common.modbus.ModbusWatchPoint;
 import common.util.JavaScript;
-import common.util.TableUtil;
 import src_ko.agent.ClientSocket;
 import src_ko.agent.ModbusAgent;
-import src_ko.util.Timer;
 import src_ko.util.Util;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JTable;
 
 public class ModbusMonitorFrame extends JFrame {
 
@@ -865,7 +863,7 @@ public class ModbusMonitorFrame extends JFrame {
 									
 								}finally {
 									ModbusMonitor.isRunning = false;				
-									
+
 								}
 							
 							}
@@ -1737,7 +1735,7 @@ public class ModbusMonitorFrame extends JFrame {
 			DefaultTableModel model = (DefaultTableModel)table.getModel();
 			
 			// 기능코드, 주소, 보정식 순서로 정렬
-			Collections.sort(pointList);			
+			Collections.sort(pointList);
 			
 			for(int i = 0; i < pointList.size(); i++) {
 				
@@ -1858,6 +1856,34 @@ public class ModbusMonitorFrame extends JFrame {
 		resetTable(pointTable, null);
 		addRecord(pointTable, findPointList);
 		setTableStyle(pointTable, formula);
+	}
+	
+	public static ArrayList<ModbusWatchPoint> getSelectedPointList(){
+		try {
+			
+			ArrayList<ModbusWatchPoint> selectedList = null;
+			
+			if(pointList != null
+				&& pointList.size() >= 1
+				&& pointTable.getSelectedRows() != null
+				&& pointTable.getSelectedRows().length >= 1) {
+				
+				selectedList = new ArrayList<ModbusWatchPoint>();
+				
+				for(int row : pointTable.getSelectedRows()) {
+					int index = Integer.parseInt(pointTable.getValueAt(row, 0).toString());
+					ModbusWatchPoint point = new ModbusWatchPoint();
+					ModbusWatchPoint selectedPoint = pointList.get(index-1);
+					point.copy(selectedPoint);
+					selectedList.add(point);
+				}
+			}
+			
+			return selectedList;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	public void connect() {
