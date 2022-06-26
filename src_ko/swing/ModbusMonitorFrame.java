@@ -34,6 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -224,7 +225,6 @@ public class ModbusMonitorFrame extends JFrame {
 		
 		log_scrollPane = new JScrollPane();
 		log_scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
-//		scrollPane.setBounds(0, 154, 1044, 507); // 사이즈 백업
 		log_scrollPane.setBounds(435, 154, 609, 507);
 		actualPanel.add(log_scrollPane);
 		
@@ -1527,8 +1527,13 @@ public class ModbusMonitorFrame extends JFrame {
 	}
 	
 	public static void writeLog(String content) {
-		content = String.format("%s%s", content, System.lineSeparator());
-		log.append(content);
+		SwingUtilities.invokeLater(new Runnable() {
+		    @Override public void run() {		    	
+				log.append(content);
+				log.append(System.lineSeparator());
+				log_scrollPane.getVerticalScrollBar().setValue(log_scrollPane.getVerticalScrollBar().getMaximum());
+		    }
+		});
 	}
 	
 	public void setComponentEnabled(boolean enabled) {
@@ -1810,6 +1815,29 @@ public class ModbusMonitorFrame extends JFrame {
 		}
 		
 		resetTable(table, content);
+		
+		
+		try {
+			String formula = search_textField.getText().toLowerCase();
+			
+			if(formula.contains("only")) {
+				formula = formula.replace("only", "");
+				if(!formula.contains("x")) {
+					try {
+						int value = Integer.parseInt(formula.trim());
+						formula = ("x == " + formula);
+					}catch(Exception exception) {
+						// do nothing
+					}
+				}
+				onlyValueFormulaPoint(formula);
+				
+			}else {
+				setTableStyle(pointTable, formula);	
+			}
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	public static void onlyValueFormulaPoint(String formula) {
