@@ -400,7 +400,21 @@ public class ModbusAgent {
 					ClientSocket.setState(ClientSocket.NODE_CONDITION_RESPONSE_WAITING); // 응답 대기중
 				}
 				
-				String rxPacket = monitor.parseResponsePacket(fcGroup, clientSocket);
+				String rxPacket = null;
+				try {
+					rxPacket = monitor.parseResponsePacket(fcGroup, clientSocket);
+
+				}catch (SocketTimeoutException e) {
+					// 타임아웃시 해당 요청은 무효처리 후 다음 요청 전송
+					ModbusMonitorFrame.writeLog(Timer.getServerTime() + " [ Timeout ] : " + e.getMessage());
+					ModbusMonitorFrame.writeLog(System.lineSeparator() + System.lineSeparator() + System.lineSeparator() + System.lineSeparator());
+					
+					// 클라이언트 소켓 : 통신 오류
+					ClientSocket.incrementTimeoutCount();
+					if(ClientSocket.getCurrentTimeoutCount() >= 5) ClientSocket.setState(ClientSocket.NODE_CONDITION_COMMERR);
+					continue;
+				}
+				
 				ModbusMonitorFrame.writeLog(Timer.getServerTime() + " [ RX ] : " + rxPacket);
 				
 				rx = new RX_Info();
@@ -447,9 +461,7 @@ public class ModbusAgent {
 			ModbusAgent.waitingLostConnection(e);
 			return null;
 			
-		}catch (SocketTimeoutException e) {
-			ModbusMonitorFrame.writeLog(Timer.getServerTime() + " [ Timeout Packet ] : " + e.getMessage());
-			
+		}catch (SocketTimeoutException e) {	
 			ClientSocket.incrementTimeoutCount();
 			
 			if(ClientSocket.getCurrentTimeoutCount() >= 5) {
