@@ -70,7 +70,7 @@ public class ModbusMonitorFrame extends JFrame {
 	public static JScrollPane log_scrollPane;
 	private JScrollPane table_scrollPane;
 	public static JTextArea log;	
-	private int fontSize = 18;
+	private int fontSize = 16;
 	
 	private JButton connectButton;
 	
@@ -911,7 +911,8 @@ public class ModbusMonitorFrame extends JFrame {
 		addSelectedPointList_Button.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		addSelectedPointList_Button.setFocusPainted(false);
 		addSelectedPointList_Button.setBackground(Color.WHITE);
-		addSelectedPointList_Button.setBounds(1055, 8, 207, 65);
+		addSelectedPointList_Button.setBounds(1055, 8, 180, 65);
+		addSelectedPointList_Button.setMargin(new Insets(2, 0, 2, 0));
 		addSelectedPointList_Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1669,17 +1670,16 @@ public class ModbusMonitorFrame extends JFrame {
 		
 		dataType_comboBox.setSelectedIndex(0);
 		
-		fontSize_text.setText("16");
-		
-		fontSize = 16;
-		log.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));		
-		log.setText("");
-		log.requestFocus();
-		
 		search_textField.setText("");
 		
 		pointList = null;
 		resetTable(pointTable, null);
+		
+		fontSize_text.setText("16");
+		fontSize = 16;
+		log.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
+		log.setText("");
+		log.requestFocus();
 	}
 	
 	public static void resetTable(JTable table, Object[][] content){
