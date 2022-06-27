@@ -15,6 +15,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -947,6 +949,24 @@ public class ModbusMonitorFrame extends JFrame {
 		fontSize_text.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		fontSize_text.setColumns(10);
 		fontSize_text.setBorder(UIManager.getBorder("TextField.border"));
+		fontSize_text.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				try {					
+					if(e.getWheelRotation() < 0) {
+	                    fontSize++;
+	                }else{
+	                	fontSize--;
+	                }
+	                fontSize_text.setText(String.valueOf(fontSize));
+	                log.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
+				}catch(Exception ex) {
+					ex.printStackTrace();
+					fontSize_text.setText(String.valueOf(fontSize));
+					log.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
+				}
+			}
+		});
 		fontSize_text.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
