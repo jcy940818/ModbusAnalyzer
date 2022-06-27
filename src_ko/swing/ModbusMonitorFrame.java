@@ -956,7 +956,10 @@ public class ModbusMonitorFrame extends JFrame {
 					if(e.getWheelRotation() < 0) {
 	                    fontSize++;
 	                }else{
-	                	fontSize--;
+	                	if(fontSize <= 0) 
+	                		return;
+	                	else
+	                		fontSize--;
 	                }
 	                fontSize_text.setText(String.valueOf(fontSize));
 	                log.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
