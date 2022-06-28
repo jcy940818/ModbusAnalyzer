@@ -1630,7 +1630,7 @@ public class ModbusMonitorFrame extends JFrame {
 		addrFormat_label.setEnabled(enabled);
 		addrFormat_label.setVisible(enabled);
 		
-		transactionID_label.setEnabled(enabled);
+//		transactionID_label.setEnabled(enabled);
 		transactionID_label.setVisible(enabled);
 		
 		unitID_label.setEnabled(enabled);
@@ -1655,7 +1655,7 @@ public class ModbusMonitorFrame extends JFrame {
 		addrTypeComboBox.setEnabled(enabled);
 		addrTypeComboBox.setVisible(enabled);
 		
-		transactionId_text.setEnabled(enabled);
+//		transactionId_text.setEnabled(enabled);
 		transactionId_text.setVisible(enabled);
 		
 		unitID_comboBox.setEnabled(enabled);
