@@ -531,4 +531,8 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
         return value;
     }
 	
+	public String getText() {
+		return String.format("%d.  [ %s ]", this.getIndex(), this.getDecCounter());
+	}
+	
 }

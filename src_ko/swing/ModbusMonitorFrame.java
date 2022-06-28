@@ -15,6 +15,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.IOException;
@@ -71,7 +72,7 @@ public class ModbusMonitorFrame extends JFrame {
 	
 	public static JScrollPane log_scrollPane;
 	private JScrollPane table_scrollPane;
-	public static JTextArea log;	
+	public static JTextArea log;
 	private int fontSize = 16;
 	
 	private JButton connectButton;
@@ -229,10 +230,21 @@ public class ModbusMonitorFrame extends JFrame {
 		log_scrollPane.setBounds(435, 154, 609, 507);
 		actualPanel.add(log_scrollPane);
 		
-		log = new JTextArea();
+		log = new JTextArea();		
 		log.setBorder(new EmptyBorder(5, 5, 0, 0));
 		log.setForeground(Color.BLACK);
 		log.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
+		log.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent var1) {
+				log.setSelectionColor(new Color(184, 207, 229));
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent var1) {
+				log.setSelectionColor(new Color(184, 207, 229));
+			}
+		});
 		log_scrollPane.setViewportView(log);
 		
 		table_scrollPane = new JScrollPane();
@@ -244,29 +256,35 @@ public class ModbusMonitorFrame extends JFrame {
 		pointTable.setCellSelectionEnabled(true);
 		pointTable.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
+				if(pointList == null || pointList.size() < 1) return;
 				int row = pointTable.getSelectedRow();
-				String index = pointTable.getValueAt(row, 0).toString().trim();						
+				int index = Integer.parseInt(pointTable.getValueAt(row, 0).toString());
+				ModbusWatchPoint point = pointList.get(index-1);
 				
-				String findIndex = String.format("%s.", index);
+				String findIndex = point.getText();
 				int textLength = findIndex.length();
 				
 				int start = log.getText().indexOf(findIndex);
 				int end = start + textLength;
 				
+				log.setSelectionColor(Color.GREEN);
 				log.getCaret().setSelectionVisible(true);
 				log.select(start, end);
 			}
 						
 			public void keyReleased(KeyEvent e) {
+				if(pointList == null || pointList.size() < 1) return;
 				int row = pointTable.getSelectedRow();
-				String index = pointTable.getValueAt(row, 0).toString().trim();					
+				int index = Integer.parseInt(pointTable.getValueAt(row, 0).toString());
+				ModbusWatchPoint point = pointList.get(index-1);
 				
-				String findIndex = String.format("%s.", index);
+				String findIndex = point.getText();
 				int textLength = findIndex.length();
 				
 				int start = log.getText().indexOf(findIndex);
 				int end = start + textLength;
 				
+				log.setSelectionColor(Color.GREEN);
 				log.getCaret().setSelectionVisible(true);
 				log.select(start, end);
 			}
@@ -281,14 +299,16 @@ public class ModbusMonitorFrame extends JFrame {
 					pointTable.requestFocus();
 					int[] selectedIndex = pointTable.getSelectedRows();
 					
-					String index = pointTable.getValueAt(selectedIndex[0], 0).toString().trim();
+					int index = Integer.parseInt(pointTable.getValueAt(selectedIndex[0], 0).toString());
+					ModbusWatchPoint point = pointList.get(index-1);
 					
-					String findIndex = String.format("%s.", index);
+					String findIndex = point.getText();
 					int textLength = findIndex.length();
 					
 					int start = log.getText().indexOf(findIndex);
 					int end = start + textLength;
 					
+					log.setSelectionColor(Color.GREEN);
 					log.getCaret().setSelectionVisible(true);
 					log.select(start, end);
 					
