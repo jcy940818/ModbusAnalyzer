@@ -233,6 +233,12 @@ public class ModbusMonitor{
 			long curTime = System.currentTimeMillis();
 			
 			for (int i = 0; i < locators.size(); i++) {
+				
+				// 요청 패킷 처리중 사용자의 요청에 의해 통신이 중지되었을 경우
+				if(!ModbusMonitor.isRunning) {
+					return rxPacket;
+				}
+				
 				KeyedModbusLocator keyLocator = (KeyedModbusLocator) locators.get(i);
 				BaseLocator locator = (BaseLocator) keyLocator.getLocator();
 				int cmd = this.locators.indexOf(locator);

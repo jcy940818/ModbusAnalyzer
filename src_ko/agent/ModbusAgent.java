@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -328,7 +329,7 @@ public class ModbusAgent {
 	
 	
 	
-	public static String modbusCommunicate(ModbusMonitor monitor, Socket client, ArrayList<ModbusWatchPoint> pointList, int timeout, int maxCount) throws IOException, EOFException, SocketException {
+	public static void modbusCommunicate(ModbusMonitor monitor, Socket client, ArrayList<ModbusWatchPoint> pointList, int timeout, int maxCount) throws IOException, EOFException, SocketException {
 		try {
 			ModbusMonitor.isRunning = true;
 			clientSocket = client;
@@ -336,12 +337,14 @@ public class ModbusAgent {
 			RX_Info rx = null;
 
 			if(clientSocket == null) {
-				return null;
+				return;
 			}else {
 				clientSocket.setSoTimeout((timeout >= 0) ? timeout : ClientSocket.RESPONSE_TIMEOUT);
 			}
 			
+			// 포인트에 인덱스를 지정 후 파싱
 			for(ModbusWatchPoint point : pointList) {
+				point.setIndex(monitor.index++);
 				monitor.parseCommand(point);
 			}
 			
@@ -356,6 +359,7 @@ public class ModbusAgent {
 			List<ReadFunctionGroup> functionGroupList = monitor.getFuntionGroupList();
 			
 			// 요청 패킷 전송전에 포인트들의 데이터를 초기화
+			Collections.sort(pointList);
 			ModbusWatchPoint.pointDataClear(pointList);
 			
 			// 포인트 리스트 저장
@@ -365,6 +369,12 @@ public class ModbusAgent {
 			ModbusMonitorFrame.cleaerLog();
 			
 			for(ReadFunctionGroup fcGroup : functionGroupList) {
+				
+				// 요청 패킷 처리중 사용자의 요청에 의해 통신이 중지되었을 경우
+				if(!ModbusMonitor.isRunning) {
+					return;
+				}
+				
 				String txPacket = monitor.sendCommand(fcGroup, clientSocket);
 				tx = new TX_Info();
 				tx.setContent(txPacket);
@@ -440,7 +450,6 @@ public class ModbusAgent {
 					BaseLocator locator = (BaseLocator) keyLocator.getLocator();
 					int cmd = monitor.locators.indexOf(locator);
 					ModbusWatchPoint point = monitor.points.get(cmd);
-					point.setIndex(monitor.index++);
 					PerfData perfData = point.getData();
 					ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), point.getIndex(), point.getDecCounter()));
 				}
@@ -454,12 +463,12 @@ public class ModbusAgent {
 				ClientSocket.resetTimeoutCount();
 			}
 			
-			return null;
+			return;
 							
 		} catch (EOFException e) {
 			// TX 전송 후 RX 대기 중 연결 끊김
 			ModbusAgent.waitingLostConnection(e);
-			return null;
+			return;
 			
 		}catch (SocketTimeoutException e) {	
 			ClientSocket.incrementTimeoutCount();
@@ -467,20 +476,20 @@ public class ModbusAgent {
 			if(ClientSocket.getCurrentTimeoutCount() >= 5) {
 				ClientSocket.setState(ClientSocket.NODE_CONDITION_COMMERR); // 클라이언트 소켓 : 통신 오류
 			}
-			return null;
+			return;
 			
 		} catch (SocketException e) {
 			// 장비의 소켓이 닫혀있음
 			ModbusAgent.serverSocketClosed(e);
-			return null;
+			return;
 			
 		} catch (NullPointerException e) {
 			clientSocket.close();
-			return null;
+			return;
 
 		} catch (Exception e) {
 			ModbusAgent.unknownException(e);
-			return null;
+			return;
 			
 		}finally {
 			ModbusMonitor.isRunning = false;

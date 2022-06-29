@@ -814,6 +814,25 @@ public class ModbusMonitorFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
+				if(ModbusMonitor.isRunning) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(String.format("%s%s%s\n", Util.colorRed("Modbus Monitor Already in communication"), Util.separator, Util.separator));
+					
+					sb.append("현재 모드버스 모니터가 마지막 요청에 대한 통신을 수행중입니다");
+					sb.append(Util.separator + Util.separator + "\n\n");
+					
+					sb.append(Util.colorBlue("현재 수행중인 통신을 중지 하시겠습니까?"));
+					sb.append(Util.separator + Util.separator + "\n");
+					
+					int userOption= Util.showConfirm(sb.toString());
+					
+					// 사용자의 요청에 의해 통신이 중지
+					if(userOption == JOptionPane.YES_OPTION) {
+						ModbusMonitor.isRunning = false;
+						return;
+					}
+				}
+				
 				boolean isRTU = radio_modbusRTU.isSelected();
 				
 				// 수집 요청 TX 생성에 필요한 Form 에 정보가 모두 입력되어 있는지 체크
@@ -829,6 +848,7 @@ public class ModbusMonitorFrame extends JFrame {
 									if(ModbusMonitor.isRunning) return;
 									
 									pointList = null;
+									resetTable(pointTable, null);
 									
 									ArrayList<ModbusWatchPoint> pointList = getPointList();
 									
@@ -885,7 +905,7 @@ public class ModbusMonitorFrame extends JFrame {
 									Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 									
 								}finally {
-									ModbusMonitor.isRunning = false;				
+									// 요청 종료
 
 								}
 							
@@ -910,6 +930,16 @@ public class ModbusMonitorFrame extends JFrame {
 		resetButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				if(ModbusMonitor.isRunning) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(String.format("%s%s%s\n", Util.colorRed("Reset operation is not possible"), Util.separator, Util.separator));
+					sb.append("모드버스 모니터의 통신 수행중에는 컴포넌트 초기화 작업을 수행 할 수 없습니다");
+					sb.append(Util.separator + Util.separator + "\n");
+					Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+				
 				resetComponent();
 			}
 		});
