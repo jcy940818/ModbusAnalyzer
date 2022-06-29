@@ -21,6 +21,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	private PerfData data = new PerfData();
 	
 	private String decCounter;
+	private String regCounter;
 	private String hexCounter;
 	
 	// MK119 V10 : Liz 전용 필드
@@ -177,6 +178,10 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	public String getDecCounter() {
 		return decCounter;
 	}
+	
+	public String getRegCounter() {
+		return regCounter;
+	}
 
 	public String getHexCounter() {
 		return hexCounter;
@@ -184,6 +189,10 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 
 	public void setDecCounter(String decCounter) {
 		this.decCounter = decCounter;
+	}
+	
+	public void setRegCounter(String regCounter) {
+		this.regCounter = regCounter;
 	}
 
 	public void setHexCounter(String hexCounter) {
@@ -235,6 +244,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			this.setModbusAddr(Integer.parseInt(this.getModbusAddrString()));
 			this.setDataType(dataType);
 			this.setDecCounter(functionCode + "_" + (this.getRegisterAddr() + 1) + "_" + dataType);
+			this.setRegCounter(functionCode + "_" + this.getRegisterAddr() + "_" + dataType);
 			this.setHexCounter(functionCode + "_" + (this.getRegisterAddrHexString()) + "_" + dataType);
 			
 		}catch(Exception e) {
@@ -531,7 +541,18 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
         return value;
     }
 	
-	public String getText() {
+	public String getText(String addrFormat) {
+		switch(addrFormat) {
+			case "Modbus (DEC)" : 
+				return String.format("%d.  [ %s ]", this.getIndex(), this.getDecCounter());
+	
+			case "Register (DEC)" :
+				return String.format("%d.  [ %s ]", this.getIndex(), this.getRegCounter());
+				
+			case "Register (HEX)" : 
+				return String.format("%d.  [ %s ]", this.getIndex(), this.getHexCounter());
+			}
+	
 		return String.format("%d.  [ %s ]", this.getIndex(), this.getDecCounter());
 	}
 	

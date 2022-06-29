@@ -451,7 +451,24 @@ public class ModbusAgent {
 					int cmd = monitor.locators.indexOf(locator);
 					ModbusWatchPoint point = monitor.points.get(cmd);
 					PerfData perfData = point.getData();
-					ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), point.getIndex(), point.getDecCounter()));
+					
+					switch(ModbusMonitorFrame.addrTypeComboBox.getSelectedItem().toString()){
+						case "Modbus (DEC)" :
+							ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), point.getIndex(), point.getDecCounter()), point);
+							break;
+							
+						case "Register (DEC)" :
+							ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), point.getIndex(), point.getRegCounter()), point);
+							break;
+							
+						case "Register (HEX)" :
+							ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), point.getIndex(), point.getHexCounter()), point);
+							break;
+							
+						default :
+							ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), point.getIndex(), point.getDecCounter()), point);
+							break;
+					}
 				}
 				
 				ModbusMonitorFrame.writeLog(System.lineSeparator() + System.lineSeparator() + System.lineSeparator() + System.lineSeparator());

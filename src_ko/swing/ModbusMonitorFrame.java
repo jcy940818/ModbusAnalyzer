@@ -73,6 +73,9 @@ public class ModbusMonitorFrame extends JFrame {
 	public static JScrollPane log_scrollPane;
 	private JScrollPane table_scrollPane;
 	public static JTextArea log;
+	public static StringBuilder log_modbus_dec = new StringBuilder();
+	public static StringBuilder log_register_dec = new StringBuilder();
+	public static StringBuilder log_register_hex = new StringBuilder();
 	private int fontSize = 16;
 	
 	private JButton connectButton;
@@ -261,7 +264,7 @@ public class ModbusMonitorFrame extends JFrame {
 				int index = Integer.parseInt(pointTable.getValueAt(row, 0).toString());
 				ModbusWatchPoint point = pointList.get(index-1);
 				
-				String findIndex = point.getText();
+				String findIndex = point.getText(addrTypeComboBox.getSelectedItem().toString());
 				int textLength = findIndex.length();
 				
 				int start = log.getText().indexOf(findIndex);
@@ -278,7 +281,7 @@ public class ModbusMonitorFrame extends JFrame {
 				int index = Integer.parseInt(pointTable.getValueAt(row, 0).toString());
 				ModbusWatchPoint point = pointList.get(index-1);
 				
-				String findIndex = point.getText();
+				String findIndex = point.getText(addrTypeComboBox.getSelectedItem().toString());
 				int textLength = findIndex.length();
 				
 				int start = log.getText().indexOf(findIndex);
@@ -302,7 +305,7 @@ public class ModbusMonitorFrame extends JFrame {
 					int index = Integer.parseInt(pointTable.getValueAt(selectedIndex[0], 0).toString());
 					ModbusWatchPoint point = pointList.get(index-1);
 					
-					String findIndex = point.getText();
+					String findIndex = point.getText(addrTypeComboBox.getSelectedItem().toString());
 					int textLength = findIndex.length();
 					
 					int start = log.getText().indexOf(findIndex);
@@ -393,13 +396,28 @@ public class ModbusMonitorFrame extends JFrame {
 		addrTypeComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
 				syncAddr();
 				
 				getAddress(startAddr_textField);
 				getMethodValue();
 				
 				lastAddrFormat = addrTypeComboBox.getSelectedItem().toString();
+				
+				if(pointList != null && pointList.size() > 0) {
+					switch(lastAddrFormat) {
+						case "Modbus (DEC)" :
+							log.setText(log_modbus_dec.toString());
+							break;
+							
+						case "Register (DEC)" :
+							log.setText(log_register_dec.toString());
+							break;
+							
+						case "Register (HEX)" :
+							log.setText(log_register_hex.toString());
+							break;
+					}
+				}
 				
 				updateTable(pointTable);
 			}
@@ -1621,14 +1639,40 @@ public class ModbusMonitorFrame extends JFrame {
 	
 	public static void cleaerLog() {
 		log.setText("");
+		log_modbus_dec = new StringBuilder();
+		log_register_dec = new StringBuilder();
+		log_register_hex = new StringBuilder();
 	}
 	
-	public static void writeLog(String content) {
+	public static void writeLogAddrType(String modbus_dec, String register_dec, String register_hex) {
+		log_modbus_dec.append(modbus_dec);
+		log_register_dec.append(register_dec);
+		log_register_hex.append(register_hex);
+	}
+	
+	public static void writeLog(String content, ModbusWatchPoint...p) {
 		SwingUtilities.invokeLater(new Runnable() {
-		    @Override public void run() {		    	
-				log.append(content);
-				log.append(System.lineSeparator());
-				log_scrollPane.getVerticalScrollBar().setValue(log_scrollPane.getVerticalScrollBar().getMaximum());
+		    @Override public void run() {
+		    	
+		    	if(p != null && p.length > 0) {
+		    		log.append(content);
+					log.append(System.lineSeparator());
+					log_scrollPane.getVerticalScrollBar().setValue(log_scrollPane.getVerticalScrollBar().getMaximum());
+					
+					PerfData perfData = p[0].getData();
+					String modbus_dec = String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), p[0].getIndex(), p[0].getDecCounter());
+					String register_dec = String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), p[0].getIndex(), p[0].getRegCounter());
+					String register_hex = String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), p[0].getIndex(), p[0].getHexCounter());
+					writeLogAddrType(modbus_dec, register_dec, register_hex);
+		    	}else {
+		    		log.append(content);
+					log.append(System.lineSeparator());
+					log_scrollPane.getVerticalScrollBar().setValue(log_scrollPane.getVerticalScrollBar().getMaximum());
+					writeLogAddrType(content, content, content);
+		    	}
+		    	
+		    	writeLogAddrType(System.lineSeparator(), System.lineSeparator(), System.lineSeparator());
+		    	
 		    }
 		});
 	}
@@ -1958,6 +2002,8 @@ public class ModbusMonitorFrame extends JFrame {
 		addRecord(pointTable, findPointList);
 		setTableStyle(pointTable, formula);
 	}
+	
+	
 	
 	public static ArrayList<ModbusWatchPoint> getSelectedPointList(){
 		try {
