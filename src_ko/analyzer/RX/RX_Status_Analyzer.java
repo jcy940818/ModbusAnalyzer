@@ -77,6 +77,7 @@ public class RX_Status_Analyzer{
 		
 		try {
 			try {
+				rx.setExpectedCrc(in.getCRC16());
 				crc = in.readCRC16();
 			} catch (IOException e) {				
 				isCrcError = true;
