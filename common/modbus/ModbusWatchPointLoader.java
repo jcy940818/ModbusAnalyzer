@@ -547,6 +547,10 @@ public class ModbusWatchPointLoader {
 }
 
 class CellUtil {
+	public static boolean isNull(Cell cell) {
+		return cell.toString().trim().length() < 1;
+	}
+	
 	public static String getStringValue(Cell cell) {
 		return cell.toString().trim();
 	}
