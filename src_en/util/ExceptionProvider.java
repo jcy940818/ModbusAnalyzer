@@ -78,6 +78,58 @@ public class ExceptionProvider {
 	}
 	
 	
+	public static String getCompareTxRxString(TX_Info tx, RX_Info rx) {
+		boolean isSame = true;
+		boolean isSameTransactionId = true;
+		boolean isSameUnitId = true;
+		boolean isSameFunctionCode = true;
+		
+		if(rx.getFunctionCode() >= 0x80) {
+			return null;
+		}
+		
+		StringBuilder sb = new StringBuilder("[  Warning!  TX & RX ");
+		
+		if((tx.isRTU()==rx.isRTU())&&!rx.isRTU()) {
+			// Modbus TCP
+			if(tx.getTransactionId()!=rx.getTransactionId()) {				
+				isSame = false;
+				isSameTransactionId = false;
+				sb.append("\"Transaction ID\", ");
+			}
+		}
+		
+		if(tx.getUnitId()!= rx.getUnitId()) {			
+			isSame = false;
+			isSameUnitId = false;
+			sb.append("\"Unit ID\", ");
+		}
+		
+		if(tx.getFunctionCode()!=rx.getFunctionCode()) {			
+			isSame = false;
+			isSameFunctionCode = false;
+			sb.append("\"Function Code\", ");
+		}
+		
+		if(!isSame) {			
+			int lastSeparator = sb.lastIndexOf(",");
+			sb.replace(lastSeparator, lastSeparator+1 , "");
+			
+			sb.append("Data Mismatch!");
+			sb.append("  ]");
+			
+//			int index = 1;
+//			if(!isSameTransactionId) sb.append("\n" + String.format("%d. Transaction ID => TX:0x%04x != RX:0x%04x", index++, (tx.getTransactionId()&0xffff),(rx.getTransactionId()&0xffff)));
+//			if(!isSameUnitId) sb.append("\n" + String.format("%d. Unit ID => TX:%d != RX:%d", index++, tx.getUnitId(), rx.getUnitId()));
+//			if(!isSameFunctionCode) sb.append("\n" + String.format("%d. Function Code => TX:FC%02x != RX:FC%02x", index++, tx.getFunctionCode(), rx.getFunctionCode()));
+//			sb.append("\n");
+			
+			return sb.toString();
+		}else {
+			return null;
+		}		
+	}
+	
 
 	public static void checkRxLength(TX_Info tx, RX_Info rx) {
 		

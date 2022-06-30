@@ -432,15 +432,16 @@ public class ModbusAgent {
 				rx.setContent(rxPacket);
 				rx = (monitor.getType() == ModbusMonitor.TYPE_RTU) ? new RX_Analyzer().rtuAnalysis(rx) : new RX_Analyzer().tcpAnalysis(rx);
 				
+				// 데이터 불일치 체크
+				String content = ExceptionProvider.getCompareTxRxString(tx, rx);
+				if(content != null) {
+					ModbusMonitorFrame.writeLog(content);
+				}
+				
+				// 예외(Exception) 응답 체크
 				String error = RX_Info.getRxHandleContent(rx);
 				if(!error.equalsIgnoreCase("") && error.length() >= 1) {
 					ModbusMonitorFrame.writeLog(error);
-				}
-				
-				// ★ ★★ 정보 비교 ★★★
-				String content = ExceptionProvider.getCompareTxRxString(tx, rx);
-				if(content != null) {
-					System.out.println(content);
 				}
 				
 				// 데이터 로그 기록

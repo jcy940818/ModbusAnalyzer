@@ -1,9 +1,5 @@
 package src_en.info;
 
-import java.io.IOException;
-
-import src_en.analyzer.RX.RX_Analyzer;
-
 public class RX_Info {
 	
 	// 실제 패킷 내용
@@ -295,4 +291,26 @@ public class RX_Info {
 		this.scanResult = scanResult;
 	}
 	
+	public static String getRxHandleContent(RX_Info rx) {
+		String content = "";
+		
+		if ((rx != null) && rx.isRTU() && rx.isCRCError()) {
+			content += String.format("[  Warning!  Incorrect CRC : 0x%04x", rx.getCrc() & 0xffff);
+			
+			if((rx.getExpectedCrc() & 0xffff) != 0x0000) {
+				content += String.format("  /  Correct CRC : 0x%04x  ]", rx.getExpectedCrc() & 0xffff);
+			}else {
+				content += "  ]";
+			}
+		}
+
+		if (rx.isException()) {
+			if ((rx != null) && rx.isRTU() && rx.isCRCError()) {
+				content += System.lineSeparator();
+			}
+			content += String.format("[  Warning!  RX is Exception Response = 0x%02x : %s  ]", rx.getExceptionCode(), rx.getExceptionContent());
+		}
+		
+		return content;
+	}	
 }
