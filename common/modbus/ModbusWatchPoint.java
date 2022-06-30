@@ -489,6 +489,32 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 		sb.append(String.format(" <font color='blue'>Register Address ( HEX )</font> : %s%s%s\n\n",point.getRegisterAddrHexString() ,Util.separator, Util.separator));
 		
 		sb.append(String.format(" <font color='blue'>Decimal</font> : %d%s%s\n",lastValue ,Util.separator, Util.separator));
+		
+		String hexString = String.format("%016X", lastValue);
+		String A = hexString.substring(0, 4);
+		String B = hexString.substring(4, 8);
+		String C = hexString.substring(8, 12);
+		String D = hexString.substring(12, 16);
+		
+		String hex = "";
+		if(point.getDataType().startsWith("TWO")) {
+			hex = (Util.colorGreen("0x") + D);
+			
+		}else if (point.getDataType().startsWith("FOUR")) {
+			hex = (Util.colorGreen("0x") + C) + " ";
+			hex += (Util.colorGreen("0x") + D);
+			
+		}else if (point.getDataType().startsWith("EIGHT")) {
+			hex = (Util.colorGreen("0x") + A) + " ";
+			hex += (Util.colorGreen("0x") + B) + " ";
+			hex += (Util.colorGreen("0x") + C) + " ";
+			hex += (Util.colorGreen("0x") + D);
+			
+		}else {
+			hex = (Util.colorGreen("0x") + D);
+		}
+		sb.append(String.format(" <font color='blue'>Hexadecimal</font> : %s%s%s\n",hex ,Util.separator, Util.separator));
+		
 		sb.append(String.format(" <font color='blue'>Binary</font> : "));
 		for(int i = 0; i < bitCount; i++) {
 			long bitStatus = (lastValue >> i) & 1;
