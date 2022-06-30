@@ -58,6 +58,7 @@ import src_ko.util.Util;
 
 public class ModbusMonitorFrame extends JFrame {
 
+	public static ModbusWatchPoint selectedPoint = null;
 	public static ArrayList<ModbusWatchPoint> pointList;
 	public static JTable pointTable;	
 	
@@ -264,6 +265,7 @@ public class ModbusMonitorFrame extends JFrame {
 				int row = pointTable.getSelectedRow();
 				int index = Integer.parseInt(pointTable.getValueAt(row, 0).toString());
 				ModbusWatchPoint point = pointList.get(index-1);
+				selectedPoint = point;
 				
 				String findIndex = point.getText(addrTypeComboBox.getSelectedItem().toString());
 				int textLength = findIndex.length();
@@ -281,6 +283,7 @@ public class ModbusMonitorFrame extends JFrame {
 				int row = pointTable.getSelectedRow();
 				int index = Integer.parseInt(pointTable.getValueAt(row, 0).toString());
 				ModbusWatchPoint point = pointList.get(index-1);
+				selectedPoint = point;
 				
 				String findIndex = point.getText(addrTypeComboBox.getSelectedItem().toString());
 				int textLength = findIndex.length();
@@ -305,6 +308,7 @@ public class ModbusMonitorFrame extends JFrame {
 					
 					int index = Integer.parseInt(pointTable.getValueAt(selectedIndex[0], 0).toString());
 					ModbusWatchPoint point = pointList.get(index-1);
+					selectedPoint = point;
 					
 					String findIndex = point.getText(addrTypeComboBox.getSelectedItem().toString());
 					int textLength = findIndex.length();
@@ -404,6 +408,7 @@ public class ModbusMonitorFrame extends JFrame {
 				
 				lastAddrFormat = addrTypeComboBox.getSelectedItem().toString();
 				
+				String selectedText = log.getSelectedText();
 				JScrollBar scrollbar = log_scrollPane.getVerticalScrollBar();
 				int scrollPosition = scrollbar.getValue();
 		    	
@@ -428,6 +433,20 @@ public class ModbusMonitorFrame extends JFrame {
 				    	scrollbar.setValue(scrollPosition);
 				    }
 				});
+				
+				if(pointTable != null && pointTable.getRowCount() > 0 && selectedPoint != null && log.getSelectionColor() == Color.GREEN) {
+					if(selectedText != null && selectedText.split(".  \\[")[0].equalsIgnoreCase(String.valueOf(selectedPoint.getIndex()))) {
+						String findIndex = selectedPoint.getText(addrTypeComboBox.getSelectedItem().toString());
+						int textLength = findIndex.length();
+						
+						int start = log.getText().indexOf(findIndex);
+						int end = start + textLength;
+						
+						log.setSelectionColor(Color.GREEN);
+						log.getCaret().setSelectionVisible(true);
+						log.select(start, end);
+					}
+				}
 				
 				updateTable(pointTable);
 			}
@@ -876,6 +895,7 @@ public class ModbusMonitorFrame extends JFrame {
 									if(ModbusMonitor.isRunning) return;
 									
 									pointList = null;
+									selectedPoint = null;
 									resetTable(pointTable, null);
 									
 									ArrayList<ModbusWatchPoint> pointList = getPointList();
