@@ -33,6 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -403,7 +404,10 @@ public class ModbusMonitorFrame extends JFrame {
 				
 				lastAddrFormat = addrTypeComboBox.getSelectedItem().toString();
 				
-				if(pointList != null && pointList.size() > 0) {
+				JScrollBar scrollbar = log_scrollPane.getVerticalScrollBar();
+				int scrollPosition = scrollbar.getValue();
+		    	
+		    	if(pointList != null && pointList.size() > 0) {
 					switch(lastAddrFormat) {
 						case "Modbus (DEC)" :
 							log.setText(log_modbus_dec.toString());
@@ -418,6 +422,12 @@ public class ModbusMonitorFrame extends JFrame {
 							break;
 					}
 				}
+				
+				SwingUtilities.invokeLater(new Runnable() {
+				    @Override public void run() {
+				    	scrollbar.setValue(scrollPosition);
+				    }
+				});
 				
 				updateTable(pointTable);
 			}
