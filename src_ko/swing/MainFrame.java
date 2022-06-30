@@ -789,16 +789,16 @@ public class MainFrame extends JFrame {
 	}
 	
 	public static void activeConnection() {
-		connectionMenu.add(new JSeparator());
-		connectionMenu.add(modbusMonitor_V1);
-		connectionMenu.add(new JSeparator());
-		connectionMenu.add(modbusMonitor_V2);
-		connectionMenu.add(new JSeparator());
-		connectionMenu.add(simpleValueScan);
+//		connectionMenu.add(new JSeparator());
+//		connectionMenu.add(simpleValueScan);
 		connectionMenu.add(new JSeparator());
 		connectionMenu.add(exceptionScan);							
 		connectionMenu.add(new JSeparator());
 		connectionMenu.add(realTime);
+		connectionMenu.add(new JSeparator());
+		connectionMenu.add(modbusMonitor_V1);
+		connectionMenu.add(new JSeparator());
+		connectionMenu.add(modbusMonitor_V2);
 	}
 	
 	public static void activeUtil() {
