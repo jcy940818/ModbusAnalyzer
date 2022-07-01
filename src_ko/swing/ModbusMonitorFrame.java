@@ -1685,14 +1685,47 @@ public class ModbusMonitorFrame extends JFrame {
 		    @Override public void run() {
 		    	
 		    	if(p != null && p.length > 0) {
+		    		ModbusWatchPoint point = p[0];
+		    		
 		    		log.append(content);
 					log.append(System.lineSeparator());
 					log_scrollPane.getVerticalScrollBar().setValue(log_scrollPane.getVerticalScrollBar().getMaximum());
 					
-					PerfData perfData = p[0].getData();
-					String modbus_dec = String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), p[0].getIndex(), p[0].getDecCounter());
-					String register_dec = String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), p[0].getIndex(), p[0].getRegCounter());
-					String register_hex = String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), p[0].getIndex(), p[0].getHexCounter());
+					PerfData perfData = point.getData();
+					
+					String modbus_dec = null;
+					String register_dec = null;
+					String register_hex = null;
+					
+					boolean hasName = !point.getDisplayName().trim().equalsIgnoreCase("") && point.getDisplayName().trim().length() > 0;
+					
+					if(hasName) {
+						modbus_dec = String.format("%d.  [ %s ] = %s   ( %s = %s )", 
+								point.getIndex(), 
+								point.getDecCounter(), 
+								PerfData.getPerfPureValue(perfData), 
+								point.getDisplayName(), 
+								PerfData.getPerfContent(point, perfData));
+						
+						register_dec = String.format("%d.  [ %s ] = %s   ( %s = %s )", 
+								point.getIndex(), 
+								point.getRegCounter(), 
+								PerfData.getPerfPureValue(perfData),
+								point.getDisplayName(), 
+								PerfData.getPerfContent(point, perfData));
+						
+						register_hex = String.format("%d.  [ %s ] = %s   ( %s = %s )", 
+								point.getIndex(), 
+								point.getHexCounter(), 
+								PerfData.getPerfPureValue(perfData),
+								point.getDisplayName(), 
+								PerfData.getPerfContent(point, perfData));
+					}else {
+						modbus_dec = String.format("%d.  [ %s ] = %s", point.getIndex(), point.getDecCounter(), PerfData.getPerfPureValue(perfData));
+						register_dec = String.format("%d.  [ %s ] = %s", point.getIndex(), point.getRegCounter(), PerfData.getPerfPureValue(perfData));
+						register_hex = String.format("%d.  [ %s ] = %s", point.getIndex(), point.getHexCounter(), PerfData.getPerfPureValue(perfData));
+					}
+					
 					writeLogAddrType(modbus_dec, register_dec, register_hex);
 		    	}else {
 		    		log.append(content);

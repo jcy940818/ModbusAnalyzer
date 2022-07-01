@@ -459,21 +459,67 @@ public class ModbusAgent {
 					ModbusWatchPoint point = monitor.points.get(cmd);
 					PerfData perfData = point.getData();
 					
+					boolean hasName = !point.getDisplayName().trim().equalsIgnoreCase("") && point.getDisplayName().trim().length() > 0;
+					
 					switch(ModbusMonitorFrame.addrTypeComboBox.getSelectedItem().toString()){
 						case "Modbus (DEC)" :
-							ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), point.getIndex(), point.getDecCounter()), point);
+							if(hasName) {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s   ( %s = %s )", 
+										point.getIndex(), 
+										point.getDecCounter(), 
+										PerfData.getPerfPureValue(perfData), 
+										point.getDisplayName(), 
+										PerfData.getPerfContent(point, perfData)),
+										point);
+							}else {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s", point.getIndex(), point.getDecCounter(), PerfData.getPerfPureValue(perfData)), point);	
+							}
+							
 							break;
 							
 						case "Register (DEC)" :
-							ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), point.getIndex(), point.getRegCounter()), point);
+							if(hasName) {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s   ( %s = %s )", 
+										point.getIndex(), 
+										point.getRegCounter(), 
+										PerfData.getPerfPureValue(perfData),
+										point.getDisplayName(), 
+										PerfData.getPerfContent(point, perfData)), 
+										point);
+							}else {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s", point.getIndex(), point.getRegCounter(), PerfData.getPerfPureValue(perfData)), point);	
+							}
+							
 							break;
 							
 						case "Register (HEX)" :
-							ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), point.getIndex(), point.getHexCounter()), point);
+							if(hasName) {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s   ( %s = %s )", 
+										point.getIndex(), 
+										point.getHexCounter(), 
+										PerfData.getPerfPureValue(perfData),
+										point.getDisplayName(), 
+										PerfData.getPerfContent(point, perfData)),
+										point);
+							}else {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s", point.getIndex(), point.getHexCounter(), PerfData.getPerfPureValue(perfData)), point);
+							}
+							
 							break;
 							
 						default :
-							ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = " + PerfData.getPerfPureValue(perfData), point.getIndex(), point.getDecCounter()), point);
+							if(hasName) {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s   ( %s = %s )", 
+										point.getIndex(), 
+										point.getDecCounter(), 
+										PerfData.getPerfPureValue(perfData), 
+										point.getDisplayName(), 
+										PerfData.getPerfContent(point, perfData)),
+										point);
+							}else {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s", point.getIndex(), point.getDecCounter(), PerfData.getPerfPureValue(perfData)), point);	
+							}
+							
 							break;
 					}
 				}
