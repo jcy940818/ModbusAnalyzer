@@ -564,18 +564,22 @@ public class ModbusAgent {
 		}finally {
 			ModbusMonitor.isRunning = false;
 			
-			ModbusMonitorFrame.resetTable(ModbusMonitorFrame.pointTable, null);
-			if(ModbusMonitorFrame.pointList != null && ModbusMonitorFrame.pointList.size() > 0) {
-				ModbusMonitorFrame.addRecord(ModbusMonitorFrame.pointTable, ModbusMonitorFrame.pointList);
+			if(ModbusMonitorFrame.pointTable != null) {
+				
+				ModbusMonitorFrame.resetTable(ModbusMonitorFrame.pointTable, null);
+				if(ModbusMonitorFrame.pointList != null && ModbusMonitorFrame.pointList.size() > 0) {
+					ModbusMonitorFrame.addRecord(ModbusMonitorFrame.pointTable, ModbusMonitorFrame.pointList);
+				}
+				
+				try {
+					ModbusMonitorFrame.setTableStyle(ModbusMonitorFrame.pointTable, ModbusMonitorFrame.search_textField.getText());
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+				
 			}
 			
-			try {
-				ModbusMonitorFrame.setTableStyle(ModbusMonitorFrame.pointTable, ModbusMonitorFrame.search_textField.getText());
-			}catch(Exception ex) {
-				ex.printStackTrace();
-			}
-			
-		}
+		}// finally
 			
 	}// modbusCommunicate
 	

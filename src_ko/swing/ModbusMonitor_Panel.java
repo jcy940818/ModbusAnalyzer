@@ -422,6 +422,11 @@ public class ModbusMonitor_Panel extends JPanel {
 								
 								ArrayList<ModbusWatchPoint> pointList = getSelectedModbusPoint(pointTable);								
 								
+								// 인덱스를 초기화
+								for(ModbusWatchPoint point : pointList) {
+									point.setIndex(0);
+								}
+								
 								ModbusMonitor monitor = new ModbusMonitor();
 								monitor.setType((isRTU) ? ModbusMonitor.TYPE_RTU : ModbusMonitor.TYPE_TCP);
 								monitor.setUnitID(getMonitorUnitID());
@@ -432,7 +437,7 @@ public class ModbusMonitor_Panel extends JPanel {
 								SwingUtilities.invokeLater(new Runnable() {
 								    @Override public void run() {
 								    	updateTable(pointTable);
-								    	setFocusMultipleRows(pointTable, selectedRows);
+								    	TableUtil.setFocusMultipleRows(pointTable, selectedRows);
 								    }
 								});
 								
@@ -785,17 +790,31 @@ public class ModbusMonitor_Panel extends JPanel {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				try {
-					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-						send_Button.doClick();
-					}
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) send_Button.doClick();
+					int row = pointTable.getSelectedRow();
+					ModbusWatchPoint point = (ModbusWatchPoint) pointTable.getValueAt(row, 1);
+					if(point != null)ModbusMonitorFrame.focusPoint(point);
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
 			}
+
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+				int row = pointTable.getSelectedRow();
+				ModbusWatchPoint point = (ModbusWatchPoint) pointTable.getValueAt(row, 1);
+				if(point != null)ModbusMonitorFrame.focusPoint(point);
+			}
 		});
 		pointTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				if (e.getButton() == 1) { } // 왼쪽 클릭
+				
+				if (e.getButton() == 1) { 
+					int row = pointTable.getSelectedRow();
+					ModbusWatchPoint point = (ModbusWatchPoint) pointTable.getValueAt(row, 1);
+					if(point != null)ModbusMonitorFrame.focusPoint(point);
+				} // 왼쪽 클릭
+				
 				if (e.getButton() == 1 && e.getClickCount() == 2) {
 					// 왼쪽 버튼 더블 클릭
 
@@ -1620,22 +1639,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		}
 		
 		resetTable(table, content);
-	}
-	
-	public void setFocusMultipleRows(JTable table, int[] rows) {
-		if(table == null || rows == null || rows.length < 1) return;
-
-		int columnCount = table.getColumnCount();
-		int firstRow = rows[0];
-		
-		for(int i = 0; i < columnCount; i++) {
-			table.changeSelection(firstRow, i, true, false);
-		}
-		
-		for(int i = 0; i < rows.length; i++) {
-			table.getSelectionModel().addSelectionInterval(rows[i], rows[i]);
-		}
-	}
+	}	
 	
 	public static void doTableFilter(boolean clickedEnter) {
 		if(search_TextField == null && useFilter == null) return;

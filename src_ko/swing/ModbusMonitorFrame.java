@@ -15,7 +15,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.IOException;
@@ -52,6 +51,7 @@ import common.modbus.ModbusCellRenderer;
 import common.modbus.ModbusMonitor;
 import common.modbus.ModbusWatchPoint;
 import common.util.JavaScript;
+import common.util.TableUtil;
 import src_ko.agent.ClientSocket;
 import src_ko.agent.ModbusAgent;
 import src_ko.util.Util;
@@ -72,9 +72,9 @@ public class ModbusMonitorFrame extends JFrame {
 	public static String IP;
 	public static int PORT;
 	
-	public static JScrollPane log_scrollPane;
-	private JScrollPane table_scrollPane;
-	public static JTextArea log;
+	public static JScrollPane log_scrollPane = new JScrollPane();
+	private JScrollPane table_scrollPane = new JScrollPane();
+	public static JTextArea log = new JTextArea();
 	public static StringBuilder log_modbus_dec = new StringBuilder();
 	public static StringBuilder log_register_dec = new StringBuilder();
 	public static StringBuilder log_register_hex = new StringBuilder();
@@ -86,6 +86,17 @@ public class ModbusMonitorFrame extends JFrame {
 	public static JRadioButton radio_modbusTCP; // TCP 라디오 버튼
 	public static JRadioButton radio_modbusRTU; // RTU 라디오 버튼
 	public static JComboBox addrTypeComboBox; // 주소 형식 콤보박스
+	static {
+		addrTypeComboBox = new JComboBox();
+		addrTypeComboBox.setModel(new DefaultComboBoxModel(
+				new String[] {
+						"Modbus (DEC)",
+						"Register (DEC)", 
+						"Register (HEX)"
+						}));
+		addrTypeComboBox.setSelectedIndex(1);
+	}
+	
 	public static JTextField transactionId_text; // 트랜잭션 아이디 텍스트 필드
 	public static JComboBox unitID_comboBox; // 장비 번호 콤보박스
 	public static JTextField timeout_text; // 타임아웃 텍스트 필드
@@ -2066,6 +2077,39 @@ public class ModbusMonitorFrame extends JFrame {
 		setTableStyle(pointTable, formula);
 	}
 	
+	
+	public static void focusPoint(ModbusWatchPoint point) {
+		
+		if(point != null
+			&& pointTable != null 
+			&& pointTable.getRowCount() > 0 
+			&& pointList != null 
+			&& pointList.size() > 0 
+			&& pointList.contains(point)) {
+			
+			SwingUtilities.invokeLater(new Runnable() {
+			    @Override public void run() {
+			    	
+					int rowNum = point.getIndex() - 1;
+					pointTable.clearSelection();
+					pointTable.addRowSelectionInterval(rowNum, rowNum);
+					pointTable.addColumnSelectionInterval(0, pointTable.getColumnCount() - 1);
+			    	
+			    	String findIndex = point.getText(addrTypeComboBox.getSelectedItem().toString());
+					int textLength = findIndex.length();
+					
+					int start = log.getText().indexOf(findIndex);
+					int end = start + textLength;
+					
+					log.setSelectionColor(Color.GREEN);
+					log.getCaret().setSelectionVisible(true);
+					log.select(start, end);
+			    	
+			    }
+			});
+			
+		}
+	}
 	
 	
 	public static ArrayList<ModbusWatchPoint> getSelectedPointList(){

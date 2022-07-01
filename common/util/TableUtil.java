@@ -15,4 +15,19 @@ public class TableUtil {
 		th.repaint();
 	}
 	
+	public static void setFocusMultipleRows(JTable table, int... rows) {
+		if(table == null || rows == null || rows.length < 1) return;
+
+		int columnCount = table.getColumnCount();
+		int firstRow = rows[0];
+		
+		for(int i = 0; i < columnCount; i++) {
+			table.changeSelection(firstRow, i, true, false);
+		}
+		
+		for(int i = 0; i < rows.length; i++) {
+			table.getSelectionModel().addSelectionInterval(rows[i], rows[i]);
+		}
+	}
+	
 }
