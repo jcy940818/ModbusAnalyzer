@@ -200,7 +200,7 @@ public class MainFrame extends JFrame {
 		mk119Menu.add(new JSeparator());
 		
 		// MK119 ¸Þ´º : XML Generator ¸Þ´º
-		xmlGeneratorMenu = new JMenu("MK119 : Protocol XML Generate   ");
+		xmlGeneratorMenu = new JMenu("MK119 : Protocol XML Generator   ");
 		xmlGeneratorMenu.setForeground(new Color(0, 100, 0));
 		xmlGeneratorMenu.setHorizontalAlignment(SwingConstants.LEFT);
 		xmlGeneratorMenu.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 14));
