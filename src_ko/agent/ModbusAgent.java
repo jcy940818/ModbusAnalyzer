@@ -572,7 +572,10 @@ public class ModbusAgent {
 				}
 				
 				try {
-					ModbusMonitorFrame.setTableStyle(ModbusMonitorFrame.pointTable, ModbusMonitorFrame.search_textField.getText());
+					String formula = ModbusMonitorFrame.search_textField.getText();
+					if(formula != null) formula = formula.toLowerCase().replace("only", "");
+					
+					ModbusMonitorFrame.setTableStyle(ModbusMonitorFrame.pointTable, formula);
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
