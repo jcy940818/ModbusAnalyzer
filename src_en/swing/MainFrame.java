@@ -156,19 +156,19 @@ public class MainFrame extends JFrame {
 		
 		
 		// Connection ¸Þ´º - Simple Value Scan (Á¶°Ç½Ä ½ºÄµ)
-		simpleValueScan = new JMenuItem("Simple Value Scan : One Register for each Request");
+		simpleValueScan = new JMenuItem("Simple Value Scan : Check Register Value");
 		simpleValueScan.setForeground(Color.BLACK);
 		simpleValueScan.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 14));		
 		
 		
 		// Connection ¸Þ´º - Exception Scan (¿¹¿Ü ½ºÄµ)
-		exceptionScan = new JMenuItem("Exception Scan : One Register for each Request");
+		exceptionScan = new JMenuItem("Exception Scan : Check Exception Response");
 		exceptionScan.setForeground(Color.BLACK);
 		exceptionScan.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 14));		
 		
 		
 		// Connection ¸Þ´º - Real Time Monitoring (½Ç½Ã°£ ¸ð´ÏÅÍ¸µ)
-		realTime = new JMenuItem("Real-Time Monitoring : Check the Real-time Data");
+		realTime = new JMenuItem("Real-Time Monitoring : Check Real-time Data");
 		realTime.setForeground(Color.BLACK);
 		realTime.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 14));
 				
