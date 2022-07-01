@@ -199,27 +199,58 @@ public class MainFrame extends JFrame {
 		utilMenu.setForeground(Color.BLACK);
 		utilMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		utilMenu.setHorizontalAlignment(SwingConstants.CENTER);
-		utilMenu.setFont(new Font("맑은 고딕", Font.BOLD, 15));		
+		utilMenu.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		
-		// Util 메뉴 : XML Generator 메뉴
+		
+				
+		
+		// MK119 메뉴
+		mk119Menu = new JMenu("   MK119   ");
+		mk119Menu.setForeground(new Color(0, 100, 0));
+		mk119Menu.setBorder(new LineBorder(new Color(0, 0, 0)));
+		mk119Menu.setHorizontalAlignment(SwingConstants.CENTER);
+		mk119Menu.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+								
+		// MK119 메뉴 : Admin Console 조회
+		JMenuItem mk119Lite = new JMenuItem("MK119 : MK119 Lite");
+		mk119Lite.setHorizontalAlignment(SwingConstants.LEFT);
+		mk119Lite.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+		mk119Lite.setForeground(new Color(0, 100, 0));
+		mk119Lite.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				showMK119Login("MK119Lite");
+			}
+		});
+		mk119Menu.add(mk119Lite);
+		mk119Menu.add(new JSeparator());
+		
+		// MK119 메뉴 : XML 뷰어
+		JMenuItem xmlViewer = new JMenuItem("MK119 : 프로토콜 검색 & XML 뷰어     ");
+		xmlViewer.setForeground(new Color(0, 100, 0));
+		xmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
+		xmlViewer.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+		mk119Menu.add(xmlViewer);
+		mk119Menu.add(new JSeparator());
+		
+		// MK119 메뉴 : XML Generator 메뉴
 		xmlGeneratorMenu = new JMenu("MK119 : 프로토콜 성능 XML 생성   ");
-		xmlGeneratorMenu.setForeground(Color.BLACK);
 		xmlGeneratorMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
+		xmlGeneratorMenu.setForeground(new Color(0, 100, 0));
 		xmlGeneratorMenu.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlGeneratorMenu.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
+		xmlGeneratorMenu.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 		xmlGeneratorMenu.setBorderPainted(false);
-		utilMenu.add(xmlGeneratorMenu);
-		utilMenu.add(new JSeparator());
+		mk119Menu.add(xmlGeneratorMenu);
+		mk119Menu.add(new JSeparator());
 		
-		// Util 메뉴 : 프로토콜 리스트 다운로드
+		// MK119 메뉴 : 프로토콜 리스트 다운로드
 		JMenuItem protocolListDownload = new JMenuItem("MK119 : 프로토콜 리스트 다운로드");
-		protocolListDownload.setForeground(Color.BLACK);
+		protocolListDownload.setForeground(new Color(0, 100, 0));
 		protocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
-		protocolListDownload.setFont(new Font("맑은 고딕", Font.PLAIN, 14));		
-		utilMenu.add(protocolListDownload);
+		protocolListDownload.setFont(new Font("맑은 고딕", Font.BOLD, 14));		
+		mk119Menu.add(protocolListDownload);
+		mk119Menu.add(new JSeparator());
 		
-		
-		// Util 메뉴 - XML Generator : Modbus
+		// MK119 메뉴 : XML Generator : Modbus
 		JMenuItem xmlGenerator_Modbus = new JMenuItem("XML Generator : Modbus");
 		xmlGenerator_Modbus.setForeground(Color.BLACK);
 		xmlGenerator_Modbus.setHorizontalAlignment(SwingConstants.LEFT);
@@ -244,7 +275,7 @@ public class MainFrame extends JFrame {
 		xmlGeneratorMenu.add(new JSeparator());
 		
 		
-		// Util 메뉴 - XML Generator : Custom Modbus
+		// MK119 메뉴 : XML Generator : Custom Modbus
 		JMenuItem xmlGenerator_CustomModbus = new JMenuItem("XML Generator : Custom Modbus");
 		xmlGenerator_CustomModbus.setForeground(Color.BLACK);
 		xmlGenerator_CustomModbus.setHorizontalAlignment(SwingConstants.LEFT);
@@ -270,7 +301,7 @@ public class MainFrame extends JFrame {
 		xmlGeneratorMenu.add(new JSeparator());
 		
 		
-		// Util 메뉴 - XML Generator : Common
+		// MK119 메뉴 : XML Generator : Common
 		JMenuItem xmlGenerator_Common = new JMenuItem("XML Generator : Common");
 		xmlGenerator_Common.setForeground(Color.BLACK);
 		xmlGenerator_Common.setHorizontalAlignment(SwingConstants.LEFT);
@@ -294,7 +325,7 @@ public class MainFrame extends JFrame {
 		xmlGeneratorMenu.add(new JSeparator());
 		
 		
-		// Util 메뉴 - XML Generator : SNMP
+		// MK119 메뉴 : XML Generator : SNMP
 		JMenuItem xmlGenerator_SNMP = new JMenuItem("XML Generator : SNMP");
 		xmlGenerator_SNMP.setForeground(Color.BLACK);
 		xmlGenerator_SNMP.setHorizontalAlignment(SwingConstants.LEFT);
@@ -318,7 +349,7 @@ public class MainFrame extends JFrame {
 		xmlGeneratorMenu.add(xmlGenerator_SNMP);		
 		xmlGeneratorMenu.add(new JSeparator());
 		
-		// Util 메뉴 - XML Generator : Agent
+		// MK119 메뉴 : XML Generator : Agent
 		JMenuItem xmlGenerator_Agent = new JMenuItem("XML Generator : Agent");
 		xmlGenerator_Agent.setForeground(Color.BLACK);
 		xmlGenerator_Agent.setHorizontalAlignment(SwingConstants.LEFT);
@@ -339,11 +370,11 @@ public class MainFrame extends JFrame {
 				
 			}
 		});
-//		xmlGeneratorMenu.add(xmlGenerator_Agent);
-//		xmlGeneratorMenu.add(new JSeparator());
+//				xmlGeneratorMenu.add(xmlGenerator_Agent);
+//				xmlGeneratorMenu.add(new JSeparator());
 		
 		
-		// Util 메뉴 - XML Generator : Control
+		// MK119 메뉴 : XML Generator : Control
 		JMenuItem xmlGenerator_Control = new JMenuItem("XML Generator : Control");
 		xmlGenerator_Control.setForeground(Color.BLACK);
 		xmlGenerator_Control.setHorizontalAlignment(SwingConstants.LEFT);
@@ -365,35 +396,8 @@ public class MainFrame extends JFrame {
 			}
 		});
 		xmlGeneratorMenu.add(xmlGenerator_Control);
-				
 		
-		// MK119 메뉴
-		mk119Menu = new JMenu("   MK119   ");
-		mk119Menu.setForeground(new Color(0, 100, 0));
-		mk119Menu.setBorder(new LineBorder(new Color(0, 0, 0)));
-		mk119Menu.setHorizontalAlignment(SwingConstants.CENTER);
-		mk119Menu.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-								
-		// MK119 메뉴 : Admin Console 조회
-		JMenuItem mk119Lite = new JMenuItem("MK119 : MK119 Lite");
-		mk119Lite.setHorizontalAlignment(SwingConstants.LEFT);
-		mk119Lite.setFont(new Font("맑은 고딕", Font.BOLD, 14));
-		mk119Lite.setForeground(new Color(0, 100, 0));
-		mk119Lite.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				showMK119Login("MK119Lite");
-			}
-		});
-		mk119Menu.add(mk119Lite);
-		mk119Menu.add(new JSeparator());
 		
-		// MK119 메뉴 : : XML 뷰어
-		JMenuItem xmlViewer = new JMenuItem("MK119 : 프로토콜 & XML 뷰어     ");
-		xmlViewer.setForeground(new Color(0, 100, 0));
-		xmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlViewer.setFont(new Font("맑은 고딕", Font.BOLD, 14));
-		mk119Menu.add(xmlViewer);
-		mk119Menu.add(new JSeparator());
 		
 		// MK119 메뉴 - MK119 : 데이터베이스 조회
 		JMenuItem mk119Link = new JMenuItem("MK119 : 데이터베이스 조회");
