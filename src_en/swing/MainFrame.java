@@ -182,26 +182,66 @@ public class MainFrame extends JFrame {
 		utilMenu.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 
 		
-		// Util 메뉴 : XML Generator 메뉴
-		xmlGeneratorMenu = new JMenu("MK119 : Create Watch Point XML File   ");
-		xmlGeneratorMenu.setForeground(Color.BLACK);
-		xmlGeneratorMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
+		
+		
+		// MK119 메뉴
+		mk119Menu = new JMenu("   MK119   ");
+		mk119Menu.setForeground(new Color(0, 100, 0));
+		mk119Menu.setBorder(new LineBorder(new Color(0, 0, 0)));
+		mk119Menu.setHorizontalAlignment(SwingConstants.CENTER);
+		mk119Menu.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		
+		// MK119 메뉴 : XML 뷰어
+		JMenuItem xmlViewer = new JMenuItem("MK119 : Protocol XML Viewer     ");
+		xmlViewer.setForeground(new Color(0, 100, 0));
+		xmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
+		xmlViewer.setFont(new Font("맑은 고딕", Font.BOLD, 14));		
+		mk119Menu.add(xmlViewer);
+		mk119Menu.add(new JSeparator());
+		
+		// MK119 메뉴 : XML Generator 메뉴
+		xmlGeneratorMenu = new JMenu("MK119 : Protocol XML Generate   ");
+		xmlGeneratorMenu.setForeground(new Color(0, 100, 0));
 		xmlGeneratorMenu.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlGeneratorMenu.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
+		xmlGeneratorMenu.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+		xmlGeneratorMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		xmlGeneratorMenu.setBorderPainted(false);
-		utilMenu.add(xmlGeneratorMenu);
-		utilMenu.add(new JSeparator());
+		mk119Menu.add(xmlGeneratorMenu);
+		mk119Menu.add(new JSeparator());
 		
-		// Util 메뉴 : 프로토콜 리스트 다운로드
+		// MK119 메뉴 : 프로토콜 리스트 다운로드
 		JMenuItem protocolListDownload = new JMenuItem("MK119 : Protocol List Download");
-		protocolListDownload.setForeground(Color.BLACK);
+		protocolListDownload.setForeground(new Color(0, 100, 0));
 		protocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
-		protocolListDownload.setFont(new Font("맑은 고딕", Font.PLAIN, 14));		
-		utilMenu.add(protocolListDownload);
+		protocolListDownload.setFont(new Font("맑은 고딕", Font.BOLD, 14));		
+		mk119Menu.add(protocolListDownload);
+		mk119Menu.add(new JSeparator());
+		
+		// MK119 메뉴 : XML Generator : Common
+		JMenuItem xmlGenerator_Common = new JMenuItem("XML Generator : Common");
+		xmlGenerator_Common.setForeground(Color.BLACK);
+		xmlGenerator_Common.setHorizontalAlignment(SwingConstants.LEFT);
+		xmlGenerator_Common.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
+		xmlGenerator_Common.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if(!CommonXmlGeneratorFrame.isExist) {
+					new CommonXmlGeneratorFrame();
+				 }else {
+					 StringBuilder sb = new StringBuilder();
+					 sb.append(Util.colorRed("Common XML Frame Already Exists") + Util.separator + "\n");
+					 sb.append("Common XML Frame is already open" + Util.separator + "\n");
+					 Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+					 return;
+				 }
+			}
+		});
+		xmlGeneratorMenu.add(xmlGenerator_Common);
+		xmlGeneratorMenu.add(new JSeparator());
 		
 		
-		
-		// Util 메뉴 - XML Generator : Modbus
+		// MK119 메뉴 : XML Generator : Modbus
 		JMenuItem xmlGenerator_Modbus = new JMenuItem("XML Generator : Modbus");
 		xmlGenerator_Modbus.setForeground(Color.BLACK);
 		xmlGenerator_Modbus.setHorizontalAlignment(SwingConstants.LEFT);
@@ -226,7 +266,7 @@ public class MainFrame extends JFrame {
 		xmlGeneratorMenu.add(new JSeparator());
 		
 		
-		// Util 메뉴 - XML Generator : Custom Modbus
+		// MK119 메뉴 : XML Generator : Custom Modbus
 		JMenuItem xmlGenerator_CustomModbus = new JMenuItem("XML Generator : Custom Modbus");
 		xmlGenerator_CustomModbus.setForeground(Color.BLACK);
 		xmlGenerator_CustomModbus.setHorizontalAlignment(SwingConstants.LEFT);
@@ -249,34 +289,13 @@ public class MainFrame extends JFrame {
 			}
 		});
 		xmlGeneratorMenu.add(xmlGenerator_CustomModbus);
-		xmlGeneratorMenu.add(new JSeparator());
 		
 		
-		// Util 메뉴 - XML Generator : Common
-		JMenuItem xmlGenerator_Common = new JMenuItem("XML Generator : Common");
-		xmlGenerator_Common.setForeground(Color.BLACK);
-		xmlGenerator_Common.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlGenerator_Common.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
-		xmlGenerator_Common.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				if(!CommonXmlGeneratorFrame.isExist) {
-					new CommonXmlGeneratorFrame();
-				 }else {
-					 StringBuilder sb = new StringBuilder();
-					 sb.append(Util.colorRed("Common XML Frame Already Exists") + Util.separator + "\n");
-					 sb.append("Common XML Frame is already open" + Util.separator + "\n");
-					 Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-					 return;
-				 }
-			}
-		});
-		xmlGeneratorMenu.add(xmlGenerator_Common);
-//		xmlGeneratorMenu.add(new JSeparator());
 		
 		
-		// Util 메뉴 - XML Generator : SNMP
+		
+		
+		// MK119 메뉴 : XML Generator : SNMP
 		JMenuItem xmlGenerator_SNMP = new JMenuItem("XML Generator : SNMP");
 		xmlGenerator_SNMP.setForeground(Color.BLACK);
 		xmlGenerator_SNMP.setHorizontalAlignment(SwingConstants.LEFT);
@@ -300,7 +319,7 @@ public class MainFrame extends JFrame {
 //		xmlGeneratorMenu.add(xmlGenerator_SNMP);		
 //		xmlGeneratorMenu.add(new JSeparator());
 		
-		// Util 메뉴 - XML Generator : Agent
+		// MK119 메뉴 : XML Generator : Agent
 		JMenuItem xmlGenerator_Agent = new JMenuItem("XML Generator : Agent");
 		xmlGenerator_Agent.setForeground(Color.BLACK);
 		xmlGenerator_Agent.setHorizontalAlignment(SwingConstants.LEFT);
@@ -325,7 +344,7 @@ public class MainFrame extends JFrame {
 //		xmlGeneratorMenu.add(new JSeparator());
 		
 		
-		// Util 메뉴 - XML Generator : Control
+		// MK119 메뉴 :  - XML Generator : Control
 		JMenuItem xmlGenerator_Control = new JMenuItem("XML Generator : Control");
 		xmlGenerator_Control.setForeground(Color.BLACK);
 		xmlGenerator_Control.setHorizontalAlignment(SwingConstants.LEFT);
@@ -347,23 +366,8 @@ public class MainFrame extends JFrame {
 			}
 		});
 //		xmlGeneratorMenu.add(xmlGenerator_Control);
-		
-		// MK119 메뉴
-		mk119Menu = new JMenu("   MK119   ");
-		mk119Menu.setForeground(new Color(0, 100, 0));
-		mk119Menu.setBorder(new LineBorder(new Color(0, 0, 0)));
-		mk119Menu.setHorizontalAlignment(SwingConstants.CENTER);
-		mk119Menu.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		
-		// MK119 메뉴 : XML 뷰어
-		JMenuItem xmlViewer = new JMenuItem("MK119 : Protocol & XML Viewer     ");
-		xmlViewer.setForeground(new Color(0, 100, 0));
-		xmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlViewer.setFont(new Font("맑은 고딕", Font.BOLD, 14));		
-		mk119Menu.add(xmlViewer);
-		mk119Menu.add(new JSeparator());
 								
-		// Database 메뉴 - MK119 : 데이터베이스 조회
+		// MK119 메뉴 :  - MK119 : 데이터베이스 조회
 		JMenuItem mk119Link = new JMenuItem("MK119 : Database inquiry");
 		mk119Link.setForeground(new Color(0, 100, 0));
 		mk119Link.setHorizontalAlignment(SwingConstants.LEFT);
@@ -371,7 +375,7 @@ public class MainFrame extends JFrame {
 		mk119Menu.add(mk119Link);
 		mk119Menu.add(new JSeparator());
 		
-		// Database 메뉴 - Stored Procedure : 저장 프로시저
+		// MK119 메뉴 :  - Stored Procedure : 저장 프로시저
 		JMenuItem storedProcedure = new JMenuItem("MK119 : Execute Stored Procedure");
 		storedProcedure.setForeground(new Color(0, 100, 0));
 		storedProcedure.setHorizontalAlignment(SwingConstants.LEFT);
@@ -387,7 +391,7 @@ public class MainFrame extends JFrame {
 		moonMenu.setFont(new Font("맑은 고딕", Font.BOLD, 15));				
 		
 		// Moon 메뉴 : 간편한 XML 조회
-		JMenuItem moonXmlViewer = new JMenuItem("MK119 : Protocol & XML Viewer");
+		JMenuItem moonXmlViewer = new JMenuItem("MK119 : Protocol XML Viewer");
 		moonXmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
 		moonXmlViewer.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 		moonXmlViewer.setForeground(Color.BLUE);
@@ -743,12 +747,12 @@ public class MainFrame extends JFrame {
 	}
 	
 	public static void activeMK119() {
-		menuBar.add(mk119Menu, 3);
+		menuBar.add(mk119Menu, 2);
 		menuBar.doLayout();
 	}
 	
 	public static void activeMoon() {
-		menuBar.add(moonMenu, 4);
+		menuBar.add(moonMenu, 3);
 		menuBar.doLayout();
 	}
 	
