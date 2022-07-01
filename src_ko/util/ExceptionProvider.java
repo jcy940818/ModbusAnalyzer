@@ -126,9 +126,40 @@ public class ExceptionProvider {
 			return sb.toString();
 		}else {
 			return null;
-		}		
+		}
 	}
 	
+	public static String getRxLengthCheckResult(TX_Info tx, RX_Info rx) {
+		
+		// 기능코드 3, 4 번 일때만 수행한다
+		if(!(tx.getFunctionCode() >= 0x03 && tx.getFunctionCode() <= 0x04)
+			|| !(rx.getFunctionCode() >= 0x03 && rx.getFunctionCode() <= 0x04)
+			|| rx == null
+			|| rx.isException()
+			|| rx.isCRCError()) {
+			return null;
+		}
+		
+		int requestCount = tx.getRequestCount();
+		int readByteCount = rx.getReadByteCount();
+		
+		if((requestCount * 2) == readByteCount) {
+			// 올바른 응답 내용 일 경우
+			return null;
+		}else {
+			// 모드버스 기능코드 3, 4번 일 경우에
+			// 응답 패킷의 Length 정보는 TX의 요청개수 * 2 이다 (레지스터 하나에 2Byte 이기 때문에)
+			
+			StringBuilder sb = new StringBuilder("[  Warning!  Wrong RX Data Length : TX Request Count( ");
+			sb.append(requestCount);
+			sb.append(" ) * 2 is not ");
+			sb.append("RX Data Length( ");
+			sb.append(readByteCount);
+			sb.append(" )  ]");
+			
+			return sb.toString();
+		}
+	}
 
 	public static void checkRxLength(TX_Info tx, RX_Info rx) {
 		

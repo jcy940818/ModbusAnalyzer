@@ -438,6 +438,12 @@ public class ModbusAgent {
 					ModbusMonitorFrame.writeLog(content);
 				}
 				
+				// ( TX 요청 개수 * 2 == RX 데이터 길이 ) 체크
+				String lengthCheck = ExceptionProvider.getRxLengthCheckResult(tx, rx);
+				if(lengthCheck != null) {
+					ModbusMonitorFrame.writeLog(lengthCheck);
+				}
+				
 				// 예외(Exception) 응답 체크
 				String error = RX_Info.getRxHandleContent(rx);
 				if(!error.equalsIgnoreCase("") && error.length() >= 1) {
