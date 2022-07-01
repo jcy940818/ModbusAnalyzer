@@ -182,7 +182,7 @@ public class MainFrame extends JFrame {
 		simpleValueScan.setFont(new Font("맑은 고딕", Font.PLAIN, 14));	
 		
 		// Connection 메뉴 - Exception Scan (예외 스캔)
-		exceptionScan = new JMenuItem("Exception Scan : 예외 스캔");
+		exceptionScan = new JMenuItem("Exception Scan : 예외 응답 검사");
 		exceptionScan.setForeground(Color.BLACK);
 		exceptionScan.setFont(new Font("맑은 고딕", Font.PLAIN, 14));		
 		
@@ -225,7 +225,7 @@ public class MainFrame extends JFrame {
 		mk119Menu.add(new JSeparator());
 		
 		// MK119 메뉴 : XML 뷰어
-		JMenuItem xmlViewer = new JMenuItem("MK119 : 프로토콜 검색 & XML 뷰어     ");
+		JMenuItem xmlViewer = new JMenuItem("MK119 : 프로토콜 XML 뷰어     ");
 		xmlViewer.setForeground(new Color(0, 100, 0));
 		xmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
 		xmlViewer.setFont(new Font("맑은 고딕", Font.BOLD, 14));
@@ -233,7 +233,7 @@ public class MainFrame extends JFrame {
 		mk119Menu.add(new JSeparator());
 		
 		// MK119 메뉴 : XML Generator 메뉴
-		xmlGeneratorMenu = new JMenu("MK119 : 프로토콜 성능 XML 생성   ");
+		xmlGeneratorMenu = new JMenu("MK119 : 프로토콜 XML 생성   ");
 		xmlGeneratorMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		xmlGeneratorMenu.setForeground(new Color(0, 100, 0));
 		xmlGeneratorMenu.setHorizontalAlignment(SwingConstants.LEFT);
@@ -249,6 +249,30 @@ public class MainFrame extends JFrame {
 		protocolListDownload.setFont(new Font("맑은 고딕", Font.BOLD, 14));		
 		mk119Menu.add(protocolListDownload);
 		mk119Menu.add(new JSeparator());
+		
+		// MK119 메뉴 : XML Generator : Common
+		JMenuItem xmlGenerator_Common = new JMenuItem("XML Generator : Common");
+		xmlGenerator_Common.setForeground(Color.BLACK);
+		xmlGenerator_Common.setHorizontalAlignment(SwingConstants.LEFT);
+		xmlGenerator_Common.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
+		xmlGenerator_Common.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if(!CommonXmlGeneratorFrame.isExist) {
+					new CommonXmlGeneratorFrame();
+				 }else {
+					 StringBuilder sb = new StringBuilder();
+					 sb.append(Util.colorRed("Common XML Frame Already Exists") + Util.separator + "\n");
+					 sb.append("Common XML 생성 프레임이 이미 열려있습니다" + Util.separator + "\n");
+					 Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+					 return;
+				 }
+			}
+		});
+		xmlGeneratorMenu.add(xmlGenerator_Common);
+		xmlGeneratorMenu.add(new JSeparator());
+		
 		
 		// MK119 메뉴 : XML Generator : Modbus
 		JMenuItem xmlGenerator_Modbus = new JMenuItem("XML Generator : Modbus");
@@ -298,30 +322,6 @@ public class MainFrame extends JFrame {
 			}
 		});
 		xmlGeneratorMenu.add(xmlGenerator_CustomModbus);
-		xmlGeneratorMenu.add(new JSeparator());
-		
-		
-		// MK119 메뉴 : XML Generator : Common
-		JMenuItem xmlGenerator_Common = new JMenuItem("XML Generator : Common");
-		xmlGenerator_Common.setForeground(Color.BLACK);
-		xmlGenerator_Common.setHorizontalAlignment(SwingConstants.LEFT);
-		xmlGenerator_Common.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
-		xmlGenerator_Common.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				if(!CommonXmlGeneratorFrame.isExist) {
-					new CommonXmlGeneratorFrame();
-				 }else {
-					 StringBuilder sb = new StringBuilder();
-					 sb.append(Util.colorRed("Common XML Frame Already Exists") + Util.separator + "\n");
-					 sb.append("Common XML 생성 프레임이 이미 열려있습니다" + Util.separator + "\n");
-					 Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-					 return;
-				 }
-			}
-		});
-		xmlGeneratorMenu.add(xmlGenerator_Common);
 		xmlGeneratorMenu.add(new JSeparator());
 		
 		
@@ -424,7 +424,7 @@ public class MainFrame extends JFrame {
 		moonMenu.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		
 		// Moon 메뉴 : 간편한 XML 조회
-		JMenuItem moonXmlViewer = new JMenuItem("MK119 : 프로토콜 & XML 뷰어");
+		JMenuItem moonXmlViewer = new JMenuItem("MK119 : 프로토콜 XML 뷰어");
 		moonXmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
 		moonXmlViewer.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 		moonXmlViewer.setForeground(Color.BLUE);
@@ -811,13 +811,13 @@ public class MainFrame extends JFrame {
 	}
 	
 	public static void activeMK119() {
-		menuBar.add(mk119Menu, 3);
+		menuBar.add(mk119Menu, 2);
 		menuBar.doLayout();
 	}
 	
 	
 	public static void activeMoon() {
-		menuBar.add(moonMenu, 4);
+		menuBar.add(moonMenu, 3);
 		menuBar.doLayout();
 	}
 	

@@ -280,7 +280,7 @@ public class PremiumLoginFrame extends JFrame {
 	}
 	
 	public static void activeHiddenMenu() {
-		MainFrame.activeUtil(); // 유틸 메뉴 활성화 ( 현재 유틸 기능 미사용 )
+		//MainFrame.activeUtil(); // 유틸 메뉴 활성화 ( 현재 유틸 기능 미사용 )
 		MainFrame.activeMK119(); // 데이터베이스 메뉴 활성화
 		MainFrame.activeConnection(); // Connection 프리미엄 기능 활성화 (조건식 스캔, 예외 스캔)		
 		ModbusAgent_Panel.activationControl(); // 모드버스 제어 기능 활성화
