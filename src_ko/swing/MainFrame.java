@@ -397,17 +397,17 @@ public class MainFrame extends JFrame {
 		
 		// MK119 메뉴 - MK119 : 데이터베이스 조회
 		JMenuItem mk119Link = new JMenuItem("MK119 : 데이터베이스 조회");
-		mk119Link.setForeground(Color.BLACK);
+		mk119Link.setForeground(new Color(0, 100, 0));
 		mk119Link.setHorizontalAlignment(SwingConstants.LEFT);
-		mk119Link.setFont(new Font("맑은 고딕", Font.PLAIN, 14));		
+		mk119Link.setFont(new Font("맑은 고딕", Font.BOLD, 14));		
 		mk119Menu.add(mk119Link);
 		mk119Menu.add(new JSeparator());
 		
 		// MK119 메뉴 - Stored Procedure : 저장 프로시저
 		JMenuItem storedProcedure = new JMenuItem("MK119 : 저장 프로시저 수행");
-		storedProcedure.setForeground(Color.BLACK);
+		storedProcedure.setForeground(new Color(0, 100, 0));
 		storedProcedure.setHorizontalAlignment(SwingConstants.LEFT);
-		storedProcedure.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
+		storedProcedure.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 		mk119Menu.add(storedProcedure);
 		
 		

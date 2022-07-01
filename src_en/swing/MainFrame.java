@@ -365,17 +365,17 @@ public class MainFrame extends JFrame {
 								
 		// Database ∏ﬁ¥∫ - MK119 : µ•¿Ã≈Õ∫£¿ÃΩ∫ ¡∂»∏
 		JMenuItem mk119Link = new JMenuItem("MK119 : Database inquiry");
-		mk119Link.setForeground(Color.BLACK);
+		mk119Link.setForeground(new Color(0, 100, 0));
 		mk119Link.setHorizontalAlignment(SwingConstants.LEFT);
-		mk119Link.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));		
+		mk119Link.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));		
 		mk119Menu.add(mk119Link);
 		mk119Menu.add(new JSeparator());
 		
 		// Database ∏ﬁ¥∫ - Stored Procedure : ¿˙¿Â «¡∑ŒΩ√¿˙
 		JMenuItem storedProcedure = new JMenuItem("MK119 : Execute Stored Procedure");
-		storedProcedure.setForeground(Color.BLACK);
+		storedProcedure.setForeground(new Color(0, 100, 0));
 		storedProcedure.setHorizontalAlignment(SwingConstants.LEFT);
-		storedProcedure.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 14));		
+		storedProcedure.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));	
 		mk119Menu.add(storedProcedure);
 		
 		
