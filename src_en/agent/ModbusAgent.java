@@ -5,15 +5,29 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import com.serotonin.modbus4j.base.KeyedModbusLocator;
+import com.serotonin.modbus4j.base.ReadFunctionGroup;
+import com.serotonin.modbus4j.locator.BaseLocator;
+
+import common.agent.PerfData;
+import common.modbus.ModbusMonitor;
+import common.modbus.ModbusWatchPoint;
+import src_en.analyzer.RX.RX_Analyzer;
+import src_en.analyzer.TX.TX_Analyzer;
 import src_en.info.RX_Info;
 import src_en.info.TX_Info;
 import src_en.swing.ExceptionScan_Panel;
 import src_en.swing.ModbusAgent_Panel;
+import src_en.swing.ModbusMonitorFrame;
 import src_en.swing.RealTime_Panel;
 import src_en.swing.SimpleValueScan_Panel;
+import src_en.util.ExceptionProvider;
 import src_en.util.Timer;
 import src_en.util.Util;
 
@@ -310,6 +324,265 @@ public class ModbusAgent {
 			}
 			
 	}// exceptionScan
+	
+	
+	public static void modbusCommunicate(ModbusMonitor monitor, Socket client, ArrayList<ModbusWatchPoint> pointList, int timeout, int maxCount) throws IOException, EOFException, SocketException {
+		try {
+			ModbusMonitor.isRunning = true;
+			clientSocket = client;
+			TX_Info tx = null;
+			RX_Info rx = null;
+
+			if(clientSocket == null) {
+				return;
+			}else {
+				clientSocket.setSoTimeout((timeout >= 0) ? timeout : ClientSocket.RESPONSE_TIMEOUT);
+			}
+			
+			// 포인트에 인덱스를 지정 후 파싱
+			for(ModbusWatchPoint point : pointList) {
+				point.setIndex(monitor.index++);
+				monitor.parseCommand(point);
+			}
+			
+			monitor.init(monitor.getType(), client.getInetAddress().getHostAddress(), client.getPort());
+			if(!(maxCount > 2000) && !(maxCount < 0)) {
+				monitor.setMaxReadBitCount(maxCount);
+			}
+			if(!(maxCount > 125) && !(maxCount < 0)) {
+				monitor.setMaxReadRegisterCount(maxCount);	
+			}
+			
+			List<ReadFunctionGroup> functionGroupList = monitor.getFuntionGroupList();
+			
+			// 요청 패킷 전송전에 포인트들의 데이터를 초기화
+			Collections.sort(pointList);
+			ModbusWatchPoint.pointDataClear(pointList);
+			
+			// 포인트 리스트 저장
+			ModbusMonitorFrame.pointList = pointList;
+			
+			// 모드버스 모니터 프레임 패킷 로그 초기화
+			ModbusMonitorFrame.cleaerLog();
+			
+			for(ReadFunctionGroup fcGroup : functionGroupList) {
+				
+				// 요청 패킷 처리중 사용자의 요청에 의해 통신이 중지되었을 경우
+				if(!ModbusMonitor.isRunning) {
+					return;
+				}
+				
+				String txPacket = monitor.sendCommand(fcGroup, clientSocket);
+				tx = new TX_Info();
+				tx.setContent(txPacket);
+				tx = (monitor.getType() == ModbusMonitor.TYPE_RTU) ? new TX_Analyzer().rtuAnalysis(tx) : new TX_Analyzer().tcpAnalysis(tx);
+				
+				String modbusType = (monitor.getType() == ModbusMonitor.TYPE_RTU) ? "Modbus-RTU" : "Modbus-TCP";
+				StringBuilder sb = new StringBuilder("┌───── Request Summary ──────┐");
+				sb.append(System.lineSeparator());
+				sb.append(String.format("│ Modbus Type : %s\t│", modbusType));
+				sb.append(System.lineSeparator());
+				sb.append(String.format("│ Unit ID : %s\t\t\t│", tx.getUnitId()));
+				sb.append(System.lineSeparator());
+				sb.append(String.format("│ Function Code : %d\t\t│", tx.getFunctionCode()));
+				sb.append(System.lineSeparator());
+				sb.append(String.format("│ Start Address (Modbus DEC) : %s\t│", tx.getModbusAddrString()));
+				sb.append(System.lineSeparator());
+				sb.append(String.format("│ Start Address (Register DEC) : %s\t│", tx.getStartAddress()));
+				sb.append(System.lineSeparator());
+				sb.append(String.format("│ Start Address (Register HEX) : %s\t│", tx.getRegisterAddrHexString()));
+				sb.append(System.lineSeparator());
+				sb.append(String.format("│ Request Count : %s\t\t│", tx.getRequestCount()));
+				sb.append(System.lineSeparator());
+				sb.append(String.format("└────────────────────┘", tx.getRequestCount()));				
+				
+				ModbusMonitorFrame.writeLog(sb.toString());
+				ModbusMonitorFrame.writeLog(Timer.getServerTime() + " [ TX ] : " + txPacket);				
+				
+				
+				// 클라이언트 소켓 : TX 전송 완료 후 응답 대기중
+				if(ClientSocket.getCurrentTimeoutCount() >= 5) {
+					ClientSocket.setState(ClientSocket.NODE_CONDITION_COMMERR); // 통신 오류
+				}else {
+					ClientSocket.setState(ClientSocket.NODE_CONDITION_RESPONSE_WAITING); // 응답 대기중
+				}
+				
+				String rxPacket = null;
+				try {
+					rxPacket = monitor.parseResponsePacket(fcGroup, clientSocket);
+
+				}catch (SocketTimeoutException e) {
+					// 타임아웃시 해당 요청은 무효처리 후 다음 요청 전송
+					ModbusMonitorFrame.writeLog(Timer.getServerTime() + " [ Timeout ] : " + e.getMessage());
+					ModbusMonitorFrame.writeLog(System.lineSeparator() + System.lineSeparator() + System.lineSeparator() + System.lineSeparator());
+					
+					// 클라이언트 소켓 : 통신 오류
+					ClientSocket.incrementTimeoutCount();
+					if(ClientSocket.getCurrentTimeoutCount() >= 5) ClientSocket.setState(ClientSocket.NODE_CONDITION_COMMERR);
+					continue;
+				}
+				
+				ModbusMonitorFrame.writeLog(Timer.getServerTime() + " [ RX ] : " + rxPacket);
+				
+				rx = new RX_Info();
+				rx.setTxInfo(tx);
+				rx.setContent(rxPacket);
+				rx = (monitor.getType() == ModbusMonitor.TYPE_RTU) ? new RX_Analyzer().rtuAnalysis(rx) : new RX_Analyzer().tcpAnalysis(rx);
+				
+				// 데이터 불일치 체크
+				String content = ExceptionProvider.getCompareTxRxString(tx, rx);
+				if(content != null) {
+					ModbusMonitorFrame.writeLog(content);
+				}
+				
+				// ( TX 요청 개수 * 2 == RX 데이터 길이 ) 체크
+				String lengthCheck = ExceptionProvider.getRxLengthCheckResult(tx, rx);
+				if(lengthCheck != null) {
+					ModbusMonitorFrame.writeLog(lengthCheck);
+				}
+				
+				// 예외(Exception) 응답 체크
+				String error = RX_Info.getRxHandleContent(rx);
+				if(!error.equalsIgnoreCase("") && error.length() >= 1) {
+					ModbusMonitorFrame.writeLog(error);
+				}
+				
+				// 데이터 로그 기록
+				List locators = fcGroup.getLocators();
+				for (int i = 0; i < locators.size(); i++) {
+					KeyedModbusLocator keyLocator = (KeyedModbusLocator) locators.get(i);
+					BaseLocator locator = (BaseLocator) keyLocator.getLocator();
+					int cmd = monitor.locators.indexOf(locator);
+					ModbusWatchPoint point = monitor.points.get(cmd);
+					PerfData perfData = point.getData();
+					
+					boolean hasName = !point.getDisplayName().trim().equalsIgnoreCase("") && point.getDisplayName().trim().length() > 0;
+					
+					switch(ModbusMonitorFrame.addrTypeComboBox.getSelectedItem().toString()){
+						case "Modbus (DEC)" :
+							if(hasName) {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s   ( %s = %s )", 
+										point.getIndex(), 
+										point.getDecCounter(), 
+										PerfData.getPerfPureValue(perfData), 
+										point.getDisplayName(), 
+										PerfData.getPerfContent(point, perfData)),
+										point);
+							}else {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s", point.getIndex(), point.getDecCounter(), PerfData.getPerfPureValue(perfData)), point);	
+							}
+							
+							break;
+							
+						case "Register (DEC)" :
+							if(hasName) {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s   ( %s = %s )", 
+										point.getIndex(), 
+										point.getRegCounter(), 
+										PerfData.getPerfPureValue(perfData),
+										point.getDisplayName(), 
+										PerfData.getPerfContent(point, perfData)), 
+										point);
+							}else {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s", point.getIndex(), point.getRegCounter(), PerfData.getPerfPureValue(perfData)), point);	
+							}
+							
+							break;
+							
+						case "Register (HEX)" :
+							if(hasName) {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s   ( %s = %s )", 
+										point.getIndex(), 
+										point.getHexCounter(), 
+										PerfData.getPerfPureValue(perfData),
+										point.getDisplayName(), 
+										PerfData.getPerfContent(point, perfData)),
+										point);
+							}else {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s", point.getIndex(), point.getHexCounter(), PerfData.getPerfPureValue(perfData)), point);
+							}
+							
+							break;
+							
+						default :
+							if(hasName) {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s   ( %s = %s )", 
+										point.getIndex(), 
+										point.getDecCounter(), 
+										PerfData.getPerfPureValue(perfData), 
+										point.getDisplayName(), 
+										PerfData.getPerfContent(point, perfData)),
+										point);
+							}else {
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s", point.getIndex(), point.getDecCounter(), PerfData.getPerfPureValue(perfData)), point);	
+							}
+							
+							break;
+					}
+				}
+				
+				ModbusMonitorFrame.writeLog(System.lineSeparator() + System.lineSeparator() + System.lineSeparator() + System.lineSeparator());
+				
+				// 클라이언트 소켓 : 통신중 (요청패킷에 대한 응답패킷을 수신함)
+				ClientSocket.setState(ClientSocket.NODE_CONDITION_REGULAR);
+
+				// 클라이언트 소켓 : 응답패킷 수신시 응답 타임아웃 카운트 초기화
+				ClientSocket.resetTimeoutCount();
+			}
+			
+			return;
+							
+		} catch (EOFException e) {
+			// TX 전송 후 RX 대기 중 연결 끊김
+			ModbusAgent.waitingLostConnection(e);
+			return;
+			
+		}catch (SocketTimeoutException e) {	
+			ClientSocket.incrementTimeoutCount();
+			
+			if(ClientSocket.getCurrentTimeoutCount() >= 5) {
+				ClientSocket.setState(ClientSocket.NODE_CONDITION_COMMERR); // 클라이언트 소켓 : 통신 오류
+			}
+			return;
+			
+		} catch (SocketException e) {
+			// 장비의 소켓이 닫혀있음
+			ModbusAgent.serverSocketClosed(e);
+			return;
+			
+		} catch (NullPointerException e) {
+			clientSocket.close();
+			return;
+
+		} catch (Exception e) {
+			ModbusAgent.unknownException(e);
+			return;
+			
+		}finally {
+			ModbusMonitor.isRunning = false;
+			
+			if(ModbusMonitorFrame.pointTable != null) {
+				
+				ModbusMonitorFrame.resetTable(ModbusMonitorFrame.pointTable, null);
+				if(ModbusMonitorFrame.pointList != null && ModbusMonitorFrame.pointList.size() > 0) {
+					ModbusMonitorFrame.addRecord(ModbusMonitorFrame.pointTable, ModbusMonitorFrame.pointList);
+				}
+				
+				try {
+					String formula = ModbusMonitorFrame.search_textField.getText();
+					if(formula != null) formula = formula.toLowerCase().replace("only", "");
+					
+					ModbusMonitorFrame.setTableStyle(ModbusMonitorFrame.pointTable, formula);
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+				
+			}
+			
+		}// finally
+			
+	}// modbusCommunicate
+	
 	
 	public static void cleaerTempRxPacket() {
 		ModbusAgent.tempRxPacket = null;

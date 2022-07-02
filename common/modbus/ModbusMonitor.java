@@ -28,6 +28,7 @@ import com.serotonin.modbus4j.msg.ReadInputRegistersRequest;
 import com.serotonin.modbus4j.serial.rtu.RtuMessageRequest;
 
 import common.agent.PerfData;
+import moon.Moon;
 import src_ko.agent.ModbusAgent;
 import src_ko.util.PacketInputStream;
 import src_ko.util.PacketOutputStream;
@@ -92,9 +93,16 @@ public class ModbusMonitor{
 	}
 	
 	public static void sendRequest(Socket clientSocket, ModbusMonitor monitor, ArrayList<ModbusWatchPoint> pointList, int timeout, int maxCount) throws Exception{
-			// 현재 모니터가 통신중이라면 현재 요청은 무시
-			if(ModbusMonitor.isRunning) return;
-			ModbusAgent.modbusCommunicate(monitor, clientSocket, pointList, timeout, maxCount);
+		// 현재 모니터가 통신중이라면 현재 요청은 무시
+		if(ModbusMonitor.isRunning) return;
+		
+		if(Moon.isKorean()) {
+			
+			src_ko.agent.ModbusAgent.modbusCommunicate(monitor, clientSocket, pointList, timeout, maxCount);
+		}else {
+			
+			src_en.agent.ModbusAgent.modbusCommunicate(monitor, clientSocket, pointList, timeout, maxCount);
+		}
 	}
 
 	public synchronized int parseCommand(ModbusWatchPoint point) {

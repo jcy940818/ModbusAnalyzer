@@ -47,6 +47,8 @@ public class MainFrame extends JFrame {
 	private static JMenu utilMenu;
 	private static JMenu xmlGeneratorMenu;
 	
+	private static JMenuItem modbusMonitor_V1;
+	private static JMenuItem modbusMonitor_V2;
 	private static JMenuItem exceptionScan;
 	private static JMenuItem simpleValueScan;
 	private static JMenuItem realTime;
@@ -154,6 +156,19 @@ public class MainFrame extends JFrame {
 		modbusAgent.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 14));
 		connectionMenu.add(modbusAgent);
 		
+		// Connection ¸Þ´º - Modbus Monitor (¸ðµå¹ö½º ¸ð´ÏÅÍ V1)
+		modbusMonitor_V1 = new JMenuItem("Modbus Monitor : Modbus Monitor V1");
+		modbusMonitor_V1.setForeground(Color.BLACK);
+		modbusMonitor_V1.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 14));
+		modbusMonitor_V1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(!ModbusMonitorFrame.isExist) {
+					new ModbusMonitorFrame();							
+				 }else {
+					 ModbusMonitorFrame.existsFrame();
+				 }
+			}
+		});
 		
 		// Connection ¸Þ´º - Simple Value Scan (Á¶°Ç½Ä ½ºÄµ)
 		simpleValueScan = new JMenuItem("Simple Value Scan : Check Register Value");
@@ -733,12 +748,14 @@ public class MainFrame extends JFrame {
 	}	
 	
 	public static void activeConnection() {
-		connectionMenu.add(new JSeparator());
-		connectionMenu.add(simpleValueScan);
+//		connectionMenu.add(new JSeparator());
+//		connectionMenu.add(simpleValueScan);
 		connectionMenu.add(new JSeparator());
 		connectionMenu.add(exceptionScan);								
 		connectionMenu.add(new JSeparator());
 		connectionMenu.add(realTime);
+		connectionMenu.add(new JSeparator());
+		connectionMenu.add(modbusMonitor_V1);
 	}
 	
 	public static void activeUtil() {
