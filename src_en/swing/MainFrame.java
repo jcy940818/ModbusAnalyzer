@@ -186,14 +186,14 @@ public class MainFrame extends JFrame {
 		
 		// MK119 ∏ﬁ¥∫
 		mk119Menu = new JMenu("   MK119   ");
-		mk119Menu.setForeground(new Color(0, 100, 0));
+		mk119Menu.setForeground(Color.BLUE);
 		mk119Menu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		mk119Menu.setHorizontalAlignment(SwingConstants.CENTER);
 		mk119Menu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));
 		
 		// MK119 ∏ﬁ¥∫ : XML ∫‰æÓ
 		JMenuItem xmlViewer = new JMenuItem("MK119 : Protocol XML Viewer     ");
-		xmlViewer.setForeground(new Color(0, 100, 0));
+		xmlViewer.setForeground(Color.BLUE);
 		xmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
 		xmlViewer.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));		
 		mk119Menu.add(xmlViewer);
@@ -201,7 +201,7 @@ public class MainFrame extends JFrame {
 		
 		// MK119 ∏ﬁ¥∫ : XML Generator ∏ﬁ¥∫
 		xmlGeneratorMenu = new JMenu("MK119 : Protocol XML Generator   ");
-		xmlGeneratorMenu.setForeground(new Color(0, 100, 0));
+		xmlGeneratorMenu.setForeground(Color.BLUE);
 		xmlGeneratorMenu.setHorizontalAlignment(SwingConstants.LEFT);
 		xmlGeneratorMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));
 		xmlGeneratorMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -211,7 +211,7 @@ public class MainFrame extends JFrame {
 		
 		// MK119 ∏ﬁ¥∫ : «¡∑Œ≈‰ƒ› ∏ÆΩ∫∆Æ ¥ŸøÓ∑ŒµÂ
 		JMenuItem protocolListDownload = new JMenuItem("MK119 : Protocol List Download");
-		protocolListDownload.setForeground(new Color(0, 100, 0));
+		protocolListDownload.setForeground(Color.BLUE);
 		protocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
 		protocolListDownload.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));		
 		mk119Menu.add(protocolListDownload);
@@ -369,7 +369,7 @@ public class MainFrame extends JFrame {
 								
 		// MK119 ∏ﬁ¥∫ :  - MK119 : µ•¿Ã≈Õ∫£¿ÃΩ∫ ¡∂»∏
 		JMenuItem mk119Link = new JMenuItem("MK119 : Database inquiry");
-		mk119Link.setForeground(new Color(0, 100, 0));
+		mk119Link.setForeground(Color.BLUE);
 		mk119Link.setHorizontalAlignment(SwingConstants.LEFT);
 		mk119Link.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));		
 		mk119Menu.add(mk119Link);
@@ -377,7 +377,7 @@ public class MainFrame extends JFrame {
 		
 		// MK119 ∏ﬁ¥∫ :  - Stored Procedure : ¿˙¿Â «¡∑ŒΩ√¿˙
 		JMenuItem storedProcedure = new JMenuItem("MK119 : Execute Stored Procedure");
-		storedProcedure.setForeground(new Color(0, 100, 0));
+		storedProcedure.setForeground(Color.BLUE);
 		storedProcedure.setHorizontalAlignment(SwingConstants.LEFT);
 		storedProcedure.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));	
 		mk119Menu.add(storedProcedure);
@@ -386,7 +386,7 @@ public class MainFrame extends JFrame {
 		// Moon ∏ﬁ¥∫ (»˜µÁ ∏ﬁ¥∫)
 		moonMenu = new JMenu("   Moon   ");
 		moonMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
-		moonMenu.setForeground(Color.BLUE);
+		moonMenu.setForeground(new Color(0, 100, 0));
 		moonMenu.setHorizontalAlignment(SwingConstants.CENTER);
 		moonMenu.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15));				
 		
@@ -394,7 +394,7 @@ public class MainFrame extends JFrame {
 		JMenuItem moonXmlViewer = new JMenuItem("MK119 : Protocol XML Viewer");
 		moonXmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
 		moonXmlViewer.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));
-		moonXmlViewer.setForeground(Color.BLUE);
+		moonXmlViewer.setForeground(new Color(0, 100, 0));
 		moonMenu.add(moonXmlViewer);
 		moonMenu.add(new JSeparator());
 		
@@ -402,7 +402,7 @@ public class MainFrame extends JFrame {
 		JMenuItem moonProtocolListDownload = new JMenuItem("MK119 : Protocol List Download");
 		moonProtocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
 		moonProtocolListDownload.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 14));
-		moonProtocolListDownload.setForeground(Color.BLUE);
+		moonProtocolListDownload.setForeground(new Color(0, 100, 0));
 		moonMenu.add(moonProtocolListDownload);
 		
 		

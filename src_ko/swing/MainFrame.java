@@ -206,7 +206,7 @@ public class MainFrame extends JFrame {
 		
 		// MK119 메뉴
 		mk119Menu = new JMenu("   MK119   ");
-		mk119Menu.setForeground(new Color(0, 100, 0));
+		mk119Menu.setForeground(Color.BLUE);
 		mk119Menu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		mk119Menu.setHorizontalAlignment(SwingConstants.CENTER);
 		mk119Menu.setFont(new Font("맑은 고딕", Font.BOLD, 15));
@@ -215,7 +215,7 @@ public class MainFrame extends JFrame {
 		JMenuItem mk119Lite = new JMenuItem("MK119 : MK119 Lite");
 		mk119Lite.setHorizontalAlignment(SwingConstants.LEFT);
 		mk119Lite.setFont(new Font("맑은 고딕", Font.BOLD, 14));
-		mk119Lite.setForeground(new Color(0, 100, 0));
+		mk119Lite.setForeground(Color.BLUE);
 		mk119Lite.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				showMK119Login("MK119Lite");
@@ -226,7 +226,7 @@ public class MainFrame extends JFrame {
 		
 		// MK119 메뉴 : XML 뷰어
 		JMenuItem xmlViewer = new JMenuItem("MK119 : 프로토콜 XML 뷰어     ");
-		xmlViewer.setForeground(new Color(0, 100, 0));
+		xmlViewer.setForeground(Color.BLUE);
 		xmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
 		xmlViewer.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 		mk119Menu.add(xmlViewer);
@@ -235,7 +235,7 @@ public class MainFrame extends JFrame {
 		// MK119 메뉴 : XML Generator 메뉴
 		xmlGeneratorMenu = new JMenu("MK119 : 프로토콜 XML 생성   ");
 		xmlGeneratorMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
-		xmlGeneratorMenu.setForeground(new Color(0, 100, 0));
+		xmlGeneratorMenu.setForeground(Color.BLUE);
 		xmlGeneratorMenu.setHorizontalAlignment(SwingConstants.LEFT);
 		xmlGeneratorMenu.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 		xmlGeneratorMenu.setBorderPainted(false);
@@ -244,7 +244,7 @@ public class MainFrame extends JFrame {
 		
 		// MK119 메뉴 : 프로토콜 리스트 다운로드
 		JMenuItem protocolListDownload = new JMenuItem("MK119 : 프로토콜 리스트 다운로드");
-		protocolListDownload.setForeground(new Color(0, 100, 0));
+		protocolListDownload.setForeground(Color.BLUE);
 		protocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
 		protocolListDownload.setFont(new Font("맑은 고딕", Font.BOLD, 14));		
 		mk119Menu.add(protocolListDownload);
@@ -401,7 +401,7 @@ public class MainFrame extends JFrame {
 		
 		// MK119 메뉴 - MK119 : 데이터베이스 조회
 		JMenuItem mk119Link = new JMenuItem("MK119 : 데이터베이스 조회");
-		mk119Link.setForeground(new Color(0, 100, 0));
+		mk119Link.setForeground(Color.BLUE);
 		mk119Link.setHorizontalAlignment(SwingConstants.LEFT);
 		mk119Link.setFont(new Font("맑은 고딕", Font.BOLD, 14));		
 		mk119Menu.add(mk119Link);
@@ -409,7 +409,7 @@ public class MainFrame extends JFrame {
 		
 		// MK119 메뉴 - Stored Procedure : 저장 프로시저
 		JMenuItem storedProcedure = new JMenuItem("MK119 : 저장 프로시저 수행");
-		storedProcedure.setForeground(new Color(0, 100, 0));
+		storedProcedure.setForeground(Color.BLUE);
 		storedProcedure.setHorizontalAlignment(SwingConstants.LEFT);
 		storedProcedure.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 		mk119Menu.add(storedProcedure);
@@ -419,7 +419,7 @@ public class MainFrame extends JFrame {
 		// Moon 메뉴 (히든 메뉴)
 		moonMenu = new JMenu("   Moon   ");
 		moonMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
-		moonMenu.setForeground(Color.BLUE);
+		moonMenu.setForeground(new Color(0, 100, 0));
 		moonMenu.setHorizontalAlignment(SwingConstants.CENTER);
 		moonMenu.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		
@@ -427,7 +427,7 @@ public class MainFrame extends JFrame {
 		JMenuItem moonXmlViewer = new JMenuItem("MK119 : 프로토콜 XML 뷰어");
 		moonXmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
 		moonXmlViewer.setFont(new Font("맑은 고딕", Font.BOLD, 14));
-		moonXmlViewer.setForeground(Color.BLUE);
+		moonXmlViewer.setForeground(new Color(0, 100, 0));
 		moonMenu.add(moonXmlViewer);
 		moonMenu.add(new JSeparator());
 		
@@ -435,7 +435,7 @@ public class MainFrame extends JFrame {
 		JMenuItem moonProtocolListDownload = new JMenuItem("MK119 : 프로토콜 리스트 다운로드");
 		moonProtocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
 		moonProtocolListDownload.setFont(new Font("맑은 고딕", Font.BOLD, 14));
-		moonProtocolListDownload.setForeground(Color.BLUE);
+		moonProtocolListDownload.setForeground(new Color(0, 100, 0));
 		moonMenu.add(moonProtocolListDownload);
 		
 		
