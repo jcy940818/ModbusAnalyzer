@@ -67,7 +67,7 @@ public class ModbusMonitorFrame extends JFrame {
 	private JPanel actualPanel;
 	
 	// 클라이언트 소켓
-	public static Socket socket_ko = ModbusAgent.clientSocket;
+	public static Socket socket_en = ModbusAgent.clientSocket;
 	public static String IP;
 	public static int PORT;
 	
@@ -195,7 +195,7 @@ public class ModbusMonitorFrame extends JFrame {
 		
 		String[] unitIdValue = new String[255];
 		for(int i = 0; i < 255; i++) {
-			unitIdValue[i] = String.valueOf(i+1) + "번";
+			unitIdValue[i] = String.valueOf(i+1);
 		}
 		this.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
@@ -861,7 +861,7 @@ public class ModbusMonitorFrame extends JFrame {
 		dataType_comboBox.setBounds(434, 43, 382, 30);
 		reqFormPanel.add(dataType_comboBox);
 		
-		sendButton = new JButton("전 송");
+		sendButton = new JButton("Send");
 		sendButton.setForeground(Color.BLUE);
 		sendButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		sendButton.setFocusPainted(false);
@@ -875,10 +875,10 @@ public class ModbusMonitorFrame extends JFrame {
 					StringBuilder sb = new StringBuilder();
 					sb.append(String.format("%s%s%s\n", Util.colorRed("Modbus Monitor Already in communication"), Util.separator, Util.separator));
 					
-					sb.append("현재 모드버스 모니터가 마지막 요청에 대한 통신을 수행중입니다");
+					sb.append("The Modbus Monitor is currently communicating with the last request");
 					sb.append(Util.separator + Util.separator + "\n\n");
 					
-					sb.append(Util.colorBlue("현재 수행중인 통신을 중지 하시겠습니까?"));
+					sb.append(Util.colorBlue("Are you sure you want to stop the communication currently in progress?"));
 					sb.append(Util.separator + Util.separator + "\n");
 					
 					int userOption= Util.showConfirm(sb.toString());
@@ -915,8 +915,8 @@ public class ModbusMonitorFrame extends JFrame {
 										if(timeout == 0) {
 											StringBuilder sb = new StringBuilder();
 											sb.append(Util.colorRed("Infinite Timeout?\n"));
-											sb.append(String.format("타임아웃 설정값을 " + Util.colorBlue("0ms") + " 으로 설정하면 응답 패킷을 수신하기 전까지 무한히 대기합니다%s%s%s", Util.separator, Util.separator, "\n\n"));
-											sb.append(String.format("타임아웃 설정값을 무한으로 설정하고  통신하시겠습니까?%s%s%s",Util.separator, Util.separator, "\n"));
+											sb.append(String.format("If the timeout value is set to " + Util.colorBlue("0ms") + ", it waits indefinitely before receiving the response packet%s%s%s", Util.separator, Util.separator, "\n\n"));
+											sb.append(String.format("Do you really want to set the timeout to infinity and start?%s%s%s",Util.separator, Util.separator, "\n"));
 											
 											int isInfiniteTimeout = Util.showConfirm(sb.toString());
 											
@@ -929,7 +929,7 @@ public class ModbusMonitorFrame extends JFrame {
 										if(timeout < 0) {
 											StringBuilder sb = new StringBuilder();
 											sb.append(Util.colorRed("Timeout Field Error\n"));					
-											sb.append(String.format("응답 타임아웃은 " + Util.colorBlue("0ms") + " 이상의 정수만 입력 할 수 있습니다%s%s%s", Util.separator, Util.separator, "\n"));	
+											sb.append(String.format("Response timeout can only enter numeric values greater than " + Util.colorBlue("0ms") + "%s%s%s", Util.separator, Util.separator, "\n"));	
 											Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 											return;
 										}
@@ -938,7 +938,7 @@ public class ModbusMonitorFrame extends JFrame {
 										if(maxCount < 0) {
 											StringBuilder sb = new StringBuilder();
 											sb.append(Util.colorRed("Max Request Count Error\n"));
-											sb.append(String.format("최대 요청 개수는 " + Util.colorBlue("0개") + " 이상의 정수만 입력 할 수 있습니다%s%s%s", Util.separator, Util.separator, "\n"));
+											sb.append(String.format("Max Request Count can only enter numeric values greater than " + Util.colorBlue("0") + "%s%s%s", Util.separator, Util.separator, "\n"));
 											Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 											return;
 										}
@@ -950,7 +950,7 @@ public class ModbusMonitorFrame extends JFrame {
 										if(monitor.getType() == ModbusMonitor.TYPE_TCP) monitor.setTransactionID(getTid());
 															
 										// 모드버스 요청 전송
-										ModbusMonitor.sendRequest(socket_ko, monitor, pointList, timeout, maxCount);
+										ModbusMonitor.sendRequest(socket_en, monitor, pointList, timeout, maxCount);
 										
 									}
 							
@@ -958,7 +958,7 @@ public class ModbusMonitorFrame extends JFrame {
 									e.printStackTrace();
 									StringBuilder sb = new StringBuilder();
 									sb.append(Util.colorRed("Modbus Monitor Error\n"));
-									sb.append(Util.colorBlue("Modbus Monitor") + " 기능 수행중 처리 할 수 없는 예외가 발생하였습니다" + Util.separator + "\n\n");
+									sb.append("An unprocessable exception occurred during the " + Util.colorBlue("Modbus Monitoring") + Util.separator + "\n\n");
 									sb.append(String.format("Exception Message : %s\n", e.getMessage()));
 									Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 									
@@ -979,7 +979,7 @@ public class ModbusMonitorFrame extends JFrame {
 		});
 		reqFormPanel.add(sendButton);
 		
-		resetButton = new JButton("초기화");
+		resetButton = new JButton("Reset");
 		resetButton.setBounds(935, 43, 100, 30);
 		resetButton.setFocusPainted(false);
 		resetButton.setBackground(Color.WHITE);
@@ -992,7 +992,7 @@ public class ModbusMonitorFrame extends JFrame {
 				if(ModbusMonitor.isRunning) {
 					StringBuilder sb = new StringBuilder();
 					sb.append(String.format("%s%s%s\n", Util.colorRed("Reset operation is not possible"), Util.separator, Util.separator));
-					sb.append("모드버스 모니터의 통신 수행중에는 컴포넌트 초기화 작업을 수행 할 수 없습니다");
+					sb.append("The component reset operation cannot be performed while the Modbus Monitor is communicating");
 					sb.append(Util.separator + Util.separator + "\n");
 					Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
 					return;
@@ -1003,7 +1003,7 @@ public class ModbusMonitorFrame extends JFrame {
 		});
 		reqFormPanel.add(resetButton);
 		
-		connectButton = new JButton("연결 정보 입력");
+		connectButton = new JButton("Connect");
 		connectButton.setForeground(Color.BLACK);
 		connectButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		connectButton.setFocusPainted(false);
@@ -1039,7 +1039,7 @@ public class ModbusMonitorFrame extends JFrame {
 //				}
 //			}
 //		});
-		reqFormPanel.add(addSelectedPointList_Button);
+//		reqFormPanel.add(addSelectedPointList_Button);
 		
 		fontSize_label = new JLabel("Font Size");
 		fontSize_label.setBounds(1055, 10, 100, 24);
@@ -1221,7 +1221,7 @@ public class ModbusMonitorFrame extends JFrame {
 						}
 						
 						// ModbusAgent <=> ExceptionScan : Socket 동기화
-						socket_ko = ModbusAgent.clientSocket;
+						socket_en = ModbusAgent.clientSocket;
 						
 					} catch (InterruptedException e) {
 						return;
@@ -1274,7 +1274,7 @@ public class ModbusMonitorFrame extends JFrame {
 	}
 	
 	public int getMonitorUnitID() {
-		return Integer.parseInt(unitID_comboBox.getSelectedItem().toString().replace("번", "").trim());
+		return Integer.parseInt(unitID_comboBox.getSelectedItem().toString().trim());
 	}
 	
 	public int getAddress(JTextField addr_textField) {
@@ -1505,20 +1505,20 @@ public class ModbusMonitorFrame extends JFrame {
 			|| timeout_text.getText().length() == 0
 			|| maxCount_text.getText().length() == 0) {
 			
-			StringBuilder sb = new StringBuilder("<font color='red'>입력 필드 양식 오류</font>\n");
+			StringBuilder sb = new StringBuilder("<font color='red'>Input field form error</font>\n");
 			
 			// 트랜잭션 ID null 검사
 			if(!isRTU && transactionId_text.getText().length() == 0) {
 				nullCount++;
-				sb.append(Util.colorBlue("트랜잭션 ID"));					
+				sb.append(Util.colorBlue("Transaction ID"));					
 			}
 			
 			// 타임아웃 null 검사
 			if(timeout_text.getText().length() == 0) {					
 				if(nullCount > 0)
-					sb.append(Util.colorBlue(", 타임아웃"));
+					sb.append(Util.colorBlue(", Timeout"));
 				else						
-					sb.append(Util.colorBlue("타임아웃"));
+					sb.append(Util.colorBlue("Timeout"));
 				
 				nullCount++;
 			}
@@ -1526,14 +1526,14 @@ public class ModbusMonitorFrame extends JFrame {
 			// 최대 요청 개수 null 검사
 			if(maxCount_text.getText().length() == 0) {					
 				if(nullCount > 0)
-					sb.append(Util.colorBlue(", 최대 요청 개수"));
+					sb.append(Util.colorBlue(", Max Request Count"));
 				else						
-					sb.append(Util.colorBlue("최대 요청 개수"));
+					sb.append(Util.colorBlue("Max Request Count"));
 				
 				nullCount++;
 			}
 			
-			sb.append(" 정보를 입력 해주세요" + Util.separator + "\n");
+			sb.append(" information is missing" + Util.separator + "\n");
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 			isValid = false;			
 			
@@ -1545,21 +1545,21 @@ public class ModbusMonitorFrame extends JFrame {
 				|| timeout_text.getForeground() == Color.RED
 				|| maxCount_text.getForeground() == Color.RED) {
 			
-			StringBuilder sb = new StringBuilder("<font color='red'>입력 필드 양식 오류</font>\n");
-			sb.append("입력하신 ");								
+			StringBuilder sb = new StringBuilder("<font color='red'>Input field form error</font>\n");
+			sb.append("Please check the ");								
 			
 			// 시작주소 양식 검사
 			if(!isRTU && transactionId_text.getForeground() == Color.RED) {
 				invalidCount++;
-				sb.append(Util.colorBlue("트랜잭션 ID"));
+				sb.append(Util.colorBlue("Transaction ID"));
 			}
 			
 			// 타임아웃 양식 검사
 			if(timeout_text.getForeground() == Color.RED) {
 				if(invalidCount > 0)
-					sb.append(Util.colorBlue(", 타임아웃"));
+					sb.append(Util.colorBlue(", Timeout"));
 				else
-					sb.append(Util.colorBlue("타임아웃"));
+					sb.append(Util.colorBlue("Timeout"));
 				
 				invalidCount++;
 			}
@@ -1567,14 +1567,14 @@ public class ModbusMonitorFrame extends JFrame {
 			// 최대 요청 개수 양식 검사
 			if(maxCount_text.getForeground() == Color.RED) {
 				if(invalidCount > 0)
-					sb.append(Util.colorBlue(", 최대 요청 개수"));
+					sb.append(Util.colorBlue(", Max Request Count"));
 				else
-					sb.append(Util.colorBlue("최대 요청 개수"));
+					sb.append(Util.colorBlue("Max Request Count"));
 				
 				invalidCount++;
 			}
 							
-			sb.append(" 정보를 확인 해주세요" + Util.separator + "\n");
+			sb.append(" information you entered" + Util.separator + "\n");
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 			isValid = false;					
 			
@@ -1597,7 +1597,7 @@ public class ModbusMonitorFrame extends JFrame {
 		if(!formValid) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(String.format("%s%s%s\n", Util.colorRed("Form Validation Error"), Util.separator, Util.separator));
-			sb.append(String.format("%s", "모드버스 포인트의 " + Util.colorBlue("요청 시작 주소(Start Address)") +  " 정보를 확인해주세요"));
+			sb.append(String.format("%s", "Please check the " + Util.colorBlue("Start Address") +  " form"));
 			sb.append(Util.separator + Util.separator + Util.separator + "\n");
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 			startAddr_textField.requestFocus();
@@ -1608,11 +1608,11 @@ public class ModbusMonitorFrame extends JFrame {
 		formValid = formValid && !(method_textField.getForeground() == Color.RED);
 
 		if(!formValid) {
-			String method = (method_Button.getText().equals("Req Count")) ? "요청 개수(Req Count)" : "마지막 요청 주소(End Address)";
+			String method = (method_Button.getText().equals("Req Count")) ? "Request Count" : "End Address";
 			StringBuilder sb = new StringBuilder();
 			
 			sb.append(String.format("%s%s%s\n", Util.colorRed("Form Validation Error"), Util.separator, Util.separator));
-			sb.append(String.format("%s", "모드버스 포인트의 " + Util.colorBlue(method) + " 정보를 확인해주세요"));
+			sb.append(String.format("%s", "Please check the " + Util.colorBlue(method) + " form"));
 			sb.append(Util.separator + Util.separator + Util.separator + "\n");
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 			
@@ -1830,7 +1830,7 @@ public class ModbusMonitorFrame extends JFrame {
 	public static void existsFrame() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(Util.colorRed("Modbus Monitor Frame Already Exists") + Util.separator + "\n");
-		sb.append("Modbus Monitor 프레임이 이미 열려있습니다" + Util.separator + "\n");
+		sb.append("Modbus Monitor Frame is already open" + Util.separator + "\n");
 		Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 		return;
 	}
@@ -1873,7 +1873,7 @@ public class ModbusMonitorFrame extends JFrame {
 	}
 	
 	public static void resetTable(JTable table, Object[][] content){
-		String[] header = new String[] { "순 서", "기능코드", "주 소", "값" };
+		String[] header = new String[] { "index", "FC", "Address", "Value" };
 		table.setModel(new DefaultTableModel(content, header) {
 				boolean[] columnEditables = new boolean[] {
 						false, // 순 서 : 수정 불가
@@ -2146,10 +2146,10 @@ public class ModbusMonitorFrame extends JFrame {
 		String lastConnectionInfo = ClientSocket.getSimpleConnectedInfo();
 		
 		try {
-			socket_ko = ModbusAgent.clientSocket;
-			src_en.swing.ModbusAgent_Panel.socket_en = socket_ko;
+			socket_en = ModbusAgent.clientSocket;
+			src_ko.swing.ModbusAgent_Panel.socket_ko = socket_en;
 			
-			if( (socket_ko == null || socket_ko.isClosed()) && ClientSocket.getIsFirst()) {				
+			if( (socket_en == null || socket_en.isClosed()) && ClientSocket.getIsFirst()) {				
 				String[] connectionInfo = ClientSocket.getConnectionInfo();
 				IP = connectionInfo[0];
 				PORT = Integer.parseInt(connectionInfo[1]);
@@ -2157,7 +2157,7 @@ public class ModbusMonitorFrame extends JFrame {
 				src_en.swing.ModbusAgent_Panel.IP = IP;
 				src_en.swing.ModbusAgent_Panel.PORT = PORT;
 				
-			}else if(socket_ko == null) {
+			}else if(socket_en == null) {
 				String[] connectionInfo = ClientSocket.getConnectionInfo();
 				IP = connectionInfo[0];
 				PORT = Integer.parseInt(connectionInfo[1]);
@@ -2167,7 +2167,7 @@ public class ModbusMonitorFrame extends JFrame {
 			}else {
 				// 기존 연결되어있는 소켓일 경우 연결을 끊고 재접속을 시도한다.						
 				// 클라이언트 소켓 : 접속 끊김
-				socket_ko.close();						
+				socket_en.close();						
 				ClientSocket.setState(ClientSocket.NODE_CONDITION_DISCONNECTED);
 			}
 		}catch(IOException exception) {
@@ -2175,27 +2175,26 @@ public class ModbusMonitorFrame extends JFrame {
 		}
 		
 		try {
-			socket_ko = ClientSocket.getClientSocket(IP, PORT);
-			src_en.swing.ModbusAgent_Panel.socket_en = socket_ko;
+			socket_en = ClientSocket.getClientSocket(IP, PORT);
+			src_ko.swing.ModbusAgent_Panel.socket_ko = socket_en;
 			
 		}catch(Exception exception) {
 			StringBuilder msg = new StringBuilder();
-			msg.append("<font color='red'>접속 실패</font>\n");
-			msg.append("입력하신 연결 정보를 확인해주세요" + Util.separator + "\n");
+			msg.append("<font color='red'>Failed to connect</font>\n");
+			msg.append("Please check the connection information you entered" + Util.separator + Util.separator + "\n");					
 			Util.showMessage(msg.toString(), JOptionPane.ERROR_MESSAGE);
 		}
 		
-		if(socket_ko != null || ClientSocket.isCurrentConnected(socket_ko)) {
+		if(socket_en != null || ClientSocket.isCurrentConnected(socket_en)) {
 			// 접속 성공 : 컴포넌트 내용들을 모두 초기화한다	
-			ModbusAgent.clientSocket = socket_ko;
-			src_en.agent.ModbusAgent.clientSocket = socket_ko;
+			ModbusAgent.clientSocket = socket_en;
+			src_ko.agent.ModbusAgent.clientSocket = socket_en;
 			
 			setComponentEnabled(true);
 			
 			// 마지막 커넥션 정보와 다른 정보로 세션을  생성시 컴포넌트 초기화
 			if(!ClientSocket.getSimpleConnectedInfo().equalsIgnoreCase(lastConnectionInfo)) {
-				resetComponent();
-//				src_en.swing.ModbusMonitorFrame.resetComponent(); 영문버전 추가시 주석 해제
+				resetComponent();				
 			}
 			
 			// 사용자가 입력한 IP, port를 클라이언트 소켓의 마지막 연결 성공 정보에 저장

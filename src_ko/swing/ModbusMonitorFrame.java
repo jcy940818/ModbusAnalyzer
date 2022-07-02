@@ -2196,7 +2196,6 @@ public class ModbusMonitorFrame extends JFrame {
 			// 마지막 커넥션 정보와 다른 정보로 세션을  생성시 컴포넌트 초기화
 			if(!ClientSocket.getSimpleConnectedInfo().equalsIgnoreCase(lastConnectionInfo)) {
 				resetComponent();
-//				src_en.swing.ModbusMonitorFrame.resetComponent(); 영문버전 추가시 주석 해제
 			}
 			
 			// 사용자가 입력한 IP, port를 클라이언트 소켓의 마지막 연결 성공 정보에 저장

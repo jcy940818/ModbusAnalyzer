@@ -9,6 +9,7 @@ import common.perf.FmsPerfItem;
 import common.perf.Perf;
 import common.perf.PerfLabelStatusBean;
 import common.util.Calculator;
+import moon.Moon;
 import src_ko.agent.ModbusAgent;
 import src_ko.util.Util;
 
@@ -432,12 +433,21 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 		
 		String dataType = point.getDataType();
 		if(!dataType.contains(" INT ")){
-			StringBuilder sb = new StringBuilder();
-			sb.append("<font color='red'>Unsupported Data Type</font>\n");
-			sb.append(String.format("선택하신 포인트의 데이터 타입은 <font color='blue'>Check Bit Structure</font> 기능을 지원하지 않습니다%s\n", Util.separator));																				
-			sb.append(String.format("\n현재 선택된 포인트의 데이터 타입 : <font color='red'>%s</font>%s\n",dataType ,Util.separator));
-			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-			return;
+			if(Moon.isKorean()) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("<font color='red'>Unsupported Data Type</font>\n");
+				sb.append(String.format("선택하신 포인트의 데이터 타입은 <font color='blue'>Bit Structure</font> 기능을 지원하지 않습니다%s\n", Util.separator));																				
+				sb.append(String.format("\n현재 선택된 포인트의 데이터 타입 : <font color='red'>%s</font>%s\n",dataType ,Util.separator));
+				Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+				return;
+			}else {
+				StringBuilder sb = new StringBuilder();
+				sb.append("<font color='red'>Unsupported Data Type</font>\n");
+				sb.append(String.format("The %s you selected is not supported by <font color='blue'>Bit Structure</font> function%s\n", Util.colorBlue("Data Type"), Util.separator));																				
+				sb.append(String.format("\nThe currently selected Data type : <font color='red'>%s</font>%s\n",dataType ,Util.separator));
+				Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 		}
 		
 		int functionCode = point.getFunctionCode();
@@ -455,12 +465,21 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 		}
 		
 		if (!(functionCode == 3 || functionCode == 4)) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("<font color='red'>Unsupported Function Code</font>\n");
-			sb.append(String.format("현재 기능코드는 <font color='blue'>Check Bit Structure</font> 기능을 지원하지 않습니다%s\n", Util.separator));																				
-			sb.append(String.format("\n현재 선택된 기능코드 : <font color='red'>%s</font>%s\n",currentFunctionCode ,Util.separator));
-			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-			return;
+			if(Moon.isKorean()) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("<font color='red'>Unsupported Function Code</font>\n");
+				sb.append(String.format("현재 기능코드는 <font color='blue'>Bit Structure</font> 기능을 지원하지 않습니다%s\n", Util.separator));																				
+				sb.append(String.format("\n현재 선택된 기능코드 : <font color='red'>%s</font>%s\n",currentFunctionCode ,Util.separator));
+				Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+				return;	
+			}else {
+				StringBuilder sb = new StringBuilder();
+				sb.append("<font color='red'>Unsupported Function Code</font>\n");
+				sb.append(String.format("The %s you selected is not supported by <font color='blue'>Bit Structure</font> function%s\n", Util.colorBlue("Function Code"), Util.separator));																				
+				sb.append(String.format("\nThe currently selected Function Code : <font color='red'>%s</font>%s\n",currentFunctionCode ,Util.separator));
+				Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 		}
 		
 		int bitCount = 16; // Default : TWO BYTE (16Bit)
