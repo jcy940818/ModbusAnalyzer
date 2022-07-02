@@ -142,7 +142,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		imagePanel.setBackground(Color.WHITE);
 		imagePanel.setBounds(0, 55, 1050, 551);
 		imagePanel.setLayout(new BorderLayout(0, 0));
-//		infoPanel.add(imagePanel); 테스트
+		infoPanel.add(imagePanel);
 		
 		JLabel imageLabel = new JLabel();
 		imagePanel.add(imageLabel, BorderLayout.CENTER);
@@ -1210,9 +1210,7 @@ public class ModbusMonitor_Panel extends JPanel {
 			}
 		}.start();
 				
-		radio_modbusRTU.doClick();
-		
-		panel_ON(); // 테스트
+		radio_modbusRTU.doClick();		
 		
 	}// end ModbusMonitor_Panel()
 	
