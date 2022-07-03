@@ -54,13 +54,13 @@ public class ModbusWatchPointLoader {
 								return null;
 						}
 
-						modbusWps = ModbusWatchPointLoader.loadModbusWatchPointXML(file, encoding);
+						modbusWps = ModbusWatchPointLoader.loadXmlV4(file, encoding);
 						
 					}else {
 						if(mkVersion >= 10) {
-							modbusWps = ModbusWatchPointLoader.loadModbusWatchPointXlsxV10(file);
+							modbusWps = ModbusWatchPointLoader.loadExcelV10(file);
 						}else {
-							modbusWps = ModbusWatchPointLoader.loadModbusWatchPointXlsxV4(file);	
+							modbusWps = ModbusWatchPointLoader.loadExcelV4(file);	
 						}
 					}
 					
@@ -109,7 +109,7 @@ public class ModbusWatchPointLoader {
 		}
 	}
         
-    public static ModbusWatchPoint[] loadModbusWatchPointXlsxV4(File xlsxFile) throws IOException, ModbusWatchPointInitException{
+    public static ModbusWatchPoint[] loadExcelV4(File xlsxFile) throws IOException, ModbusWatchPointInitException{
     	
     	FileInputStream inputStream = null;
     	String item = "";
@@ -304,7 +304,7 @@ public class ModbusWatchPointLoader {
     }
     
     
-    public static ModbusWatchPoint[] loadModbusWatchPointXlsxV10(File xlsxFile) throws IOException, ModbusWatchPointInitException{
+    public static ModbusWatchPoint[] loadExcelV10(File xlsxFile) throws IOException, ModbusWatchPointInitException{
     	
     	FileInputStream inputStream = null;
     	String item = "";
@@ -503,7 +503,7 @@ public class ModbusWatchPointLoader {
     
     
     
-    public static ModbusWatchPoint[] loadModbusWatchPointXML(File xmlFile, String encoding) throws IOException, ModbusWatchPointInitException{
+    public static ModbusWatchPoint[] loadXmlV4(File xmlFile, String encoding) throws IOException, ModbusWatchPointInitException{
     	ArrayList<Perf> perfs = FmsPerfConf.getFmsPerfList(xmlFile, encoding);
     	ModbusWatchPoint[] modbusWps = new ModbusWatchPoint[perfs.size()];
     	
