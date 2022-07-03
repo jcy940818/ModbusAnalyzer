@@ -464,7 +464,7 @@ public class ModbusAgent {
 					switch(ModbusMonitorFrame.addrTypeComboBox.getSelectedItem().toString()){
 						case "Modbus (DEC)" :
 							if(hasName) {
-								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s\t\t( %s = %s )",
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s     ( %s = %s )",
 										point.getIndex(), 
 										point.getDecCounter(), 
 										PerfData.getPerfPureValue(perfData), 
@@ -479,7 +479,7 @@ public class ModbusAgent {
 							
 						case "Register (DEC)" :
 							if(hasName) {
-								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s\t\t( %s = %s )", 
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s     ( %s = %s )", 
 										point.getIndex(), 
 										point.getRegCounter(), 
 										PerfData.getPerfPureValue(perfData),
@@ -494,7 +494,7 @@ public class ModbusAgent {
 							
 						case "Register (HEX)" :
 							if(hasName) {
-								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s\t\t( %s = %s )", 
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s     ( %s = %s )", 
 										point.getIndex(), 
 										point.getHexCounter(), 
 										PerfData.getPerfPureValue(perfData),
@@ -509,7 +509,7 @@ public class ModbusAgent {
 							
 						default :
 							if(hasName) {
-								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s\t\t( %s = %s )", 
+								ModbusMonitorFrame.writeLog(String.format("%d.  [ %s ] = %s     ( %s = %s )", 
 										point.getIndex(), 
 										point.getDecCounter(), 
 										PerfData.getPerfPureValue(perfData), 
