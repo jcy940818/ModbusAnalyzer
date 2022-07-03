@@ -34,10 +34,17 @@ public class ModbusWatchPointLoader {
 					String encoding = "euc-kr";
 					
 					if(file.getAbsolutePath().toLowerCase().endsWith(".xml")) {
+						// XML 업로드
+						
 						StringBuilder msg = new StringBuilder();
 						msg.append("<font color='Green'>XML File Encoding</font>\n");
 						msg.append(Util.colorBlue("XML File") + " : " + file.getName() + Util.separator + Util.separator +"\n\n");
-						msg.append("XML 파일의 인코딩 방식을 선택해주세요" + Util.separator + Util.separator +"\n");
+						
+						if(Moon.isKorean()) {
+							msg.append("XML 파일의 인코딩 방식을 선택해주세요" + Util.separator + Util.separator +"\n");	
+						}else {
+							msg.append("Select the encoding method of the XML file" + Util.separator + Util.separator +"\n");
+						}						
 
 						int menu = Util.showOption(msg.toString(), new String[] { "EUC-KR", "UTF-8"}, JOptionPane.QUESTION_MESSAGE);
 
@@ -57,9 +64,37 @@ public class ModbusWatchPointLoader {
 						modbusWps = ModbusWatchPointLoader.loadXmlV4(file, encoding);
 						
 					}else {
+						// Excel 업로드
+						
 						if(mkVersion >= 10) {
-							modbusWps = ModbusWatchPointLoader.loadExcelV10(file);
+							// MK119 V10 Excel 업로드
+							
+							StringBuilder msg = new StringBuilder();
+							msg.append("<font color='Green'>MK119 V10 Template Type Selection</font>\n");
+							msg.append(Util.colorBlue("Excel File") + " : " + file.getName() + Util.separator + Util.separator +"\n\n");
+							
+							if(Moon.isKorean()) {
+								msg.append("MK119 V10 Excel 템플릿의 종류를 선택해주세요" + Util.separator + Util.separator +"\n");
+							}else {
+								msg.append("Please select the type of MK119 V10 Excel template" + Util.separator + Util.separator +"\n");
+							}
+
+							int menu = Util.showOption(msg.toString(), new String[] { "PLC", "Modbus"}, JOptionPane.QUESTION_MESSAGE);
+
+							switch (menu) {
+								case 0: // 첫 번째 버튼 : PLC
+									modbusWps = ModbusWatchPointLoader.loadExcelV10_PLC(file);
+									break;
+									
+								case 1: // 두 번째 버튼 : Modbus
+									modbusWps = ModbusWatchPointLoader.loadExcelV10_Modbus(file);
+									break;
+									
+								default :
+									return null;
+							}
 						}else {
+							// MK119 V4 Excel 업로드
 							modbusWps = ModbusWatchPointLoader.loadExcelV4(file);	
 						}
 					}
@@ -70,8 +105,15 @@ public class ModbusWatchPointLoader {
 					
 					StringBuilder sb = new StringBuilder();
 					sb.append(String.format("%s\n", Util.colorRed("Modbus Watch Point Initialization Error")));
-					sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), e.getMessage(), Util.separator, Util.separator));
-					sb.append(String.format("위의 모드버스 포인트 정보를 초기화 하는중 오류가 발생하였습니다%s%s\n", Util.separator, Util.separator));
+					
+					if(Moon.isKorean()) {
+						sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), e.getMessage(), Util.separator, Util.separator));
+						sb.append(String.format("위의 모드버스 포인트 정보를 초기화 하는중 오류가 발생하였습니다%s%s\n", Util.separator, Util.separator));	
+					}else {
+						sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("Modbus Point"), e.getMessage(), Util.separator, Util.separator));
+						sb.append(String.format("An error occurred while initializing the above Modbus Point information%s%s\n", Util.separator, Util.separator));
+					}
+					
 					Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 					
 				}catch(IOException e) {
@@ -83,18 +125,36 @@ public class ModbusWatchPointLoader {
 					
 					StringBuilder sb = new StringBuilder();
 					sb.append(String.format("%s\n", Util.colorRed("Modbus Watch Point Initialization Error")));
-					sb.append(String.format("%s : %s%s%s\n", Util.colorBlue("행 번호"), info[0], Util.separator, Util.separator));
-					sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("에러 필드"), info[1], Util.separator, Util.separator));
 					
-					if(hasPointName) {
-						sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), info[2], Util.separator, Util.separator));
+					if(Moon.isKorean()) {
+						sb.append(String.format("%s : %s%s%s\n", Util.colorBlue("행 번호"), info[0], Util.separator, Util.separator));
+						sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("에러 필드"), info[1], Util.separator, Util.separator));	
+					}else {
+						sb.append(String.format("%s : %s%s%s\n", Util.colorBlue("Row Number"), info[0], Util.separator, Util.separator));
+						sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("Error Field"), info[1], Util.separator, Util.separator));
 					}
 					
-					sb.append(String.format("%s번 행의 %s 필드 파싱 과정에서 에러가 발생하였습니다%s%s\n", 
-									Util.colorRed(info[0]),							
-									Util.colorRed(info[1]),
-									Util.separator,
-									Util.separator));
+					if(hasPointName) {
+						if(Moon.isKorean()) {
+							sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), info[2], Util.separator, Util.separator));	
+						}else {
+							sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("Modbus Point"), info[2], Util.separator, Util.separator));
+						}
+					}
+					
+					if(Moon.isKorean()) {
+						sb.append(String.format("%s번 행의 %s 필드 파싱 과정에서 에러가 발생하였습니다%s%s\n", 
+								Util.colorRed(info[0]),							
+								Util.colorRed(info[1]),
+								Util.separator,
+								Util.separator));	
+					}else {
+						sb.append(String.format("Error occurred during %s field parsing on row number %s%s%s\n", 
+								Util.colorRed(info[1]),							
+								Util.colorRed(info[0]),
+								Util.separator,
+								Util.separator));
+					}
 					
 					Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);						
 				}
@@ -108,7 +168,10 @@ public class ModbusWatchPointLoader {
 			return modbusWps;
 		}
 	}
-        
+	
+	
+    
+	
     public static ModbusWatchPoint[] loadExcelV4(File xlsxFile) throws IOException, ModbusWatchPointInitException{
     	
     	FileInputStream inputStream = null;
@@ -304,7 +367,207 @@ public class ModbusWatchPointLoader {
     }
     
     
-    public static ModbusWatchPoint[] loadExcelV10(File xlsxFile) throws IOException, ModbusWatchPointInitException{
+    
+    
+    public static ModbusWatchPoint[] loadExcelV10_PLC(File xlsxFile) throws IOException, ModbusWatchPointInitException{
+    	
+    	FileInputStream inputStream = null;
+    	String item = "";
+		Cell cell = null;
+    	
+    	try {
+			inputStream = new FileInputStream(xlsxFile);
+			Workbook workbook = new XSSFWorkbook(inputStream);
+			
+			Sheet mappingSheet = workbook.getSheetAt(2);
+			int mappingNumberOfRows = mappingSheet.getPhysicalNumberOfRows();
+			HashMap<String, String> mappingMap = new HashMap<String, String>();
+			String content =  "Point Value Code Definition";
+			
+			for(int i = 2; i < mappingNumberOfRows; i++) {
+				int rowNum = i - 2;
+				Row row = mappingSheet.getRow(i);
+				
+				try {
+					if(row == null) {
+						continue;
+					}else if(row.getCell(2) == null) {
+						// Point Value Code Definition 시트의 Data Code 내용이 없으면 스킵
+						continue;
+					}else if(CellUtil.getStringValue(row.getCell(2)).equals("")) {
+						// Point Value Code Definition 시트의 Data Code 내용이 없으면 스킵
+						continue;
+					}
+					
+					item = content + " ( Device ID )";
+					cell = row.getCell(0);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					int deviceID = CellUtil.getIntValue(cell);
+					
+					item = content + " ( Point ID )";
+					cell = row.getCell(1);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					int pointID = CellUtil.getIntValue(cell);
+					
+					item = content + " ( Data Code )";
+					cell = row.getCell(2);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					int dataCode = CellUtil.getIntValue(cell);
+					
+					item = content + " ( Point Value )";
+					cell = row.getCell(3);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					String pointValue = CellUtil.getStringValue(cell);
+					
+					String key = deviceID + "-" + pointID;
+					String value = dataCode + "; " + pointValue + ";";
+					
+					if(mappingMap.containsKey(key)) {
+						String lastValue = mappingMap.get(key);
+						lastValue += ( " " +  value );
+						mappingMap.put(key, lastValue);
+					}else {
+						mappingMap.put(key, value);
+					}					
+				}catch(Exception e) {
+					throw new IOException(Integer.toString(i+1) + "," + item + "," + null);
+				}
+			}
+			
+			
+			Sheet sheet = workbook.getSheetAt(1);
+			int numberOfRows = sheet.getPhysicalNumberOfRows();
+			ModbusWatchPoint[] modbusWps = new ModbusWatchPoint[numberOfRows - 4];
+			for (int i = 4; i < numberOfRows; i++) {
+				int rowNum = i - 4;				
+				Row row = sheet.getRow(i);
+				
+				try {
+					if(row == null) {
+						continue;
+					}else if(row.getCell(3) == null) {
+						// Point Definition 시트의 Point Name 내용이 없으면 스킵
+						continue;
+					}else if(CellUtil.getStringValue(row.getCell(3)).equals("")) {
+						// Point Definition 시트의 Point Name 내용이 없으면 스킵
+						continue;
+					}
+					
+					modbusWps[rowNum] = new ModbusWatchPoint();
+					
+					item = (Moon.isKorean()) ? "Device ID" : "Device ID";
+					cell = row.getCell(0);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					modbusWps[rowNum].setDeviceID(CellUtil.getIntValue(cell));
+					
+					
+					// Device Alias Pass
+					// cell = row.getCell(1);
+					
+					
+					item = (Moon.isKorean()) ? "Point ID" : "Point ID";
+					cell = row.getCell(2);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					modbusWps[rowNum].setPointID(CellUtil.getIntValue(cell));
+					
+					
+					item = (Moon.isKorean()) ? "Point Name" : "Point Name";
+					cell = row.getCell(3);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					modbusWps[rowNum].displayName = CellUtil.getStringValue(cell);
+					
+					
+					// Point Type Pass
+					// cell = row.getCell(4);
+					
+					
+					item = (Moon.isKorean()) ? "Measure" : "Measure";
+					cell = row.getCell(5);
+					modbusWps[rowNum].measure = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getStringValue(cell) : "";
+					
+					
+					item = (Moon.isKorean()) ? "Function Code" : "Function Code";
+					cell = row.getCell(6);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					int functionCode = CellUtil.getIntValue(cell);
+					
+					
+					item = (Moon.isKorean()) ? "Address" : "Address";
+					cell = row.getCell(7);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					String address = CellUtil.getStringValue(cell).toLowerCase().contains("0x") ? CellUtil.getStringValue(cell) : String.valueOf(CellUtil.getIntValue(cell));
+					
+					
+					item = (Moon.isKorean()) ? "Data Type" : "Data Type";
+					cell = row.getCell(8);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					String dataType = CellUtil.getStringValue(cell);
+					
+					String counter = functionCode + "_" + address + "_" + dataType;
+					
+					modbusWps[rowNum].counter = counter;
+					
+					
+					item = (Moon.isKorean()) ? "Calibration Formula" : "Calibration Formula";
+					cell = row.getCell(9);
+					modbusWps[rowNum].scaleFunc = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getStringValue(cell) : "x";
+					
+					
+					item = (Moon.isKorean()) ? "Check Interval" : "Check Interval";
+					cell = row.getCell(10);
+					modbusWps[rowNum].interval = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getIntValue(cell) : 60;
+					
+					
+					item = (Moon.isKorean()) ? "Data Format" : "Data Format";
+					cell = row.getCell(12);
+					modbusWps[rowNum].dataFormat = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getIntValue(cell) : 3;
+					
+					
+					if (modbusWps[rowNum].dataFormat == PerfConf.DATA_FORMAT_DIGITAL) {
+						item = (Moon.isKorean()) ? "Label of 0, 1" : "Label of 0, 1";						
+						modbusWps[rowNum].binLabel = new String[] { 
+								CellUtil.getStringValue(row.getCell(15)),
+								CellUtil.getStringValue(row.getCell(16)) };
+						
+					}else if (modbusWps[rowNum].dataFormat == PerfConf.DATA_FORMAT_STATUS) {
+						item = (Moon.isKorean()) ? "Point Value Code Definition" : "Point Value Code Definition";
+						String key = modbusWps[rowNum].getDeviceID() + "-" + modbusWps[rowNum].getPointID();
+						String value = mappingMap.get(key);
+						String[] keys = value.split(";");
+						
+						PerfLabelStatusBean[] statusLabels = new PerfLabelStatusBean[keys.length / 2];
+						int j = 0;
+						
+						for (int k = 0; k < keys.length; k += 2) {
+							statusLabels[j] = new PerfLabelStatusBean();
+							statusLabels[j].value = Integer.parseInt(keys[k].trim());
+							statusLabels[j].label = keys[k + 1].trim();
+							j++;
+						}
+						
+						modbusWps[rowNum].labels = statusLabels;						
+					}
+					
+				}catch(Exception e) {
+					throw new IOException(Integer.toString(i+1) + "," + item + "," + modbusWps[rowNum].displayName);
+				}
+			}
+			
+			// 모드버스 정보 초기화
+			for(ModbusWatchPoint modbusWp : modbusWps) {
+				modbusWp.init();
+			}
+			
+			return modbusWps;
+		
+    	}finally {
+    		if(inputStream != null) inputStream.close();
+    		inputStream = null;
+    	}
+    }
+    
+    
+    public static ModbusWatchPoint[] loadExcelV10_Modbus(File xlsxFile) throws IOException, ModbusWatchPointInitException{
     	
     	FileInputStream inputStream = null;
     	String item = "";
