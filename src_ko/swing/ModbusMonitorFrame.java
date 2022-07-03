@@ -1711,21 +1711,21 @@ public class ModbusMonitorFrame extends JFrame {
 					boolean hasName = !point.getDisplayName().trim().equalsIgnoreCase("") && point.getDisplayName().trim().length() > 0;
 					
 					if(hasName) {
-						modbus_dec = String.format("%d.  [ %s ] = %s   ( %s = %s )", 
+						modbus_dec = String.format("%d.  [ %s ] = %s\t\t( %s = %s )", 
 								point.getIndex(), 
 								point.getDecCounter(), 
 								PerfData.getPerfPureValue(perfData), 
 								point.getDisplayName(), 
 								PerfData.getPerfContent(point, perfData));
 						
-						register_dec = String.format("%d.  [ %s ] = %s   ( %s = %s )", 
+						register_dec = String.format("%d.  [ %s ] = %s\t\t( %s = %s )", 
 								point.getIndex(), 
 								point.getRegCounter(), 
 								PerfData.getPerfPureValue(perfData),
 								point.getDisplayName(), 
 								PerfData.getPerfContent(point, perfData));
 						
-						register_hex = String.format("%d.  [ %s ] = %s   ( %s = %s )", 
+						register_hex = String.format("%d.  [ %s ] = %s\t\t( %s = %s )", 
 								point.getIndex(), 
 								point.getHexCounter(), 
 								PerfData.getPerfPureValue(perfData),
