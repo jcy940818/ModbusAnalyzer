@@ -79,15 +79,15 @@ public class ModbusWatchPointLoader {
 								msg.append("Please select the type of MK119 V10 Excel template" + Util.separator + Util.separator +"\n");
 							}
 
-							int menu = Util.showOption(msg.toString(), new String[] { "PLC", "Modbus"}, JOptionPane.QUESTION_MESSAGE);
+							int menu = Util.showOption(msg.toString(), new String[] { "  Modbus  ", "  PLC  "}, JOptionPane.QUESTION_MESSAGE);
 
 							switch (menu) {
-								case 0: // 첫 번째 버튼 : PLC
-									modbusWps = ModbusWatchPointLoader.loadExcelV10_PLC(file);
+								case 0: // 첫 번째 버튼 : Modbus
+									modbusWps = ModbusWatchPointLoader.loadExcelV10_Modbus(file);
 									break;
 									
-								case 1: // 두 번째 버튼 : Modbus
-									modbusWps = ModbusWatchPointLoader.loadExcelV10_Modbus(file);
+								case 1: // 두 번째 버튼 : PLC
+									modbusWps = ModbusWatchPointLoader.loadExcelV10_PLC(file);
 									break;
 									
 								default :
@@ -577,127 +577,54 @@ public class ModbusWatchPointLoader {
 			inputStream = new FileInputStream(xlsxFile);
 			Workbook workbook = new XSSFWorkbook(inputStream);
 			
-			Sheet mappingSheet = workbook.getSheetAt(2);
-			int mappingNumberOfRows = mappingSheet.getPhysicalNumberOfRows();
-			HashMap<String, String> mappingMap = new HashMap<String, String>();
-			String content =  "Point Value Code Definition";
-			
-			for(int i = 2; i < mappingNumberOfRows; i++) {
-				int rowNum = i - 2;
-				Row row = mappingSheet.getRow(i);
-				
-				try {
-					if(row == null) {
-						continue;
-					}else if(row.getCell(2) == null) {
-						// Point Value Code Definition 시트의 Data Code 내용이 없으면 스킵
-						continue;
-					}else if(CellUtil.getStringValue(row.getCell(2)).equals("")) {
-						// Point Value Code Definition 시트의 Data Code 내용이 없으면 스킵
-						continue;
-					}
-					
-					item = content + " ( Device ID )";
-					cell = row.getCell(0);
-					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
-					int deviceID = CellUtil.getIntValue(cell);
-					
-					item = content + " ( Point ID )";
-					cell = row.getCell(1);
-					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
-					int pointID = CellUtil.getIntValue(cell);
-					
-					item = content + " ( Data Code )";
-					cell = row.getCell(2);
-					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
-					int dataCode = CellUtil.getIntValue(cell);
-					
-					item = content + " ( Point Value )";
-					cell = row.getCell(3);
-					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
-					String pointValue = CellUtil.getStringValue(cell);
-					
-					String key = deviceID + "-" + pointID;
-					String value = dataCode + "; " + pointValue + ";";
-					
-					if(mappingMap.containsKey(key)) {
-						String lastValue = mappingMap.get(key);
-						lastValue += ( " " +  value );
-						mappingMap.put(key, lastValue);
-					}else {
-						mappingMap.put(key, value);
-					}					
-				}catch(Exception e) {
-					throw new IOException(Integer.toString(i+1) + "," + item + "," + null);
-				}
-			}
-			
-			
 			Sheet sheet = workbook.getSheetAt(1);
-			int numberOfRows = sheet.getPhysicalNumberOfRows();
-			ModbusWatchPoint[] modbusWps = new ModbusWatchPoint[numberOfRows - 4];
-			for (int i = 4; i < numberOfRows; i++) {
-				int rowNum = i - 4;				
+			int numberOfRows = sheet.getPhysicalNumberOfRows() + 1; // 왜 하나가 덜 나올까?
+			
+			ModbusWatchPoint[] modbusWps = new ModbusWatchPoint[numberOfRows - 2];
+			HashMap<String, ArrayList<ModbusWatchPoint>> multiStatesPointMap = new HashMap<String, ArrayList<ModbusWatchPoint>>();
+			
+			for (int i = 2; i < numberOfRows; i++) {
+				int rowNum = i - 2;
 				Row row = sheet.getRow(i);
 				
 				try {
 					if(row == null) {
 						continue;
-					}else if(row.getCell(3) == null) {
-						// Point Definition 시트의 Point Name 내용이 없으면 스킵
+					}else if(row.getCell(0) == null) {
+						// Point Name 내용이 없으면 스킵
 						continue;
-					}else if(CellUtil.getStringValue(row.getCell(3)).equals("")) {
-						// Point Definition 시트의 Point Name 내용이 없으면 스킵
+					}else if(CellUtil.getStringValue(row.getCell(0)).equals("")) {
+						// Point Name 내용이 없으면 스킵
 						continue;
 					}
 					
 					modbusWps[rowNum] = new ModbusWatchPoint();
 					
-					item = (Moon.isKorean()) ? "Device ID" : "Device ID";
+					item = (Moon.isKorean()) ? "포인트 이름" : "Point Name";
 					cell = row.getCell(0);
-					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
-					modbusWps[rowNum].setDeviceID(CellUtil.getIntValue(cell));
-					
-					
-					// Device Alias Pass
-					// cell = row.getCell(1);
-					
-					
-					item = (Moon.isKorean()) ? "Point ID" : "Point ID";
-					cell = row.getCell(2);
-					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
-					modbusWps[rowNum].setPointID(CellUtil.getIntValue(cell));
-					
-					
-					item = (Moon.isKorean()) ? "Point Name" : "Point Name";
-					cell = row.getCell(3);
 					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
 					modbusWps[rowNum].displayName = CellUtil.getStringValue(cell);
 					
 					
-					// Point Type Pass
-					// cell = row.getCell(4);
-					
-					
-					item = (Moon.isKorean()) ? "Measure" : "Measure";
-					cell = row.getCell(5);
+					item = (Moon.isKorean()) ? "단위" : "Measure";
+					cell = row.getCell(2);
 					modbusWps[rowNum].measure = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getStringValue(cell) : "";
 					
 					
-					item = (Moon.isKorean()) ? "Function Code" : "Function Code";
-					cell = row.getCell(6);
+					item = (Moon.isKorean()) ? "기능코드" : "Function Code";
+					cell = row.getCell(3);
 					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
 					int functionCode = CellUtil.getIntValue(cell);
 					
 					
-					item = (Moon.isKorean()) ? "Address" : "Address";
-					cell = row.getCell(7);
+					item = (Moon.isKorean()) ? "주소" : "Address";
+					cell = row.getCell(4);
 					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
 					String address = CellUtil.getStringValue(cell).toLowerCase().contains("0x") ? CellUtil.getStringValue(cell) : String.valueOf(CellUtil.getIntValue(cell));
 					
 					
-					item = (Moon.isKorean()) ? "Data Type" : "Data Type";
-					cell = row.getCell(8);
+					item = (Moon.isKorean()) ? "데이터 타입" : "Data Type";
+					cell = row.getCell(5);
 					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
 					String dataType = CellUtil.getStringValue(cell);
 					
@@ -706,33 +633,132 @@ public class ModbusWatchPointLoader {
 					modbusWps[rowNum].counter = counter;
 					
 					
-					item = (Moon.isKorean()) ? "Calibration Formula" : "Calibration Formula";
-					cell = row.getCell(9);
+					item = (Moon.isKorean()) ? "보정식" : "Calibration Formula";
+					cell = row.getCell(6);
 					modbusWps[rowNum].scaleFunc = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getStringValue(cell) : "x";
 					
 					
-					item = (Moon.isKorean()) ? "Check Interval" : "Check Interval";
-					cell = row.getCell(10);
+					item = (Moon.isKorean()) ? "수집 주기" : "Check Interval";
+					cell = row.getCell(7);
 					modbusWps[rowNum].interval = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getIntValue(cell) : 60;
 					
 					
-					item = (Moon.isKorean()) ? "Data Format" : "Data Format";
-					cell = row.getCell(12);
-					modbusWps[rowNum].dataFormat = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getIntValue(cell) : 3;
+					item = (Moon.isKorean()) ? "데이터 형식" : "Data Format";
+					cell = row.getCell(9);
+					String dataForamt = CellUtil.getStringValue(cell);
 					
+					if(dataForamt.equalsIgnoreCase("1") || dataForamt.contains("Boolean") || dataForamt.contains("이진")) {
+						modbusWps[rowNum].dataFormat = PerfConf.DATA_FORMAT_DIGITAL;
+						
+					}else if(dataForamt.equalsIgnoreCase("2") || dataForamt.contains("Multi") || dataForamt.contains("다중")) {						
+						modbusWps[rowNum].dataFormat = PerfConf.DATA_FORMAT_STATUS;
+						
+					}else {						
+						modbusWps[rowNum].dataFormat = PerfConf.DATA_FORMAT_MEASURE;
+						
+					}
 					
 					if (modbusWps[rowNum].dataFormat == PerfConf.DATA_FORMAT_DIGITAL) {
-						item = (Moon.isKorean()) ? "Label of 0, 1" : "Label of 0, 1";						
+						item = (Moon.isKorean()) ? "0, 1 값 레이블" : "Label of 0, 1";						
 						modbusWps[rowNum].binLabel = new String[] { 
-								CellUtil.getStringValue(row.getCell(15)),
-								CellUtil.getStringValue(row.getCell(16)) };
+								CellUtil.getStringValue(row.getCell(12)),
+								CellUtil.getStringValue(row.getCell(13)) };
 						
 					}else if (modbusWps[rowNum].dataFormat == PerfConf.DATA_FORMAT_STATUS) {
-						item = (Moon.isKorean()) ? "Point Value Code Definition" : "Point Value Code Definition";
-						String key = modbusWps[rowNum].getDeviceID() + "-" + modbusWps[rowNum].getPointID();
-						String value = mappingMap.get(key);
-						String[] keys = value.split(";");
+						if(multiStatesPointMap.containsKey(modbusWps[rowNum].displayName)) {
+							ArrayList<ModbusWatchPoint> list = multiStatesPointMap.get(modbusWps[rowNum].displayName);
+							list.add(modbusWps[rowNum]);
+							
+						}else {
+							ArrayList<ModbusWatchPoint> list = new ArrayList<ModbusWatchPoint>();
+							list.add(modbusWps[rowNum]);
+							multiStatesPointMap.put(modbusWps[rowNum].displayName, list);
+							
+						}
+					}
+					
+				}catch(Exception e) {
+					throw new IOException(Integer.toString(i+1) + "," + item + "," + modbusWps[rowNum].displayName);
+				}
+			}
+			
+			Sheet labelSheet = workbook.getSheetAt(2);
+			int mappingNumberOfRows = labelSheet.getPhysicalNumberOfRows();
+			HashMap<String, String> mappingMap = new HashMap<String, String>();
+			
+			for(int i = 2; i < mappingNumberOfRows; i++) {
+				int rowNum = i - 2;
+				Row row = labelSheet.getRow(i);
+				
+				try {
+					if(row == null) {
+						continue;
+					}else if(row.getCell(0) == null) {
+						// Point Name 내용이 없으면 스킵
+						continue;
+					}else if(CellUtil.getStringValue(row.getCell(0)).equals("")) {
+						// Point Name 내용이 없으면 스킵
+						continue;
+					}
+					
+					item = (Moon.isKorean()) ? "포인트 이름" : "Point Name";
+					cell = row.getCell(0);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					String pointName = CellUtil.getStringValue(cell);
+					
+					item = (Moon.isKorean()) ? "Data Code" : "Data Code";
+					cell = row.getCell(1);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					int dataCode = CellUtil.getIntValue(cell);
+					
+					item = (Moon.isKorean()) ? "Point Value" : "Point Value";
+					cell = row.getCell(2);
+					if (cell == null || CellUtil.getStringValue(cell).equals("")) throw new IOException();
+					String pointValue = CellUtil.getStringValue(cell);
+					
+					String key = pointName;
+					String value = dataCode + "; " + pointValue + ";";
+					
+					if(mappingMap.containsKey(key)) {
+						String lastValue = mappingMap.get(key);
+						lastValue += ( " " +  value );
+						mappingMap.put(key, lastValue);
+					}else {
+						mappingMap.put(key, value);
+					}
+				}catch(Exception e) {
+					throw new IOException(Integer.toString(i+1) + "," + item + "," + null);
+				}
+			}
+			
+			// 다중 상태 포인트의 레이블 초기화
+			if(multiStatesPointMap.size() > 0) {
+				item = (Moon.isKorean()) ? "다중 상태 레이블" : "Multi-State Label";
+				
+				for(String key : multiStatesPointMap.keySet()) {
+		            ArrayList<ModbusWatchPoint> multiStatePointList = multiStatesPointMap.get(key);
+		            
+		            if(!mappingMap.containsKey(key)) {
+		            	StringBuilder sb = new StringBuilder();
+						sb.append(String.format("%s\n", Util.colorRed("Multi-State Point Label Mapping Error")));
 						
+						if(Moon.isKorean()) {
+							sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), key, Util.separator, Util.separator));
+							sb.append(String.format("위의 다중 상태 포인트의 레이블 매핑 정보를 초기화 하는중 오류가 발생하였습니다%s%s\n", Util.separator, Util.separator));	
+						}else {
+							sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("Modbus Point"), key, Util.separator, Util.separator));
+							sb.append(String.format("An error occurred while initializing label mapping information for the above multi-state point%s%s\n", Util.separator, Util.separator));
+						}
+						
+						Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+		            	return null;
+		            }
+		            
+		            String value = mappingMap.get(key);
+		            
+					String[] keys = value.split(";");
+					
+					for(ModbusWatchPoint point : multiStatePointList) {
 						PerfLabelStatusBean[] statusLabels = new PerfLabelStatusBean[keys.length / 2];
 						int j = 0;
 						
@@ -743,12 +769,11 @@ public class ModbusWatchPointLoader {
 							j++;
 						}
 						
-						modbusWps[rowNum].labels = statusLabels;						
+						point.labels = statusLabels;	
 					}
-					
-				}catch(Exception e) {
-					throw new IOException(Integer.toString(i+1) + "," + item + "," + modbusWps[rowNum].displayName);
-				}
+		            
+		            System.out.println("[key] : " + key + ", [value] : " + value);
+		        }
 			}
 			
 			// 모드버스 정보 초기화
