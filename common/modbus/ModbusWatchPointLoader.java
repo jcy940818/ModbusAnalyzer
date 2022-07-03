@@ -225,9 +225,9 @@ public class ModbusWatchPointLoader {
 					
 					modbusWps[i - 2].counter = counter;
 					
-					item = (Moon.isKorean()) ? "수집 주기" : "Interval";
-					cell = row.getCell(5);
-					modbusWps[i - 2].interval = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getIntValue(cell) : 60;
+//					item = (Moon.isKorean()) ? "수집 주기" : "Interval";
+//					cell = row.getCell(5);
+//					modbusWps[i - 2].interval = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getIntValue(cell) : 60;
 					
 					item = (Moon.isKorean()) ? "단위" : "Measure";
 					cell = row.getCell(6);
@@ -513,9 +513,9 @@ public class ModbusWatchPointLoader {
 					modbusWps[rowNum].scaleFunc = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getStringValue(cell) : "x";
 					
 					
-					item = (Moon.isKorean()) ? "Check Interval" : "Check Interval";
-					cell = row.getCell(10);
-					modbusWps[rowNum].interval = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getIntValue(cell) : 60;
+//					item = (Moon.isKorean()) ? "Check Interval" : "Check Interval";
+//					cell = row.getCell(10);
+//					modbusWps[rowNum].interval = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getIntValue(cell) : 60;
 					
 					
 					item = (Moon.isKorean()) ? "Data Format" : "Data Format";
@@ -638,9 +638,9 @@ public class ModbusWatchPointLoader {
 					modbusWps[rowNum].scaleFunc = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getStringValue(cell) : "x";
 					
 					
-					item = (Moon.isKorean()) ? "수집 주기" : "Check Interval";
-					cell = row.getCell(7);
-					modbusWps[rowNum].interval = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getIntValue(cell) : 60;
+//					item = (Moon.isKorean()) ? "수집 주기" : "Check Interval";
+//					cell = row.getCell(7);
+//					modbusWps[rowNum].interval = !(cell == null || CellUtil.getStringValue(cell).equals("")) ? CellUtil.getIntValue(cell) : 60;
 					
 					
 					item = (Moon.isKorean()) ? "데이터 형식" : "Data Format";
@@ -683,7 +683,7 @@ public class ModbusWatchPointLoader {
 			}
 			
 			Sheet labelSheet = workbook.getSheetAt(2);
-			int mappingNumberOfRows = labelSheet.getPhysicalNumberOfRows();
+			int mappingNumberOfRows = labelSheet.getPhysicalNumberOfRows() + 1;
 			HashMap<String, String> mappingMap = new HashMap<String, String>();
 			
 			for(int i = 2; i < mappingNumberOfRows; i++) {
