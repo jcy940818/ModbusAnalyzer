@@ -122,7 +122,7 @@ public class ModbusCellRenderer extends DefaultTableCellRenderer {
 			if(formula != null) {
 				boolean result = false;
 				
-				result = (boolean)JavaScript.eval(formula.trim() , scanReulst);
+				result = Boolean.parseBoolean(JavaScript.eval(formula.trim() , scanReulst).toString());
 				
 				if(result) {
 					if (isSelected) {
