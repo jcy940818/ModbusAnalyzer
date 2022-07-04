@@ -84,7 +84,8 @@ public class PerfData implements Comparable{
 		
 		try {
 			double doubleValue = Double.parseDouble(data.getPureValue().toString());
-			pureValue = (Math.round(doubleValue*1000)/1000.0);
+			boolean exponent = String.valueOf(doubleValue).toUpperCase().contains("E");
+			pureValue = (exponent) ? ((doubleValue * 1000) / 1000.0) : (Math.round(doubleValue * 1000) / 1000.0);
 		}catch(Exception e) {
 			pureValue = "-";
 		}
@@ -102,6 +103,7 @@ public class PerfData implements Comparable{
 
 		return pureValue;
 	}
+	
 	
 	public static Object getPerfContent(Perf perf, PerfData data) {
 		
@@ -121,7 +123,8 @@ public class PerfData implements Comparable{
 						content = binLabel[1];
 						labelMapping = true;
 					}else {
-						content = (Math.round(doubleValue*1000)/1000.0);
+						boolean exponent = String.valueOf(doubleValue).toUpperCase().contains("E");
+						content = (exponent) ? ((doubleValue * 1000) / 1000.0) : (Math.round(doubleValue * 1000) / 1000.0);
 					}
 				}catch(Exception e) {
 					content = "-";
@@ -133,7 +136,10 @@ public class PerfData implements Comparable{
 				try {
 					double doubleValue = Double.parseDouble(data.getValue().toString());
 					PerfLabelStatusBean[] labels = perf.getStatusLabels();
-					content = (Math.round(doubleValue*1000)/1000.0);
+					
+					boolean exponent = String.valueOf(doubleValue).toUpperCase().contains("E");
+					content = (exponent) ? ((doubleValue * 1000) / 1000.0) : (Math.round(doubleValue * 1000) / 1000.0);
+					
 					// 다중 상태 레이블을 검사 후 일치하는 값이 있다면 내용에 적용 후 반복문 종료
 					for(int k = 0; k < labels.length; k++) {					
 						if(doubleValue == labels[k].value) {
@@ -151,10 +157,15 @@ public class PerfData implements Comparable{
 			case 3 : // 아날로그 성능
 				try {
 					double doubleValue = Double.parseDouble(data.getValue().toString());
+					boolean exponent = String.valueOf(doubleValue).toUpperCase().contains("E");
+					
 					if((perf.getMeasure() != null) && (perf.getMeasure().length() > 0)) {
-						content = (Math.round(doubleValue*1000)/1000.0) + " " + perf.getMeasure();	
+						content = (exponent) ? ((doubleValue * 1000) / 1000.0) : (Math.round(doubleValue * 1000) / 1000.0);
+						content = content + " " + perf.getMeasure();
+						
 					}else {
-						content = (Math.round(doubleValue*1000)/1000.0);
+						content = (exponent) ? ((doubleValue * 1000) / 1000.0) : (Math.round(doubleValue * 1000) / 1000.0);
+						
 					}
 				}catch(Exception e) {
 					content = "-";
