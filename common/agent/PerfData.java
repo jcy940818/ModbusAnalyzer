@@ -24,7 +24,13 @@ public class PerfData implements Comparable{
 		return value;
 	}
 	public Object getPureValue() {
-		return pureValue;
+		try {
+			boolean exponent = pureValue.toString().toUpperCase().contains("E");
+			double doubleValue = Double.parseDouble(pureValue.toString());
+			return (exponent) ? ((doubleValue * 1000) / 1000.0) : (Math.round(doubleValue * 1000) / 1000.0);
+		}catch(Exception e) {
+			return pureValue;
+		}
 	}
 	public long getTime() {
 		return time;
