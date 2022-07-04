@@ -5,11 +5,12 @@ import java.awt.Component;
 import java.awt.Font;
 import java.util.ArrayList;
 
+import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import common.util.JavaScript;
-import src_ko.swing.ModbusMonitor_Panel;
+import moon.Moon;
 
 public class ModbusCellRenderer extends DefaultTableCellRenderer {
 	
@@ -36,6 +37,9 @@ public class ModbusCellRenderer extends DefaultTableCellRenderer {
 		String scanReulst = null;
 		ModbusWatchPoint point = null;
 		
+		JComboBox addrTypeComboBox = (Moon.isKorean()) ? src_ko.swing.ModbusMonitor_Panel.addrTypeComboBox : src_en.swing.ModbusMonitor_Panel.addrTypeComboBox;
+		JComboBox resultType = (Moon.isKorean()) ? src_ko.swing.ModbusMonitor_Panel.resultType : src_en.swing.ModbusMonitor_Panel.resultType;
+		
 		if(pointList != null) {
 			int index = Integer.parseInt(table.getValueAt(row, 0).toString());
 			point = pointList.get(index-1);
@@ -57,7 +61,7 @@ public class ModbusCellRenderer extends DefaultTableCellRenderer {
 				try {
 					scanReulst = String.valueOf(point.getRegisterAddr());
 					
-					switch(ModbusMonitor_Panel.addrTypeComboBox.getSelectedItem().toString()) {
+					switch(addrTypeComboBox.getSelectedItem().toString()) {
 						case "Modbus (DEC)" :
 							scanReulst = point.getModbusAddrString();
 							break;
@@ -76,7 +80,7 @@ public class ModbusCellRenderer extends DefaultTableCellRenderer {
 		
 		
 			case "value" :
-				try {					
+				try {
 					String pureData = point.getData().getPureValue().toString();
 					
 					if(pureData.equalsIgnoreCase("none")) {
@@ -91,7 +95,7 @@ public class ModbusCellRenderer extends DefaultTableCellRenderer {
 						}
 						return c;
 						
-					}else if(ModbusMonitor_Panel.resultType != null && ModbusMonitor_Panel.resultType.getSelectedIndex() == 0) {
+					}else if(pointList == null && resultType != null && resultType.getSelectedIndex() == 0) {
 						scanReulst = String.valueOf(point.getComputedValue(Double.parseDouble(pureData)));
 						
 					}else {
