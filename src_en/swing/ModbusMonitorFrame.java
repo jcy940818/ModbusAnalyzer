@@ -1926,7 +1926,7 @@ public class ModbusMonitorFrame extends JFrame {
 		}else {
 			if(!valueFormula.toLowerCase().contains("x")) {
 				try {
-					int value = Integer.parseInt(valueFormula.trim());
+					double value = Double.parseDouble(valueFormula.trim());
 					valueFormula = ("x == " + valueFormula);
 				}catch(Exception e) {
 					// do nothing

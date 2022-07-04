@@ -252,11 +252,11 @@ public class ModbusMonitor{
 				int cmd = this.locators.indexOf(locator);
 				Object valueObj = keyLocator.bytesToValue(data, startOffset);
 				
-				double value = Double.NaN;
+				Object value = Double.NaN;
 				
-				// 수집값 처리 단위 : double
 				if (valueObj instanceof Number) {
-					value = ((Number) valueObj).doubleValue();
+					// value = ((Number) valueObj).doubleValue();
+					value = valueObj;
 				}
 				else if (valueObj instanceof Boolean) {
 					value = ((Boolean) valueObj).booleanValue() ? 1 : 0;
@@ -265,7 +265,7 @@ public class ModbusMonitor{
 				ModbusWatchPoint point = points.get(cmd);
 				PerfData perfData = new PerfData();
 				perfData.setPureValue(value);
-				perfData.setValue(point.getComputedValue(value));
+				perfData.setValue(point.getComputedValue(Double.parseDouble(value.toString())));
 				perfData.setTime(curTime);
 				point.setData(perfData);
 			}
