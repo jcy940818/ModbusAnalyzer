@@ -647,10 +647,14 @@ public class ModbusWatchPointLoader {
 					cell = row.getCell(9);
 					String dataForamt = CellUtil.getStringValue(cell);
 					
-					if(dataForamt.equalsIgnoreCase("1") || dataForamt.contains("Boolean") || dataForamt.contains("이진")) {
+					if(dataForamt != null && dataForamt.length() > 0) {
+						dataForamt = dataForamt.toLowerCase();
+					}
+					
+					if(dataForamt.equalsIgnoreCase("1") || dataForamt.contains("bool") || dataForamt.contains("이진")) {
 						modbusWps[rowNum].dataFormat = PerfConf.DATA_FORMAT_DIGITAL;
 						
-					}else if(dataForamt.equalsIgnoreCase("2") || dataForamt.contains("Multi") || dataForamt.contains("다중")) {						
+					}else if(dataForamt.equalsIgnoreCase("2") || dataForamt.contains("multi") || dataForamt.contains("다중")) {
 						modbusWps[rowNum].dataFormat = PerfConf.DATA_FORMAT_STATUS;
 						
 					}else {						
@@ -771,8 +775,7 @@ public class ModbusWatchPointLoader {
 						
 						point.labels = statusLabels;	
 					}
-		            
-		            System.out.println("[key] : " + key + ", [value] : " + value);
+		            		            
 		        }
 			}
 			
