@@ -81,19 +81,19 @@ public class AddModbusPointFrame extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					
-					new AddModbusPointFrame();
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					
+//					new AddModbusPointFrame();
+//					
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 	
 	/**
 	 * Create the frame.
@@ -139,14 +139,34 @@ public class AddModbusPointFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String mkVersion = mk_V4_RaidoButton.isSelected() ? "V4" : "V10";				
+					String mkVersion = mk_V4_RaidoButton.isSelected() ? "V4" : "V10";
+					String fileName = "Modbus";
+					
+					if(mkVersion.equals("V10")) {
+						StringBuilder msg = new StringBuilder();
+						msg.append("<font color='Green'>MK119 V10 Template Type Selection</font>\n");
+						msg.append("MK119 V10 Excel 템플릿의 종류를 선택해주세요" + Util.separator + Util.separator +"\n");
 
+						int menu = Util.showOption(msg.toString(), new String[] { "  Modbus  ", "  PLC  "}, JOptionPane.QUESTION_MESSAGE);
+						switch (menu) {
+							case 0: // 첫 번째 버튼 : Modbus
+								fileName = "Modbus";
+								break;
+							case 1: // 두 번째 버튼 : PLC
+								fileName = "PLC";
+								break;
+							default :
+								// 템플릿 다운로드 취소
+								return;
+						}
+					}
+					
 					String filePath = String.format("%s\\%s\\%s\\%s\\%s.xlsx", 
 							MainFrame.getCurrentPath(),
 							"template",
 							mkVersion,
 							Moon.currentLanguage,
-							"Modbus"
+							fileName
 							);
 					
 					File file = new File(filePath);
