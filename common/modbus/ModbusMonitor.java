@@ -216,7 +216,6 @@ public class ModbusMonitor{
 				if( func > 0x80 && func < 0x91){
 					byte[] packet = in.debug_getBuffer();
 					String rxPacket = getPacketString(packet, 0, packet.length);
-					System.out.println("RX : " + rxPacket);
 					return rxPacket;
 				}
 			}
