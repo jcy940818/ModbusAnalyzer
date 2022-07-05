@@ -2089,20 +2089,24 @@ public class ModbusMonitorFrame extends JFrame {
 			SwingUtilities.invokeLater(new Runnable() {
 			    @Override public void run() {
 			    	
-					int rowNum = point.getIndex() - 1;
-					pointTable.clearSelection();
-					pointTable.addRowSelectionInterval(rowNum, rowNum);
-					pointTable.addColumnSelectionInterval(0, pointTable.getColumnCount() - 1);
-			    	
-			    	String findIndex = point.getText(addrTypeComboBox.getSelectedItem().toString());
-					int textLength = findIndex.length();
-					
-					int start = log.getText().indexOf(findIndex);
-					int end = start + textLength;
-					
-					log.setSelectionColor(Color.GREEN);
-					log.getCaret().setSelectionVisible(true);
-					log.select(start, end);
+			    	try {
+						int rowNum = point.getIndex() - 1;
+						pointTable.clearSelection();
+						pointTable.addRowSelectionInterval(rowNum, rowNum);
+						pointTable.addColumnSelectionInterval(0, pointTable.getColumnCount() - 1);
+				    	
+				    	String findIndex = point.getText(addrTypeComboBox.getSelectedItem().toString());
+						int textLength = findIndex.length();
+						
+						int start = log.getText().indexOf(findIndex);
+						int end = start + textLength;
+						
+						log.setSelectionColor(Color.GREEN);
+						log.getCaret().setSelectionVisible(true);
+						log.select(start, end);
+			    	}catch(IllegalArgumentException e) {
+			    		// do nothing
+			    	}
 			    	
 			    }
 			});
