@@ -1120,6 +1120,14 @@ public class ModbusMonitor_Panel extends JPanel {
 		exportButton.setBorder(UIManager.getBorder("Button.border"));
 		exportButton.setBackground(Color.WHITE);
 		exportButton.setBounds(918, 11, 120, 36);
+		exportButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				new ExportModbusWatchPointFrame();
+				
+			}
+		});
 		infoPanel.add(exportButton);
 		
 		monitorV1Button = new JButton("Monitor V1");
