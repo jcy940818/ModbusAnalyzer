@@ -7,6 +7,8 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
@@ -33,24 +35,22 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-import common.agent.PerfData;
-import common.modbus.ModbusCellRenderer;
 import common.modbus.ModbusWatchPoint;
-import common.util.JavaScript;
+import common.perf.PerfLabelStatusBean;
 import src_ko.util.Util;
 
 public class ExportModbusWatchPointFrame extends JFrame {
 
 	public static ModbusWatchPoint selectedPoint = null;
 	public static ArrayList<ModbusWatchPoint> pointList;
-	public static JTable pointTable;	
+	public static JTable pointTable;
 	
 	public static boolean isExist = false;
 	
 	private JPanel contentPane;
 	private JPanel actualPanel;
 	
-	public static JTextField search_textField;	
+	public static JTextField search_TextField;
 	private JScrollPane table_scrollPane = new JScrollPane();	
 	
 	public static JComboBox addrTypeComboBox; // 주소 형식 콤보박스
@@ -91,6 +91,8 @@ public class ExportModbusWatchPointFrame extends JFrame {
 	 */
 	public ExportModbusWatchPointFrame() {
 		ExportModbusWatchPointFrame.isExist = true;		
+		ExportModbusWatchPointFrame.pointList = ModbusMonitor_Panel.pointList;
+		
 		setTitle("Modbus Monitor");
 		setMinimumSize(new Dimension(r.width, r.height));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -136,6 +138,13 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		currentFunction.setBackground(Color.WHITE);
 		currentFunction.setBounds(0, 0, 350, 55);
 		actualPanel.add(currentFunction);
+		
+		JLabel searchLabel = new JLabel("검 색");
+		searchLabel.setBackground(Color.WHITE);
+		searchLabel.setForeground(Color.BLACK);
+		searchLabel.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		searchLabel.setBounds(18, 66, 50, 32);
+		actualPanel.add(searchLabel);
 		
 		table_scrollPane = new JScrollPane();
 		table_scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
@@ -186,64 +195,48 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		addrTypeComboBox.setForeground(Color.BLACK);
 		addrTypeComboBox.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		addrTypeComboBox.setBackground(Color.WHITE);
-		addrTypeComboBox.setBounds(515, 68, 150, 30);
+		addrTypeComboBox.setBounds(552, 68, 150, 32);
+		addrTypeComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updateTable();
+			}
+		});
 		actualPanel.add(addrTypeComboBox);
 		
 		
-		search_textField = new JTextField();
-		search_textField.setHorizontalAlignment(SwingConstants.LEFT);
-		search_textField.setForeground(Color.BLACK);
-		search_textField.setFont(new Font("맑은 고딕", Font.PLAIN, 17));
-		search_textField.setColumns(10);
-		search_textField.setBorder(new LineBorder(Color.BLACK, 2));
-		search_textField.setBackground(Color.WHITE);
-		search_textField.setBounds(72, 68, 437, 32);
-		search_textField.addKeyListener(new KeyAdapter() {
+		search_TextField = new JTextField();
+		search_TextField.setHorizontalAlignment(SwingConstants.LEFT);
+		search_TextField.setForeground(Color.BLACK);
+		search_TextField.setFont(new Font("맑은 고딕", Font.PLAIN, 17));
+		search_TextField.setColumns(10);
+		search_TextField.setBorder(new LineBorder(Color.BLACK, 2));
+		search_TextField.setBackground(Color.WHITE);
+		search_TextField.setBounds(72, 68, 475, 32);
+		search_TextField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				try {
-					if(pointList != null && (pointList.size() != pointTable.getRowCount())) {
-						resetTable(pointTable, null);
-						addRecord(pointTable, pointList);
-					}
-					
-					setTableStyle(pointTable, search_textField.getText());
-					
+					doTableFilter(false);
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 			public void keyReleased(KeyEvent e) {
 				try {
-					if(pointList != null && (pointList.size() != pointTable.getRowCount())) {
-						resetTable(pointTable, null);
-						addRecord(pointTable, pointList);
-					}
 					
-					String formula = search_textField.getText().toLowerCase();
+					boolean enter = (e.getKeyCode() == KeyEvent.VK_ENTER);
+					doTableFilter(enter);
 					
-					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-						if(formula.contains("only")) {
-							formula = formula.replace("only", "");
-							if(!formula.contains("x")) {
-								try {
-									int value = Integer.parseInt(formula.trim());
-									formula = ("x == " + formula);
-								}catch(Exception exception) {
-									// do nothing
-								}
-							}
-							onlyValueFormulaPoint(formula);
-						}
-						
-					}else {
-						setTableStyle(pointTable, formula);	
-					}
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 		});
-		actualPanel.add(search_textField);
+		actualPanel.add(search_TextField);
+		
+		
+		
+		tableDataInit();
 		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
@@ -280,9 +273,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 				"보정식",
 				"이진 상태 : 0",
 				"이진 상태 : 1",
-				"다중 상태",
-				"마지막 내용",
-				"마지막 데이터"
+				"다중 상태"
 		};
 		
 		table.setModel(new DefaultTableModel(content, header) {
@@ -296,20 +287,17 @@ public class ExportModbusWatchPointFrame extends JFrame {
 						false,
 						false,
 						false,
-						false,
-						false,
 						false
-						
 				};
 				public boolean isCellEditable(int row, int column) {
 					return columnEditables[column];
 				}
 		});
 		
-		setTableStyle(table, null);
+		setTableStyle(pointTable);
 	}
 	
-	public static void setTableStyle(JTable table, String valueFormula) {
+	public static void setTableStyle(JTable table) {
 		// 이동 불가, 셀 크기 조절 불가
 		table.getTableHeader().setBackground(new Color(255, 255, 153));
 		table.getTableHeader().setForeground(Color.BLACK);		
@@ -325,17 +313,15 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		
 		// 테이블 헤더 width 설정
 		table.getColumnModel().getColumn(0).setPreferredWidth(70); // 순서
-		table.getColumnModel().getColumn(1).setPreferredWidth(350); // 모드버스 포인트
+		table.getColumnModel().getColumn(1).setPreferredWidth(400); // 모드버스 포인트
 		table.getColumnModel().getColumn(2).setPreferredWidth(80); // 기능코드
 		table.getColumnModel().getColumn(3).setPreferredWidth(130); // 주 소
-		table.getColumnModel().getColumn(4).setPreferredWidth(280); // 데이터 타입
-		table.getColumnModel().getColumn(5).setPreferredWidth(80); // 단 위
-		table.getColumnModel().getColumn(6).setPreferredWidth(130); // 보정식
-		table.getColumnModel().getColumn(7).setPreferredWidth(120); // 이진 상태 : 0
-		table.getColumnModel().getColumn(8).setPreferredWidth(120); // 이진 상태 : 1
-		table.getColumnModel().getColumn(9).setPreferredWidth(300); // 다중 상태
-		table.getColumnModel().getColumn(10).setPreferredWidth(150); // 마지막 내용
-		table.getColumnModel().getColumn(11).setPreferredWidth(150); // 마지막 데이터
+		table.getColumnModel().getColumn(4).setPreferredWidth(300); // 데이터 타입
+		table.getColumnModel().getColumn(5).setPreferredWidth(120); // 단 위
+		table.getColumnModel().getColumn(6).setPreferredWidth(145); // 보정식
+		table.getColumnModel().getColumn(7).setPreferredWidth(150); // 이진 상태 : 0
+		table.getColumnModel().getColumn(8).setPreferredWidth(150); // 이진 상태 : 1
+		table.getColumnModel().getColumn(9).setPreferredWidth(350); // 다중 상태
 				
 		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
 		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();
@@ -346,29 +332,20 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		// 정렬할 테이블의 ColumnModel을 가져옴
 		TableColumnModel tcmSchedule = table.getColumnModel();
 		
-		// 값
-		DefaultTableCellRenderer valueCellRenderer = null;
-		if(valueFormula == null || valueFormula.length() == 0 || valueFormula.equalsIgnoreCase("")) {
-			valueCellRenderer = new DefaultTableCellRenderer();
-			
-		}else {
-			if(!valueFormula.toLowerCase().contains("x")) {
-				try {
-					double value = Double.parseDouble(valueFormula.trim());
-					valueFormula = ("x == " + valueFormula);
-				}catch(Exception e) {
-					// do nothing
-				}
-			}
-			
-			valueCellRenderer = new ModbusCellRenderer(valueFormula, "value", pointList);
-		}
-		valueCellRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		
 		tcmSchedule.getColumn(0).setCellRenderer(tScheduleCellRenderer); // 순 서
-		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 기능코드
-		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 주소
-		tcmSchedule.getColumn(3).setCellRenderer(valueCellRenderer); // 값		
+//		tcmSchedule.getColumn(1).setCellRenderer(tScheduleCellRenderer); // 모드버스 포인트
+		tcmSchedule.getColumn(2).setCellRenderer(tScheduleCellRenderer); // 기능코드
+		tcmSchedule.getColumn(3).setCellRenderer(tScheduleCellRenderer); // 주 소
+		tcmSchedule.getColumn(4).setCellRenderer(tScheduleCellRenderer); // 데이터 타입
+		tcmSchedule.getColumn(5).setCellRenderer(tScheduleCellRenderer); // 단 위
+		tcmSchedule.getColumn(6).setCellRenderer(tScheduleCellRenderer); // 보정식
+		tcmSchedule.getColumn(7).setCellRenderer(tScheduleCellRenderer); // 이진 상태 : 0
+		tcmSchedule.getColumn(8).setCellRenderer(tScheduleCellRenderer); // 이진 상태 : 1
+//		tcmSchedule.getColumn(9).setCellRenderer(tScheduleCellRenderer); // 다중 상태
+	}
+	
+	public static void tableDataInit() {
+		addRecord(pointTable, ModbusMonitor_Panel.pointList);
 	}
 	
 	/**
@@ -387,8 +364,15 @@ public class ExportModbusWatchPointFrame extends JFrame {
 				
 				ModbusWatchPoint point = pointList.get(i);
 				record = new Vector();
-				/* column[0] */ record.add(point.getIndex()); // 순 서
-				/* column[1] */ record.add(point.getFunctionCode()); // 기능코드
+				
+				int index = 0;
+				if(table.getRowCount() <= 0) {
+					// 테이블의 행 개수가 0개 일 경우 : index = 1
+					index = 1;
+				}else if(table.getRowCount() >= 1){
+					// 테이블의 행 개수가 최소 1개 이상 일 경우 마지막 레코드의 ( 순서 컬럼 값 + 1 )
+					index = Integer.parseInt(String.valueOf(table.getValueAt(table.getRowCount()-1, 0))) + 1;				
+				}
 				
 				Object addr = null;
 				switch(addrTypeComboBox.getSelectedItem().toString()) {
@@ -406,9 +390,24 @@ public class ExportModbusWatchPointFrame extends JFrame {
 						break;
 				}
 				
-				/* column[2] */ record.add(addr);  // 주소
-				/* column[3] */ record.add(PerfData.getPerfPureValue(point.getData())); // 결 과
+				PerfLabelStatusBean[] labels =  point.getStatusLabels();
+				String multiLabel = "";
+				if(labels != null) {
+					for(PerfLabelStatusBean label : labels) {
+						multiLabel += label.value + "; " + label.label + "; ";
+					}
+				}
 				
+				/* column[0] */ record.add(String.valueOf(index)); // 순 서 
+				/* column[1] */ record.add(point); // 모드버스 포인트
+				/* column[2] */ record.add(point.getFunctionCode()); // 기능코드
+				/* column[3] */ record.add(addr);  // 주소
+				/* column[4] */ record.add(point.getDataType());  // 데이터 타입
+				/* column[5] */ record.add(point.getMeasure());  // 단위
+				/* column[6] */ record.add(point.getScaleFunction());  // 보정식
+				/* column[7] */ record.add(point.getBinLabel()[0]);  // 이진 상태 : 0
+				/* column[8] */ record.add(point.getBinLabel()[1]);  // 이진 상태 : 1
+				/* column[9] */ record.add(multiLabel);  // 다중 상태		
 				model.addRow(record);
 			}
 			
@@ -418,91 +417,10 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		}
 	}
 	
-	public static void updateTable(JTable table) {
-		
-		if(pointList == null || pointList.size() < 1) {
-			resetTable(table, null);
-			return;
-		}
-		
-		int rowCount = table.getRowCount();
-		int columnCount = table.getColumnCount();
-		
-		Object[][] content = new Object[rowCount][];
-		
-		for(int i = 0; i < rowCount; i++) {
-			content[i] = new Object[columnCount];
-			
-			int index = Integer.parseInt(pointTable.getValueAt(i, 0).toString());
-			ModbusWatchPoint point = pointList.get(index-1);
-			
-			Object addr = null;
-			switch(addrTypeComboBox.getSelectedItem().toString()) {
-				case "Modbus (DEC)" :
-					addr = point.getModbusAddrString();
-					break;
-				case "Register (DEC)" :
-					addr = point.getRegisterAddr();
-					break;
-				case "Register (HEX)" :
-					addr = point.getRegisterAddrHexString();
-					break;
-				default : 
-					addr = point.getModbusAddrString();
-					break;
-			}
-			
-			content[i][0] = table.getValueAt(i, 0);
-			content[i][1] = point.getFunctionCode();
-			content[i][2] = addr;
-			content[i][3] = PerfData.getPerfPureValue(point.getData());			
-		}
-		
-		resetTable(table, content);
-		
-		
-		try {
-			String formula = search_textField.getText().toLowerCase();
-			
-			if(formula.contains("only")) {
-				formula = formula.replace("only", "");
-				if(!formula.contains("x")) {
-					try {
-						int value = Integer.parseInt(formula.trim());
-						formula = ("x == " + formula);
-					}catch(Exception exception) {
-						// do nothing
-					}
-				}
-				onlyValueFormulaPoint(formula);
-				
-			}else {
-				setTableStyle(pointTable, formula);	
-			}
-		}catch(Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-	
-	public static void onlyValueFormulaPoint(String formula) {
-    	ArrayList<ModbusWatchPoint> findPointList = new ArrayList<ModbusWatchPoint>();
-		
-		for(ModbusWatchPoint p : pointList) {
-			String pureData = p.getData().getPureValue().toString();
-			if(!pureData.equalsIgnoreCase("none")) {
-				try {
-					boolean validFormula =  (boolean)JavaScript.eval(formula, pureData);
-					if(validFormula) findPointList.add(p);
-				}catch(Exception exp) {
-					// Do Nothing
-				}
-			}
-		}
-		
+	public static void updateTable() {
 		resetTable(pointTable, null);
-		addRecord(pointTable, findPointList);
-		setTableStyle(pointTable, formula);
-	}	
+		addRecord(pointTable, ModbusMonitor_Panel.pointList);
+	}
 	
 	public static ArrayList<ModbusWatchPoint> getSelectedPointList(){
 		try {
@@ -532,5 +450,59 @@ public class ExportModbusWatchPointFrame extends JFrame {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	
+	
+	// 테이블 기능 관련
+	public static void doTableFilter(boolean clickedEnter) {
+		if(search_TextField == null) return;
+		
+		ArrayList<ModbusWatchPoint> filterList = new ArrayList<ModbusWatchPoint>();
+		String text = search_TextField.getText();
+		
+		boolean noSearch = (text == null || text.length() == 0 || text.equals(""));
+		
+		if(noSearch) {
+			resetTable(pointTable, null);
+			addRecord(pointTable, pointList);
+			return;
+		}
+		if(!noSearch) {
+			text = text.toLowerCase().trim();
+		}
+		
+		for(int i = 0; i < pointList.size(); i++) {
+			ModbusWatchPoint modbusWp = pointList.get(i);
+			boolean isContain = false;
+			
+			if(!noSearch) {
+				String searchElement = modbusWp.toString().toLowerCase();
+				
+				if(text.contains(",")) {
+					String[] textToken = text.split(",");
+					for(int i2 = 0; i2 < textToken.length; i2++) {
+						String token = textToken[i2].trim();
+						if(searchElement.contains(token)) {
+							isContain = true;
+						}
+					}
+				}else{
+					if (searchElement.contains(text)) {
+						isContain = true;
+					}
+				}		
+			}else {
+				isContain = true;
+			}
+			
+			if(isContain) {
+				filterList.add(modbusWp);
+			}
+			
+		}// for loop
+		
+		resetTable(pointTable, null);
+		addRecord(pointTable, filterList);
 	}
 }

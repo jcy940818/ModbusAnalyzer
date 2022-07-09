@@ -62,7 +62,7 @@ public class ModbusMonitor_Panel extends JPanel {
 	public static JComboBox resultType;
 	public static JScrollPane pointList_ScrollPane;
 	public static JTable pointTable;	
-	private static ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();
+	public static ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();
 	
 	public static String fc_formula = null;
 	public static String addr_formula = null;
@@ -874,13 +874,6 @@ public class ModbusMonitor_Panel extends JPanel {
 					boolean enter = (e.getKeyCode() == KeyEvent.VK_ENTER);
 					doTableFilter(enter);					
 					
-					if(enter) {
-						System.out.println("Fc Formula  : " + fc_formula);
-						System.out.println("Addr Formula  : " + addr_formula);
-						System.out.println("Value Formula  : " + value_formula);
-						System.out.println();
-					}
-					
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -1124,7 +1117,26 @@ public class ModbusMonitor_Panel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				new ExportModbusWatchPointFrame();
+				if(pointList == null 
+					|| pointList.size() < 1 
+					|| pointTable == null 
+					|| pointTable.getRowCount() < 1){
+					
+					StringBuilder sb = new StringBuilder("<font color='red'>No data in table</font>\n");
+					sb.append("현재 테이블에 모드버스 포인트 데이터가 없습니다");
+					sb.append(Util.separator + Util.separator + "\n");
+					Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+					
+				}else {
+					
+					if(!ExportModbusWatchPointFrame.isExist) {
+						new ExportModbusWatchPointFrame();
+					}else {
+						ExportModbusWatchPointFrame.existsFrame();
+					}
+					
+						
+				}
 				
 			}
 		});
@@ -1666,6 +1678,8 @@ public class ModbusMonitor_Panel extends JPanel {
 		boolean value_only = false;
 		
 		if(noSearch && !useFilter.isSelected()) {
+			fc_formula = null;
+			addr_formula = null;
 			value_formula = null;
 			resetTable(pointTable, null);
 			addRecord(pointTable, pointList);

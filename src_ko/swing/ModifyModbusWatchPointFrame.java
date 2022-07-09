@@ -679,6 +679,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 						updatePoint(selectedPoint);
 						ModbusMonitor_Panel.doTableFilter(false);
 						ModifyModbusWatchPointFrame.doTableFilter();
+						ExportModbusWatchPointFrame.updateTable();
 						
 						StringBuilder sb = new StringBuilder();
 						sb.append(String.format("%s%s%s\n", Util.colorGreen("Point Modification Completed"), Util.separator, Util.separator));						
@@ -804,6 +805,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 						
 						ModbusMonitor_Panel.doTableFilter(false);
 						ModifyModbusWatchPointFrame.doTableFilter();
+						ExportModbusWatchPointFrame.updateTable();
 						
 						sb = new StringBuilder();
 						sb.append(String.format("%s%s%s\n", Util.colorGreen("Point Modification Completed"), Util.separator, Util.separator));						
