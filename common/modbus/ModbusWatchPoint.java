@@ -239,6 +239,9 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			}
 	
 			dataType = counterToken[2].trim();
+			if(ModbusMonitor.getDataType(dataType) == -1) {
+				throw new ModbusWatchPointInitException();
+			}
 			
 			this.setFunctionCode(functionCode);
 			this.setRegisterAddr(registerAddr);

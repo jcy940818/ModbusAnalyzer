@@ -73,18 +73,18 @@ public class ExportModbusWatchPointFrame extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ExportModbusWatchPointFrame frame = new ExportModbusWatchPointFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					ExportModbusWatchPointFrame frame = new ExportModbusWatchPointFrame();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the frame.
@@ -321,7 +321,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		table.getColumnModel().getColumn(6).setPreferredWidth(145); // 보정식
 		table.getColumnModel().getColumn(7).setPreferredWidth(150); // 이진 상태 : 0
 		table.getColumnModel().getColumn(8).setPreferredWidth(150); // 이진 상태 : 1
-		table.getColumnModel().getColumn(9).setPreferredWidth(350); // 다중 상태
+		table.getColumnModel().getColumn(9).setPreferredWidth(800); // 다중 상태
 				
 		// DefaultTableCellHeaderRenderer 생성 (가운데 정렬을 위한)
 		DefaultTableCellRenderer tScheduleCellRenderer = new DefaultTableCellRenderer();

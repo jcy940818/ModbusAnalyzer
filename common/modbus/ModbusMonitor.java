@@ -327,7 +327,7 @@ public class ModbusMonitor{
 		}
 	}
 	
-	private int getDataType(String dataTypeStr) {
+	public static int getDataType(String dataTypeStr) {
 		int dataType = DataType.TWO_BYTE_INT_SIGNED;
 		
 		if (dataTypeStr.equalsIgnoreCase("BINARY")) {
@@ -365,6 +365,8 @@ public class ModbusMonitor{
 		}
 		else if (dataTypeStr.equalsIgnoreCase("EIGHT BYTE FLOAT")) {
 			dataType = DataType.EIGHT_BYTE_FLOAT;
+		}else {
+			return -1;
 		}
 
 		return dataType;
