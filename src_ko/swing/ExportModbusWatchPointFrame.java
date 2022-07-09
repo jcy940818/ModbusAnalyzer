@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -19,12 +18,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Vector;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -50,6 +52,9 @@ public class ExportModbusWatchPointFrame extends JFrame {
 	private JPanel contentPane;
 	private JPanel actualPanel;
 	
+	private JRadioButton mk_V4_RaidoButton;
+	private JRadioButton mk_V10_RaidoButton;
+	
 	public static JTextField search_TextField;
 	private JScrollPane table_scrollPane = new JScrollPane();	
 	
@@ -62,13 +67,13 @@ public class ExportModbusWatchPointFrame extends JFrame {
 						"Register (DEC)", 
 						"Register (HEX)"
 						}));
-		addrTypeComboBox.setSelectedIndex(1);
+		addrTypeComboBox.setSelectedIndex(0);
 	}
 	
 	private JPanel cardPanel;
 	private static CardLayout cardLayout;
 	private Rectangle r = new Rectangle(100, 100, 1080, 720);
-	
+	private Color mkColor = new Color(237, 76, 55);
 	
 	/**
 	 * Launch the application.
@@ -155,28 +160,23 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		pointTable.setRowSelectionAllowed(false);
 		pointTable.setCellSelectionEnabled(true);
 		pointTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // ¡Ú ³»°¡ ±×Åä·Ï Ã£´ø ±â´É
-		pointTable.setCellSelectionEnabled(true);
-		pointTable.addKeyListener(new KeyAdapter() {			
-			public void keyPressed(KeyEvent e) {
-				
-			}
-						
-			public void keyReleased(KeyEvent e) {
-				
-			}
-		});
+		pointTable.setCellSelectionEnabled(true);		
 		pointTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
+				
 				if (e.getButton() == 1) {
-					// ¿ÞÂÊ Å¬¸¯
-					
-				} 
+				} // ¿ÞÂÊ Å¬¸¯
+				
 				if (e.getButton() == 1 && e.getClickCount() == 2) {
 					// ¿ÞÂÊ ¹öÆ° ´õºí Å¬¸¯
-					
+
 				}
 				if (e.getButton() == 3) {
 					// ¿À¸¥ÂÊ Å¬¸¯
+					
+					int row = pointTable.getSelectedRow();
+					ModbusWatchPoint point = (ModbusWatchPoint) pointTable.getValueAt(row, 1);
+					ModbusWatchPoint.showInfo(point);
 					
 				}
 			}
@@ -191,11 +191,11 @@ public class ExportModbusWatchPointFrame extends JFrame {
 						"Register (DEC)", 
 						"Register (HEX)"
 						}));
-		addrTypeComboBox.setSelectedIndex(1);
+		addrTypeComboBox.setSelectedIndex(0);
 		addrTypeComboBox.setForeground(Color.BLACK);
 		addrTypeComboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		addrTypeComboBox.setBackground(Color.WHITE);
-		addrTypeComboBox.setBounds(552, 68, 150, 32);
+		addrTypeComboBox.setBounds(397, 30, 150, 32);
 		addrTypeComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -203,7 +203,6 @@ public class ExportModbusWatchPointFrame extends JFrame {
 			}
 		});
 		actualPanel.add(addrTypeComboBox);
-		
 		
 		search_TextField = new JTextField();
 		search_TextField.setHorizontalAlignment(SwingConstants.LEFT);
@@ -234,7 +233,52 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		});
 		actualPanel.add(search_TextField);
 		
+		JButton exportButton = new JButton(" Export");
+		exportButton.setIcon(new Util().getExcelImage());
+		exportButton.setForeground(Color.BLACK);
+		exportButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
+		exportButton.setFocusPainted(false);
+		exportButton.setBackground(Color.WHITE);
+		exportButton.setBounds(841, 8, 196, 66);
+		actualPanel.add(exportButton);
 		
+		mk_V4_RaidoButton = new JRadioButton("MK119  V4");
+		mk_V4_RaidoButton.setSelected(true);
+		mk_V4_RaidoButton.setHorizontalAlignment(SwingConstants.LEFT);
+		mk_V4_RaidoButton.setForeground(new Color(237, 76, 55));
+		mk_V4_RaidoButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
+		mk_V4_RaidoButton.setFocusPainted(false);
+		mk_V4_RaidoButton.setBackground(Color.WHITE);
+		mk_V4_RaidoButton.setBounds(686, 12, 151, 23);
+		actualPanel.add(mk_V4_RaidoButton);
+		
+		mk_V10_RaidoButton = new JRadioButton("MK119  V10");
+		mk_V10_RaidoButton.setHorizontalAlignment(SwingConstants.LEFT);
+		mk_V10_RaidoButton.setForeground(Color.LIGHT_GRAY);
+		mk_V10_RaidoButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
+		mk_V10_RaidoButton.setFocusPainted(false);
+		mk_V10_RaidoButton.setBackground(Color.WHITE);
+		mk_V10_RaidoButton.setBounds(686, 45, 151, 23);
+		actualPanel.add(mk_V10_RaidoButton);
+		
+		ButtonGroup group = new ButtonGroup();
+		group.add(mk_V4_RaidoButton);
+		group.add(mk_V10_RaidoButton);
+		
+		ActionListener mkVerionListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(mk_V4_RaidoButton.isSelected()) {
+					mk_V4_RaidoButton.setForeground(mkColor);
+					mk_V10_RaidoButton.setForeground(Color.LIGHT_GRAY);
+				}else {
+					mk_V4_RaidoButton.setForeground(Color.LIGHT_GRAY);
+					mk_V10_RaidoButton.setForeground(mkColor);
+				}
+			}
+		};
+		mk_V4_RaidoButton.addActionListener(mkVerionListener);
+		mk_V10_RaidoButton.addActionListener(mkVerionListener);
 		
 		tableDataInit();
 		
