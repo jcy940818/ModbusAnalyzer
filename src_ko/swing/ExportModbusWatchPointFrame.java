@@ -163,21 +163,17 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		pointTable.setCellSelectionEnabled(true);		
 		pointTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				
 				if (e.getButton() == 1) {
-				} // 왼쪽 클릭
-				
+					// 왼쪽 클릭
+				} 
 				if (e.getButton() == 1 && e.getClickCount() == 2) {
 					// 왼쪽 버튼 더블 클릭
-
 				}
 				if (e.getButton() == 3) {
 					// 오른쪽 클릭
-					
 					int row = pointTable.getSelectedRow();
 					ModbusWatchPoint point = (ModbusWatchPoint) pointTable.getValueAt(row, 1);
 					ModbusWatchPoint.showInfo(point);
-					
 				}
 			}
 		});

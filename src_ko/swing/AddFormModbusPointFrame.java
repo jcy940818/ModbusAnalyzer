@@ -532,6 +532,7 @@ public class AddFormModbusPointFrame extends JFrame {
 						if(pointList != null) {
 							ModbusMonitor_Panel.addPointList(pointList);
 							ModbusMonitor_Panel.doTableFilter(false);
+							ExportModbusWatchPointFrame.updateTable();
 							
 							StringBuilder sb = new StringBuilder();
 							sb.append(String.format("%s%s%s\n", Util.colorGreen("Modbus Point Added Successfully"), Util.separator, Util.separator));

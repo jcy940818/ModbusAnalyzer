@@ -493,6 +493,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				useFilter.setSelected(false);
 				
 				pointList.clear();
+				ExportModbusWatchPointFrame.updateTable();
 				doTableFilter(false);
 			}
 		});
@@ -538,6 +539,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					}
 
 					doTableFilter(false);
+					ExportModbusWatchPointFrame.updateTable();
 				}
 			}
 		});
@@ -1117,25 +1119,10 @@ public class ModbusMonitor_Panel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				if(pointList == null 
-					|| pointList.size() < 1 
-					|| pointTable == null 
-					|| pointTable.getRowCount() < 1){
-					
-					StringBuilder sb = new StringBuilder("<font color='red'>No data in table</font>\n");
-					sb.append("현재 테이블에 모드버스 포인트 데이터가 없습니다");
-					sb.append(Util.separator + Util.separator + "\n");
-					Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-					
+				if(!ExportModbusWatchPointFrame.isExist) {
+					new ExportModbusWatchPointFrame();
 				}else {
-					
-					if(!ExportModbusWatchPointFrame.isExist) {
-						new ExportModbusWatchPointFrame();
-					}else {
-						ExportModbusWatchPointFrame.existsFrame();
-					}
-					
-						
+					ExportModbusWatchPointFrame.existsFrame();
 				}
 				
 			}
