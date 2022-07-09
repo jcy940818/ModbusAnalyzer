@@ -4,7 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +18,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -31,18 +36,26 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import common.agent.RestAgent;
 import common.modbus.ModbusWatchPoint;
 import common.perf.PerfLabelStatusBean;
+import src_ko.agent.ModbusFacility;
+import src_ko.info.AdminConsole_Info;
 import src_ko.util.Util;
 
 public class ExportModbusWatchPointFrame extends JFrame {
 
+	public static AdminConsole_Info adminConsole = null;
+	public static ModbusFacility facility = null;
+	public static HashMap<String, ModbusFacility> facilityMap = new HashMap<String, ModbusFacility>();
+	
 	public static ModbusWatchPoint selectedPoint = null;
 	public static ArrayList<ModbusWatchPoint> pointList;
 	public static JTable pointTable;
@@ -52,8 +65,11 @@ public class ExportModbusWatchPointFrame extends JFrame {
 	private JPanel contentPane;
 	private JPanel actualPanel;
 	
+	private JRadioButton download_radioButton;
+	private JRadioButton directAdd_radioButton;
 	private JRadioButton mk_V4_RaidoButton;
 	private JRadioButton mk_V10_RaidoButton;
+	private JButton exportButton;
 	
 	public static JTextField search_TextField;
 	private JScrollPane table_scrollPane = new JScrollPane();	
@@ -75,21 +91,29 @@ public class ExportModbusWatchPointFrame extends JFrame {
 	private Rectangle r = new Rectangle(100, 100, 1080, 720);
 	private Color mkColor = new Color(237, 76, 55);
 	
+	private JButton adminConsole_Button;
+	private JLabel adminConsoleInfo;
+	private JLabel serverName_Label;
+	private JTextField serverName_TextField;
+	private JButton connect_Button;
+	private JLabel serverInfo_Label;
+	private JButton addPoint_Button;
+	
 	/**
 	 * Launch the application.
 	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					ExportModbusWatchPointFrame frame = new ExportModbusWatchPointFrame();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ExportModbusWatchPointFrame frame = new ExportModbusWatchPointFrame();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	/**
 	 * Create the frame.
@@ -148,12 +172,12 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		searchLabel.setBackground(Color.WHITE);
 		searchLabel.setForeground(Color.BLACK);
 		searchLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
-		searchLabel.setBounds(18, 66, 50, 32);
+		searchLabel.setBounds(18, 74, 50, 32);
 		actualPanel.add(searchLabel);
 		
 		table_scrollPane = new JScrollPane();
 		table_scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
-		table_scrollPane.setBounds(0, 107, 1044, 554);
+		table_scrollPane.setBounds(0, 111, 1044, 550);
 		actualPanel.add(table_scrollPane);
 		
 		pointTable = new JTable();
@@ -191,7 +215,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		addrTypeComboBox.setForeground(Color.BLACK);
 		addrTypeComboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		addrTypeComboBox.setBackground(Color.WHITE);
-		addrTypeComboBox.setBounds(397, 30, 150, 32);
+		addrTypeComboBox.setBounds(318, 38, 150, 32);
 		addrTypeComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -207,7 +231,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		search_TextField.setColumns(10);
 		search_TextField.setBorder(new LineBorder(Color.BLACK, 2));
 		search_TextField.setBackground(Color.WHITE);
-		search_TextField.setBounds(72, 68, 475, 32);
+		search_TextField.setBounds(72, 75, 397, 32);
 		search_TextField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				try {
@@ -229,14 +253,144 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		});
 		actualPanel.add(search_TextField);
 		
-		JButton exportButton = new JButton(" Export");
-		exportButton.setIcon(new Util().getExcelImage());
-		exportButton.setForeground(Color.BLACK);
-		exportButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
-		exportButton.setFocusPainted(false);
-		exportButton.setBackground(Color.WHITE);
-		exportButton.setBounds(841, 8, 196, 66);
-		actualPanel.add(exportButton);
+		download_radioButton = new JRadioButton("´Ù¿î·Îµå");
+		download_radioButton.setSelected(true);
+		download_radioButton.setHorizontalAlignment(SwingConstants.LEFT);
+		download_radioButton.setForeground(new Color(237, 76, 55));
+		download_radioButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
+		download_radioButton.setFocusPainted(false);
+		download_radioButton.setBackground(Color.WHITE);
+		download_radioButton.setBounds(480, 11, 110, 23);
+		download_radioButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				changeWork();
+			}
+		});
+		actualPanel.add(download_radioButton);
+		
+		directAdd_radioButton = new JRadioButton("¹Ù·ÎÃß°¡");
+		directAdd_radioButton.setHorizontalAlignment(SwingConstants.LEFT);
+		directAdd_radioButton.setForeground(Color.LIGHT_GRAY);
+		directAdd_radioButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
+		directAdd_radioButton.setFocusPainted(false);
+		directAdd_radioButton.setBackground(Color.WHITE);
+		directAdd_radioButton.setBounds(480, 44, 110, 23);
+		directAdd_radioButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				changeWork();
+			}
+		});
+		actualPanel.add(directAdd_radioButton);
+		
+		ButtonGroup group = new ButtonGroup();
+		group.add(download_radioButton);
+		group.add(directAdd_radioButton);
+		
+		adminConsole_Button = new JButton(new Util().getMK2Resource());		
+		adminConsole_Button.setBounds(485, 75, 102, 30);
+		adminConsole_Button.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
+		adminConsole_Button.setFocusPainted(false);
+		adminConsole_Button.setContentAreaFilled(false);
+		adminConsole_Button.setBorder(UIManager.getBorder("Button.border"));
+		adminConsole_Button.setBackground(Color.WHITE);
+		adminConsole_Button.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(!AdminConsole_LoginFrame.isExist) {
+					new AdminConsole_LoginFrame(null, "ModbusExport");			
+				}else {
+					StringBuilder sb = new StringBuilder();
+					sb.append(Util.colorRed("AdminConsole Login Already Exists") + Util.separator + "\n");
+					sb.append("AdminConsole Login ÇÁ·¹ÀÓÀÌ ÀÌ¹Ì Á¸ÀçÇÕ´Ï´Ù" + Util.separator + "\n");
+					Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		actualPanel.add(adminConsole_Button);
+		
+		adminConsoleInfo = new JLabel("MK119 AdminConsole");
+		adminConsoleInfo.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
+		adminConsoleInfo.setForeground(Color.BLACK);
+		adminConsoleInfo.setBackground(Color.WHITE);
+		adminConsoleInfo.setBounds(598, 10, 437, 25);
+		actualPanel.add(adminConsoleInfo);
+		
+		serverName_Label = new JLabel("Àåºñ¸í");
+		serverName_Label.setHorizontalAlignment(SwingConstants.LEFT);		
+		serverName_Label.setForeground(Color.BLACK);
+		serverName_Label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
+		serverName_Label.setBackground(Color.WHITE);
+		serverName_Label.setBounds(598, 44, 63, 28);
+		actualPanel.add(serverName_Label);
+		
+		serverName_TextField = new JTextField();
+		serverName_TextField.setBorder(new LineBorder(Color.BLACK, 2));
+		serverName_TextField.setForeground(Color.BLACK);
+		serverName_TextField.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 18));
+		serverName_TextField.setBounds(663, 44, 308, 28);
+		serverName_TextField.setColumns(10);
+		actualPanel.add(serverName_TextField);
+		
+		connect_Button = new JButton("¿¬ µ¿");
+		connect_Button.setForeground(Color.BLACK);
+		connect_Button.setFocusPainted(false);
+		connect_Button.setMargin(new Insets(2, 0, 2, 0));
+		connect_Button.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
+		connect_Button.setFocusPainted(false);
+		connect_Button.setContentAreaFilled(false);
+		connect_Button.setBorder(UIManager.getBorder("Button.border"));
+		connect_Button.setBackground(Color.WHITE);
+		connect_Button.setBounds(975, 44, 63, 28);
+		actualPanel.add(connect_Button);
+		
+		serverInfo_Label = new JLabel("MK119 AdminConsole");
+		serverInfo_Label.setForeground(Color.BLACK);
+		serverInfo_Label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
+		serverInfo_Label.setBackground(Color.WHITE);
+		serverInfo_Label.setBounds(598, 78, 373, 28);
+		actualPanel.add(serverInfo_Label);
+		
+		addPoint_Button = new JButton("Ãß °¡");
+		addPoint_Button.setMargin(new Insets(2, 0, 2, 0));
+		addPoint_Button.setForeground(Color.BLACK);
+		addPoint_Button.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
+		addPoint_Button.setFocusPainted(false);
+		addPoint_Button.setContentAreaFilled(false);
+		addPoint_Button.setBorder(UIManager.getBorder("Button.border"));
+		addPoint_Button.setBackground(Color.WHITE);
+		addPoint_Button.setBounds(975, 78, 63, 28);
+		actualPanel.add(addPoint_Button);
+		
+		ActionListener workListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(download_radioButton.isSelected()) {
+					download_radioButton.setForeground(mkColor);
+					directAdd_radioButton.setForeground(Color.LIGHT_GRAY);
+					
+					mk_V4_RaidoButton.setEnabled(true);
+					mk_V4_RaidoButton.setVisible(true);
+					mk_V10_RaidoButton.setEnabled(true);
+					mk_V10_RaidoButton.setVisible(true);
+					exportButton.setEnabled(true);
+					exportButton.setVisible(true);
+				}else {
+					download_radioButton.setForeground(Color.LIGHT_GRAY);
+					directAdd_radioButton.setForeground(mkColor);
+					
+					mk_V4_RaidoButton.setEnabled(false);
+					mk_V4_RaidoButton.setVisible(false);
+					mk_V10_RaidoButton.setEnabled(false);
+					mk_V10_RaidoButton.setVisible(false);
+					exportButton.setEnabled(false);
+					exportButton.setVisible(false);
+				}
+			}
+		};
+		download_radioButton.addActionListener(workListener);
+		directAdd_radioButton.addActionListener(workListener);
 		
 		mk_V4_RaidoButton = new JRadioButton("MK119  V4");
 		mk_V4_RaidoButton.setSelected(true);
@@ -246,7 +400,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		mk_V4_RaidoButton.setFocusPainted(false);
 		mk_V4_RaidoButton.setBackground(Color.WHITE);
 		mk_V4_RaidoButton.setBounds(686, 12, 151, 23);
-		actualPanel.add(mk_V4_RaidoButton);
+//		actualPanel.add(mk_V4_RaidoButton);
 		
 		mk_V10_RaidoButton = new JRadioButton("MK119  V10");
 		mk_V10_RaidoButton.setHorizontalAlignment(SwingConstants.LEFT);
@@ -255,11 +409,12 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		mk_V10_RaidoButton.setFocusPainted(false);
 		mk_V10_RaidoButton.setBackground(Color.WHITE);
 		mk_V10_RaidoButton.setBounds(686, 45, 151, 23);
-		actualPanel.add(mk_V10_RaidoButton);
+//		actualPanel.add(mk_V10_RaidoButton);
 		
-		ButtonGroup group = new ButtonGroup();
-		group.add(mk_V4_RaidoButton);
-		group.add(mk_V10_RaidoButton);
+		ButtonGroup group2 = new ButtonGroup();
+		group2.add(mk_V4_RaidoButton);
+		group2.add(mk_V10_RaidoButton);
+		
 		
 		ActionListener mkVerionListener = new ActionListener() {
 			@Override
@@ -275,6 +430,15 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		};
 		mk_V4_RaidoButton.addActionListener(mkVerionListener);
 		mk_V10_RaidoButton.addActionListener(mkVerionListener);
+		
+		exportButton = new JButton(" Export");
+		exportButton.setIcon(new Util().getExcelImage());
+		exportButton.setForeground(Color.BLACK);
+		exportButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
+		exportButton.setFocusPainted(false);
+		exportButton.setBackground(Color.WHITE);
+		exportButton.setBounds(841, 8, 196, 66);
+//		actualPanel.add(exportButton);
 		
 		tableDataInit();
 		
@@ -388,6 +552,63 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		addRecord(pointTable, ModbusMonitor_Panel.pointList);
 	}
 	
+	public void changeWork() {
+		mk_V4_RaidoButton.setEnabled(download_radioButton.isSelected());
+		mk_V4_RaidoButton.setVisible(download_radioButton.isSelected());
+		
+		mk_V10_RaidoButton.setEnabled(download_radioButton.isSelected());
+		mk_V10_RaidoButton.setVisible(download_radioButton.isSelected());
+		
+		exportButton.setEnabled(download_radioButton.isSelected());
+		exportButton.setVisible(download_radioButton.isSelected());
+		
+		adminConsole_Button.setEnabled(directAdd_radioButton.isSelected());
+		adminConsole_Button.setVisible(directAdd_radioButton.isSelected());
+		
+		adminConsoleInfo.setEnabled(directAdd_radioButton.isSelected());
+		adminConsoleInfo.setVisible(directAdd_radioButton.isSelected());
+		
+		serverName_Label.setEnabled(directAdd_radioButton.isSelected());
+		serverName_Label.setVisible(directAdd_radioButton.isSelected());
+		
+		serverName_TextField.setEnabled(directAdd_radioButton.isSelected());
+		serverName_TextField.setVisible(directAdd_radioButton.isSelected());
+		
+		connect_Button.setEnabled(directAdd_radioButton.isSelected());
+		connect_Button.setVisible(directAdd_radioButton.isSelected());
+		
+		serverInfo_Label.setEnabled(directAdd_radioButton.isSelected());
+		serverInfo_Label.setVisible(directAdd_radioButton.isSelected());		
+		
+		addPoint_Button.setEnabled(directAdd_radioButton.isSelected());
+		addPoint_Button.setVisible(directAdd_radioButton.isSelected());
+	}
+	
+	public void connectAdminConsole(AdminConsole_Info adminConsole) {
+		
+		String mk119Info = String.format("MK119 %s %s:%s", adminConsole.getVersion(), adminConsole.get_IP(), adminConsole.get_PORT());
+		
+		adminConsoleInfo.setEnabled(true);
+		adminConsoleInfo.setVisible(true);
+		adminConsoleInfo.setText(mk119Info);
+		
+		serverName_Label.setEnabled(true);
+		serverName_Label.setVisible(true);
+		
+		serverName_TextField.setEnabled(true);
+		serverName_TextField.setVisible(true);
+		
+		connect_Button.setEnabled(true);
+		connect_Button.setVisible(true);
+		
+		serverInfo_Label.setEnabled(true);
+		serverInfo_Label.setVisible(true);
+		serverInfo_Label.setText("¸ðµå¹ö½º ¿¬°á ¹æ½ÄÀÇ Àåºñ¿Í ¿¬µ¿µÇÁö ¾Ê¾Ò½À´Ï´Ù");
+		
+		addPoint_Button.setEnabled(true);
+		addPoint_Button.setVisible(true);
+	}
+	
 	/**
 	 * 	·¹ÄÚµå Ãß°¡
 	 */
@@ -492,6 +713,28 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		}
 	}
 	
+	public static void loadFacilityInfo(AdminConsole_Info adminConsole) {
+		HashMap<String, ModbusFacility> map = RestAgent.getFacilityAll(adminConsole);
+		
+		if(map != null) {
+			facilityMap = map;
+			
+			Set keys = facilityMap.keySet();
+			Iterator it = keys.iterator();
+			while(it.hasNext()) {
+				String key = (String)it.next();
+				ModbusFacility fac = facilityMap.get(key);
+				
+				if(fac != null) {
+					System.out.printf("idx : %d, name : %s, type : %s\n", fac.getnServerIndex(), fac.getStrServerName(), fac.getFACILITY_TYPE_String());
+				}
+				
+			}
+			
+		}else {
+			System.out.println("MK119 Àåºñ ¸®½ºÆ® ·Îµå ½ÇÆÐ");
+		}
+	}
 	
 	
 	// Å×ÀÌºí ±â´É °ü·Ã

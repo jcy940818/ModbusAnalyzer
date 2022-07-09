@@ -75,7 +75,7 @@ public class AdminConsole_LoginFrame extends JFrame {
 		this.mkDatabasePort = SqlServerInfo.split(":")[1];
 		
 		setResizable(false);
-		setTitle(String.format("ModbusAnalyzer : %s [ %s ]", this.mkDatabaseIp, DbUtil.getMK119VersionInfo()));
+		setTitle("ModbusAnalyzer");
 			
 		// 클래스 로더를 이용한 이미지 로딩
 		// String ImageFile = "Moon.png";

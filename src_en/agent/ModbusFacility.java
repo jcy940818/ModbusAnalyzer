@@ -1,5 +1,7 @@
 package src_en.agent;
 
+import src_en.database.DbUtil;
+
 public class ModbusFacility {
 	private int nServerIndex;
 	private String strServerName;
@@ -56,6 +58,11 @@ public class ModbusFacility {
 	
 	public String getFACILITY_TYPE_String() {
 		return FACILITY_TYPE_String;
+	}
+	
+	public void setFacilityType(int facType) {
+		this.FACILITY_TYPE = facType;
+		this.FACILITY_TYPE_String = DbUtil.getFacilityType(facType);
 	}
 
 }

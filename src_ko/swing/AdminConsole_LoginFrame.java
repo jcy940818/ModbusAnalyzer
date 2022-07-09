@@ -85,13 +85,15 @@ public class AdminConsole_LoginFrame extends JFrame {
 	public AdminConsole_LoginFrame(String SqlServerInfo, String agentType) {
 		AdminConsole_LoginFrame.isExist = true;
 		
-		this.mkSqlServerInfo = SqlServerInfo;
-		this.mkDatabaseIp = SqlServerInfo.split(":")[0];
-		this.mkDatabasePort = SqlServerInfo.split(":")[1];
+		if(SqlServerInfo != null) {
+			this.mkSqlServerInfo = SqlServerInfo;
+			this.mkDatabaseIp = SqlServerInfo.split(":")[0];
+			this.mkDatabasePort = SqlServerInfo.split(":")[1];
+		}
 		this.agentType = agentType;
 		
 		setResizable(false);
-		setTitle(String.format("ModbusAnalyzer : %s [ %s ]", this.mkDatabaseIp, DbUtil.getMK119VersionInfo()));
+		setTitle("ModbusAnalyzer");
 			
 		// 클래스 로더를 이용한 이미지 로딩
 		// String ImageFile = "Moon.png";
@@ -102,10 +104,12 @@ public class AdminConsole_LoginFrame extends JFrame {
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 695, 380);
+		
+		Color color = (SqlServerInfo != null) ? new Color(255, 140, 0) : Color.DARK_GRAY;
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
-		contentPane.setBorder(new LineBorder(new Color(255, 140, 0), 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
+		contentPane.setBorder(new LineBorder(color, 5));
 		setContentPane(contentPane);
 		
 		JPanel actualPanel = new JPanel();
@@ -116,8 +120,7 @@ public class AdminConsole_LoginFrame extends JFrame {
 		
 		// 서버 IP 정보 -------------------------------------------------------
 		serverIp = new JTextField();
-		serverIp.setHorizontalAlignment(SwingConstants.CENTER);		
-		serverIp.setText(String.format("%s", this.mkDatabaseIp));
+		serverIp.setHorizontalAlignment(SwingConstants.CENTER);				
 		serverIp.setForeground(Color.BLACK);
 		serverIp.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		serverIp.setFocusTraversalKeysEnabled(false);
@@ -136,6 +139,8 @@ public class AdminConsole_LoginFrame extends JFrame {
 				login();
 			}
 		});	
+		String ip = (SqlServerInfo != null) ? this.mkDatabaseIp : "";
+		serverIp.setText(String.format("%s", ip));
 		actualPanel.add(serverIp);
 		
 		// 서버 PORT 정보 ---------------------------------------------------
@@ -228,8 +233,8 @@ public class AdminConsole_LoginFrame extends JFrame {
 		
 		
 		// MK119 버전 정보 -----------------------------------------------------------------
-		JLabel MK119_Version = new JLabel(DbUtil.getMK119Version());
-//		JLabel MK119_Version = new JLabel("4.5");
+		String versionInfo = (SqlServerInfo != null) ? DbUtil.getMK119Version() : "V4";
+		JLabel MK119_Version = new JLabel(versionInfo);		
 		MK119_Version.setHorizontalAlignment(SwingConstants.LEFT);
 		MK119_Version.setForeground(Color.DARK_GRAY);
 		MK119_Version.setFont(new Font("맑은 고딕", Font.BOLD, 25));
@@ -299,7 +304,12 @@ public class AdminConsole_LoginFrame extends JFrame {
 		// 프레임이 화면 가운데에서 생성된다		
 		setLocationRelativeTo(null);
 		setVisible(true);
-		loginId.requestFocus();
+		
+		if(SqlServerInfo != null) {
+			loginId.requestFocus();	
+		}else {
+			serverIp.requestFocus();
+		}
 	}
 	
 	public void login() {		
@@ -354,6 +364,12 @@ public class AdminConsole_LoginFrame extends JFrame {
 						FacilityInfoFrame.isConnectRestAPI();
 						dispose();
 					}
+					break;
+					
+				case "ModbusExport" :
+					ExportModbusWatchPointFrame.adminConsole = this.adminConsole;
+					ExportModbusWatchPointFrame.loadFacilityInfo(this.adminConsole);
+					dispose();					
 					break;
 					
 				default :
