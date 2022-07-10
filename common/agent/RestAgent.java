@@ -217,4 +217,112 @@ public class RestAgent {
 		return facilityMap;
 	}
 	
+	public static ModbusFacility getFacilityDetail(AdminConsole_Info adminConsole, int serverIndex){
+		ModbusFacility facility = null;
+		
+		try {
+			String API_URL = String.format("http://%s:%s/midknight/api/metadata/servers/%d", adminConsole.get_IP(), adminConsole.get_PORT(), serverIndex);
+			
+			Connection connection = Jsoup.connect(API_URL)
+					.header("Content-Type", "application/x-www-form-urlencoded;charset:utf-8")
+					.header("Cookie", "JSESSIONID=" + adminConsole.get_SESSION_ID())
+					.ignoreContentType(true)
+					.maxBodySize(0)
+					.timeout(0)
+					.method(Connection.Method.GET);
+			
+			Connection.Response response = connection.execute();
+			
+			adminConsole.setHttpStatusCode(response.statusCode(), false);
+			
+			Document dom = response.parse();
+			responseBody = dom.body().text();
+			
+			// 세션이 끊어지지 않음
+			try {
+				facility = new ModbusFacility();
+				
+				JSONObject jsonObject = new JSONObject(responseBody);
+				
+				if(jsonObject.getInt("agentType") == 16) {
+					facility.setnServerIndex(jsonObject.getInt("idx"));
+					facility.setStrServerName(jsonObject.getString("serverName"));
+					
+					JSONObject facInfo = jsonObject.getJSONObject("facilityInfo");
+					facility.setFacilityType(facInfo.getInt("facilityType"));
+					facility.setCONN_METHOD(facInfo.getInt("connMethod"));
+					facility.setCOMM_PROTOCOL(facInfo.getInt("commProtocol"));
+					
+					return facility;
+				}else {
+					return null;
+				}				
+				
+			}catch(JSONException e) {
+				e.printStackTrace();
+				return null;
+			}
+			
+		}catch(ConnectException e) {
+			// MK119 서비스 실행중 아님			
+			e.printStackTrace();
+			return null;
+			
+		}catch(Exception e) {
+			e.printStackTrace();			
+			return null;
+		}
+	}
+	
+	
+	public static String getMK119Version(AdminConsole_Info adminConsole){		
+		
+		String mk119Version = null;
+		
+		try {
+			String API_URL = String.format("http://%s:%s/midknight/api2/metadata/version", adminConsole.get_IP(), adminConsole.get_PORT());
+			
+			Connection connection = Jsoup.connect(API_URL)
+					.header("Content-Type", "application/x-www-form-urlencoded;charset:utf-8")
+					.header("Cookie", "JSESSIONID=" + adminConsole.get_SESSION_ID())
+					.ignoreContentType(true)
+					.maxBodySize(0)
+					.timeout(0)
+					.method(Connection.Method.GET);
+			
+			Connection.Response response = connection.execute();
+			
+			adminConsole.setHttpStatusCode(response.statusCode(), false);
+			
+			Document dom = response.parse();
+			responseBody = dom.body().text();
+			
+			// 세션이 끊어지지 않음
+			try {
+				JSONObject versionInfo = new JSONObject(responseBody);
+				String name = versionInfo.getString("name");
+				String version = versionInfo.getString("version");
+				String buildVersion = versionInfo.getString("buildVersion");
+				String buildDate = versionInfo.getString("buildDate");
+				mk119Version= String.format("%s %s Build%s(%s)", name, version, buildVersion, buildDate);
+				
+				adminConsole.setVersion(version);
+				
+			}catch(JSONException e) {
+				e.printStackTrace();
+				return null;
+			}
+			
+		}catch(ConnectException e) {
+			// MK119 서비스 실행중 아님			
+			e.printStackTrace();
+			return null;
+			
+		}catch(Exception e) {
+			e.printStackTrace();			
+			return null;
+		}
+				
+		return mk119Version;
+	}
 }

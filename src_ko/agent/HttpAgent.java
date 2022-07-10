@@ -168,8 +168,8 @@ public class HttpAgent {
 					// 성능 추가 성공 로직
 					StringBuilder sb = new StringBuilder();
 					sb.append(String.format("<font color='green'>Successfully MK119 Add Watch Point</font>%s%s\n", Util.separator, Util.separator));
-					sb.append(String.format("시설물 종류 : %s%s%s\n", Util.colorBlue(server.getFACILITY_TYPE_String()), Util.separator, Util.separator));
-					sb.append(String.format("장비명 : %s%s%s\n\n", Util.colorBlue(server.getStrServerName()), Util.separator, Util.separator));
+					sb.append(String.format("장비명 : %s%s%s\n", Util.colorBlue(server.getStrServerName()), Util.separator, Util.separator));
+					sb.append(String.format("시설물 종류 : %s%s%s\n\n", Util.colorBlue(server.getFACILITY_TYPE_String()), Util.separator, Util.separator));
 					sb.append(String.format("위의 장비에 성공적으로 %s개 성능 항목 추가 완료하였습니다%s%s\n", Util.colorBlue(String.valueOf(perfs.length)), Util.separator, Util.separator));
 					Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
 					ModbusCollectionFrame.isMK119Adding = false;

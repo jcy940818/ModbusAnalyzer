@@ -19,8 +19,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -46,15 +44,21 @@ import javax.swing.table.TableColumnModel;
 import common.agent.RestAgent;
 import common.modbus.ModbusWatchPoint;
 import common.perf.PerfLabelStatusBean;
+import src_ko.agent.HttpAgent;
+import src_ko.agent.ModbusAgent;
 import src_ko.agent.ModbusFacility;
+import src_ko.agent.Perf;
+import src_ko.database.DbUtil;
 import src_ko.info.AdminConsole_Info;
 import src_ko.util.Util;
 
 public class ExportModbusWatchPointFrame extends JFrame {
 
 	public static AdminConsole_Info adminConsole = null;
+	public static boolean working = false;
+	
 	public static ModbusFacility facility = null;
-	public static HashMap<String, ModbusFacility> facilityMap = new HashMap<String, ModbusFacility>();
+	public static HashMap<String, ModbusFacility> facilityMap = null;
 	
 	public static ModbusWatchPoint selectedPoint = null;
 	public static ArrayList<ModbusWatchPoint> pointList;
@@ -91,13 +95,13 @@ public class ExportModbusWatchPointFrame extends JFrame {
 	private Rectangle r = new Rectangle(100, 100, 1080, 720);
 	private Color mkColor = new Color(237, 76, 55);
 	
-	private JButton adminConsole_Button;
-	private JLabel adminConsoleInfo;
-	private JLabel serverName_Label;
-	private JTextField serverName_TextField;
-	private JButton connect_Button;
-	private JLabel serverInfo_Label;
-	private JButton addPoint_Button;
+	private static JButton mk119_Button;
+	private static JLabel adminConsoleInfo;
+	private static JLabel serverName_Label;
+	private static JTextField serverName_TextField;
+	private static JButton connect_Button;
+	private static JLabel serverInfo_Label;
+	private static JButton addPoint_Button;
 	
 	/**
 	 * Launch the application.
@@ -121,6 +125,10 @@ public class ExportModbusWatchPointFrame extends JFrame {
 	public ExportModbusWatchPointFrame() {
 		ExportModbusWatchPointFrame.isExist = true;		
 		ExportModbusWatchPointFrame.pointList = ModbusMonitor_Panel.pointList;
+		
+		adminConsole = null;
+		facility = null;
+		facilityMap = null;
 		
 		setTitle("Modbus Monitor");
 		setMinimumSize(new Dimension(r.width, r.height));
@@ -183,8 +191,8 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		pointTable = new JTable();
 		pointTable.setRowSelectionAllowed(false);
 		pointTable.setCellSelectionEnabled(true);
-		pointTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // ★ 내가 그토록 찾던 기능
-		pointTable.setCellSelectionEnabled(true);		
+		pointTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		pointTable.setCellSelectionEnabled(true);
 		pointTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == 1) {
@@ -235,17 +243,14 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		search_TextField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				try {
-					doTableFilter(false);
+					doTableFilter();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 			public void keyReleased(KeyEvent e) {
 				try {
-					
-					boolean enter = (e.getKeyCode() == KeyEvent.VK_ENTER);
-					doTableFilter(enter);
-					
+					doTableFilter();
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}
@@ -288,18 +293,20 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		group.add(download_radioButton);
 		group.add(directAdd_radioButton);
 		
-		adminConsole_Button = new JButton(new Util().getMK2Resource());		
-		adminConsole_Button.setBounds(485, 75, 102, 30);
-		adminConsole_Button.setFont(new Font("맑은 고딕", Font.BOLD, 17));
-		adminConsole_Button.setFocusPainted(false);
-		adminConsole_Button.setContentAreaFilled(false);
-		adminConsole_Button.setBorder(UIManager.getBorder("Button.border"));
-		adminConsole_Button.setBackground(Color.WHITE);
-		adminConsole_Button.addActionListener(new ActionListener() {	
+		mk119_Button = new JButton(new Util().getMK2Resource());		
+		mk119_Button.setBounds(485, 75, 102, 30);
+		mk119_Button.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		mk119_Button.setFocusPainted(false);
+		mk119_Button.setContentAreaFilled(false);
+		mk119_Button.setBorder(UIManager.getBorder("Button.border"));
+		mk119_Button.setBackground(Color.WHITE);
+		mk119_Button.setEnabled(false);
+		mk119_Button.setVisible(false);
+		mk119_Button.addActionListener(new ActionListener() {	
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!AdminConsole_LoginFrame.isExist) {
-					new AdminConsole_LoginFrame(null, "ModbusExport");			
+				if(!AdminConsole_LoginFrame.isExist) {					
+					new AdminConsole_LoginFrame(null, "ModbusExport");
 				}else {
 					StringBuilder sb = new StringBuilder();
 					sb.append(Util.colorRed("AdminConsole Login Already Exists") + Util.separator + "\n");
@@ -307,14 +314,50 @@ public class ExportModbusWatchPointFrame extends JFrame {
 					Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 				}
 			}
-		});
-		actualPanel.add(adminConsole_Button);
+		});		
+		actualPanel.add(mk119_Button);
 		
-		adminConsoleInfo = new JLabel("MK119 AdminConsole");
+		adminConsoleInfo = new JLabel();
+		adminConsoleInfo.setText("<html><font color='black'>Admin Console : </font>" + "연동 전" + "</html>");
 		adminConsoleInfo.setFont(new Font("맑은 고딕", Font.BOLD, 18));
-		adminConsoleInfo.setForeground(Color.BLACK);
+		adminConsoleInfo.setForeground(mkColor);
 		adminConsoleInfo.setBackground(Color.WHITE);
-		adminConsoleInfo.setBounds(598, 10, 437, 25);
+		adminConsoleInfo.setBounds(598, 7, 437, 28);
+		adminConsoleInfo.setEnabled(false);
+		adminConsoleInfo.setVisible(false);
+		adminConsoleInfo.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if(adminConsole != null) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(String.format("%s", Util.colorGreen("linked with MK119 AdminConsole")));
+					sb.append(Util.separator + Util.separator + "\n");
+					
+					String mkVersionInfo = RestAgent.getMK119Version(adminConsole);
+					
+					if(mkVersionInfo == null) {
+						String newSession = AdminConsole_Info.refreshSession(adminConsole);
+						
+						if (newSession != null) {
+							mkVersionInfo = RestAgent.getMK119Version(adminConsole);
+						}else {
+							mkVersionInfo = "연동 실패";
+						}
+					}
+					
+					sb.append(String.format("%s : %s", Util.colorBlue("AdminConsole"), mkVersionInfo));
+					sb.append(Util.separator + Util.separator + "\n\n");
+					
+					sb.append(String.format("%s : %s", Util.colorBlue("IP"), adminConsole.get_IP()));
+					sb.append(Util.separator + Util.separator + "\n");
+					
+					sb.append(String.format("%s : %s", Util.colorBlue("Port"), adminConsole.get_PORT()));
+					sb.append(Util.separator + Util.separator + "\n");
+					Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+			}
+		});
+		
 		actualPanel.add(adminConsoleInfo);
 		
 		serverName_Label = new JLabel("장비명");
@@ -322,7 +365,9 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		serverName_Label.setForeground(Color.BLACK);
 		serverName_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		serverName_Label.setBackground(Color.WHITE);
-		serverName_Label.setBounds(598, 44, 63, 28);
+		serverName_Label.setBounds(598, 43, 63, 28);
+		serverName_Label.setEnabled(false);
+		serverName_Label.setVisible(false);
 		actualPanel.add(serverName_Label);
 		
 		serverName_TextField = new JTextField();
@@ -331,6 +376,14 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		serverName_TextField.setFont(new Font("맑은 고딕", Font.PLAIN, 18));
 		serverName_TextField.setBounds(663, 44, 308, 28);
 		serverName_TextField.setColumns(10);
+		serverName_TextField.setEnabled(false);
+		serverName_TextField.setVisible(false);
+		serverName_TextField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				connect_Button.doClick();
+			}
+		});
 		actualPanel.add(serverName_TextField);
 		
 		connect_Button = new JButton("연 동");
@@ -343,13 +396,25 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		connect_Button.setBorder(UIManager.getBorder("Button.border"));
 		connect_Button.setBackground(Color.WHITE);
 		connect_Button.setBounds(975, 44, 63, 28);
+		connect_Button.setEnabled(false);
+		connect_Button.setVisible(false);
+		connect_Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String serverName = serverName_TextField.getText();
+				connectFacility(serverName);		
+			}
+		});
 		actualPanel.add(connect_Button);
 		
-		serverInfo_Label = new JLabel("MK119 AdminConsole");
-		serverInfo_Label.setForeground(Color.BLACK);
+		serverInfo_Label = new JLabel();
+		serverInfo_Label.setText(String.format("<html><font color='black'>연동 장비 :</font> %s</html>", "연동 전"));
+		serverInfo_Label.setForeground(Color.BLUE);
 		serverInfo_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		serverInfo_Label.setBackground(Color.WHITE);
 		serverInfo_Label.setBounds(598, 78, 373, 28);
+		serverInfo_Label.setEnabled(false);
+		serverInfo_Label.setVisible(false);
 		actualPanel.add(serverInfo_Label);
 		
 		addPoint_Button = new JButton("추 가");
@@ -361,6 +426,13 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		addPoint_Button.setBorder(UIManager.getBorder("Button.border"));
 		addPoint_Button.setBackground(Color.WHITE);
 		addPoint_Button.setBounds(975, 78, 63, 28);
+		addPoint_Button.setEnabled(false);
+		addPoint_Button.setVisible(false);
+		addPoint_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addModbusPerfFacility(facility);
+			}
+		});
 		actualPanel.add(addPoint_Button);
 		
 		ActionListener workListener = new ActionListener() {
@@ -370,22 +442,10 @@ public class ExportModbusWatchPointFrame extends JFrame {
 					download_radioButton.setForeground(mkColor);
 					directAdd_radioButton.setForeground(Color.LIGHT_GRAY);
 					
-					mk_V4_RaidoButton.setEnabled(true);
-					mk_V4_RaidoButton.setVisible(true);
-					mk_V10_RaidoButton.setEnabled(true);
-					mk_V10_RaidoButton.setVisible(true);
-					exportButton.setEnabled(true);
-					exportButton.setVisible(true);
 				}else {
 					download_radioButton.setForeground(Color.LIGHT_GRAY);
 					directAdd_radioButton.setForeground(mkColor);
 					
-					mk_V4_RaidoButton.setEnabled(false);
-					mk_V4_RaidoButton.setVisible(false);
-					mk_V10_RaidoButton.setEnabled(false);
-					mk_V10_RaidoButton.setVisible(false);
-					exportButton.setEnabled(false);
-					exportButton.setVisible(false);
 				}
 			}
 		};
@@ -400,7 +460,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		mk_V4_RaidoButton.setFocusPainted(false);
 		mk_V4_RaidoButton.setBackground(Color.WHITE);
 		mk_V4_RaidoButton.setBounds(686, 12, 151, 23);
-//		actualPanel.add(mk_V4_RaidoButton);
+		actualPanel.add(mk_V4_RaidoButton);
 		
 		mk_V10_RaidoButton = new JRadioButton("MK119  V10");
 		mk_V10_RaidoButton.setHorizontalAlignment(SwingConstants.LEFT);
@@ -409,7 +469,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		mk_V10_RaidoButton.setFocusPainted(false);
 		mk_V10_RaidoButton.setBackground(Color.WHITE);
 		mk_V10_RaidoButton.setBounds(686, 45, 151, 23);
-//		actualPanel.add(mk_V10_RaidoButton);
+		actualPanel.add(mk_V10_RaidoButton);
 		
 		ButtonGroup group2 = new ButtonGroup();
 		group2.add(mk_V4_RaidoButton);
@@ -438,7 +498,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		exportButton.setFocusPainted(false);
 		exportButton.setBackground(Color.WHITE);
 		exportButton.setBounds(841, 8, 196, 66);
-//		actualPanel.add(exportButton);
+		actualPanel.add(exportButton);
 		
 		tableDataInit();
 		
@@ -459,11 +519,6 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		sb.append("Export Modbus Point 프레임이 이미 열려있습니다" + Util.separator + "\n");
 		Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 		return;
-	}
-	
-	public void tableResize(JTable table) {
-		int width = contentPane.getWidth() - (table_scrollPane.getX() + 20);
-		
 	}
 	
 	public static void resetTable(JTable table, Object[][] content){
@@ -562,9 +617,9 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		exportButton.setEnabled(download_radioButton.isSelected());
 		exportButton.setVisible(download_radioButton.isSelected());
 		
-		adminConsole_Button.setEnabled(directAdd_radioButton.isSelected());
-		adminConsole_Button.setVisible(directAdd_radioButton.isSelected());
-		
+		mk119_Button.setEnabled(directAdd_radioButton.isSelected());
+		mk119_Button.setVisible(directAdd_radioButton.isSelected());
+				
 		adminConsoleInfo.setEnabled(directAdd_radioButton.isSelected());
 		adminConsoleInfo.setVisible(directAdd_radioButton.isSelected());
 		
@@ -582,31 +637,6 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		
 		addPoint_Button.setEnabled(directAdd_radioButton.isSelected());
 		addPoint_Button.setVisible(directAdd_radioButton.isSelected());
-	}
-	
-	public void connectAdminConsole(AdminConsole_Info adminConsole) {
-		
-		String mk119Info = String.format("MK119 %s %s:%s", adminConsole.getVersion(), adminConsole.get_IP(), adminConsole.get_PORT());
-		
-		adminConsoleInfo.setEnabled(true);
-		adminConsoleInfo.setVisible(true);
-		adminConsoleInfo.setText(mk119Info);
-		
-		serverName_Label.setEnabled(true);
-		serverName_Label.setVisible(true);
-		
-		serverName_TextField.setEnabled(true);
-		serverName_TextField.setVisible(true);
-		
-		connect_Button.setEnabled(true);
-		connect_Button.setVisible(true);
-		
-		serverInfo_Label.setEnabled(true);
-		serverInfo_Label.setVisible(true);
-		serverInfo_Label.setText("모드버스 연결 방식의 장비와 연동되지 않았습니다");
-		
-		addPoint_Button.setEnabled(true);
-		addPoint_Button.setVisible(true);
 	}
 	
 	/**
@@ -679,38 +709,125 @@ public class ExportModbusWatchPointFrame extends JFrame {
 	}
 	
 	public static void updateTable() {
-		resetTable(pointTable, null);
-		addRecord(pointTable, ModbusMonitor_Panel.pointList);
+		if(ExportModbusWatchPointFrame.isExist) {
+			resetTable(pointTable, null);
+			addRecord(pointTable, ModbusMonitor_Panel.pointList);
+		}
 	}
 	
-	public static ArrayList<ModbusWatchPoint> getSelectedPointList(){
-		try {
+	public static void connectFacility(String facilityName) {
+		
+		ModbusFacility facility = facilityMap.get(facilityName);
+		
+		if(adminConsole == null && facilityMap == null) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("%s", Util.colorRed("It is not linked with MK119 AdminConsole")));
+			sb.append(Util.separator + Util.separator + "\n");
 			
-			ArrayList<ModbusWatchPoint> selectedList = null;
+			sb.append("MK119 관리자 콘솔과 연동되지 않았습니다");
+			sb.append(Util.separator + Util.separator + "\n");
 			
-			if(pointList != null
-				&& pointList.size() >= 1
-				&& pointTable.getRowCount() >= 1
-				&& pointTable.getSelectedRows() != null
-				&& pointTable.getSelectedRows().length >= 1) {
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		if(facility == null) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("%s", Util.colorRed("Not Found Modbus Connected Facility")));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			sb.append(String.format("%s : %s", Util.colorBlue("장비명"), facilityName));
+			sb.append(Util.separator + Util.separator + "\n\n");
+			
+			sb.append("입력하신 장비명을 가진 시설물이 존재하지 않습니다");
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		facility = RestAgent.getFacilityDetail(adminConsole, facility.getnServerIndex());
+		
+		if(facility == null) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("%s", Util.colorRed("Not Found Modbus Connected Facility")));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			sb.append(String.format("%s : %s", Util.colorBlue("장비명"), facilityName));
+			sb.append(Util.separator + Util.separator + "\n\n");
+			
+			sb.append("입력하신 장비명을 가진 시설물이 존재하지 않습니다");
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		int connMethod = facility.getCONN_METHOD();
+		int commPorotocol = facility.getCOMM_PROTOCOL();
+		
+		if(connMethod == ModbusAgent.CONN_METHOD_MODBUS && (commPorotocol == ModbusAgent.MODBUS_TYPE_RTU || commPorotocol == ModbusAgent.MODBUS_TYPE_TCP)) {
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("%s", Util.colorGreen("Modbus Connected Facility")));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			sb.append(String.format("%s : %s", Util.colorBlue("장비명"), facility.getStrServerName()));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			sb.append(String.format("%s : %s", Util.colorBlue("시설물 종류"), facility.getFACILITY_TYPE_String()));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			sb.append(String.format("%s : %s", Util.colorBlue("연결 방식"), DbUtil.getConnMethod(connMethod)));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			sb.append(String.format("%s : %s", Util.colorBlue("모드버스 타입"), (commPorotocol == ModbusAgent.MODBUS_TYPE_RTU) ? "Modbus-RTU" : "Modbus-TCP"));
+			sb.append(Util.separator + Util.separator + "\n\n");
+			
+			sb.append("위의 모드버스 연결 장비와 연동하시겠습니까?");
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			int menu = Util.showConfirm(sb.toString());
+			
+			if(menu == JOptionPane.OK_OPTION) {
+				/***********************************************************************************************/
+				ExportModbusWatchPointFrame.facility = facility;
 				
-				selectedList = new ArrayList<ModbusWatchPoint>();
-				
-				for(int row : pointTable.getSelectedRows()) {
-					int index = Integer.parseInt(pointTable.getValueAt(row, 0).toString());
-					// 새로운 포인트를 생성해서 Copy 하는 이유는 새로 생성한 포인트 객체의 주소를 참조하기 위해서임
-					ModbusWatchPoint point = new ModbusWatchPoint();
-					ModbusWatchPoint selectedPoint = pointList.get(index-1);
-					point.copy(selectedPoint);
-					selectedList.add(point);
-				}
+				serverInfo_Label.setText(String.format("<html><font color='black'>연동 장비 :</font> %s</html>", facility.getStrServerName()));
+				/***********************************************************************************************/
+			}else {
+				// 사용자가 연동을 취소함
+				return;
 			}
 			
-			return selectedList;
-		}catch(Exception e) {
-			e.printStackTrace();
-			return null;
+		}else {
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("%s", Util.colorRed("Not a Modbus Connected Facility")));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			sb.append(String.format("%s : %s", Util.colorBlue("장비명"), facility.getStrServerName()));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			sb.append(String.format("%s : %s", Util.colorBlue("시설물 종류"), facility.getFACILITY_TYPE_String()));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			sb.append(String.format("%s : %s", Util.colorBlue("연결 방식"), DbUtil.getConnMethod(connMethod)));
+			sb.append(Util.separator + Util.separator + "\n\n");
+			
+			sb.append("위의 장비는 모스버스 연결 방식으로 등록되지 않았기 때문에 연동이 불가능합니다");
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 		}
+	}
+	
+	public static void loadMK119Version(AdminConsole_Info adminConsole) {
+		String mkVersionInfo = RestAgent.getMK119Version(adminConsole);
+		adminConsoleInfo.setText("<html><font color='black'>Admin Console : </font>" + mkVersionInfo + "</html>");
+	}
+	
+	public static void linkSuccess() {
+		ExportModbusWatchPointFrame.facility = null;
+		serverInfo_Label.setText(String.format("<html><font color='black'>연동 장비 :</font> %s</html>", "연동 전"));		
 	}
 	
 	public static void loadFacilityInfo(AdminConsole_Info adminConsole) {
@@ -718,27 +835,119 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		
 		if(map != null) {
 			facilityMap = map;
-			
-			Set keys = facilityMap.keySet();
-			Iterator it = keys.iterator();
-			while(it.hasNext()) {
-				String key = (String)it.next();
-				ModbusFacility fac = facilityMap.get(key);
-				
-				if(fac != null) {
-					System.out.printf("idx : %d, name : %s, type : %s\n", fac.getnServerIndex(), fac.getStrServerName(), fac.getFACILITY_TYPE_String());
-				}
-				
-			}
-			
 		}else {
-			System.out.println("MK119 장비 리스트 로드 실패");
+			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("%s", Util.colorRed("MK119 Facility Info load Fail")));
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			sb.append("MK119 장비 정보 로드에 실패하였습니다");
+			sb.append(Util.separator + Util.separator + "\n");
+			
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
+	public static void addModbusPerfFacility(ModbusFacility facility){
+		try {
+			
+			if(facility == null) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(String.format("%s", Util.colorRed("It is not linked with Modbus Facility")));
+				sb.append(Util.separator + Util.separator + "\n");
+				
+				sb.append("현재 연동된 모드버스 연결 장비가 없습니다");
+				sb.append(Util.separator + Util.separator + "\n");
+				
+				Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(pointTable.getSelectedRowCount() == 0) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(String.format("%s", Util.colorRed("No points selected")));
+				sb.append(Util.separator + Util.separator + "\n");
+				
+				sb.append("테이블에서 추가하실 모드버스 포인트를 선택 후 다시 시도해주세요");
+				sb.append(Util.separator + Util.separator + "\n");
+				
+				Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if(ExportModbusWatchPointFrame.working) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(String.format("%s", Util.colorRed("Performing the last requested operation")));
+				sb.append(Util.separator + Util.separator + "\n");
+				
+				sb.append("현재 스레드가 마지막 요청을 처리중입니다");
+				sb.append(Util.separator + Util.separator + "\n");
+				
+				Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			int[] selectedRows = pointTable.getSelectedRows();
+			Perf[] perfs = new Perf[selectedRows.length];
+			
+			Thread thread = new Thread(new Runnable() {
+				public void run() {
+					
+					StringBuilder sb = new StringBuilder();
+					sb.append("<font color='green'>Add MK119 Watch Point?</font>\n");
+					sb.append(String.format("장비명 : %s%s%s\n", Util.colorBlue(facility.getStrServerName()), Util.separator ,Util.separator));					
+					sb.append(String.format("시설물 종류 : %s%s%s\n\n", Util.colorBlue(facility.getFACILITY_TYPE_String()), Util.separator ,Util.separator));
+					sb.append(String.format("위의 장비에 성능 %s개 항목을 추가 하시겠습니까?%s%s\n",Util.colorBlue(String.valueOf(perfs.length)) ,Util.separator, Util.separator));
+					
+					int userOption= Util.showConfirm(sb.toString());
+					
+					if(userOption != JOptionPane.YES_OPTION) {															
+						// 성능 추가 요청 취소
+						sb = new StringBuilder();
+						sb.append(String.format("<font color='red'>Cancel MK119 Add Watch Point</font>%s\n", Util.separator));
+						sb.append(String.format("MK119 성능 추가 요청을 취소하였습니다%s\n", Util.separator));											
+						Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);						
+						return;
+					}
+					
+					try {
+						
+						ExportModbusWatchPointFrame.working = true;
+						
+						for(int i = 0; i < selectedRows.length; i++) {
+							ModbusWatchPoint point = (ModbusWatchPoint)pointTable.getValueAt(selectedRows[i], 1);
+							perfs[i] = point.parsePerf_ko();
+							
+							if (addrTypeComboBox.getSelectedIndex() == 2) {
+								perfs[i].setPerfCounter(point.getHexCounter() + "\\\\{1}");
+							}else {
+								perfs[i].setPerfCounter(point.getDecCounter() + "\\\\{1}");
+							}
+						}
+						
+						Perf.parseJSON(perfs);
+						
+						new HttpAgent().addModbusPerfs(adminConsole, facility, perfs, false);
+						
+					}finally {
+						ExportModbusWatchPointFrame.working = false;
+						
+					}
+					
+				}
+			});
+		
+			thread.start();
+			
+		}catch(Exception ex) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("<font color='red'>Failed to MK119 Add Watch Point</font>\n");
+			sb.append(String.format("MK119 성능 추가 작업중 예외가 발생하였습니다%s\n\n", Util.separator));
+			sb.append(String.format("Exception Message : %s%s\n", ex.getMessage(), Util.separator));
+			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+	}
 	
 	// 테이블 기능 관련
-	public static void doTableFilter(boolean clickedEnter) {
+	public static void doTableFilter() {
 		if(search_TextField == null) return;
 		
 		ArrayList<ModbusWatchPoint> filterList = new ArrayList<ModbusWatchPoint>();

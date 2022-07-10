@@ -204,7 +204,7 @@ public class Perf implements Comparable{
 				sb.append(String.format("'perfLabels':[]", null));
 			}
 			
-			if(ModbusCollectionFrame.useAutoEvent.isSelected()) {
+			if(ModbusCollectionFrame.useAutoEvent != null && ModbusCollectionFrame.useAutoEvent.isSelected()) {
 				sb.append(",'event':{");				
 				sb.append(String.format("'name':'%s',", perfs[i].event.getPerfEventName()));
 				sb.append(String.format("'severity':%s,", Event.severity));

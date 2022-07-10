@@ -1,8 +1,11 @@
 package common.modbus;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 import common.agent.PerfData;
 import common.perf.FmsPerfItem;
@@ -11,6 +14,8 @@ import common.perf.PerfLabelStatusBean;
 import common.util.Calculator;
 import moon.Moon;
 import src_ko.agent.ModbusAgent;
+import src_ko.analyzer.RX.DataType;
+import src_ko.util.Inspecter;
 import src_ko.util.Util;
 
 public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
@@ -604,4 +609,40 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 		return String.format("%d.  [ %s ]", this.getIndex(), this.getDecCounter());
 	}
 	
+	
+	public src_ko.agent.Perf parsePerf_ko() {
+			
+		src_ko.agent.Perf perf = new src_ko.agent.Perf();
+		
+		perf.setDisplayName(this.getDisplayName());
+		perf.setFunctionCode(String.valueOf(this.getFunctionCode()));
+		perf.setRegisterAddress(String.valueOf(this.getRegisterAddr()));
+		perf.setModbusAddress(String.valueOf(this.getModbusAddr()));		
+		perf.setDataType(this.getDataType());
+		perf.setMK119_DataType(this.getDataType());
+		perf.setInterval("60");	
+		perf.setMeasure(this.getMeasure());
+		perf.setScaleFunction(this.getScaleFunction());
+		perf.setDataFormat(String.valueOf(this.getDataFormat()));
+		
+		HashMap binaryMap = perf.getBinaryMap();
+		binaryMap.put("0", this.binLabel[0]);
+		binaryMap.put("1", this.binLabel[1]);
+		perf.setBinaryMap(binaryMap);
+		
+		if(this.getDataFormat() == 2 && this.getStatusLabels() != null) {
+			HashMap multiStatusMap = new HashMap();
+			PerfLabelStatusBean[] labelList = this.getStatusLabels();
+			for(int i = 0; i < labelList.length; i++) {
+				PerfLabelStatusBean bean = labelList[i];
+				multiStatusMap.put(
+						String.valueOf(bean.value), 
+						String.valueOf(bean.label)
+				);			
+			}
+			perf.setMultiStatusMap(multiStatusMap);	
+		}
+		
+		return perf;
+	}
 }
