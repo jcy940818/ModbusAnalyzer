@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import common.perf.FmsPerfConf;
+import common.perf.FmsPerfItem.EventInfo;
 import common.perf.Perf;
 import common.perf.PerfConf;
 import common.perf.PerfLabelStatusBean;
@@ -289,7 +290,7 @@ public class ModbusWatchPointLoader {
 					throw new IOException(Integer.toString(i+1) + "," + item + "," + modbusWps[i - 2].displayName);			
 				}
 	
-				/*
+				
 				if (row.getCell(11) != null && !CellUtil.getStringValue(row.getCell(11)).equalsIgnoreCase("")) {
 				
 					try {
@@ -348,7 +349,7 @@ public class ModbusWatchPointLoader {
 						throw new IOException("event" + "," + Integer.toString(i+1) + "," + item + "," + modbusWps[i - 2].displayName);			
 					}	
 				}
-				*/
+				
 			}
 			
 			modbusWps = trimWatchPointArray(modbusWps);
@@ -839,7 +840,9 @@ public class ModbusWatchPointLoader {
 
 class CellUtil {
 	public static boolean isNull(Cell cell) {
-		return cell.toString().trim().length() < 1;
+		return	  (cell == null
+				|| cell.toString().isEmpty() 
+				|| cell.toString().trim().length() < 1);
 	}
 	
 	public static String getStringValue(Cell cell) {
