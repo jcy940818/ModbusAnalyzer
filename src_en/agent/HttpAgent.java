@@ -97,8 +97,6 @@ public class HttpAgent {
 	
 	public void addModbusPerfs(AdminConsole_Info adminConsole, ModbusFacility server, Perf[] perfs, boolean useAutoEvent) {
 		
-//		System.out.println(ModbusPerf.getTotalJSON(perfs));		
-		
 		try {
 			String adminConsoleURL = String.format("http://%s:%s/midknight/adminConsole", adminConsole.get_IP(), adminConsole.get_PORT());
 			
