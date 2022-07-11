@@ -106,18 +106,18 @@ public class ExportModbusWatchPointFrame extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ExportModbusWatchPointFrame frame = new ExportModbusWatchPointFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					ExportModbusWatchPointFrame frame = new ExportModbusWatchPointFrame();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the frame.
@@ -790,9 +790,30 @@ public class ExportModbusWatchPointFrame extends JFrame {
 			
 			if(menu == JOptionPane.OK_OPTION) {
 				/***********************************************************************************************/
-				ExportModbusWatchPointFrame.facility = facility;
-				
+				ExportModbusWatchPointFrame.facility = facility;				
 				serverInfo_Label.setText(String.format("<html><font color='black'>연동 장비 :</font> %s</html>", facility.getStrServerName()));
+				
+				sb = new StringBuilder();
+				sb.append(String.format("%s", Util.colorGreen("Modbus Connected Facility")));
+				sb.append(Util.separator + Util.separator + "\n");
+				
+				sb.append(String.format("%s : %s", Util.colorBlue("장비명"), facility.getStrServerName()));
+				sb.append(Util.separator + Util.separator + "\n");
+				
+				sb.append(String.format("%s : %s", Util.colorBlue("시설물 종류"), facility.getFACILITY_TYPE_String()));
+				sb.append(Util.separator + Util.separator + "\n");
+				
+				sb.append(String.format("%s : %s", Util.colorBlue("연결 방식"), DbUtil.getConnMethod(connMethod)));
+				sb.append(Util.separator + Util.separator + "\n");
+				
+				sb.append(String.format("%s : %s", Util.colorBlue("모드버스 타입"), (commPorotocol == ModbusAgent.MODBUS_TYPE_RTU) ? "Modbus-RTU" : "Modbus-TCP"));
+				sb.append(Util.separator + Util.separator + "\n\n");
+				
+				sb.append("위의 모드버스 연결 장비와 정상적으로 연동 되었습니다");
+				sb.append(Util.separator + Util.separator + "\n");
+				
+				Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+				return;
 				/***********************************************************************************************/
 			}else {
 				// 사용자가 연동을 취소함
