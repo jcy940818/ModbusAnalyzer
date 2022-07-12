@@ -159,10 +159,10 @@ public class HttpAgent {
 				}else {					
 					// 성능 추가에는 성공하였지만 너무 많은 성능 리스트때문에 결과 페이지의 소스가 잘렸을 경우					
 					StringBuilder sb = new StringBuilder();				
-					sb.append("<font color='red'>Result Unknown MK119 Tasks are Complete</font>\n");
+					sb.append("<font color='green'>Result Unknown MK119 Tasks are Complete</font>\n");
 					sb.append(String.format("I don't know the result of adding MK119 performance%s\n\n", Util.separator));						
 					sb.append(String.format("( %s )%s\n", Util.colorBlue("The message does not mean that the operation fails") ,Util.separator));
-					Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+					Util.showMessage(sb.toString(), JOptionPane.QUESTION_MESSAGE);
 					ModbusCollectionFrame.isMK119Adding = false;
 					return;
 										
