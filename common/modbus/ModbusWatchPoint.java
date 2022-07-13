@@ -323,29 +323,29 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			sb.append(Util.separator + Util.separator + "\n\n");
 			
 			sb.append(String.format("%s : %s", Util.colorBlue("2. Counter"), wp.getCounter()));
-			sb.append(Util.separator + Util.separator + "\n");
+			sb.append(Util.separator + Util.separator + Util.separator + Util.separator + "\n");
 			
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 			sb.append(String.format("%s", Util.colorBlue("¦¢")));
-			sb.append(Util.separator + Util.separator + "\n");
+			sb.append(Util.separator + Util.separator + Util.separator + Util.separator + "\n");
 			
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;Function Code"), wp.getFunctionCode()));
-			sb.append(Util.separator + Util.separator + "\n");
+			sb.append(Util.separator + Util.separator + Util.separator + Util.separator + "\n");
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;Modbus Address ( DEC )"), wp.getModbusAddrString()));
-			sb.append(Util.separator + Util.separator + "\n");
+			sb.append(Util.separator + Util.separator + Util.separator + Util.separator + "\n");
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 			sb.append(String.format("%s : %d", Util.colorBlue("¦§&nbsp;&nbsp;Register Address ( DEC )"), wp.getRegisterAddr()));
-			sb.append(Util.separator + Util.separator + "\n");
+			sb.append(Util.separator + Util.separator + Util.separator + Util.separator + "\n");
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 			sb.append(String.format("%s : %s", Util.colorBlue("¦§&nbsp;&nbsp;Register Address ( HEX )"), wp.getRegisterAddrHexString()));
-			sb.append(Util.separator + Util.separator + "\n");
+			sb.append(Util.separator + Util.separator + Util.separator + Util.separator + "\n");
 			
 			
 			sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
@@ -375,7 +375,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			}
 			
 			sb.append(String.format("%s : %s", Util.colorBlue("5. Data Format"), dataFormat));
-			sb.append(Util.separator + Util.separator + "\n");
+			sb.append(Util.separator + Util.separator + Util.separator + Util.separator + "\n");
 			
 			if(wp.getDataFormat() == 1) {
 				String[] binLabel = wp.getBinLabel();
@@ -383,7 +383,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 				sb.append(String.format("%s", Util.colorBlue("¦¢")));
-				sb.append(Util.separator + Util.separator + "\n");
+				sb.append(Util.separator + Util.separator + Util.separator + Util.separator + "\n");
 				
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
@@ -394,7 +394,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 						Util.colorRed("/"),
 						Util.colorBlue("Label"),
 						binLabel[0]));
-				sb.append(Util.separator + Util.separator + "\n");
+				sb.append(Util.separator + Util.separator + Util.separator + Util.separator + "\n");
 								
 				
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
@@ -406,7 +406,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 						Util.colorRed("/"),
 						Util.colorBlue("Label"),
 						binLabel[1]));
-				sb.append(Util.separator + Util.separator + "\n");
+				sb.append(Util.separator + Util.separator + Util.separator + Util.separator + "\n");
 				
 			}else if(wp.getDataFormat() == 2) {
 				PerfLabelStatusBean[] labels = wp.getStatusLabels();
@@ -414,7 +414,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 				sb.append(String.format("%s", Util.colorBlue("¦¢")));
-				sb.append(Util.separator + Util.separator + "\n");
+				sb.append(Util.separator + Util.separator + Util.separator + Util.separator + "\n");
 				
 				for(int i = 0; i < labels.length; i++) {
 					sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
@@ -426,7 +426,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 							Util.colorRed("/"),
 							Util.colorBlue("Label"),
 							labels[i].label));
-					sb.append(Util.separator + Util.separator + "\n");
+					sb.append(Util.separator + Util.separator + Util.separator + Util.separator + "\n");
 				}
 			}
 			
