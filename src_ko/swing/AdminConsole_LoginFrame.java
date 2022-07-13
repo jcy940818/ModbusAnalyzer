@@ -370,7 +370,7 @@ public class AdminConsole_LoginFrame extends JFrame {
 					ExportModbusWatchPointFrame.adminConsole = this.adminConsole;
 					ExportModbusWatchPointFrame.loadFacilityInfo(this.adminConsole);
 					ExportModbusWatchPointFrame.linkSuccess(this.adminConsole);
-					dispose();					
+					dispose();
 					break;
 					
 				default :
