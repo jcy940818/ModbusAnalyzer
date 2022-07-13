@@ -515,6 +515,18 @@ public class ExportModbusPointFrame extends JFrame {
 		useAutoEvent_CheckBox.setBackground(Color.WHITE);
 		useAutoEvent_CheckBox.setBounds(1212, 45, 183, 23);
 		useAutoEvent_CheckBox.setFocusPainted(false);
+		useAutoEvent_CheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(useAutoEvent_CheckBox.isSelected()) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(String.format("%s%s\n", Util.colorBlue("성능 이벤트 자동 등록 사용"), Util.separator));
+					sb.append("Export 기능 사용시 자동 등록 이벤트 내용이 포함됩니다\n\n");
+					sb.append("자동 등록 이벤트는 이벤트 이름을 제외한 모든 설정이 동일하게 적용되어 등록됩니다 " + Util.separator + Util.separator + "\n");
+					sb.append("\n반드시 이벤트 설정 내용을 확인해주세요 !\n");
+					Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+				}				
+			}
+		});
 		actualPanel.add(useAutoEvent_CheckBox);
 		
 		setEvent_Button = new JButton("이벤트 설정");
@@ -523,6 +535,19 @@ public class ExportModbusPointFrame extends JFrame {
 		setEvent_Button.setFocusPainted(false);
 		setEvent_Button.setBackground(Color.WHITE);
 		setEvent_Button.setBounds(1213, 74, 182, 32);
+		setEvent_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				 if(!EventInfoFrame.isExist) {
+					 new EventInfoFrame(Color.DARK_GRAY);
+				 }else {
+					 StringBuilder sb = new StringBuilder();
+					 sb.append(Util.colorRed("Event Frame Already Exists") + Util.separator + Util.separator + "\n");
+					 sb.append("이벤트 설정 프레임이 이미 열려있습니다" + Util.separator + Util.separator + "\n");
+					 Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+					 return;
+				 }
+			}
+		});
 		actualPanel.add(setEvent_Button);
 		
 		ActionListener workListener = new ActionListener() {

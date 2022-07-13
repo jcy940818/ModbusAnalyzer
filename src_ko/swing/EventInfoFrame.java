@@ -76,7 +76,7 @@ public class EventInfoFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public EventInfoFrame() {
+	public EventInfoFrame(Color... color) {
 		EventInfoFrame.isExist = true;
 		
 		setBackground(Color.WHITE);
@@ -87,7 +87,9 @@ public class EventInfoFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 760, 686);
 		contentPane = new JPanel();
-		contentPane.setBorder(new LineBorder(new Color(255, 140, 0), 8));
+		
+		Color borderColor = (color != null && color.length > 0 && color[0] != null) ? color[0] : new Color(255, 140, 0);
+		contentPane.setBorder(new LineBorder(borderColor, 8));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		

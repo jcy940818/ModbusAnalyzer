@@ -47,23 +47,6 @@ public class Event {
 	public static String autoClose = "TRUE"; // 이벤트 자동 종료 사용 여부 : TRUE
 	public static String seqCount = "3"; // 통보 횟수 : 현재 MK119 모드버스 성능 추가시 통보 횟수는 설정하지 못함
 	
-	public static void printEventInfo() {
-		System.out.println("------------------[ 이벤트 정보 ]------------------\n");
-		System.out.println("현재 시간 : " + Timer.getServerTime());
-		System.out.println("이벤트 이름 : " + Event.name);
-		System.out.println("심각도 : " + Event.severity);
-		System.out.println("임계 값 : " + Event.threshold);
-		System.out.println("연산자 : " + Event.op);
-		System.out.println("이벤트 모드 : " + Event.mode);
-		System.out.println("지속 시간 : " + Event.duration);
-		System.out.println("이상 발생 횟수 : " + Event.count);
-		System.out.println("이벤트 자동 등록 : " + Event.autoReg);
-		System.out.println("이벤트 사용 여부 : " + Event.enable);
-		System.out.println("이벤트 자동 복구 : " + Event.autoClose);
-		System.out.println("이벤트 알림 메시지 : " + Event.message);
-		System.out.println("\n---------------------------------------------\n");
-	}
-	
 	public String getPerfEventName() {
 		return perfEventName;
 	}
