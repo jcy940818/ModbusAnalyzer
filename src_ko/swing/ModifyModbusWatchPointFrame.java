@@ -1910,6 +1910,9 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				
 				point.getBinLabel()[0] = label0;
 				point.getBinLabel()[1] = label1;
+				point.labels = null;
+				point.labelList = new ArrayList<PerfLabelStatusBean>();
+				
 				point.dataFormat = 1;
 				
 			}else if(dataFormat == 2){
@@ -1923,8 +1926,11 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 					labelList.add(bean);
 				}
 				
+				point.getBinLabel()[0] = "";
+				point.getBinLabel()[1] = "";
 				point.labelList = labelList;
 				point.setStatusLabels();
+				
 				point.dataFormat = 2;
 				
 			}else {
@@ -1932,6 +1938,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				
 				point.getBinLabel()[0] = "";
 				point.getBinLabel()[1] = "";
+				point.labels = null;
 				point.labelList = new ArrayList<PerfLabelStatusBean>();
 				
 			}
