@@ -533,7 +533,6 @@ public class ModbusMonitor_Panel extends JPanel {
 				if (selectedPointList == null || selectedPointList.size() < 1) {
 					return;
 				} else {
-
 					for (ModbusWatchPoint wp : selectedPointList) {
 						pointList.remove(wp);
 					}
@@ -557,7 +556,17 @@ public class ModbusMonitor_Panel extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					ArrayList<ModbusWatchPoint> selectedPointList = getSelectedModbusPoint(pointTable);
-					if (selectedPointList == null || selectedPointList.size() < 1) return;
+					if (selectedPointList == null || selectedPointList.size() < 1) {
+						StringBuilder sb = new StringBuilder();
+						sb.append(String.format("%s", Util.colorGreen("Please select Modbus Point to modify")));
+						sb.append(Util.separator + Util.separator + "\n");					
+						
+						sb.append("테이블에서 수정하실 모드버스 포인트를 선택 후 다시 시도해주세요");
+						sb.append(Util.separator + Util.separator + "\n");
+						
+						Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+						return;
+					}
 					
 					if(!ModifyModbusWatchPointFrame.isExist) {
 						new ModifyModbusWatchPointFrame(selectedPointList);
