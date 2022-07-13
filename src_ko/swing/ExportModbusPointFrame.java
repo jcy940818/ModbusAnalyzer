@@ -138,7 +138,7 @@ public class ExportModbusPointFrame extends JFrame {
 		facility = null;
 		facilityMap = null;
 		
-		setTitle("Modbus Monitor");
+		setTitle("Export Modbus Point");
 		setMinimumSize(new Dimension(r.width, r.height));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setIconImage(new Util().getIconResource().getImage());

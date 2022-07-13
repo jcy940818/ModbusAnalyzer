@@ -99,7 +99,7 @@ public class ImportModbusPointFrame extends JFrame {
 	 */
 	public ImportModbusPointFrame() {
 		isExist = true;
-		setTitle("ModbusAnalyzer");
+		setTitle("Import Modbus Point");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setIconImage(new Util().getIconResource().getImage());
