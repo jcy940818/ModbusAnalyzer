@@ -682,7 +682,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 						updatePoint(selectedPoint);
 						ModbusMonitor_Panel.doTableFilter(false);
 						ModifyModbusWatchPointFrame.doTableFilter();
-						ExportModbusWatchPointFrame.updateTable();
+						ExportModbusPointFrame.updateTable();
 						
 						StringBuilder sb = new StringBuilder();
 						sb.append(String.format("%s%s%s\n", Util.colorGreen("Point Modification Completed"), Util.separator, Util.separator));						
@@ -727,15 +727,15 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				JTable table = (ModifyModbusWatchPointFrame.this.callFrom.equalsIgnoreCase("ExportModbusWatchPointFrame")) ?
-						ExportModbusWatchPointFrame.pointTable : ModbusMonitor_Panel.pointTable;
+				JTable table = (ModifyModbusWatchPointFrame.this.callFrom.equalsIgnoreCase("ExportModbusPointFrame")) ?
+						ExportModbusPointFrame.pointTable : ModbusMonitor_Panel.pointTable;
 				
 				ArrayList<ModbusWatchPoint> pointList = getSelectedPoint(table);
 				addPointList(pointList);
 				doTableFilter();
 			}
 		});
-		actualPanel.add(addModifyPoint);	
+		actualPanel.add(addModifyPoint);
 		
 		
 		deleteModifyPoint = new JButton();
@@ -813,7 +813,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 						
 						ModbusMonitor_Panel.doTableFilter(false);
 						ModifyModbusWatchPointFrame.doTableFilter();
-						ExportModbusWatchPointFrame.updateTable();
+						ExportModbusPointFrame.updateTable();
 						
 						sb = new StringBuilder();
 						sb.append(String.format("%s%s%s\n", Util.colorGreen("Point Modification Completed"), Util.separator, Util.separator));						

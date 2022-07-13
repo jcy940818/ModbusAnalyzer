@@ -729,19 +729,19 @@ public class ProtocolList_Panel extends JPanel {
 			}
 			
 			if(OnionDirCheck_Panel.agent != null && OnionDirCheck_Panel.agent.equalsIgnoreCase("watchPoint")) {
-				AddModbusPointFrame addModbusPointFrame= null;
+				ImportModbusPointFrame addModbusPointFrame= null;
 				
-				if(!AddModbusPointFrame.isExist) {
-					addModbusPointFrame = new AddModbusPointFrame();
+				if(!ImportModbusPointFrame.isExist) {
+					addModbusPointFrame = new ImportModbusPointFrame();
 					
-					if(AddModbusPointFrame.pointUpload(xmlFile)) {
+					if(ImportModbusPointFrame.pointUpload(xmlFile)) {
 						MainFrame.showModbusMonitor();
 					}else {
 						addModbusPointFrame.dispose();
 					}
 					
 				 }else {
-					 AddModbusPointFrame.existsFrame();
+					 ImportModbusPointFrame.existsFrame();
 				 }
 				
 			}else {

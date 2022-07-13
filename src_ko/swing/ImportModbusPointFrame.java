@@ -2,7 +2,6 @@ package src_ko.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.dnd.DnDConstants;
@@ -47,7 +46,7 @@ import moon.Moon;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
 
-public class AddModbusPointFrame extends JFrame {
+public class ImportModbusPointFrame extends JFrame {
 
 	private static ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();
 	
@@ -98,7 +97,7 @@ public class AddModbusPointFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public AddModbusPointFrame() {
+	public ImportModbusPointFrame() {
 		isExist = true;
 		setTitle("ModbusAnalyzer");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -118,7 +117,7 @@ public class AddModbusPointFrame extends JFrame {
 		contentPane.add(actualPanel, BorderLayout.CENTER);		
 		actualPanel.setLayout(null);
 		
-		JLabel currentFunction = new JLabel("Modbus Watch Point Upload");
+		JLabel currentFunction = new JLabel("Import Modbus Point");
 		currentFunction.setForeground(Color.BLACK);
 		currentFunction.setIcon(new Util().getSubLogoResource());
 		currentFunction.setHorizontalAlignment(SwingConstants.LEFT);
@@ -232,7 +231,7 @@ public class AddModbusPointFrame extends JFrame {
 	
 					ModbusMonitor_Panel.addPointList(selectedPointList);
 					ModbusMonitor_Panel.doTableFilter(false);
-					ExportModbusWatchPointFrame.updateTable();
+					ExportModbusPointFrame.updateTable();
 					doTableFilter();
 					search_TextField.requestFocus();
 				}
@@ -748,8 +747,8 @@ public class AddModbusPointFrame extends JFrame {
 	
 	public static void existsFrame() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(Util.colorRed("Modbus Watch Point Upload Frame Already Exists") + Util.separator + "\n");
-		sb.append("Modbus Watch Point Upload 프레임이 이미 열려있습니다" + Util.separator + "\n");
+		sb.append(Util.colorRed("Import Modbus Point Frame Already Exists") + Util.separator + "\n");
+		sb.append("Import Modbus Point 프레임이 이미 열려있습니다" + Util.separator + "\n");
 		Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 		return;
 	}

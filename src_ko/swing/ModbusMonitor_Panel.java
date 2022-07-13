@@ -494,7 +494,7 @@ public class ModbusMonitor_Panel extends JPanel {
 				useFilter.setSelected(false);
 				
 				pointList.clear();
-				ExportModbusWatchPointFrame.updateTable();
+				ExportModbusPointFrame.updateTable();
 				doTableFilter(false);
 			}
 		});
@@ -553,7 +553,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					}
 
 					doTableFilter(false);
-					ExportModbusWatchPointFrame.updateTable();
+					ExportModbusPointFrame.updateTable();
 				}
 			}
 		});
@@ -1120,10 +1120,10 @@ public class ModbusMonitor_Panel extends JPanel {
 		importButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!AddModbusPointFrame.isExist) {
-					new AddModbusPointFrame();
+				if(!ImportModbusPointFrame.isExist) {
+					new ImportModbusPointFrame();
 				 }else {
-					 AddModbusPointFrame.existsFrame();
+					 ImportModbusPointFrame.existsFrame();
 				 }
 			}
 		});
@@ -1143,10 +1143,10 @@ public class ModbusMonitor_Panel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				if(!ExportModbusWatchPointFrame.isExist) {
-					new ExportModbusWatchPointFrame();
+				if(!ExportModbusPointFrame.isExist) {
+					new ExportModbusPointFrame();
 				}else {
-					ExportModbusWatchPointFrame.existsFrame();
+					ExportModbusPointFrame.existsFrame();
 				}
 				
 			}

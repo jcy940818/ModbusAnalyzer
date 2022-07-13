@@ -385,10 +385,10 @@ public class OnionDirCheck_Panel extends JPanel {
 				
 				MainFrame.showModbusMonitor();
 				
-				if(!AddModbusPointFrame.isExist) {
-					new AddModbusPointFrame();
+				if(!ImportModbusPointFrame.isExist) {
+					new ImportModbusPointFrame();
 				}else {
-					AddModbusPointFrame.existsFrame();
+					ImportModbusPointFrame.existsFrame();
 				}
 				
 				OnionDirCheck_Panel.back_button.setEnabled(false);

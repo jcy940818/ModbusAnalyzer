@@ -24,6 +24,7 @@ import java.util.Vector;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -31,6 +32,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -41,20 +43,18 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-import common.web.AdminConsole_Info;
 import common.agent.RestAgent;
 import common.modbus.ModbusWatchPoint;
 import common.perf.PerfLabelStatusBean;
+import common.web.AdminConsole_Info;
 import src_ko.agent.HttpAgent;
 import src_ko.agent.ModbusAgent;
 import src_ko.agent.ModbusFacility;
 import src_ko.agent.Perf;
 import src_ko.database.DbUtil;
 import src_ko.util.Util;
-import javax.swing.JSeparator;
-import javax.swing.JCheckBox;
 
-public class ExportModbusWatchPointFrame extends JFrame {
+public class ExportModbusPointFrame extends JFrame {
 
 	public static AdminConsole_Info adminConsole = null;
 	public static boolean working = false;
@@ -118,7 +118,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ExportModbusWatchPointFrame frame = new ExportModbusWatchPointFrame();
+					ExportModbusPointFrame frame = new ExportModbusPointFrame();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -130,9 +130,9 @@ public class ExportModbusWatchPointFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ExportModbusWatchPointFrame() {
-		ExportModbusWatchPointFrame.isExist = true;		
-		ExportModbusWatchPointFrame.pointList = ModbusMonitor_Panel.pointList;
+	public ExportModbusPointFrame() {
+		ExportModbusPointFrame.isExist = true;		
+		ExportModbusPointFrame.pointList = ModbusMonitor_Panel.pointList;
 		
 		adminConsole = null;
 		facility = null;
@@ -481,7 +481,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 					}
 					
 					if(!ModifyModbusWatchPointFrame.isExist) {
-						new ModifyModbusWatchPointFrame(selectedPointList, "ExportModbusWatchPointFrame");
+						new ModifyModbusWatchPointFrame(selectedPointList, "ExportModbusPointFrame");
 						
 					 }else {
 						 ModifyModbusWatchPointFrame.addPointList(selectedPointList);
@@ -599,7 +599,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 
 	@Override
 	public void dispose() {
-		ExportModbusWatchPointFrame.isExist = false;
+		ExportModbusPointFrame.isExist = false;
 		super.dispose();
 	}
 	
@@ -799,7 +799,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 	}
 	
 	public static void updateTable() {
-		if(ExportModbusWatchPointFrame.isExist) {
+		if(ExportModbusPointFrame.isExist) {
 			resetTable(pointTable, null);
 			addRecord(pointTable, ModbusMonitor_Panel.pointList);
 		}
@@ -881,7 +881,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 			
 			if(menu == JOptionPane.OK_OPTION) {
 				/***********************************************************************************************/
-				ExportModbusWatchPointFrame.facility = facility;				
+				ExportModbusPointFrame.facility = facility;				
 				serverInfo_Label.setText(String.format("<html><font color='black'>연동 장비 :</font> %s</html>", facility.getStrServerName()));
 				
 				sb = new StringBuilder();
@@ -936,7 +936,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		String mkVersionInfo = RestAgent.getMK119Version(adminConsole);
 		adminConsoleInfo.setText("<html><font color='black'>Admin Console : </font>" + mkVersionInfo + "</html>");
 		
-		ExportModbusWatchPointFrame.facility = null;
+		ExportModbusPointFrame.facility = null;
 		serverInfo_Label.setText(String.format("<html><font color='black'>연동 장비 :</font> %s</html>", "연동 전"));
 		
 		StringBuilder sb = new StringBuilder();
@@ -996,7 +996,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 				Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			if(ExportModbusWatchPointFrame.working) {
+			if(ExportModbusPointFrame.working) {
 				StringBuilder sb = new StringBuilder();
 				sb.append(String.format("%s", Util.colorRed("Performing the last requested operation")));
 				sb.append(Util.separator + Util.separator + "\n");
@@ -1033,7 +1033,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 					
 					try {
 						
-						ExportModbusWatchPointFrame.working = true;
+						ExportModbusPointFrame.working = true;
 						
 						for(int i = 0; i < selectedRows.length; i++) {
 							ModbusWatchPoint point = (ModbusWatchPoint)pointTable.getValueAt(selectedRows[i], 1);
@@ -1051,7 +1051,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 						new HttpAgent().addModbusPerfs(adminConsole, facility, perfs, false);
 						
 					}finally {
-						ExportModbusWatchPointFrame.working = false;
+						ExportModbusPointFrame.working = false;
 						
 					}
 					
