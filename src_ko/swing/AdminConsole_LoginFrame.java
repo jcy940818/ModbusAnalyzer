@@ -368,9 +368,8 @@ public class AdminConsole_LoginFrame extends JFrame {
 					
 				case "ModbusExport" :
 					ExportModbusWatchPointFrame.adminConsole = this.adminConsole;
-					ExportModbusWatchPointFrame.loadFacilityInfo(this.adminConsole);					
-					ExportModbusWatchPointFrame.loadMK119Version(this.adminConsole);
-					ExportModbusWatchPointFrame.linkSuccess();
+					ExportModbusWatchPointFrame.loadFacilityInfo(this.adminConsole);
+					ExportModbusWatchPointFrame.linkSuccess(this.adminConsole);
 					dispose();					
 					break;
 					

@@ -717,19 +717,20 @@ public class ExportModbusWatchPointFrame extends JFrame {
 	
 	public static void connectFacility(String facilityName) {
 		
-		ModbusFacility facility = facilityMap.get(facilityName);
-		
 		if(adminConsole == null && facilityMap == null) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(String.format("%s", Util.colorRed("It is not linked with MK119 AdminConsole")));
 			sb.append(Util.separator + Util.separator + "\n");
 			
-			sb.append("MK119 관리자 콘솔과 연동되지 않았습니다");
+			sb.append("MK119 Admin Console 서비스와 연동되지 않았습니다");
 			sb.append(Util.separator + Util.separator + "\n");
 			
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		
+		ModbusFacility facility = facilityMap.get(facilityName);
+		
 		if(facility == null) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(String.format("%s", Util.colorRed("Not Found Modbus Connected Facility")));
@@ -841,14 +842,25 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		}
 	}
 	
-	public static void loadMK119Version(AdminConsole_Info adminConsole) {
+	public static void linkSuccess(AdminConsole_Info adminConsole) {
 		String mkVersionInfo = RestAgent.getMK119Version(adminConsole);
 		adminConsoleInfo.setText("<html><font color='black'>Admin Console : </font>" + mkVersionInfo + "</html>");
-	}
-	
-	public static void linkSuccess() {
+		
 		ExportModbusWatchPointFrame.facility = null;
 		serverInfo_Label.setText(String.format("<html><font color='black'>연동 장비 :</font> %s</html>", "연동 전"));
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("%s", Util.colorGreen("MK119 Admin Console Login successful")));
+		sb.append(Util.separator + Util.separator + "\n");
+		
+		sb.append(String.format("%s : %s", Util.colorBlue("Admin Console"), mkVersionInfo));
+		sb.append(Util.separator + Util.separator + "\n\n");
+		
+		sb.append(String.format("%s 로그인에 성공하였습니다", Util.colorBlue(adminConsole.get_IP() + ":" + adminConsole.get_PORT() + " Admin Console")));
+		sb.append(Util.separator + Util.separator + "\n");
+		
+		Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+		
 		serverName_TextField.requestFocus();
 	}
 	
