@@ -107,8 +107,8 @@ public class ExportModbusPointFrame extends JFrame {
 	private JSeparator separator_1;
 	private JLabel autoEvent_Label;
 	
+	private static JCheckBox useAutoEvent_CheckBox;
 	private JButton updatePoint_Button;
-	private JCheckBox useAutoEvent_CheckBox;
 	private JButton setEvent_Button;
 	
 	/**
@@ -1043,7 +1043,13 @@ public class ExportModbusPointFrame extends JFrame {
 					sb.append("<font color='green'>Add MK119 Watch Point?</font>\n");
 					sb.append(String.format("장비명 : %s%s%s\n", Util.colorBlue(facility.getStrServerName()), Util.separator ,Util.separator));					
 					sb.append(String.format("시설물 종류 : %s%s%s\n\n", Util.colorBlue(facility.getFACILITY_TYPE_String()), Util.separator ,Util.separator));
-					sb.append(String.format("위의 장비에 성능 %s개 항목을 추가 하시겠습니까?%s%s\n",Util.colorBlue(String.valueOf(perfs.length)) ,Util.separator, Util.separator));
+					sb.append(String.format("위의 장비에 성능 %s개 항목을 추가 하시겠습니까?%s%s\n\n",Util.colorBlue(String.valueOf(perfs.length)) ,Util.separator, Util.separator));
+					
+					if(useAutoEvent_CheckBox.isSelected()) {
+						sb.append(String.format("( %s )%s%s\n", Util.colorBlue("성능 이벤트가 자동 등록됩니다"), Util.separator ,Util.separator));
+					}else {
+						sb.append(String.format("( %s )%s%s\n", Util.colorBlue("성능 이벤트가 자동 등록되지 않습니다"), Util.separator ,Util.separator));
+					}
 					
 					int userOption= Util.showConfirm(sb.toString());
 					
@@ -1071,7 +1077,11 @@ public class ExportModbusPointFrame extends JFrame {
 							}
 						}
 						
-						Perf.parseJSON(perfs);
+						// 자동 이벤트 등록 옵션
+						if(useAutoEvent_CheckBox.isSelected()) Perf.initPerfEvent(perfs);
+						
+						// JSON 데이터 초기화
+						Perf.parseJSON(useAutoEvent_CheckBox.isSelected(), perfs);
 						
 						new HttpAgent().addModbusPerfs(adminConsole, facility, perfs, false);
 						

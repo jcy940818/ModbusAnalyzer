@@ -3,7 +3,6 @@ package src_ko.agent;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -14,7 +13,6 @@ import javax.swing.table.DefaultTableModel;
 import src_ko.analyzer.RX.DataType;
 import src_ko.info.TX_Info;
 import src_ko.swing.ModbusAgent_Panel;
-import src_ko.swing.ModbusCollectionFrame;
 import src_ko.util.Util;
 
 public class Perf implements Comparable{
@@ -178,7 +176,7 @@ public class Perf implements Comparable{
 		return sb.toString().replace("},]", "}]").replace("'","\"");
 	}
 	
-	public static void parseJSON(Perf...perfs) {
+	public static void parseJSON(boolean useAutoEvent, Perf...perfs) {
 		for(int i = 0; i < perfs.length; i++) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("{");
@@ -204,7 +202,7 @@ public class Perf implements Comparable{
 				sb.append(String.format("'perfLabels':[]", null));
 			}
 			
-			if(ModbusCollectionFrame.useAutoEvent != null && ModbusCollectionFrame.useAutoEvent.isSelected()) {
+			if(useAutoEvent) {
 				sb.append(",'event':{");				
 				sb.append(String.format("'name':'%s',", perfs[i].event.getPerfEventName()));
 				sb.append(String.format("'severity':%s,", Event.severity));

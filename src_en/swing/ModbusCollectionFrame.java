@@ -631,7 +631,7 @@ public class ModbusCollectionFrame extends JFrame {
 						Perf.initPerfCounter(false, perfs);
 					}
 					
-					Perf.parseJSON(perfs);
+					Perf.parseJSON(useAutoEvent.isSelected());
 					
 					new HttpAgent().addModbusPerfs(adminConsole, modbusFacility, perfs, useAutoEvent.isSelected());
 					
