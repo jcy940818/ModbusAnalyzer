@@ -1929,6 +1929,11 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 				
 			}else {
 				point.dataFormat = 3;
+				
+				point.getBinLabel()[0] = "";
+				point.getBinLabel()[1] = "";
+				point.labelList = new ArrayList<PerfLabelStatusBean>();
+				
 			}
 		}
 		
