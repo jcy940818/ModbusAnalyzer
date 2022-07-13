@@ -49,6 +49,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 
 	public static boolean isExist = false;
 	
+	private String callFrom = "";
 	private static ArrayList<ModbusWatchPoint> pointList = null;
 	private ModbusWatchPoint selectedPoint = null;
 	
@@ -134,12 +135,14 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ModifyModbusWatchPointFrame(ArrayList<ModbusWatchPoint> modifyPointList) {
+	public ModifyModbusWatchPointFrame(ArrayList<ModbusWatchPoint> modifyPointList, String callFrom) {
 		this.pointList = modifyPointList;
+		this.callFrom = callFrom;
 		if(modifyPointList != null && modifyPointList.size() > 0) {
 			this.selectedPoint = modifyPointList.get(0);
 		}
 		ModifyModbusWatchPointFrame.isExist = true;
+		
 		setTitle("ModbusAnalyzer");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
@@ -723,12 +726,17 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		addModifyPoint.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ArrayList<ModbusWatchPoint> pointList = getSelectedPoint(ModbusMonitor_Panel.pointTable);
+				
+				JTable table = (ModifyModbusWatchPointFrame.this.callFrom.equalsIgnoreCase("ExportModbusWatchPointFrame")) ?
+						ExportModbusWatchPointFrame.pointTable : ModbusMonitor_Panel.pointTable;
+				
+				ArrayList<ModbusWatchPoint> pointList = getSelectedPoint(table);
 				addPointList(pointList);
 				doTableFilter();
 			}
 		});
-		actualPanel.add(addModifyPoint);
+		actualPanel.add(addModifyPoint);	
+		
 		
 		deleteModifyPoint = new JButton();
 		deleteModifyPoint.setText("»è Á¦");

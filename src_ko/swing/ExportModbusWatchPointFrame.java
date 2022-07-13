@@ -51,6 +51,8 @@ import src_ko.agent.ModbusFacility;
 import src_ko.agent.Perf;
 import src_ko.database.DbUtil;
 import src_ko.util.Util;
+import javax.swing.JSeparator;
+import javax.swing.JCheckBox;
 
 public class ExportModbusWatchPointFrame extends JFrame {
 
@@ -102,22 +104,28 @@ public class ExportModbusWatchPointFrame extends JFrame {
 	private static JButton connect_Button;
 	private static JLabel serverInfo_Label;
 	private static JButton addPoint_Button;
+	private JSeparator separator_1;
+	private JLabel autoEvent_Label;
+	
+	private JButton updatePoint_Button;
+	private JCheckBox useAutoEvent_CheckBox;
+	private JButton setEvent_Button;
 	
 	/**
 	 * Launch the application.
 	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					ExportModbusWatchPointFrame frame = new ExportModbusWatchPointFrame();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ExportModbusWatchPointFrame frame = new ExportModbusWatchPointFrame();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	/**
 	 * Create the frame.
@@ -136,7 +144,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		setIconImage(new Util().getIconResource().getImage());
 		setResizable(true);
 				
-		setBounds(100, 100, 1080, 720);
+		setBounds(100, 100, 1080, 720);		
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new LineBorder(Color.DARK_GRAY, 10));
@@ -435,6 +443,88 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		});
 		actualPanel.add(addPoint_Button);
 		
+		JSeparator separator = new JSeparator();
+		separator.setOrientation(SwingConstants.VERTICAL);
+		separator.setBackground(Color.BLACK);
+		separator.setForeground(Color.BLACK);
+		separator.setBounds(1050, 0, 1, 111);
+		actualPanel.add(separator);
+		
+		JLabel modbusPoint_Label = new JLabel("Modbus Point");
+		modbusPoint_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		modbusPoint_Label.setForeground(Color.BLACK);
+		modbusPoint_Label.setBackground(Color.WHITE);
+		modbusPoint_Label.setBounds(1060, 7, 135, 34);
+		actualPanel.add(modbusPoint_Label);
+		
+		updatePoint_Button = new JButton("수 정");
+		updatePoint_Button.setForeground(Color.BLACK);
+		updatePoint_Button.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		updatePoint_Button.setBackground(Color.WHITE);
+		updatePoint_Button.setBounds(1065, 60, 120, 42);
+		updatePoint_Button.setFocusPainted(false);
+		updatePoint_Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					ArrayList<ModbusWatchPoint> selectedPointList = ModbusMonitor_Panel.getSelectedModbusPoint(pointTable);
+					if (selectedPointList == null || selectedPointList.size() < 1) {
+						StringBuilder sb = new StringBuilder();
+						sb.append(String.format("%s", Util.colorGreen("Please select Modbus Point to modify")));
+						sb.append(Util.separator + Util.separator + "\n");					
+						
+						sb.append("테이블에서 수정하실 모드버스 포인트를 선택 후 다시 시도해주세요");
+						sb.append(Util.separator + Util.separator + "\n");
+						
+						Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+						return;
+					}
+					
+					if(!ModifyModbusWatchPointFrame.isExist) {
+						new ModifyModbusWatchPointFrame(selectedPointList, "ExportModbusWatchPointFrame");
+						
+					 }else {
+						 ModifyModbusWatchPointFrame.addPointList(selectedPointList);
+						 ModifyModbusWatchPointFrame.doTableFilter();
+					 }
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+				
+			}
+		});
+		actualPanel.add(updatePoint_Button);
+		
+		separator_1 = new JSeparator();
+		separator_1.setOrientation(SwingConstants.VERTICAL);
+		separator_1.setForeground(Color.BLACK);
+		separator_1.setBackground(Color.BLACK);
+		separator_1.setBounds(1200, 0, 1, 111);
+		actualPanel.add(separator_1);
+		
+		autoEvent_Label = new JLabel("Auto Event");
+		autoEvent_Label.setForeground(Color.BLACK);
+		autoEvent_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		autoEvent_Label.setBackground(Color.WHITE);
+		autoEvent_Label.setBounds(1210, 6, 183, 34);
+		actualPanel.add(autoEvent_Label);
+		
+		useAutoEvent_CheckBox = new JCheckBox("이벤트 자동 등록 사용");
+		useAutoEvent_CheckBox.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		useAutoEvent_CheckBox.setForeground(Color.BLACK);
+		useAutoEvent_CheckBox.setBackground(Color.WHITE);
+		useAutoEvent_CheckBox.setBounds(1212, 45, 183, 23);
+		useAutoEvent_CheckBox.setFocusPainted(false);
+		actualPanel.add(useAutoEvent_CheckBox);
+		
+		setEvent_Button = new JButton("이벤트 설정");
+		setEvent_Button.setForeground(Color.BLACK);
+		setEvent_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		setEvent_Button.setFocusPainted(false);
+		setEvent_Button.setBackground(Color.WHITE);
+		setEvent_Button.setBounds(1213, 74, 182, 32);
+		actualPanel.add(setEvent_Button);
+		
 		ActionListener workListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -460,7 +550,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		mk_V4_RaidoButton.setFocusPainted(false);
 		mk_V4_RaidoButton.setBackground(Color.WHITE);
 		mk_V4_RaidoButton.setBounds(686, 12, 151, 23);
-		actualPanel.add(mk_V4_RaidoButton);
+//		actualPanel.add(mk_V4_RaidoButton); 테스트
 		
 		mk_V10_RaidoButton = new JRadioButton("MK119  V10");
 		mk_V10_RaidoButton.setHorizontalAlignment(SwingConstants.LEFT);
@@ -469,7 +559,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		mk_V10_RaidoButton.setFocusPainted(false);
 		mk_V10_RaidoButton.setBackground(Color.WHITE);
 		mk_V10_RaidoButton.setBounds(686, 45, 151, 23);
-		actualPanel.add(mk_V10_RaidoButton);
+//		actualPanel.add(mk_V10_RaidoButton); 테스트
 		
 		ButtonGroup group2 = new ButtonGroup();
 		group2.add(mk_V4_RaidoButton);
@@ -498,7 +588,7 @@ public class ExportModbusWatchPointFrame extends JFrame {
 		exportButton.setFocusPainted(false);
 		exportButton.setBackground(Color.WHITE);
 		exportButton.setBounds(841, 8, 196, 66);
-		actualPanel.add(exportButton);
+//		actualPanel.add(exportButton); 테스트
 		
 		tableDataInit();
 		
