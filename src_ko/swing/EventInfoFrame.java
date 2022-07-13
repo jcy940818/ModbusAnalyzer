@@ -527,9 +527,7 @@ public class EventInfoFrame extends JFrame {
 				Event.enable = "0";
 				
 				// 이벤트 자동 종료 ----------------------------------------------
-				Event.autoClose = String.valueOf(eventAutoClose_CheckBox.isSelected()).toUpperCase();			
-				
-				Event.printEventInfo();
+				Event.autoClose = String.valueOf(eventAutoClose_CheckBox.isSelected()).toUpperCase();
 				
 				StringBuilder sb = new StringBuilder();
 				sb.append(String.format("%s%s\n", Util.colorBlue("Save Event Setting"), Util.separator));
