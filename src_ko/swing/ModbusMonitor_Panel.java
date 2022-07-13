@@ -47,6 +47,7 @@ import common.util.JavaScript;
 import common.util.TableUtil;
 import src_ko.agent.ClientSocket;
 import src_ko.agent.ModbusAgent;
+import src_ko.database.DbUtil;
 import src_ko.util.Util;
 
 public class ModbusMonitor_Panel extends JPanel {
@@ -533,6 +534,20 @@ public class ModbusMonitor_Panel extends JPanel {
 				if (selectedPointList == null || selectedPointList.size() < 1) {
 					return;
 				} else {
+					StringBuilder sb = new StringBuilder();
+					sb.append(String.format("%s", Util.colorGreen("Delete the selected Modbus Point")));
+					sb.append(Util.separator + Util.separator + "\n");
+					
+					sb.append(String.format("선택하신 모드버스 포인트 %s개 항목을 정말 삭제하시겠습니까?", Util.colorBlue(String.valueOf(selectedPointList.size()))));
+					sb.append(Util.separator + Util.separator + "\n");
+					
+					int menu = Util.showConfirm(sb.toString());
+					
+					if(menu != JOptionPane.OK_OPTION) {
+						// 모드버스 포인트 삭제 취소
+						return;
+					}
+					
 					for (ModbusWatchPoint wp : selectedPointList) {
 						pointList.remove(wp);
 					}
@@ -569,7 +584,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					}
 					
 					if(!ModifyModbusWatchPointFrame.isExist) {
-						new ModifyModbusWatchPointFrame(selectedPointList);
+						new ModifyModbusWatchPointFrame(selectedPointList, "ModbusMonitor_Panel");
 						
 					 }else {
 						 ModifyModbusWatchPointFrame.addPointList(selectedPointList);
