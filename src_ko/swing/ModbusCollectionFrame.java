@@ -35,11 +35,11 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import common.util.Calculator;
+import common.web.AdminConsole_Info;
 import src_ko.agent.HttpAgent;
 import src_ko.agent.ModbusFacility;
 import src_ko.agent.Perf;
 import src_ko.analyzer.RX.DataType;
-import src_ko.info.AdminConsole_Info;
 import src_ko.util.ExcelAdapter;
 import src_ko.util.Inspecter;
 import src_ko.util.Util;

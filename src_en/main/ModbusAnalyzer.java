@@ -5,7 +5,7 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 
 import src_en.agent.HttpAgent;
-import src_en.info.AdminConsole_Info;
+import common.web.AdminConsole_Info;
 import src_en.util.Util;
 
 public class ModbusAnalyzer {

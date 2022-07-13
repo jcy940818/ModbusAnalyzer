@@ -33,7 +33,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
 import common.agent.RestAgent;
-import src_ko.info.AdminConsole_Info;
+import common.web.AdminConsole_Info;
 import src_ko.info.ONION_Info;
 import src_ko.info.Protocol;
 import src_ko.main.MoonInspector;
@@ -603,7 +603,7 @@ public class LinkMK119Frame extends JFrame{
 				
 			}
 		}catch(Exception e) {
-			e.printStackTrace();
+		
 		}
 	}
 	

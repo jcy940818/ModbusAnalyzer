@@ -41,6 +41,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import common.web.AdminConsole_Info;
 import common.agent.RestAgent;
 import common.modbus.ModbusWatchPoint;
 import common.perf.PerfLabelStatusBean;
@@ -49,7 +50,6 @@ import src_ko.agent.ModbusAgent;
 import src_ko.agent.ModbusFacility;
 import src_ko.agent.Perf;
 import src_ko.database.DbUtil;
-import src_ko.info.AdminConsole_Info;
 import src_ko.util.Util;
 
 public class ExportModbusWatchPointFrame extends JFrame {
@@ -848,7 +848,8 @@ public class ExportModbusWatchPointFrame extends JFrame {
 	
 	public static void linkSuccess() {
 		ExportModbusWatchPointFrame.facility = null;
-		serverInfo_Label.setText(String.format("<html><font color='black'>연동 장비 :</font> %s</html>", "연동 전"));		
+		serverInfo_Label.setText(String.format("<html><font color='black'>연동 장비 :</font> %s</html>", "연동 전"));
+		serverName_TextField.requestFocus();
 	}
 	
 	public static void loadFacilityInfo(AdminConsole_Info adminConsole) {

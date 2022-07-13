@@ -36,11 +36,11 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import common.util.Calculator;
+import common.web.AdminConsole_Info;
 import src_en.agent.HttpAgent;
 import src_en.agent.ModbusFacility;
 import src_en.agent.Perf;
 import src_en.analyzer.RX.DataType;
-import src_en.info.AdminConsole_Info;
 import src_en.util.ExcelAdapter;
 import src_en.util.Inspecter;
 import src_en.util.MessageUtil_en;

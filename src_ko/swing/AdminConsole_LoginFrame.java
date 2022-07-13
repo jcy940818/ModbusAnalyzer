@@ -20,9 +20,9 @@ import javax.swing.border.LineBorder;
 
 import org.jsoup.HttpStatusException;
 
+import common.web.AdminConsole_Info;
 import src_ko.agent.HttpAgent;
 import src_ko.database.DbUtil;
-import src_ko.info.AdminConsole_Info;
 import src_ko.info.ONION_Info;
 import src_ko.util.Util;
 

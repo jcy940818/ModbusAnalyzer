@@ -24,10 +24,10 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 
+import common.web.AdminConsole_Info;
 import src_ko.agent.ModbusAgent;
 import src_ko.agent.ModbusFacility;
 import src_ko.database.DbUtil;
-import src_ko.info.AdminConsole_Info;
 import src_ko.info.ONION_Info;
 import src_ko.util.Util;
 

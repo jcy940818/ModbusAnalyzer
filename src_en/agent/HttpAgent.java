@@ -3,23 +3,22 @@ package src_en.agent;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
-import src_en.info.AdminConsole_Info;
-import src_en.main.ModbusAnalyzer;
-import src_en.swing.MessageFrame;
+import common.agent.RestAgent;
+import common.web.AdminConsole_Info;
 import src_en.swing.ModbusCollectionFrame;
 import src_en.util.Util;
 
@@ -33,14 +32,18 @@ public class HttpAgent {
 	/**
 	 * MK119 AdminConsole 로그인에  성공하면 sesssionID를, 실패하면 null을 리턴
 	 */
-	public String getMK119SessionId(String IP,String PORT ,String ID, String PW) throws IOException, ConnectException, SocketTimeoutException{
+	public String getMK119SessionId(AdminConsole_Info admin) throws IOException, ConnectException, SocketTimeoutException{
 		
-		try {
+		String IP = admin.get_IP();
+		String PORT = admin.get_PORT();
+		String ID = admin.get_ID();
+		String PW = admin.get_PW();
+		
+		try {			
 			String adminConsole = String.format("http://%s:%s/midknight/adminConsole", IP, PORT);
 			
 			Connection.Response loginForm = Jsoup.connect(adminConsole)
 					.header("Connection", "keep-alive")
-	//				.header("Accept", "*/*")
 					.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
 					.header("Accept-Charset", "utf-8")
 					.header("Content-Type", "application/x-www-form-urlencoded")
@@ -58,7 +61,7 @@ public class HttpAgent {
 			if(page.title().contains("Admin Console")) {
 				System.out.println(String.format("[ %s:%s AdminConsole 로그인 성공 : ID(%s) / PW(%s) ]",IP, PORT, ID, PW));
 				
-				webCookies = loginForm.cookies();		
+				webCookies = loginForm.cookies();
 				
 				Set keys = webCookies.keySet();
 				Iterator it = keys.iterator();
@@ -71,7 +74,10 @@ public class HttpAgent {
 					}
 				}
 				
+				admin.set_SESSION_ID(sessionID);
+				admin.setHttpStatusCode(loginForm.statusCode(), false);				
 				return sessionID;
+				
 			}else {
 				StringBuilder sb = new StringBuilder();
 				sb.append(String.format("%s%s\n", Util.colorRed("MK119 Login Failure"), Util.separator));
@@ -80,6 +86,9 @@ public class HttpAgent {
 				sb.append(String.format("1. <font color='blue'>%s:%s Server</font> : %s%s\n", IP, PORT,Util.colorRed("MK119 service is executed or not") ,Util.separator));
 				sb.append(String.format("2. <font color='blue'>AdminConsole Login information</font> : ID( %s ) / PW( %s )%s\n", Util.colorRed(ID), Util.colorRed(PW), Util.separator));	
 				Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+				
+				admin.set_SESSION_ID(sessionID);
+				admin.setHttpStatusCode(0, true);				
 				return null;
 			}
 		}catch(Exception e) {
@@ -90,10 +99,13 @@ public class HttpAgent {
 			sb.append(String.format("1. <font color='blue'>%s:%s Server</font> : %s%s\n", IP, PORT,Util.colorRed("MK119 service is executed or not") ,Util.separator));
 			sb.append(String.format("2. <font color='blue'>AdminConsole Login information</font> : ID( %s ) / PW( %s )%s\n", Util.colorRed(ID), Util.colorRed(PW), Util.separator));	
 			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+			
+			admin.set_SESSION_ID(sessionID);
+			admin.handleException(e);
 			return null;
 		}
 	}
-		
+	
 	
 	public void addModbusPerfs(AdminConsole_Info adminConsole, ModbusFacility server, Perf[] perfs, boolean useAutoEvent) {
 		
@@ -146,7 +158,7 @@ public class HttpAgent {
 			
 			if(page.title().contains(server.getStrServerName())) {
 				
-				if(isSuccess(page, perfs)) {
+				if(getTaskResult(adminConsole, server, perfs)) {
 					// 성능 추가 성공 로직
 					StringBuilder sb = new StringBuilder();
 					sb.append(String.format("<font color='green'>Successfully MK119 Add Watch Point</font>%s%s\n", Util.separator, Util.separator));
@@ -234,37 +246,61 @@ public class HttpAgent {
 			ModbusCollectionFrame.isMK119Adding = false;
 		}				
 	}
-	
-	public boolean toMuchWatchPoints(Document page) {
+		
+	public boolean getTaskResult(AdminConsole_Info adminConsole, ModbusFacility facility, Perf[] perfs) throws JSONException{				
 		try {
-			if(page.text().contains("...")) {
-				return true;
+			boolean result = true;
+			JSONObject serverAndPerf = RestAgent.getServerAndPerf(adminConsole, facility.getnServerIndex());
+			
+			int serverIndex = serverAndPerf.getJSONObject("serverInfo").getInt("idx");
+			
+			if(facility.getnServerIndex() == serverIndex) {
+				JSONArray serverPerfs = serverAndPerf.getJSONArray("perfs");
+				
+				HashMap<String, Perf> perfMap = new HashMap();
+				
+				for(int i = 0; i < serverPerfs.length(); i++) {
+					JSONObject serverPerf = (JSONObject)serverPerfs.get(i);
+					Perf perf = new Perf();
+					perf.setIndex(serverPerf.getInt("idx"));
+					perf.setDisplayName(serverPerf.getString("name"));
+					perf.setMeasure(serverPerf.getString("measure"));
+					perf.setDataFormat(serverPerf.getString("format"));
+					perfMap.put(perf.getDisplayName(), perf);
+				}
+				
+				for(Perf checkPerf : perfs) {					
+					
+					if(checkPerf.getDisplayName().startsWith("{") && checkPerf.getDisplayName().contains("}")) {
+						String perfName = checkPerf.getDisplayName();
+						checkPerf.setDisplayName(perfName.split("}")[1]);
+					}
+					
+					if(perfMap.containsKey(checkPerf.getDisplayName())) {
+						Perf serverPerf = perfMap.get(checkPerf.getDisplayName());												
+						
+						result = result
+							&& checkPerf.getDisplayName().equals(serverPerf.getDisplayName())
+							&& checkPerf.getMeasure().equals(serverPerf.getMeasure())
+							&& checkPerf.getDataFormat().equals(serverPerf.getDataFormat());
+						
+						if(!result) return false;
+						
+					}else {
+						return false;
+					}
+				}
+				
+				return result;
+				
 			}else {
 				return false;
 			}
+		
 		}catch(Exception e) {
+			e.printStackTrace();
 			return false;
-		}
-	}
-	
-	public boolean isSuccess(Document page, Perf[] perfs) {				
-		Element resultTable = page.selectFirst("table.result");
-		Elements tableRows = resultTable.select("tr.sub");
-		List collections = new ArrayList();
-		List perfNames = new ArrayList();  
-		
-		// ModbusCollection 성능명 리스트	
-		for(int i = 0; i < perfs.length; i++) {
-			collections.add(perfs[i].getDisplayName());
-		}
-		
-		// MK119 장비에 등록된 성능명 리스트
-		for(Element e : tableRows) {
-			perfNames.add(e.selectFirst("td.result_sub").nextElementSibling().text());
-		}
-						
-		// MK119 장비에 ModbusCollection 성능이 모두 추가 되었는지 검사 결과 리턴
-		return perfNames.containsAll(collections);		 
+		}		
 	}
 	
 }

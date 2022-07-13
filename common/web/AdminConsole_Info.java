@@ -1,4 +1,4 @@
-package src_ko.info;
+package common.web;
 
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -8,7 +8,7 @@ import org.jsoup.HttpStatusException;
 
 import common.agent.RestAgent;
 import common.util.HttpUtil;
-import src_ko.agent.HttpAgent;
+import moon.Moon;
 import src_ko.util.Util;
 
 public class AdminConsole_Info {
@@ -66,7 +66,11 @@ public class AdminConsole_Info {
 		String sessionId = null;
 		
 		try {
-			sessionId = new HttpAgent().getMK119SessionId(adminConsole);
+			if(Moon.isKorean()) {
+				sessionId = new src_ko.agent.HttpAgent().getMK119SessionId(adminConsole);	
+			}else {
+				sessionId = new src_en.agent.HttpAgent().getMK119SessionId(adminConsole);
+			}
 		}catch(SocketTimeoutException e) {
 			e.printStackTrace();
 			System.out.println("응답 타임아웃 초과");

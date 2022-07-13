@@ -3,21 +3,22 @@ package src_ko.agent;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
-import src_ko.info.AdminConsole_Info;
+import common.agent.RestAgent;
+import common.web.AdminConsole_Info;
 import src_ko.swing.LinkMK119Frame;
 import src_ko.swing.ModbusCollectionFrame;
 import src_ko.util.Util;
@@ -162,7 +163,7 @@ public class HttpAgent {
 			
 			if(page.title().contains(server.getStrServerName())) {
 				
-				if(isSuccess(page, perfs)) {
+				if(getTaskResult(adminConsole, server, perfs)) {
 					// 성능 추가 성공 로직
 					StringBuilder sb = new StringBuilder();
 					sb.append(String.format("<font color='green'>Successfully MK119 Add Watch Point</font>%s%s\n", Util.separator, Util.separator));
@@ -251,36 +252,61 @@ public class HttpAgent {
 		}				
 	}
 	
-	public boolean toMuchWatchPoints(Document page) {
+	
+	public boolean getTaskResult(AdminConsole_Info adminConsole, ModbusFacility facility, Perf[] perfs) throws JSONException{				
 		try {
-			if(page.text().contains("...")) {
-				return true;
+			boolean result = true;
+			JSONObject serverAndPerf = RestAgent.getServerAndPerf(adminConsole, facility.getnServerIndex());
+			
+			int serverIndex = serverAndPerf.getJSONObject("serverInfo").getInt("idx");
+			
+			if(facility.getnServerIndex() == serverIndex) {
+				JSONArray serverPerfs = serverAndPerf.getJSONArray("perfs");
+				
+				HashMap<String, Perf> perfMap = new HashMap();
+				
+				for(int i = 0; i < serverPerfs.length(); i++) {
+					JSONObject serverPerf = (JSONObject)serverPerfs.get(i);
+					Perf perf = new Perf();
+					perf.setIndex(serverPerf.getInt("idx"));
+					perf.setDisplayName(serverPerf.getString("name"));
+					perf.setMeasure(serverPerf.getString("measure"));
+					perf.setDataFormat(serverPerf.getString("format"));
+					perfMap.put(perf.getDisplayName(), perf);
+				}
+				
+				for(Perf checkPerf : perfs) {					
+					
+					if(checkPerf.getDisplayName().startsWith("{") && checkPerf.getDisplayName().contains("}")) {
+						String perfName = checkPerf.getDisplayName();
+						checkPerf.setDisplayName(perfName.split("}")[1]);
+					}
+					
+					if(perfMap.containsKey(checkPerf.getDisplayName())) {
+						Perf serverPerf = perfMap.get(checkPerf.getDisplayName());												
+						
+						result = result
+							&& checkPerf.getDisplayName().equals(serverPerf.getDisplayName())
+							&& checkPerf.getMeasure().equals(serverPerf.getMeasure())
+							&& checkPerf.getDataFormat().equals(serverPerf.getDataFormat());
+						
+						if(!result) return false;
+						
+					}else {
+						return false;
+					}
+				}
+				
+				return result;
+				
 			}else {
 				return false;
 			}
+		
 		}catch(Exception e) {
+			e.printStackTrace();
 			return false;
-		}
-	}
-	
-	public boolean isSuccess(Document page, Perf[] perfs) {				
-		Element resultTable = page.selectFirst("table.result");
-		Elements tableRows = resultTable.select("tr.sub");
-		List collections = new ArrayList();
-		List perfNames = new ArrayList();  
-		
-		// ModbusCollection 성능명 리스트	
-		for(int i = 0; i < perfs.length; i++) {
-			collections.add(perfs[i].getDisplayName());
-		}
-		
-		// MK119 장비에 등록된 성능명 리스트
-		for(Element e : tableRows) {
-			perfNames.add(e.selectFirst("td.result_sub").nextElementSibling().text());
-		}
-						
-		// MK119 장비에 ModbusCollection 성능이 모두 추가 되었는지 검사 결과 리턴
-		return perfNames.containsAll(collections);		 
+		}		
 	}
 	
 }

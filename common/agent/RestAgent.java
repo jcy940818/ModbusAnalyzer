@@ -12,8 +12,8 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import common.web.AdminConsole_Info;
 import src_ko.agent.ModbusFacility;
-import src_ko.info.AdminConsole_Info;
 import src_ko.swing.LinkMK119Frame;
 
 public class RestAgent {
@@ -325,4 +325,47 @@ public class RestAgent {
 				
 		return mk119Version;
 	}
+	
+	public static JSONObject getServerAndPerf(AdminConsole_Info adminConsole, int serverIndex){		
+		
+		try {
+			String API_URL = String.format("http://%s:%s/midknight/api/metadata/servers/%d/perfs", adminConsole.get_IP(), adminConsole.get_PORT(), serverIndex);
+			
+			Connection connection = Jsoup.connect(API_URL)
+					.header("Content-Type", "application/x-www-form-urlencoded;charset:utf-8")
+					.header("Cookie", "JSESSIONID=" + adminConsole.get_SESSION_ID())
+					.ignoreContentType(true)
+					.maxBodySize(0)
+					.timeout(0)
+					.method(Connection.Method.GET);
+			
+			Connection.Response response = connection.execute();
+			
+			adminConsole.setHttpStatusCode(response.statusCode(), false);
+			
+			Document dom = response.parse();
+			responseBody = dom.body().text();
+			
+			// 세션이 끊어지지 않음
+			try {
+				
+				// 시설물 정보와 시설물에 등록된 성능 정보
+				return new JSONObject(responseBody);
+				
+			}catch(JSONException e) {
+				e.printStackTrace();
+				return null;
+			}
+			
+		}catch(ConnectException e) {
+			// MK119 서비스 실행중 아님			
+			e.printStackTrace();
+			return null;
+			
+		}catch(Exception e) {
+			e.printStackTrace();			
+			return null;
+		}
+	}
+	
 }
