@@ -40,7 +40,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import common.modbus.ModbusWatchPoint;
-import common.modbus.ModbusWatchPointLoader;
+import common.modbus.ModbusPointLoader;
 import common.util.TableUtil;
 import moon.Moon;
 import src_ko.util.FileUtil;
@@ -389,7 +389,7 @@ public class ImportModbusPointFrame extends JFrame {
 							
 							int mkVersion = mk_V4_RaidoButton.isSelected() ? 4 : 10;
 							
-							ArrayList<ModbusWatchPoint> modbusWps  = ModbusWatchPointLoader.load(mkVersion, file);
+							ArrayList<ModbusWatchPoint> modbusWps  = ModbusPointLoader.load(mkVersion, file);
 							
 							if(modbusWps != null && modbusWps.size() > 0) {
 								resetTable(point_table);
@@ -644,7 +644,7 @@ public class ImportModbusPointFrame extends JFrame {
 					
 					int mkVersion = mk_V4_RaidoButton.isSelected() ? 4 : 10;
 					
-					ArrayList<ModbusWatchPoint> modbusWps  = ModbusWatchPointLoader.load(mkVersion, xmlFile);
+					ArrayList<ModbusWatchPoint> modbusWps  = ModbusPointLoader.load(mkVersion, xmlFile);
 					
 					if(modbusWps != null && modbusWps.size() > 0) {
 						resetTable(point_table);
@@ -669,7 +669,7 @@ public class ImportModbusPointFrame extends JFrame {
 
 				int mkVersion = mk_V4_RaidoButton.isSelected() ? 4 : 10;
 
-				ArrayList<ModbusWatchPoint> modbusWps = ModbusWatchPointLoader.load(mkVersion, file);
+				ArrayList<ModbusWatchPoint> modbusWps = ModbusPointLoader.load(mkVersion, file);
 
 				if (modbusWps != null && modbusWps.size() > 0) {
 					resetTable(point_table);

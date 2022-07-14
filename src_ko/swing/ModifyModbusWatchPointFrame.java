@@ -37,7 +37,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import common.modbus.ModbusWatchPoint;
-import common.modbus.ModbusWatchPointInitException;
+import common.modbus.ModbusPointInitException;
 import common.perf.PerfLabelStatusBean;
 import common.util.Calculator;
 import common.util.TableUtil;
@@ -1958,7 +1958,7 @@ public class ModifyModbusWatchPointFrame extends JFrame {
 		try {
 			point.init();
 			
-		}catch(ModbusWatchPointInitException e) {
+		}catch(ModbusPointInitException e) {
 //			StringBuilder sb = new StringBuilder();
 //			sb.append(String.format("%s\n", Util.colorRed("Modbus Watch Point Initialization Error")));
 //			sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), e.getMessage(), Util.separator, Util.separator));

@@ -209,16 +209,16 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 		return PerfData.getPerfContent(this, this.data);
 	}
 	
-	public void init() throws ModbusWatchPointInitException{
+	public void init() throws ModbusPointInitException{
 		
 		try {
 			
 			// 모드버스 관제점 드라이버 코드 유효성 검사
 			if(!this.getCounter().contains("_")) {
-				throw new ModbusWatchPointInitException();
+				throw new ModbusPointInitException();
 				
 			}else if(this.getCounter().split("_").length != 3){
-				throw new ModbusWatchPointInitException();
+				throw new ModbusPointInitException();
 			}
 			
 			int functionCode;
@@ -232,7 +232,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			
 			// 기능 코드 : FC01 ~ FC04
 			if(functionCode < 1 || functionCode > 4) {
-				throw new ModbusWatchPointInitException();
+				throw new ModbusPointInitException();
 			}
 			
 			if (counterToken[1].startsWith("0x") || counterToken[1].startsWith("0X")) {
@@ -245,7 +245,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	
 			dataType = counterToken[2].trim();
 			if(ModbusMonitor.getDataType(dataType) == -1) {
-				throw new ModbusWatchPointInitException();
+				throw new ModbusPointInitException();
 			}
 			
 			this.setFunctionCode(functionCode);
@@ -257,7 +257,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			this.setHexCounter(functionCode + "_" + (this.getRegisterAddrHexString()) + "_" + dataType);
 			
 		}catch(Exception e) {
-			throw new ModbusWatchPointInitException(this.getDisplayName());
+			throw new ModbusPointInitException(this.getDisplayName());
 			
 		}
 	}

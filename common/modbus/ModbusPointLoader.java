@@ -23,7 +23,7 @@ import common.util.ExcelUtil;
 import moon.Moon;
 import src_ko.util.Util;
 
-public class ModbusWatchPointLoader {
+public class ModbusPointLoader {
 	
 	public static ArrayList<ModbusWatchPoint> load(int mkVersion, File file) {
 		ArrayList<ModbusWatchPoint> modbusWps  = null;
@@ -63,7 +63,7 @@ public class ModbusWatchPointLoader {
 								return null;
 						}
 
-						modbusWps = ModbusWatchPointLoader.loadXmlV4(file, encoding);
+						modbusWps = ModbusPointLoader.loadXmlV4(file, encoding);
 						
 					}else {
 						// Excel 업로드
@@ -85,11 +85,11 @@ public class ModbusWatchPointLoader {
 
 							switch (menu) {
 								case 0: // 첫 번째 버튼 : Modbus
-									modbusWps = ModbusWatchPointLoader.loadExcelV10_Modbus(file);
+									modbusWps = ModbusPointLoader.loadExcelV10_Modbus(file);
 									break;
 									
 								case 1: // 두 번째 버튼 : PLC
-									modbusWps = ModbusWatchPointLoader.loadExcelV10_PLC(file);
+									modbusWps = ModbusPointLoader.loadExcelV10_PLC(file);
 									break;
 									
 								default :
@@ -97,11 +97,11 @@ public class ModbusWatchPointLoader {
 							}
 						}else {
 							// MK119 V4 Excel 업로드
-							modbusWps = ModbusWatchPointLoader.loadExcelV4(file);
+							modbusWps = ModbusPointLoader.loadExcelV4(file);
 						}
 					}
 					
-				}catch(ModbusWatchPointInitException e) {
+				}catch(ModbusPointInitException e) {
 					modbusWps = null;
 					e.printStackTrace();
 					
@@ -173,7 +173,7 @@ public class ModbusWatchPointLoader {
 	
     
 	
-    public static ArrayList<ModbusWatchPoint> loadExcelV4(File xlsxFile) throws IOException, ModbusWatchPointInitException{
+    public static ArrayList<ModbusWatchPoint> loadExcelV4(File xlsxFile) throws IOException, ModbusPointInitException{
     	
     	FileInputStream inputStream = null;
     	String item = "";
@@ -371,7 +371,7 @@ public class ModbusWatchPointLoader {
     }
     
     
-    public static ArrayList<ModbusWatchPoint> loadExcelV10_Modbus(File xlsxFile) throws IOException, ModbusWatchPointInitException{
+    public static ArrayList<ModbusWatchPoint> loadExcelV10_Modbus(File xlsxFile) throws IOException, ModbusPointInitException{
     	
     	FileInputStream inputStream = null;
     	String item = "";
@@ -607,7 +607,7 @@ public class ModbusWatchPointLoader {
     
     
     
-    public static ArrayList<ModbusWatchPoint> loadExcelV10_PLC(File xlsxFile) throws IOException, ModbusWatchPointInitException{
+    public static ArrayList<ModbusWatchPoint> loadExcelV10_PLC(File xlsxFile) throws IOException, ModbusPointInitException{
     	
     	FileInputStream inputStream = null;
     	String item = "";
@@ -816,7 +816,7 @@ public class ModbusWatchPointLoader {
     
 
     
-    public static ArrayList<ModbusWatchPoint> loadXmlV4(File xmlFile, String encoding) throws IOException, ModbusWatchPointInitException{
+    public static ArrayList<ModbusWatchPoint> loadXmlV4(File xmlFile, String encoding) throws IOException, ModbusPointInitException{
     	ArrayList<Perf> perfs = FmsPerfConf.getFmsPerfList(xmlFile, encoding);
     	ModbusWatchPoint[] modbusWps = new ModbusWatchPoint[perfs.size()];
     	
