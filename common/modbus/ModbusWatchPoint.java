@@ -609,6 +609,13 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 		return String.format("%d.  [ %s ]", this.getIndex(), this.getDecCounter());
 	}
 	
+	public static ArrayList<ModbusWatchPoint> convertArrayToList(ModbusWatchPoint[] pointArray){
+		ArrayList<ModbusWatchPoint> pointList = new ArrayList<ModbusWatchPoint>();
+		for(ModbusWatchPoint point : pointArray) {
+			pointList.add(point);
+		}
+		return pointList;
+	}
 	
 	public src_ko.agent.Perf parsePerf_ko() {
 			
