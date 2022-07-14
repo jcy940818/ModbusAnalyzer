@@ -144,7 +144,7 @@ public class ImportModbusPointFrame extends JFrame {
 					if(mkVersion.equals("V10")) {
 						StringBuilder msg = new StringBuilder();
 						msg.append("<font color='Green'>MK119 V10 Template Type Selection</font>\n");
-						msg.append("MK119 V10 Excel 템플릿의 종류를 선택해주세요" + Util.separator + Util.separator +"\n");
+						msg.append("MK119 V10 템플릿의 종류를 선택해주세요" + Util.separator + Util.separator +"\n");
 
 						int menu = Util.showOption(msg.toString(), new String[] { "  Modbus  ", "  PLC  "}, JOptionPane.QUESTION_MESSAGE);
 						switch (menu) {

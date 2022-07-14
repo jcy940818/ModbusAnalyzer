@@ -44,6 +44,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import common.agent.RestAgent;
+import common.modbus.ModbusPointExporter;
 import common.modbus.ModbusWatchPoint;
 import common.perf.PerfLabelStatusBean;
 import common.web.AdminConsole_Info;
@@ -613,6 +614,16 @@ public class ExportModbusPointFrame extends JFrame {
 		exportButton.setFocusPainted(false);
 		exportButton.setBackground(Color.WHITE);
 		exportButton.setBounds(841, 8, 196, 66);
+		exportButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				int mkVersion = (mk_V4_RaidoButton.isSelected()) ? 4 : 10;
+				
+				ModbusPointExporter.export(mkVersion, addrTypeComboBox.getSelectedItem().toString() ,pointList);
+				
+			}
+		});
 		actualPanel.add(exportButton);
 		
 		tableDataInit();
