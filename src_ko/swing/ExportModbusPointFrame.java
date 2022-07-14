@@ -575,7 +575,7 @@ public class ExportModbusPointFrame extends JFrame {
 		mk_V4_RaidoButton.setFocusPainted(false);
 		mk_V4_RaidoButton.setBackground(Color.WHITE);
 		mk_V4_RaidoButton.setBounds(686, 12, 151, 23);
-//		actualPanel.add(mk_V4_RaidoButton); 테스트
+		actualPanel.add(mk_V4_RaidoButton);
 		
 		mk_V10_RaidoButton = new JRadioButton("MK119  V10");
 		mk_V10_RaidoButton.setHorizontalAlignment(SwingConstants.LEFT);
@@ -584,7 +584,7 @@ public class ExportModbusPointFrame extends JFrame {
 		mk_V10_RaidoButton.setFocusPainted(false);
 		mk_V10_RaidoButton.setBackground(Color.WHITE);
 		mk_V10_RaidoButton.setBounds(686, 45, 151, 23);
-//		actualPanel.add(mk_V10_RaidoButton); 테스트
+		actualPanel.add(mk_V10_RaidoButton);
 		
 		ButtonGroup group2 = new ButtonGroup();
 		group2.add(mk_V4_RaidoButton);
@@ -613,7 +613,7 @@ public class ExportModbusPointFrame extends JFrame {
 		exportButton.setFocusPainted(false);
 		exportButton.setBackground(Color.WHITE);
 		exportButton.setBounds(841, 8, 196, 66);
-//		actualPanel.add(exportButton); 테스트
+		actualPanel.add(exportButton);
 		
 		tableDataInit();
 		
