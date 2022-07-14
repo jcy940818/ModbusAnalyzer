@@ -15,7 +15,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import common.perf.FmsPerfConf;
-import common.perf.FmsPerfItem.EventInfo;
 import common.perf.Perf;
 import common.perf.PerfConf;
 import common.perf.PerfLabelStatusBean;
@@ -33,68 +32,18 @@ public class ModbusPointLoader {
 
 				// 인코딩 선택 해야함
 				try {
-					String encoding = "euc-kr";
-					
+
 					if(file.getAbsolutePath().toLowerCase().endsWith(".xml")) {
 						// XML 업로드
-						
-						StringBuilder msg = new StringBuilder();
-						msg.append("<font color='Green'>XML File Encoding</font>\n");
-						msg.append(Util.colorBlue("XML File") + " : " + file.getName() + Util.separator + Util.separator +"\n\n");
-						
-						if(Moon.isKorean()) {
-							msg.append("XML 파일의 인코딩 방식을 선택해주세요" + Util.separator + Util.separator +"\n");	
-						}else {
-							msg.append("Select the encoding method of the XML file" + Util.separator + Util.separator +"\n");
-						}						
-
-						int menu = Util.showOption(msg.toString(), new String[] { "EUC-KR", "UTF-8"}, JOptionPane.QUESTION_MESSAGE);
-
-						switch (menu) {
-							case 0: // 첫 번째 버튼 : EUC-KR
-								encoding = "euc-kr";
-								break;
-								
-							case 1: // 두 번째 버튼
-								encoding = "utf-8";
-								break;
-								
-							default :
-								return null;
-						}
-
-						modbusWps = ModbusPointLoader.loadXmlV4(file, encoding);
+						modbusWps = ModbusPointLoader.loadXmlV4(file);
 						
 					}else {
 						// Excel 업로드
 						
 						if(mkVersion >= 10) {
 							// MK119 V10 Excel 업로드
+							modbusWps = ModbusPointLoader.loadExcelV10(file);
 							
-							StringBuilder msg = new StringBuilder();
-							msg.append("<font color='Green'>MK119 V10 Template Type Selection</font>\n");
-							msg.append(Util.colorBlue("Excel File") + " : " + file.getName() + Util.separator + Util.separator +"\n\n");
-							
-							if(Moon.isKorean()) {
-								msg.append("MK119 V10 Excel 템플릿의 종류를 선택해주세요" + Util.separator + Util.separator +"\n");
-							}else {
-								msg.append("Please select the type of MK119 V10 Excel template" + Util.separator + Util.separator +"\n");
-							}
-
-							int menu = Util.showOption(msg.toString(), new String[] { "  Modbus  ", "  PLC  "}, JOptionPane.QUESTION_MESSAGE);
-
-							switch (menu) {
-								case 0: // 첫 번째 버튼 : Modbus
-									modbusWps = ModbusPointLoader.loadExcelV10_Modbus(file);
-									break;
-									
-								case 1: // 두 번째 버튼 : PLC
-									modbusWps = ModbusPointLoader.loadExcelV10_PLC(file);
-									break;
-									
-								default :
-									return null;
-							}
 						}else {
 							// MK119 V4 Excel 업로드
 							modbusWps = ModbusPointLoader.loadExcelV4(file);
@@ -368,6 +317,33 @@ public class ModbusPointLoader {
     		if(inputStream != null) inputStream.close();
     		inputStream = null;
     	}
+    }
+    
+    public static ArrayList<ModbusWatchPoint> loadExcelV10(File xlsxFile) throws IOException, ModbusPointInitException{
+    	
+    	StringBuilder msg = new StringBuilder();
+		msg.append("<font color='Green'>MK119 V10 Template Type Selection</font>\n");
+		msg.append(Util.colorBlue("Excel File") + " : " + xlsxFile.getName() + Util.separator + Util.separator +"\n\n");
+		
+		if(Moon.isKorean()) {
+			msg.append("MK119 V10 템플릿의 종류를 선택해주세요" + Util.separator + Util.separator +"\n");
+		}else {
+			msg.append("Please select the type of MK119 V10 Excel template" + Util.separator + Util.separator +"\n");
+		}
+
+		int menu = Util.showOption(msg.toString(), new String[] { "  Modbus  ", "  PLC  "}, JOptionPane.QUESTION_MESSAGE);
+
+		switch (menu) {
+			case 0: // 첫 번째 버튼 : Modbus
+				return ModbusPointLoader.loadExcelV10_Modbus(xlsxFile);
+				
+			case 1: // 두 번째 버튼 : PLC
+				return ModbusPointLoader.loadExcelV10_PLC(xlsxFile);
+				
+			default :
+				return null;
+		}
+		
     }
     
     
@@ -816,7 +792,34 @@ public class ModbusPointLoader {
     
 
     
-    public static ArrayList<ModbusWatchPoint> loadXmlV4(File xmlFile, String encoding) throws IOException, ModbusPointInitException{
+    public static ArrayList<ModbusWatchPoint> loadXmlV4(File xmlFile) throws IOException, ModbusPointInitException{
+    	String encoding = "euc-kr";
+    	
+    	StringBuilder msg = new StringBuilder();
+		msg.append("<font color='Green'>XML File Encoding</font>\n");
+		msg.append(Util.colorBlue("XML File") + " : " + xmlFile.getName() + Util.separator + Util.separator +"\n\n");
+		
+		if(Moon.isKorean()) {
+			msg.append("XML 파일의 인코딩 방식을 선택해주세요" + Util.separator + Util.separator +"\n");	
+		}else {
+			msg.append("Select the encoding method of the XML file" + Util.separator + Util.separator +"\n");
+		}						
+
+		int menu = Util.showOption(msg.toString(), new String[] { "EUC-KR", "UTF-8"}, JOptionPane.QUESTION_MESSAGE);
+
+		switch (menu) {
+			case 0: // 첫 번째 버튼 : EUC-KR
+				encoding = "euc-kr";
+				break;
+				
+			case 1: // 두 번째 버튼
+				encoding = "utf-8";
+				break;
+				
+			default :
+				return null;
+		}
+    	
     	ArrayList<Perf> perfs = FmsPerfConf.getFmsPerfList(xmlFile, encoding);
     	ModbusWatchPoint[] modbusWps = new ModbusWatchPoint[perfs.size()];
     	
