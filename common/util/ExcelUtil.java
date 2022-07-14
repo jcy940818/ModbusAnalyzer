@@ -7,33 +7,40 @@ import org.apache.poi.ss.usermodel.Sheet;
 public class ExcelUtil {
 	
 	public static int getHeaderRowNum(Sheet sheet, int offset) {
-		int header = 0;
-		int numberOfRows = sheet.getPhysicalNumberOfRows();
+		
 		Cell cell = null;
-    	
-		for(header = 0; header < numberOfRows; header++) {
+		int header = 0;
+		int nullCount = 0;
+		
+		while(true) {
 			try {
+				if(nullCount > 100) return -1;
+				
 				Row row = sheet.getRow(header);
 				
-				if(row == null) continue;
-				
+				if(row == null) {
+					header++;
+					nullCount++;
+					continue;
+				}
+
 				cell = row.getCell(0);
-				
-					
+
 				if(!ExcelUtil.isNull(cell)) {
 					return header + offset;
+					
 				}else {
+					header++;
+					nullCount++;
 					continue;
 				}
 				
 			}catch(Exception e) {
 				e.printStackTrace();
+				return -1;
 			}
 		}
-		
-    	return -1;
 	}
-	
     	
 	public static boolean isNull(Cell cell) {
 		return cell == null || cell.toString().trim().equals("") || cell.toString().trim().isEmpty();
