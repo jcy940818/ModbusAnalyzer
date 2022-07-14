@@ -389,11 +389,11 @@ public class ImportModbusPointFrame extends JFrame {
 							
 							int mkVersion = mk_V4_RaidoButton.isSelected() ? 4 : 10;
 							
-							ModbusWatchPoint[] modbusWps  = ModbusWatchPointLoader.load(mkVersion, file);
+							ArrayList<ModbusWatchPoint> modbusWps  = ModbusWatchPointLoader.load(mkVersion, file);
 							
-							if(modbusWps != null && modbusWps.length > 0) {
+							if(modbusWps != null && modbusWps.size() > 0) {
 								resetTable(point_table);
-								fill(pointList, modbusWps);
+								pointList = modbusWps;								
 								addRecord(point_table, pointList);
 								setTableStyle(point_table);
 								
@@ -644,11 +644,11 @@ public class ImportModbusPointFrame extends JFrame {
 					
 					int mkVersion = mk_V4_RaidoButton.isSelected() ? 4 : 10;
 					
-					ModbusWatchPoint[] modbusWps  = ModbusWatchPointLoader.load(mkVersion, xmlFile);
+					ArrayList<ModbusWatchPoint> modbusWps  = ModbusWatchPointLoader.load(mkVersion, xmlFile);
 					
-					if(modbusWps != null && modbusWps.length > 0) {
+					if(modbusWps != null && modbusWps.size() > 0) {
 						resetTable(point_table);
-						fill(pointList, modbusWps);
+						pointList = modbusWps;
 						addRecord(point_table, pointList);
 						setTableStyle(point_table);						
 						
@@ -669,11 +669,11 @@ public class ImportModbusPointFrame extends JFrame {
 
 				int mkVersion = mk_V4_RaidoButton.isSelected() ? 4 : 10;
 
-				ModbusWatchPoint[] modbusWps = ModbusWatchPointLoader.load(mkVersion, file);
+				ArrayList<ModbusWatchPoint> modbusWps = ModbusWatchPointLoader.load(mkVersion, file);
 
-				if (modbusWps != null && modbusWps.length > 0) {
+				if (modbusWps != null && modbusWps.size() > 0) {
 					resetTable(point_table);
-					fill(pointList, modbusWps);
+					pointList = modbusWps;
 					addRecord(point_table, pointList);
 					setTableStyle(point_table);
 					
