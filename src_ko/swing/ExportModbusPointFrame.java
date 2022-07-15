@@ -46,6 +46,7 @@ import javax.swing.table.TableColumnModel;
 import common.agent.RestAgent;
 import common.modbus.ModbusPointExporter;
 import common.modbus.ModbusWatchPoint;
+import common.perf.PerfConf;
 import common.perf.PerfLabelStatusBean;
 import common.web.AdminConsole_Info;
 import src_ko.agent.HttpAgent;
@@ -111,6 +112,7 @@ public class ExportModbusPointFrame extends JFrame {
 	private static JCheckBox useAutoEvent_CheckBox;
 	private JButton updatePoint_Button;
 	private JButton setEvent_Button;
+	private JSeparator separator_3;
 	
 	/**
 	 * Launch the application.
@@ -145,13 +147,12 @@ public class ExportModbusPointFrame extends JFrame {
 		setIconImage(new Util().getIconResource().getImage());
 		setResizable(true);
 				
-		setBounds(100, 100, 1080, 720);		
+		setBounds(100, 100, 1080, 720);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new LineBorder(Color.DARK_GRAY, 10));
 		contentPane.setLayout(new BorderLayout(0, 0));		
 		setContentPane(contentPane);
-		
 		
 		this.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
@@ -167,7 +168,7 @@ public class ExportModbusPointFrame extends JFrame {
 		
 		cardPanel = new JPanel();
 		cardLayout = new CardLayout(0, 0);
-		cardPanel.setLayout(cardLayout);	
+		cardPanel.setLayout(cardLayout);
 		contentPane.add(cardPanel, BorderLayout.CENTER);
 		
 		actualPanel = new JPanel();
@@ -451,16 +452,16 @@ public class ExportModbusPointFrame extends JFrame {
 		separator.setBounds(1050, 0, 1, 111);
 		actualPanel.add(separator);
 		
-		JLabel modbusPoint_Label = new JLabel("Modbus Point");
+		JLabel modbusPoint_Label = new JLabel("Modify Point");
 		modbusPoint_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		modbusPoint_Label.setForeground(Color.BLACK);
 		modbusPoint_Label.setBackground(Color.WHITE);
 		modbusPoint_Label.setBounds(1060, 7, 135, 34);
 		actualPanel.add(modbusPoint_Label);
 		
-		updatePoint_Button = new JButton("수 정");
+		updatePoint_Button = new JButton("포인트 수정");
 		updatePoint_Button.setForeground(Color.BLACK);
-		updatePoint_Button.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		updatePoint_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		updatePoint_Button.setBackground(Color.WHITE);
 		updatePoint_Button.setBounds(1065, 60, 120, 42);
 		updatePoint_Button.setFocusPainted(false);
@@ -471,7 +472,7 @@ public class ExportModbusPointFrame extends JFrame {
 					ArrayList<ModbusWatchPoint> selectedPointList = ModbusMonitor_Panel.getSelectedModbusPoint(pointTable);
 					if (selectedPointList == null || selectedPointList.size() < 1) {
 						StringBuilder sb = new StringBuilder();
-						sb.append(String.format("%s", Util.colorGreen("Please select Modbus Point to modify")));
+						sb.append(String.format("%s", Util.colorBlue("선택된 포인트 없음")));
 						sb.append(Util.separator + Util.separator + "\n");					
 						
 						sb.append("테이블에서 수정하실 모드버스 포인트를 선택 후 다시 시도해주세요");
@@ -503,7 +504,7 @@ public class ExportModbusPointFrame extends JFrame {
 		separator_1.setBounds(1200, 0, 1, 111);
 		actualPanel.add(separator_1);
 		
-		autoEvent_Label = new JLabel("Auto Event");
+		autoEvent_Label = new JLabel("Set Auto Event");
 		autoEvent_Label.setForeground(Color.BLACK);
 		autoEvent_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		autoEvent_Label.setBackground(Color.WHITE);
@@ -520,10 +521,12 @@ public class ExportModbusPointFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if(useAutoEvent_CheckBox.isSelected()) {
 					StringBuilder sb = new StringBuilder();
-					sb.append(String.format("%s%s\n", Util.colorBlue("성능 이벤트 자동 등록 사용"), Util.separator));
+					sb.append(String.format("%s%s\n", Util.colorBlue("성능 이벤트 자동 등록 옵션 사용"), Util.separator));
 					sb.append("Export 기능 사용시 자동 등록 이벤트 내용이 포함됩니다\n\n");
-					sb.append("자동 등록 이벤트는 이벤트 이름을 제외한 모든 설정이 동일하게 적용되어 등록됩니다 " + Util.separator + Util.separator + "\n");
-					sb.append("\n반드시 이벤트 설정 내용을 확인해주세요 !\n");
+					sb.append("자동 등록 이벤트는 이벤트 이름을 제외한 모든 설정이 동일하게 적용되어 등록됩니다 " + Util.separator + Util.separator + "\n\n");
+					sb.append("반드시 이벤트 설정 내용을 확인해주세요 !" + Util.separator + Util.separator + "\n\n");
+					sb.append(Util.colorGreen("( 해당 옵션은 MK119 V4 포인트에만 적용됩니다 )" + Util.separator + Util.separator + "\n"));
+					
 					Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
 				}				
 			}
@@ -625,6 +628,77 @@ public class ExportModbusPointFrame extends JFrame {
 			}
 		});
 		actualPanel.add(exportButton);
+		
+		JSeparator separator_2 = new JSeparator();
+		separator_2.setOrientation(SwingConstants.VERTICAL);
+		separator_2.setForeground(Color.BLACK);
+		separator_2.setBackground(Color.BLACK);
+		separator_2.setBounds(1405, 0, 1, 111);
+		actualPanel.add(separator_2);
+		
+		JLabel setAutoMeasure_label = new JLabel("Set Auto Measure");
+		setAutoMeasure_label.setForeground(Color.BLACK);
+		setAutoMeasure_label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		setAutoMeasure_label.setBackground(Color.WHITE);
+		setAutoMeasure_label.setBounds(1415, 6, 183, 34);
+		actualPanel.add(setAutoMeasure_label);
+		
+		JButton autoMeasure_Button = new JButton("자동 단위 생성");
+		autoMeasure_Button.setForeground(Color.BLACK);
+		autoMeasure_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		autoMeasure_Button.setFocusPainted(false);
+		autoMeasure_Button.setBackground(Color.WHITE);
+		autoMeasure_Button.setBounds(1418, 60, 150, 42);
+		autoMeasure_Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				StringBuilder sb = new StringBuilder();
+				
+				sb.append(String.format("%s%s\n", Util.colorBlue("포인트 측정 단위 자동 설정"), Util.separator));
+								
+				sb.append("해당 기능 사용시 현재 포인트 항목들의 이름을 검사 후 해당 포인트에 적절한 단위가 자동으로 설정됩니다");
+				sb.append(Util.separator + Util.separator + "\n\n");
+				
+				sb.append("해당 기능은 단순 보조 기능이므로 사용 후 반드시 자동으로 설정된 포인트의 단위 내용을 확인해주세요  !");
+				sb.append(Util.separator + Util.separator + "\n\n");
+				
+				sb.append(Util.colorGreen("( 해당 기능은 포인트의 데이터 형식이 아날로그 데이터(DataFormat:3) 이면서 측정 단위가 설정되지 않은 항목에만 적용됩니다 )"));
+				sb.append(Util.separator + Util.separator + "\n");
+				
+				int menu = Util.showConfirm(sb.toString());
+				
+				if(menu == JOptionPane.OK_OPTION) {
+					for(ModbusWatchPoint point : pointList) {
+						if(point.getDataFormat() == PerfConf.DATA_FORMAT_MEASURE && (point.getMeasure() == null || point.getMeasure().trim().equals(""))) {
+							point.measure = Perf.createMeasure(point.getDisplayName().trim());
+						}
+					}
+					
+					ModbusMonitor_Panel.doTableFilter(false);
+					ModifyModbusWatchPointFrame.doTableFilter();
+					ExportModbusPointFrame.updateTable();
+					
+					sb = new StringBuilder();
+					sb.append(String.format("%s", Util.colorBlue("포인트 측정 단위 자동 설정 완료")));
+					sb.append(Util.separator + Util.separator + "\n");
+					
+					sb.append("포인트 항목들의 측정 단위 자동 설정이 완료되었습니다");
+					sb.append(Util.separator + Util.separator + "\n");
+					
+					Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+				
+			}
+		});
+		actualPanel.add(autoMeasure_Button);
+		
+		separator_3 = new JSeparator();
+		separator_3.setOrientation(SwingConstants.VERTICAL);
+		separator_3.setForeground(Color.BLACK);
+		separator_3.setBackground(Color.BLACK);
+		separator_3.setBounds(1580, 0, 1, 111);
+		actualPanel.add(separator_3);
 		
 		tableDataInit();
 		

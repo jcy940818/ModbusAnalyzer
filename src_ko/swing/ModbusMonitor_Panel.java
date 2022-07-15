@@ -573,7 +573,7 @@ public class ModbusMonitor_Panel extends JPanel {
 					ArrayList<ModbusWatchPoint> selectedPointList = getSelectedModbusPoint(pointTable);
 					if (selectedPointList == null || selectedPointList.size() < 1) {
 						StringBuilder sb = new StringBuilder();
-						sb.append(String.format("%s", Util.colorGreen("Please select Modbus Point to modify")));
+						sb.append(String.format("%s", Util.colorBlue("선택된 포인트 없음")));
 						sb.append(Util.separator + Util.separator + "\n");					
 						
 						sb.append("테이블에서 수정하실 모드버스 포인트를 선택 후 다시 시도해주세요");
