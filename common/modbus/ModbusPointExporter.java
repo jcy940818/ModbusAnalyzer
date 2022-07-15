@@ -24,6 +24,8 @@ import src_ko.util.Util;
 
 public class ModbusPointExporter {
 
+	public static boolean isRunning = false;
+	
 	public static void export(int mkVersion, String addrFormat, ArrayList<ModbusWatchPoint> pointList) {
 		try {			
 			String fileName = "Modbus";
@@ -107,6 +109,7 @@ public class ModbusPointExporter {
 	
 	public static void exportExcelV10_Modbus(File file, String addrFormat, ArrayList<ModbusWatchPoint> pointList) throws IOException{
 		
+		ModbusPointExporter.isRunning = true;
 		FileInputStream in = null;
 		FileOutputStream out = null;
 		
@@ -202,6 +205,7 @@ public class ModbusPointExporter {
 			out.flush();
 			
 		}finally {
+			ModbusPointExporter.isRunning = false;
 			if(in != null) in.close();
 			if(out != null) out.close();
 		}
