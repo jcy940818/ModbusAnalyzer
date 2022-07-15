@@ -33,6 +33,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	// MK119 V10 : Liz 전용 필드
 	private int deviceID;
 	private int pointID;
+	private int memoryBit;
 	
 	public ModbusWatchPoint() {
 		
@@ -148,6 +149,14 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 
 	public void setPointID(int pointID) {
 		this.pointID = pointID;
+	}
+
+	public int getMemoryBit() {
+		return memoryBit;
+	}
+
+	public void setMemoryBit(int memoryBit) {
+		this.memoryBit = memoryBit;
 	}
 
 	public int getFunctionCode() {
