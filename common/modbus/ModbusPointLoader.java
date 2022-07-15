@@ -58,10 +58,10 @@ public class ModbusPointLoader {
 					sb.append(String.format("%s\n", Util.colorRed("Modbus Watch Point Initialization Error")));
 					
 					if(Moon.isKorean()) {
-						sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), e.getMessage(), Util.separator, Util.separator));
-						sb.append(String.format("위의 모드버스 포인트 정보를 초기화 하는중 오류가 발생하였습니다%s%s\n", Util.separator, Util.separator));	
+						sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("포인트 이름"), e.getMessage(), Util.separator, Util.separator));
+						sb.append(String.format("위의 포인트 정보를 초기화 하는중 오류가 발생하였습니다%s%s\n", Util.separator, Util.separator));	
 					}else {
-						sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("Modbus Point"), e.getMessage(), Util.separator, Util.separator));
+						sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("Point Name"), e.getMessage(), Util.separator, Util.separator));
 						sb.append(String.format("An error occurred while initializing the above Modbus Point information%s%s\n", Util.separator, Util.separator));
 					}
 					
@@ -87,9 +87,9 @@ public class ModbusPointLoader {
 					
 					if(hasPointName) {
 						if(Moon.isKorean()) {
-							sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), info[2], Util.separator, Util.separator));	
+							sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("포인트 이름"), info[2], Util.separator, Util.separator));	
 						}else {
-							sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("Modbus Point"), info[2], Util.separator, Util.separator));
+							sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("Point Name"), info[2], Util.separator, Util.separator));
 						}
 					}
 					
@@ -535,10 +535,10 @@ public class ModbusPointLoader {
 						sb.append(String.format("%s\n", Util.colorRed("Multi-State Point Label Mapping Error")));
 						
 						if(Moon.isKorean()) {
-							sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("모드버스 포인트"), key, Util.separator, Util.separator));
-							sb.append(String.format("다중 상태 포인트의 레이블 매핑 정보를 초기화 하는중 오류가 발생하였습니다%s%s\n", Util.separator, Util.separator));	
+							sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("포인트 이름"), key, Util.separator, Util.separator));
+							sb.append(String.format("포인트의 다중 상태 레이블 매핑 정보를 초기화 하는중 오류가 발생하였습니다%s%s\n", Util.separator, Util.separator));	
 						}else {
-							sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("Modbus Point"), key, Util.separator, Util.separator));
+							sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("Point Name"), key, Util.separator, Util.separator));
 							sb.append(String.format("An error occurred while initializing label mapping information for the above multi-state point%s%s\n", Util.separator, Util.separator));
 						}
 						
@@ -596,7 +596,7 @@ public class ModbusPointLoader {
 			
 			Sheet mappingSheet = workbook.getSheetAt(2);
 			HashMap<String, String> mappingMap = new HashMap<String, String>();
-			String content =  "Point Value Code Definition";
+			String content =  "Multi-State Label";
 			
 			int labelHeader = ExcelUtil.getHeaderRowNum(mappingSheet, 1);
 			if(labelHeader < 0) return null;
@@ -612,7 +612,7 @@ public class ModbusPointLoader {
 					if(row == null) {
 						nullCount++;
 						continue;
-					}else if(ExcelUtil.isNull(row.getCell(2))) {
+					}else if(ExcelUtil.isNull(row.getCell(0)) && ExcelUtil.isNull(row.getCell(1))) {
 						nullCount++;
 						continue;
 					}
@@ -653,7 +653,7 @@ public class ModbusPointLoader {
 			}
 			
 			
-			Sheet sheet = workbook.getSheetAt(1);			
+			Sheet sheet = workbook.getSheetAt(1);
 			ArrayList<ModbusWatchPoint> modbusWps = new ArrayList<ModbusWatchPoint>();
 			
 			int header = ExcelUtil.getHeaderRowNum(sheet, 2);
@@ -680,7 +680,7 @@ public class ModbusPointLoader {
 					
 					item = (Moon.isKorean()) ? "Device ID" : "Device ID";
 					cell = row.getCell(0);
-					if (cell == null || ExcelUtil.getStringValue(cell).equals("")) throw new IOException();
+					if (ExcelUtil.isNull(cell)) throw new IOException();
 					modbusPoint.setDeviceID(ExcelUtil.getIntValue(cell));
 					
 					
@@ -690,13 +690,13 @@ public class ModbusPointLoader {
 					
 					item = (Moon.isKorean()) ? "Point ID" : "Point ID";
 					cell = row.getCell(2);
-					if (cell == null || ExcelUtil.getStringValue(cell).equals("")) throw new IOException();
+					if (ExcelUtil.isNull(cell)) throw new IOException();
 					modbusPoint.setPointID(ExcelUtil.getIntValue(cell));
 					
 					
 					item = (Moon.isKorean()) ? "Point Name" : "Point Name";
 					cell = row.getCell(3);
-					if (cell == null || ExcelUtil.getStringValue(cell).equals("")) throw new IOException();
+					if (ExcelUtil.isNull(cell)) throw new IOException();
 					modbusPoint.displayName = ExcelUtil.getStringValue(cell);
 					
 					
@@ -706,24 +706,30 @@ public class ModbusPointLoader {
 					
 					item = (Moon.isKorean()) ? "Measure" : "Measure";
 					cell = row.getCell(5);
-					modbusPoint.measure = !(cell == null || ExcelUtil.getStringValue(cell).equals("")) ? ExcelUtil.getStringValue(cell) : "";
+					modbusPoint.measure = !(ExcelUtil.isNull(cell)) ? ExcelUtil.getStringValue(cell) : "";
 					
 					
 					item = (Moon.isKorean()) ? "Function Code" : "Function Code";
 					cell = row.getCell(6);
-					if (cell == null || ExcelUtil.getStringValue(cell).equals("")) throw new IOException();
+					if (ExcelUtil.isNull(cell)) throw new IOException();
 					int functionCode = ExcelUtil.getIntValue(cell);
 					
 					
 					item = (Moon.isKorean()) ? "Address" : "Address";
 					cell = row.getCell(7);
-					if (cell == null || ExcelUtil.getStringValue(cell).equals("")) throw new IOException();
+					if (ExcelUtil.isNull(cell)) throw new IOException();
 					String address = ExcelUtil.getStringValue(cell).toLowerCase().contains("0x") ? ExcelUtil.getStringValue(cell) : String.valueOf(ExcelUtil.getIntValue(cell));
 					
 					
+//					item = (Moon.isKorean()) ? "Memory BIT" : "Memory BIT";
+//					cell = row.getCell(8);
+//					int memoryBit = !(ExcelUtil.isNull(cell)) ? ExcelUtil.getIntValue(cell) : 0;
+//					modbusPoint.setMemoryBit(memoryBit);
+					
+					
 					item = (Moon.isKorean()) ? "Data Type" : "Data Type";
-					cell = row.getCell(8);
-					if (cell == null || ExcelUtil.getStringValue(cell).equals("")) throw new IOException();
+					cell = row.getCell(9);
+					if (ExcelUtil.isNull(cell)) throw new IOException();
 					String dataType = ExcelUtil.getStringValue(cell);
 					
 					String counter = functionCode + "_" + address + "_" + dataType;
@@ -732,28 +738,28 @@ public class ModbusPointLoader {
 					
 					
 					item = (Moon.isKorean()) ? "Calibration Formula" : "Calibration Formula";
-					cell = row.getCell(9);
-					modbusPoint.scaleFunc = !(cell == null || ExcelUtil.getStringValue(cell).equals("")) ? ExcelUtil.getStringValue(cell) : "x";
+					cell = row.getCell(10);
+					modbusPoint.scaleFunc = !(ExcelUtil.isNull(cell)) ? ExcelUtil.getStringValue(cell) : "x";
 					
 					
 //					item = (Moon.isKorean()) ? "Check Interval" : "Check Interval";
-//					cell = row.getCell(10);
+//					cell = row.getCell(11);
 //					modbusPoint.interval = !(cell == null || ExcelUtil.getStringValue(cell).equals("")) ? ExcelUtil.getIntValue(cell) : 60;
 					
 					
 					item = (Moon.isKorean()) ? "Data Format" : "Data Format";
-					cell = row.getCell(12);
-					modbusPoint.dataFormat = !(cell == null || ExcelUtil.getStringValue(cell).equals("")) ? ExcelUtil.getIntValue(cell) : 3;
+					cell = row.getCell(13);
+					modbusPoint.dataFormat = !(ExcelUtil.isNull(cell)) ? ExcelUtil.getIntValue(cell) : 3;
 					
 					
 					if (modbusPoint.dataFormat == PerfConf.DATA_FORMAT_DIGITAL) {
 						item = (Moon.isKorean()) ? "Binary State Label" : "Binary State Label";						
 						modbusPoint.binLabel = new String[] { 
-								ExcelUtil.getStringValue(row.getCell(15)),
-								ExcelUtil.getStringValue(row.getCell(16)) };
+								ExcelUtil.getStringValue(row.getCell(16)),
+								ExcelUtil.getStringValue(row.getCell(17)) };
 						
 					}else if (modbusPoint.dataFormat == PerfConf.DATA_FORMAT_STATUS) {
-						item = (Moon.isKorean()) ? "Point Value Code Definition" : "Point Value Code Definition";
+						item = (Moon.isKorean()) ? "Multi-State Label" : "Multi-State Label";
 						String key = modbusPoint.getDeviceID() + "-" + modbusPoint.getPointID();
 						String value = mappingMap.get(key);
 						String[] keys = value.split(";");
