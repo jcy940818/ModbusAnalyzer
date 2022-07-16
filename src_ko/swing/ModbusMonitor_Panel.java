@@ -39,8 +39,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-import org.omg.CORBA.TIMEOUT;
-
 import common.agent.PerfData;
 import common.modbus.ModbusCellRenderer;
 import common.modbus.ModbusMonitor;
