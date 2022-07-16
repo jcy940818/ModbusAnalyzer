@@ -39,6 +39,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import org.omg.CORBA.TIMEOUT;
+
 import common.agent.PerfData;
 import common.modbus.ModbusCellRenderer;
 import common.modbus.ModbusMonitor;
@@ -47,17 +49,19 @@ import common.util.JavaScript;
 import common.util.TableUtil;
 import src_ko.agent.ClientSocket;
 import src_ko.agent.ModbusAgent;
-import src_ko.database.DbUtil;
 import src_ko.util.Util;
 
 public class ModbusMonitor_Panel extends JPanel {
 
 	private static boolean isRTU = true;
+	public static boolean modeComm = true;  
 	
 	// 클라이언트 소켓
 	public static Socket socket_ko = ModbusAgent.clientSocket;
 	public static String IP;
 	public static int PORT;
+	
+	JButton modeButton;
 	
 	// Modbus Point List	
 	public static JComboBox resultType;
@@ -93,6 +97,8 @@ public class ModbusMonitor_Panel extends JPanel {
 	private static JLabel currentState;
 	private static JLabel TID;
 	private static JLabel UNIT_ID;
+	private static JLabel TIME_OUT;
+	private static JLabel MAX_COUNT;
 	
 	private static JTextField search_TextField;
 	private static JCheckBox useFilter;
@@ -356,6 +362,8 @@ public class ModbusMonitor_Panel extends JPanel {
 		send_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {								
 				
+				if(!modeComm) return;
+				
 				if(ModbusMonitor.isRunning) {
 					StringBuilder sb = new StringBuilder();
 					sb.append(String.format("%s%s%s\n", Util.colorRed("Modbus Monitor Already in communication"), Util.separator, Util.separator));
@@ -530,7 +538,18 @@ public class ModbusMonitor_Panel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ArrayList<ModbusWatchPoint> selectedPointList = getSelectedModbusPoint(pointTable);
-
+				if (selectedPointList == null || selectedPointList.size() < 1) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(String.format("%s", Util.colorBlue("선택된 포인트 없음")));
+					sb.append(Util.separator + Util.separator + "\n");					
+					
+					sb.append("테이블에서 삭제하실 모드버스 포인트를 선택 후 다시 시도해주세요");
+					sb.append(Util.separator + Util.separator + "\n");
+					
+					Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+				
 				if (selectedPointList == null || selectedPointList.size() < 1) {
 					return;
 				} else {
@@ -625,7 +644,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		UNIT_ID.setBounds(130, 11, 57, 15);
 		form_InputPanel.add(UNIT_ID);
 		
-		JLabel TIME_OUT = new JLabel("Timeout");
+		TIME_OUT = new JLabel("Timeout");
 		TIME_OUT.setForeground(Color.BLACK);
 		TIME_OUT.setFont(new Font("맑은 고딕", Font.BOLD, 14));
 		TIME_OUT.setBounds(215, 11, 57, 15);
@@ -713,11 +732,11 @@ public class ModbusMonitor_Panel extends JPanel {
 		});
 		form_InputPanel.add(timeout_text);
 		
-		JLabel lblMaxReqCount = new JLabel("Max Count");
-		lblMaxReqCount.setForeground(Color.BLACK);
-		lblMaxReqCount.setFont(new Font("맑은 고딕", Font.BOLD, 14));
-		lblMaxReqCount.setBounds(290, 11, 85, 15);
-		form_InputPanel.add(lblMaxReqCount);
+		MAX_COUNT = new JLabel("Max Count");
+		MAX_COUNT.setForeground(Color.BLACK);
+		MAX_COUNT.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+		MAX_COUNT.setBounds(290, 11, 85, 15);
+		form_InputPanel.add(MAX_COUNT);
 		
 		maxCount_text = new JTextField();
 		maxCount_text.setForeground(Color.BLUE);
@@ -1028,7 +1047,7 @@ public class ModbusMonitor_Panel extends JPanel {
 		currentState.setHorizontalAlignment(SwingConstants.CENTER);
 		currentState.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		currentState.setBackground(Color.WHITE);
-		currentState.setBounds(250, 5, 145, 45);
+		currentState.setBounds(250, 6, 145, 45);
 		infoPanel.add(currentState);
 		
 		connectButton = new JButton("연결 정보 입력");
@@ -1172,6 +1191,34 @@ public class ModbusMonitor_Panel extends JPanel {
 			}
 		});
 		infoPanel.add(monitorV1Button);
+		
+		modeButton = new JButton("작업 모드로 전환");
+		modeButton.setBackground(Color.WHITE);
+		modeButton.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		modeButton.setForeground(Color.BLACK);
+		modeButton.setBounds(570, 11, 180, 36);
+		modeButton.setFocusPainted(false);
+		modeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(modeComm) {
+					modeComm = false;
+					modeButton.setText("통신 모드로 전환");
+										
+					panel_ON();
+					resultType.setSelectedIndex(0);
+					connectButton.setEnabled(false);
+					monitorV1Button.setVisible(false);
+					monitorV1Button.setEnabled(false);
+					
+				}else {
+					modeComm = true;
+					modeButton.setText("작업 모드로 전환");
+				}
+				
+			}
+		});
+		infoPanel.add(modeButton);
 	
 		panel_OFF();
 		
@@ -1184,51 +1231,55 @@ public class ModbusMonitor_Panel extends JPanel {
 				while (true) {					
 					try {
 						Thread.sleep(500);
-							
-						if(lastState.equalsIgnoreCase(ClientSocket.getCurrentState())) {
-							switch(lastState) {
-								case ClientSocket.SOCKET_STATUS_BEFORE_CONNECTING : panel_OFF(); break;
-								case ClientSocket.SOCKET_STATUS_CONNECTED : panel_ON(); break;
-								case ClientSocket.SOCKET_STATUS_CONNECTING : panel_OFF(); break;
-								case ClientSocket.SOCKET_STATUS_COMMUNICATING : panel_ON(); break;
-								case ClientSocket.SOCKET_STATUS_COMMUNICATION_ERROR : panel_ON(); break;
-								case ClientSocket.SOCKET_STATUS_CONNECTION_CLOSED : panel_OFF(); break;
-								case ClientSocket.SOCKET_STATUS_CONNECTION_FAILED : panel_OFF(); break;
-								case ClientSocket.SOCKET_STATUS_PING_FAILED : panel_OFF(); break;
-								case ClientSocket.SOCKET_STATUS_WAITING_RESPONSE : panel_ON(); break;
-								case ClientSocket.SOCKET_STATUS_CONNECTION_IS_CUT_OFF : panel_OFF(); break;
-								default : panel_OFF();  break;
+						
+						checkMode(modeComm);
+						
+						if(modeComm) {
+							if(lastState.equalsIgnoreCase(ClientSocket.getCurrentState())) {
+								switch(lastState) {
+									case ClientSocket.SOCKET_STATUS_BEFORE_CONNECTING : panel_OFF(); break;
+									case ClientSocket.SOCKET_STATUS_CONNECTED : panel_ON(); break;
+									case ClientSocket.SOCKET_STATUS_CONNECTING : panel_OFF(); break;
+									case ClientSocket.SOCKET_STATUS_COMMUNICATING : panel_ON(); break;
+									case ClientSocket.SOCKET_STATUS_COMMUNICATION_ERROR : panel_ON(); break;
+									case ClientSocket.SOCKET_STATUS_CONNECTION_CLOSED : panel_OFF(); break;
+									case ClientSocket.SOCKET_STATUS_CONNECTION_FAILED : panel_OFF(); break;
+									case ClientSocket.SOCKET_STATUS_PING_FAILED : panel_OFF(); break;
+									case ClientSocket.SOCKET_STATUS_WAITING_RESPONSE : panel_ON(); break;
+									case ClientSocket.SOCKET_STATUS_CONNECTION_IS_CUT_OFF : panel_OFF(); break;
+									default : panel_OFF();  break;
+								}
 							}
-						}
-						
-						switch(ClientSocket.getCurrentState()) {
-							case ClientSocket.SOCKET_STATUS_BEFORE_CONNECTING : lastState = ClientSocket.getCurrentState(); break;
-							case ClientSocket.SOCKET_STATUS_CONNECTED : lastState = ClientSocket.getCurrentState(); break;
-							case ClientSocket.SOCKET_STATUS_CONNECTING : lastState = ClientSocket.getCurrentState(); break;
-							case ClientSocket.SOCKET_STATUS_COMMUNICATING : lastState = ClientSocket.getCurrentState(); break;
-							case ClientSocket.SOCKET_STATUS_COMMUNICATION_ERROR : lastState = ClientSocket.getCurrentState(); break;
-							case ClientSocket.SOCKET_STATUS_CONNECTION_CLOSED : lastState = ClientSocket.getCurrentState(); break;
-							case ClientSocket.SOCKET_STATUS_CONNECTION_FAILED : lastState = ClientSocket.getCurrentState(); break;
-							case ClientSocket.SOCKET_STATUS_PING_FAILED : lastState = ClientSocket.getCurrentState(); break;
-							case ClientSocket.SOCKET_STATUS_WAITING_RESPONSE : lastState = ClientSocket.getCurrentState(); break;
-							case ClientSocket.SOCKET_STATUS_CONNECTION_IS_CUT_OFF : lastState = ClientSocket.getCurrentState(); break;
-							default : lastState = ClientSocket.getCurrentState(); break;
-						}
-																
-						currentState.setText(ClientSocket.getCurrentState());
-						
-						switch(currentState.getText()) {
-							case ClientSocket.SOCKET_STATUS_BEFORE_CONNECTING : currentState.setForeground(Color.BLACK); break;
-							case ClientSocket.SOCKET_STATUS_CONNECTED : currentState.setForeground(Color.BLUE); break;
-							case ClientSocket.SOCKET_STATUS_CONNECTING : currentState.setForeground(Color.BLACK); break;
-							case ClientSocket.SOCKET_STATUS_COMMUNICATING : currentState.setForeground(Color.BLUE); break;
-							case ClientSocket.SOCKET_STATUS_COMMUNICATION_ERROR : currentState.setForeground(Color.RED); break;
-							case ClientSocket.SOCKET_STATUS_CONNECTION_CLOSED : currentState.setForeground(Color.BLACK); break;
-							case ClientSocket.SOCKET_STATUS_CONNECTION_FAILED : currentState.setForeground(Color.RED); break;
-							case ClientSocket.SOCKET_STATUS_PING_FAILED : currentState.setForeground(Color.RED); break;
-							case ClientSocket.SOCKET_STATUS_WAITING_RESPONSE : currentState.setForeground(Color.BLUE); break;
-							case ClientSocket.SOCKET_STATUS_CONNECTION_IS_CUT_OFF : currentState.setForeground(Color.RED); break;
-							default : currentState.setForeground(Color.BLACK); break;
+							
+							switch(ClientSocket.getCurrentState()) {
+								case ClientSocket.SOCKET_STATUS_BEFORE_CONNECTING : lastState = ClientSocket.getCurrentState(); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTED : lastState = ClientSocket.getCurrentState(); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTING : lastState = ClientSocket.getCurrentState(); break;
+								case ClientSocket.SOCKET_STATUS_COMMUNICATING : lastState = ClientSocket.getCurrentState(); break;
+								case ClientSocket.SOCKET_STATUS_COMMUNICATION_ERROR : lastState = ClientSocket.getCurrentState(); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTION_CLOSED : lastState = ClientSocket.getCurrentState(); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTION_FAILED : lastState = ClientSocket.getCurrentState(); break;
+								case ClientSocket.SOCKET_STATUS_PING_FAILED : lastState = ClientSocket.getCurrentState(); break;
+								case ClientSocket.SOCKET_STATUS_WAITING_RESPONSE : lastState = ClientSocket.getCurrentState(); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTION_IS_CUT_OFF : lastState = ClientSocket.getCurrentState(); break;
+								default : lastState = ClientSocket.getCurrentState(); break;
+							}
+																	
+							currentState.setText(ClientSocket.getCurrentState());
+							
+							switch(currentState.getText()) {
+								case ClientSocket.SOCKET_STATUS_BEFORE_CONNECTING : currentState.setForeground(Color.BLACK); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTED : currentState.setForeground(Color.BLUE); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTING : currentState.setForeground(Color.BLACK); break;
+								case ClientSocket.SOCKET_STATUS_COMMUNICATING : currentState.setForeground(Color.BLUE); break;
+								case ClientSocket.SOCKET_STATUS_COMMUNICATION_ERROR : currentState.setForeground(Color.RED); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTION_CLOSED : currentState.setForeground(Color.BLACK); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTION_FAILED : currentState.setForeground(Color.RED); break;
+								case ClientSocket.SOCKET_STATUS_PING_FAILED : currentState.setForeground(Color.RED); break;
+								case ClientSocket.SOCKET_STATUS_WAITING_RESPONSE : currentState.setForeground(Color.BLUE); break;
+								case ClientSocket.SOCKET_STATUS_CONNECTION_IS_CUT_OFF : currentState.setForeground(Color.RED); break;
+								default : currentState.setForeground(Color.BLACK); break;
+							}
 						}
 						
 						// ModbusAgent <=> ExceptionScan : Socket 동기화
@@ -1241,10 +1292,40 @@ public class ModbusMonitor_Panel extends JPanel {
 			}
 		}.start();
 				
-		radio_modbusRTU.doClick();		
+		radio_modbusRTU.doClick();
+		
 		
 	}// end ModbusMonitor_Panel()
 	
+	public void checkMode(boolean isComm) {
+		if(!isComm) {
+			currentState.setText("작업 모드");
+			currentState.setForeground(Color.BLUE);
+			
+			TID.setEnabled(isComm);
+			transactionId_text.setEnabled(isComm);
+		}
+		
+		radio_modbusTCP.setEnabled(isComm);
+		radio_modbusRTU.setEnabled(isComm);
+		
+		UNIT_ID.setEnabled(isComm);
+		unitID_comboBox.setEnabled(isComm);
+		
+		TIME_OUT.setEnabled(isComm);
+		timeout_text.setEnabled(isComm);
+		
+		MAX_COUNT.setEnabled(isComm);
+		maxCount_text.setEnabled(isComm);
+		
+		monitorV1Button.setEnabled(isComm);
+		monitorV1Button.setVisible(isComm);
+		
+		send_Button.setEnabled(isComm);
+		connectButton.setEnabled(isComm);
+				
+		resultType.setEnabled(isComm);
+	}
 	
 	public void panel_ON() {
 		// 접속 전에는 판넬 컴포넌트들을 사용하지 않는다
@@ -1261,7 +1342,11 @@ public class ModbusMonitor_Panel extends JPanel {
 		exportButton.setVisible(true);
 		exportButton.setEnabled(true);
 		monitorV1Button.setVisible(true);
-		monitorV1Button.setEnabled(true);		
+		monitorV1Button.setEnabled(true);
+		if(modeComm) {
+			modeButton.setEnabled(false);
+			modeButton.setVisible(false);	
+		}
 		if (MainFrame.getMainFrame() != null) {
 			MainFrame.getMainFrame().setTitle(String.format("ModbusAnalyzer : %s", ClientSocket.getSimpleConnectedInfo()));
 		}
@@ -1284,6 +1369,8 @@ public class ModbusMonitor_Panel extends JPanel {
 		exportButton.setEnabled(false);
 		monitorV1Button.setVisible(false);
 		monitorV1Button.setEnabled(false);
+		modeButton.setEnabled(true);
+		modeButton.setVisible(true);
 		if (MainFrame.getMainFrame() != null) {
 			MainFrame.getMainFrame().setTitle("ModbusAnalyzer");
 		}
