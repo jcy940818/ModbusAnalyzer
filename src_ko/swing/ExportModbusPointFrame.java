@@ -623,7 +623,7 @@ public class ExportModbusPointFrame extends JFrame {
 				
 				int mkVersion = (mk_V4_RaidoButton.isSelected()) ? 4 : 10;
 				
-				ModbusPointExporter.export(mkVersion, addrTypeComboBox.getSelectedItem().toString() ,pointList);
+				ModbusPointExporter.exportExcel(mkVersion, addrTypeComboBox.getSelectedItem().toString(), useAutoEvent_CheckBox.isSelected(), pointList);
 				
 			}
 		});

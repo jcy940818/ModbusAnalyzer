@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -19,6 +20,7 @@ import common.perf.PerfConf;
 import common.perf.PerfLabelStatusBean;
 import common.util.ExcelUtil;
 import moon.Moon;
+import src_ko.agent.Event;
 import src_ko.swing.MainFrame;
 import src_ko.util.FileUtil;
 import src_ko.util.Util;
@@ -27,7 +29,7 @@ public class ModbusPointExporter {
 
 	public static boolean isRunning = false;
 	
-	public static void export(int mkVersion, String addrFormat, ArrayList<ModbusWatchPoint> pointList) {
+	public static void exportExcel(int mkVersion, String addrFormat, boolean useAutoEvent ,ArrayList<ModbusWatchPoint> pointList) {
 		new Thread(()->{
 			try {
 				String fileName = "Modbus";
@@ -88,7 +90,7 @@ public class ModbusPointExporter {
 						}
 					}else {
 						// MK119 V4
-						exportExcelV4(formFile, addrFormat, pointList);
+						exportExcelV4(formFile, addrFormat, useAutoEvent, pointList);
 					}
 				}
 			}catch(Exception exception) {
@@ -103,12 +105,134 @@ public class ModbusPointExporter {
 		}).start(); // end Thread
 	}
 	
-	public static void exportXML(String addrFormat, ArrayList<ModbusWatchPoint> pointList) {
+	public static void exportXML(String addrFormat, boolean useAutoEvent, ArrayList<ModbusWatchPoint> pointList) {
 		
 	}
 	
-	public static void exportExcelV4(File file, String addrFormat, ArrayList<ModbusWatchPoint> pointList) throws IOException{
+	public static void exportExcelV4(File file, String addrFormat, boolean useAutoEvent, ArrayList<ModbusWatchPoint> pointList) throws IOException{
+		ModbusPointExporter.isRunning = true;
+		FileInputStream in = null;
+		FileOutputStream out = null;
 		
+		try {
+			in = new FileInputStream(file);
+			
+			XSSFWorkbook workbook = new XSSFWorkbook(in);
+	
+			XSSFCellStyle leftAlign = workbook.createCellStyle();
+			leftAlign.setAlignment(HorizontalAlignment.LEFT);
+//			leftAlign.setBorderTop(BorderStyle.THIN);
+//			leftAlign.setBorderBottom(BorderStyle.THIN);
+//			leftAlign.setBorderLeft(BorderStyle.THIN);
+//			leftAlign.setBorderRight(BorderStyle.THIN);
+			
+			XSSFCellStyle centerAlign = workbook.createCellStyle();
+			centerAlign.setAlignment(HorizontalAlignment.CENTER);
+//			centerAlign.setBorderTop(BorderStyle.THIN);
+//			centerAlign.setBorderBottom(BorderStyle.THIN);
+//			centerAlign.setBorderLeft(BorderStyle.THIN);
+//			centerAlign.setBorderRight(BorderStyle.THIN);
+	
+			XSSFSheet pointSheet = workbook.getSheetAt(0);
+			
+			int ID = 0;
+			int header = ExcelUtil.getHeaderRowNum(pointSheet, 1);
+			int columnCount = useAutoEvent ? 22 : 10;
+			
+			for(ModbusWatchPoint point : pointList) {
+				ID++;
+				Row row = pointSheet.createRow(++header);
+				
+				for(int i = 0; i <= columnCount; i++) {
+					
+					if(i == 8 || i == 9) {
+						if(point.getDataFormat() == PerfConf.DATA_FORMAT_DIGITAL) row.createCell(i);
+					}else if(i == 10){
+						if(point.getDataFormat() == PerfConf.DATA_FORMAT_STATUS) row.createCell(i);
+					}else {
+						row.createCell(i);
+					}
+					
+					if(i == 1 || i == 10 || i == 19 || i == 20) {
+						Cell cell = row.getCell(i);
+						if(cell != null) cell.setCellStyle(leftAlign);
+					}else {
+						Cell cell = row.getCell(i);
+						if(cell != null) cell.setCellStyle(centerAlign);						
+					}
+				}
+				
+				row.getCell(0).setCellValue(ID);
+				row.getCell(1).setCellValue(point.getDisplayName());
+				row.getCell(2).setCellValue(point.getFunctionCode());
+				if(addrFormat.contains("HEX")) {
+					row.getCell(3).setCellValue(point.getRegisterAddrHexString());
+				}else {
+					row.getCell(3).setCellValue(Integer.parseInt(point.getModbusAddrString()));
+				}
+				row.getCell(4).setCellValue(point.getDataType());
+				row.getCell(5).setCellValue(60);
+				row.getCell(6).setCellValue(point.getMeasure());
+				row.getCell(7).setCellValue(point.getScaleFunction());
+				
+				switch(point.getDataFormat()) {
+					case PerfConf.DATA_FORMAT_DIGITAL :
+						String[] binaryLabel = point.getBinLabel();
+						if(binaryLabel != null) {
+							row.getCell(8).setCellValue(binaryLabel[0]);
+							row.getCell(9).setCellValue(binaryLabel[1]);
+						}
+						break;
+						
+					case PerfConf.DATA_FORMAT_STATUS :
+						PerfLabelStatusBean[] labels =  point.getStatusLabels();
+						if(labels != null) {
+							String multiLabel = "";
+							if(labels != null) {
+								for(PerfLabelStatusBean label : labels) {
+									multiLabel += label.value + "; " + label.label + "; ";
+								}
+							}
+							row.getCell(10).setCellValue(multiLabel.trim());
+						}
+						break;
+						
+					case PerfConf.DATA_FORMAT_MEASURE :
+						break;
+						
+					default :
+						break;
+				}
+				
+				if(useAutoEvent) {
+					row.getCell(11).setCellValue(Integer.parseInt(Event.severity));
+					row.getCell(12).setCellValue(Double.parseDouble(Event.threshold));
+					row.getCell(13).setCellValue(Event.op);
+					row.getCell(14).setCellValue(Integer.parseInt(Event.mode));
+					row.getCell(15).setCellValue(Integer.parseInt(Event.duration));
+					row.getCell(16).setCellValue(Integer.parseInt(Event.count));
+					row.getCell(17).setCellValue(Integer.parseInt(Event.seqCount));
+					row.getCell(18).setCellValue(Boolean.parseBoolean(Event.autoReg));
+					row.getCell(19).setCellValue(point.getDisplayName() + " " + Event.name);
+					row.getCell(20).setCellValue(Event.message);
+					row.getCell(21).setCellValue(Integer.parseInt(Event.enable));
+					row.getCell(22).setCellValue(Boolean.parseBoolean(Event.autoClose));
+				}
+			}
+
+			out = new FileOutputStream(file);
+			workbook.write(out);
+			out.flush();
+			
+			downloadFile(file);
+			
+			if(in != null) in.close();
+			if(out != null) out.close();
+			if(file.exists()) FileUtil.deleteFile(file);
+			
+		}finally {
+			ModbusPointExporter.isRunning = false;
+		}
 	}
 	
 	public static void exportExcelV10(File file, String addrFormat, ArrayList<ModbusWatchPoint> pointList) throws IOException{
@@ -176,9 +300,9 @@ public class ModbusPointExporter {
 						
 					case PerfConf.DATA_FORMAT_STATUS :
 						dataFormat = (Moon.isKorean()) ? "´ÙÁß°ª" : "Multi-State";
-						PerfLabelStatusBean[] lables = point.getStatusLabels();
-						if(lables != null) {
-							for(PerfLabelStatusBean label : lables) {
+						PerfLabelStatusBean[] labels = point.getStatusLabels();
+						if(labels != null) {
+							for(PerfLabelStatusBean label : labels) {
 								Row labelRow = labelSheet.createRow(++labelHeader);
 								for(int i = 0; i <= 2; i++) {
 									labelRow.createCell(i);
@@ -294,9 +418,9 @@ public class ModbusPointExporter {
 						break;
 						
 					case PerfConf.DATA_FORMAT_STATUS :						
-						PerfLabelStatusBean[] lables = point.getStatusLabels();
-						if(lables != null) {
-							for(PerfLabelStatusBean label : lables) {
+						PerfLabelStatusBean[] labels = point.getStatusLabels();
+						if(labels != null) {
+							for(PerfLabelStatusBean label : labels) {
 								Row labelRow = labelSheet.createRow(++labelHeader);
 								for(int i = 0; i <= 3; i++) {
 									labelRow.createCell(i);
