@@ -1,5 +1,6 @@
 package common.util;
 
+import java.io.File;
 import java.io.PrintWriter;
 
 import javax.swing.JOptionPane;
@@ -13,9 +14,15 @@ import src_ko.util.Util;
 
 public class XmlGenerator {
 	
-	public static void generatePerfXML(FmsPerfItem[] perfs, boolean useAutoEvent, String encoding, String agentType) {
-		String savePath = Util.getFilePath() + ".xml";
+	public static void generateXML(FmsPerfItem[] perfs, boolean useAutoEvent, String encoding, String agentType) {
+		String savePath = Util.getFilePath();
 				
+		if(savePath == null) {
+			return;
+		}else {
+			savePath = savePath + ".xml";
+		}
+		
         try {
             PrintWriter writer = new PrintWriter(savePath, encoding);
             writer.println("<?xml version=\"1.0\" encoding=\"" + encoding.toUpperCase() + "\"?>");
@@ -70,13 +77,18 @@ public class XmlGenerator {
             }
             
             writer.println("</perfinfo>");
+            writer.flush();
             writer.close();
             
             System.out.println("Done (" + perfCount + ")");
             
+            File xmlFile = new File(savePath);
+            
             StringBuilder sb = new StringBuilder();
 			sb.append("<font color='Green'>XML File Converting is Complete</font>\n");			
-			sb.append(String.format("성능 %s개 항목을 변환 완료하였습니다%s%s\n",Util.colorBlue(String.valueOf(perfCount)), Util.separator, Util.separator));        						
+			sb.append(String.format("성능 %s개 항목 생성 완료%s%s\n\n",Util.colorBlue(String.valueOf(perfCount)), Util.separator, Util.separator));
+			sb.append("아래의 경로에 XML 파일을 다운로드 완료하였습니다" + Util.separator + Util.separator + "\n\n");
+			sb.append(Util.colorBlue("Path") + " : " + xmlFile.getAbsolutePath().replace("\\", Util.colorBlue("\\")) + Util.separator + Util.separator + "\n");
 			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);            
             }
         
@@ -151,10 +163,10 @@ public class XmlGenerator {
 	
 	
 	private static String getCommonPerfEntry(FmsPerfItem perf, boolean useAutoEvent){
-    	StringBuilder s = new StringBuilder(100);
+    	StringBuilder s = new StringBuilder();
         s.append("\t\t<displayname>").append(perf.getDisplayName()).append("</displayname>\r\n");
         s.append("\t\t<counter>").append(perf.getCounter()).append("</counter>\r\n");
-        s.append("\t\t<interval>").append(perf.getInterval()).append("</interval>\r\n");                
+        s.append("\t\t<interval>").append((perf.getInterval() != 0) ? perf.getInterval() : 60).append("</interval>\r\n");                
         s.append("\t\t<measure>").append(perf.getMeasure()).append("</measure>\r\n");        
         s.append("\t\t<scalefunction>").append(perf.getScaleFunction().replace("&", "&amp;")).append("</scalefunction>\r\n");
         
@@ -203,10 +215,10 @@ public class XmlGenerator {
 	
 	
 	private static String getSnmpPerfEntry(FmsPerfItem perf, boolean useAutoEvent){
-    	StringBuilder s = new StringBuilder(100);
+    	StringBuilder s = new StringBuilder();
         s.append("\t\t<displayname>").append(perf.getDisplayName()).append("</displayname>\r\n");
         s.append("\t\t<oid>").append(perf.getCounter()).append("</oid>\r\n");
-        s.append("\t\t<interval>").append(perf.getInterval()).append("</interval>\r\n");                
+        s.append("\t\t<interval>").append((perf.getInterval() != 0) ? perf.getInterval() : 60).append("</interval>\r\n");                
         s.append("\t\t<units>").append(perf.getMeasure()).append("</units>\r\n");        
         s.append("\t\t<expression>").append(perf.getScaleFunction().replace("&", "&amp;")).append("</expression>\r\n");
         
@@ -254,7 +266,7 @@ public class XmlGenerator {
     }
 	
 	private static String getControlActionEntry(ControlAction control){
-    	StringBuilder s = new StringBuilder(100);
+    	StringBuilder s = new StringBuilder();
         s.append("\t\t<displayName>").append(control.getControlName()).append("</displayName>\r\n");
         s.append("\t\t<controlCounter>").append(control.getControlCounter()).append("</controlCounter>\r\n");
         s.append("\t\t<command>").append(control.getCommand()).append("</command>\r\n");                

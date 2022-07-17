@@ -77,7 +77,8 @@ public class ExportModbusPointFrame extends JFrame {
 	private JRadioButton directAdd_radioButton;
 	private JRadioButton mk_V4_RaidoButton;
 	private JRadioButton mk_V10_RaidoButton;
-	private JButton exportButton;
+	private JButton exportXML_Button;
+	private JButton exportExcel_Button;
 	
 	public static JTextField search_TextField;
 	private JScrollPane table_scrollPane = new JScrollPane();	
@@ -279,7 +280,7 @@ public class ExportModbusPointFrame extends JFrame {
 		download_radioButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				changeWork();
+				changeWork();				
 			}
 		});
 		actualPanel.add(download_radioButton);
@@ -367,7 +368,6 @@ public class ExportModbusPointFrame extends JFrame {
 				}
 			}
 		});
-		
 		actualPanel.add(adminConsoleInfo);
 		
 		serverName_Label = new JLabel("¿Â∫Ò∏Ì");
@@ -578,7 +578,7 @@ public class ExportModbusPointFrame extends JFrame {
 		mk_V4_RaidoButton.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		mk_V4_RaidoButton.setFocusPainted(false);
 		mk_V4_RaidoButton.setBackground(Color.WHITE);
-		mk_V4_RaidoButton.setBounds(686, 12, 151, 23);
+		mk_V4_RaidoButton.setBounds(587, 11, 151, 23);
 		actualPanel.add(mk_V4_RaidoButton);
 		
 		mk_V10_RaidoButton = new JRadioButton("MK119  V10");
@@ -587,13 +587,12 @@ public class ExportModbusPointFrame extends JFrame {
 		mk_V10_RaidoButton.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		mk_V10_RaidoButton.setFocusPainted(false);
 		mk_V10_RaidoButton.setBackground(Color.WHITE);
-		mk_V10_RaidoButton.setBounds(686, 45, 151, 23);
+		mk_V10_RaidoButton.setBounds(587, 44, 151, 23);
 		actualPanel.add(mk_V10_RaidoButton);
 		
 		ButtonGroup group2 = new ButtonGroup();
 		group2.add(mk_V4_RaidoButton);
 		group2.add(mk_V10_RaidoButton);
-		
 		
 		ActionListener mkVerionListener = new ActionListener() {
 			@Override
@@ -601,23 +600,42 @@ public class ExportModbusPointFrame extends JFrame {
 				if(mk_V4_RaidoButton.isSelected()) {
 					mk_V4_RaidoButton.setForeground(mkColor);
 					mk_V10_RaidoButton.setForeground(Color.LIGHT_GRAY);
+					exportXML_Button.setEnabled(true);
 				}else {
 					mk_V4_RaidoButton.setForeground(Color.LIGHT_GRAY);
 					mk_V10_RaidoButton.setForeground(mkColor);
+					exportXML_Button.setEnabled(false);
 				}
 			}
 		};
 		mk_V4_RaidoButton.addActionListener(mkVerionListener);
 		mk_V10_RaidoButton.addActionListener(mkVerionListener);
 		
-		exportButton = new JButton(" Export");
-		exportButton.setIcon(new Util().getExcelImage());
-		exportButton.setForeground(Color.BLACK);
-		exportButton.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
-		exportButton.setFocusPainted(false);
-		exportButton.setBackground(Color.WHITE);
-		exportButton.setBounds(841, 8, 196, 66);
-		exportButton.addActionListener(new ActionListener() {
+		exportXML_Button = new JButton(" XML");
+		exportXML_Button.setIcon(new Util().getXMLImage());
+		exportXML_Button.setForeground(Color.BLACK);
+		exportXML_Button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
+		exportXML_Button.setFocusPainted(false);
+		exportXML_Button.setBackground(Color.WHITE);
+		exportXML_Button.setBounds(740, 8, 140, 66);
+		exportXML_Button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				ModbusPointExporter.exportXML(addrTypeComboBox.getSelectedItem().toString(), useAutoEvent_CheckBox.isSelected(), pointList);
+				
+			}
+		});
+		actualPanel.add(exportXML_Button);
+		
+		exportExcel_Button = new JButton(" Excel");
+		exportExcel_Button.setIcon(new Util().getExcelImage());
+		exportExcel_Button.setForeground(Color.BLACK);
+		exportExcel_Button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
+		exportExcel_Button.setFocusPainted(false);
+		exportExcel_Button.setBackground(Color.WHITE);
+		exportExcel_Button.setBounds(887, 8, 150, 66);
+		exportExcel_Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
@@ -627,7 +645,7 @@ public class ExportModbusPointFrame extends JFrame {
 				
 			}
 		});
-		actualPanel.add(exportButton);
+		actualPanel.add(exportExcel_Button);
 		
 		JSeparator separator_2 = new JSeparator();
 		separator_2.setOrientation(SwingConstants.VERTICAL);
@@ -814,8 +832,11 @@ public class ExportModbusPointFrame extends JFrame {
 		mk_V10_RaidoButton.setEnabled(download_radioButton.isSelected());
 		mk_V10_RaidoButton.setVisible(download_radioButton.isSelected());
 		
-		exportButton.setEnabled(download_radioButton.isSelected());
-		exportButton.setVisible(download_radioButton.isSelected());
+		exportXML_Button.setEnabled(mk_V4_RaidoButton.isSelected());
+		exportXML_Button.setVisible(download_radioButton.isSelected());
+		
+		exportExcel_Button.setEnabled(download_radioButton.isSelected());
+		exportExcel_Button.setVisible(download_radioButton.isSelected());
 		
 		mk119_Button.setEnabled(directAdd_radioButton.isSelected());
 		mk119_Button.setVisible(directAdd_radioButton.isSelected());

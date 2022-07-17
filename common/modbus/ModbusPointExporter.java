@@ -16,9 +16,11 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import common.perf.FmsPerfItem;
 import common.perf.PerfConf;
 import common.perf.PerfLabelStatusBean;
 import common.util.ExcelUtil;
+import common.util.XmlGenerator;
 import moon.Moon;
 import src_ko.agent.Event;
 import src_ko.swing.MainFrame;
@@ -106,7 +108,53 @@ public class ModbusPointExporter {
 	}
 	
 	public static void exportXML(String addrFormat, boolean useAutoEvent, ArrayList<ModbusWatchPoint> pointList) {
+		if(pointList != null && pointList.size() > 0) {
+			String encoding = "euc-kr";
+	    	
+	    	StringBuilder msg = new StringBuilder();
+			msg.append("<font color='Green'>XML File Encoding</font>\n");		
+			
+			if(Moon.isKorean()) {
+				msg.append("XML 파일의 인코딩 방식을 선택해주세요" + Util.separator + Util.separator +"\n\n");
+				msg.append(String.format("%s : EUC-KR%s%s\n", Util.colorBlue("MK119 4.2 Version 이하"), Util.separator, Util.separator));
+				msg.append(String.format("%s : UTF-8%s%s\n", Util.colorBlue("MK119 4.5 Version 이상"), Util.separator, Util.separator));
+			}else {
+				msg.append("Select the encoding method of the XML file" + Util.separator + Util.separator +"\n\n");
+				msg.append(String.format("It's the same as or lower than MK119 %s Version : %s%s%s\n", Util.colorGreen("4.2") ,Util.colorBlue("EUC-KR"), Util.separator, Util.separator));
+				msg.append(String.format("It's the same as or higher than MK119 %s Version : %s%s%s\n", Util.colorGreen("4.5"), Util.colorBlue("UTF-8"), Util.separator, Util.separator));
+			}
+	
+			int menu = Util.showOption(msg.toString(), new String[] { "EUC-KR", "UTF-8"}, JOptionPane.QUESTION_MESSAGE);
+	
+			switch (menu) {
+				case 0: // 첫 번째 버튼 : EUC-KR
+					encoding = "euc-kr";
+					break;
+					
+				case 1: // 두 번째 버튼
+					encoding = "utf-8";
+					break;
+					
+				default :
+					return;
+			}
+			
+			FmsPerfItem[] array = new FmsPerfItem[pointList.size()];
+			
+			for(int i = 0; i < pointList.size(); i++) {
+				ModbusWatchPoint point = pointList.get(i);
+				
+				if(addrFormat.contains("HEX")) {
+					point.setCounter(point.getHexCounter() + "\\{1}");
+				}else {
+					point.setCounter(point.getDecCounter() + "\\{1}");
+				}
+				
+				array[i] = point;
+			}
 		
+			XmlGenerator.generateXML(array, useAutoEvent, encoding, "common");
+		}
 	}
 	
 	public static void exportExcelV4(File file, String addrFormat, boolean useAutoEvent, ArrayList<ModbusWatchPoint> pointList) throws IOException{
