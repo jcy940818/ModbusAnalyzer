@@ -255,7 +255,7 @@ public class XmlGenerator {
         	s.append("mode=\"").append(Event.mode).append("\" ");
         	s.append("duration=\"").append(Event.duration).append("\" ");
         	s.append("count=\"").append(Event.count).append("\" ");
-        	s.append("notify=\"").append(Event.notify).append("\" ");
+        	s.append("notify=\"").append(Event.seqCount).append("\" ");
         	s.append("autoreg=\"").append(Event.autoReg).append("\" ");
         	s.append("name=\"").append(perf.getDisplayName() + " " + Event.name).append("\" ");
         	s.append("msg=\"").append(Event.message).append("\" ");
@@ -304,7 +304,7 @@ public class XmlGenerator {
         	s.append("mode=\"").append(Event.mode).append("\" ");
         	s.append("duration=\"").append(Event.duration).append("\" ");
         	s.append("count=\"").append(Event.count).append("\" ");
-        	s.append("notify=\"").append(Event.notify).append("\" ");
+        	s.append("notify=\"").append(Event.seqCount).append("\" ");
         	s.append("autoreg=\"").append(Event.autoReg).append("\" ");
         	s.append("name=\"").append(perf.getDisplayName() + " " + Event.name).append("\" ");
         	s.append("msg=\"").append(Event.message).append("\" ");
@@ -353,7 +353,7 @@ public class XmlGenerator {
         	s.append("mode=\"").append(Event.mode).append("\" ");
         	s.append("duration=\"").append(Event.duration).append("\" ");
         	s.append("count=\"").append(Event.count).append("\" ");
-        	s.append("notify=\"").append(Event.notify).append("\" ");
+        	s.append("notify=\"").append(Event.seqCount).append("\" ");
         	s.append("autoreg=\"").append(Event.autoReg).append("\" ");
         	s.append("name=\"").append(perf.getDisplayName() + " " + Event.name).append("\" ");
         	s.append("msg=\"").append(Event.message).append("\" ");
@@ -403,7 +403,7 @@ public class XmlGenerator {
         	s.append("mode=\"").append(Event.mode).append("\" ");
         	s.append("duration=\"").append(Event.duration).append("\" ");
         	s.append("count=\"").append(Event.count).append("\" ");
-        	s.append("notify=\"").append(Event.notify).append("\" ");
+        	s.append("notify=\"").append(Event.seqCount).append("\" ");
         	s.append("autoreg=\"").append(Event.autoReg).append("\" ");
         	s.append("name=\"").append(perf.getDisplayName() + " " + Event.name).append("\" ");
         	s.append("msg=\"").append(Event.message).append("\" ");
