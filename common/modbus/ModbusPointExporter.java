@@ -139,7 +139,7 @@ public class ModbusPointExporter {
 					return;
 			}
 			
-			FmsPerfItem[] array = new FmsPerfItem[pointList.size()];
+			ArrayList<FmsPerfItem> fmsPerfItemList = new ArrayList<FmsPerfItem>();
 			
 			for(int i = 0; i < pointList.size(); i++) {
 				ModbusWatchPoint point = pointList.get(i);
@@ -150,10 +150,10 @@ public class ModbusPointExporter {
 					point.setCounter(point.getDecCounter() + "\\{1}");
 				}
 				
-				array[i] = point;
+				fmsPerfItemList.add(point);
 			}
 		
-			XmlGenerator.generateXML(array, useAutoEvent, encoding, "common");
+			XmlGenerator.generateXML(fmsPerfItemList, useAutoEvent, encoding, "modbus");
 		}
 	}
 	

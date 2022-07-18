@@ -2,11 +2,13 @@ package common.util;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
 import common.perf.ControlAction;
 import common.perf.FmsPerfItem;
+import common.perf.FmsPerfItem.EventInfo;
 import common.perf.PerfConf;
 import common.perf.PerfLabelStatusBean;
 import src_ko.agent.Event;
@@ -14,7 +16,7 @@ import src_ko.util.Util;
 
 public class XmlGenerator {
 	
-	public static void generateXML(FmsPerfItem[] perfs, boolean useAutoEvent, String encoding, String agentType) {
+	public static void generateXML(ArrayList<FmsPerfItem> perfs, boolean useAutoEvent, String encoding, String agentType) {
 		String savePath = Util.getFilePath();
 				
 		if(savePath == null) {
@@ -38,17 +40,21 @@ public class XmlGenerator {
 
             int perfCount = 0;
             
-            for(int i = 0; i < perfs.length; i++) {            	
+            for(int i = 0; i < perfs.size(); i++) {            	
                 String entry = null;
                 
                 try {
                 	switch(agentType) {
+	                	case "modbus" :
+	                		entry = getModbusPerfEntry(perfs.get(i), useAutoEvent);
+	                		break;
+	                		
 	                	case "common" :
-	                		entry = getCommonPerfEntry(perfs[i], useAutoEvent);
+	                		entry = getCommonPerfEntry(perfs.get(i));
 	                		break;
 	                		
 	                	case "snmp" :
-	                		entry = getSnmpPerfEntry(perfs[i], useAutoEvent);
+	                		entry = getSnmpPerfEntry(perfs.get(i));
 	                		break;
                 	}
                 }
@@ -60,7 +66,7 @@ public class XmlGenerator {
         			sb.append(String.format("XML 파일 변환 작업중 예외가 발생하였습니다%s\n\n", Util.separator));
         			sb.append(String.format("작업중이던 성능 : %s번째 성능 ( 성능명 : %s )%s\n\n",
         					Util.colorBlue(String.valueOf(i+1)),
-        					Util.colorBlue(perfs[i].getDisplayName()) ,
+        					Util.colorBlue(perfs.get(i).getDisplayName()) ,
         					Util.separator));        			
         			sb.append(String.format("Exception Message : %s%s\n", e.getMessage(), Util.separator));
         			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
@@ -99,7 +105,7 @@ public class XmlGenerator {
 	}
 	
 	
-	public static void generateControlXML(ControlAction[] controls, String encoding, String agentType) {
+	public static void generateControlXML(ArrayList<ControlAction> controls, String encoding, String agentType) {
 		String savePath = Util.getFilePath() + ".xml";
 				
         try {
@@ -111,13 +117,13 @@ public class XmlGenerator {
 
             int controlCount = 0;
             
-            for(int i = 0; i < controls.length; i++) {            	
+            for(int i = 0; i < controls.size(); i++) {            	
                 String entry = null;
                 
                 try {
                 	switch(agentType) {                	
 	                	case "control" :
-	                		entry = getControlActionEntry(controls[i]);
+	                		entry = getControlActionEntry(controls.get(i));
 	                		break;	             	                	
                 	}                	
                 }catch (Exception e) {
@@ -128,7 +134,7 @@ public class XmlGenerator {
         			sb.append(String.format("XML 파일 변환 작업중 예외가 발생하였습니다%s\n\n", Util.separator));
         			sb.append(String.format("작업중이던 제어 항목 : %s번째 제어 ( 제어 이름 : %s )%s\n\n",
         					Util.colorBlue(String.valueOf(i+1)),
-        					Util.colorBlue(controls[i].getControlName()) ,
+        					Util.colorBlue(controls.get(i).getControlName()) ,
         					Util.separator));        			
         			sb.append(String.format("Exception Message : %s%s\n", e.getMessage(), Util.separator));
         			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
@@ -162,7 +168,7 @@ public class XmlGenerator {
 	}
 	
 	
-	private static String getCommonPerfEntry(FmsPerfItem perf, boolean useAutoEvent){
+	private static String getModbusPerfEntry(FmsPerfItem perf, boolean useAutoEvent){
     	StringBuilder s = new StringBuilder();
         s.append("\t\t<displayname>").append(perf.getDisplayName()).append("</displayname>\r\n");
         s.append("\t\t<counter>").append(perf.getCounter()).append("</counter>\r\n");
@@ -214,7 +220,60 @@ public class XmlGenerator {
     }
 	
 	
-	private static String getSnmpPerfEntry(FmsPerfItem perf, boolean useAutoEvent){
+	private static String getCommonPerfEntry(FmsPerfItem perf){
+    	StringBuilder s = new StringBuilder();
+        s.append("\t\t<displayname>").append(perf.getDisplayName()).append("</displayname>\r\n");
+        s.append("\t\t<counter>").append(perf.getCounter()).append("</counter>\r\n");
+        s.append("\t\t<interval>").append((perf.getInterval() != 0) ? perf.getInterval() : 60).append("</interval>\r\n");                
+        s.append("\t\t<measure>").append(perf.getMeasure()).append("</measure>\r\n");        
+        s.append("\t\t<scalefunction>").append(perf.getScaleFunction().replace("&", "&amp;")).append("</scalefunction>\r\n");
+        
+        if(perf.getDataFormat() == PerfConf.DATA_FORMAT_STATUS){
+        	s.append("\t\t<data format=\"2\">\r\n");
+        	        	        	
+        	PerfLabelStatusBean[] labels = perf.getStatusLabels();
+        	
+        	if(labels != null) {
+	        	for(PerfLabelStatusBean label : labels) {
+	        		 s.append("\t\t\t<set value=\"")
+	 	    	    .append(label.value)
+	 	    	    .append("\" label=\"")
+	 	    	    .append(label.label).append("\" />\r\n");
+	        	}
+        	}
+        	s.append("\t\t</data>\r\n");
+        	
+        }
+        else if(perf.getDataFormat() == PerfConf.DATA_FORMAT_DIGITAL){
+            s.append("\t\t<data format=\"1\">\r\n");
+            s.append("\t\t\t<label0>").append(perf.binLabel[0]).append("</label0>\r\n");
+            s.append("\t\t\t<label1>").append(perf.binLabel[1]).append("</label1>\r\n");
+            s.append("\t\t</data>\r\n");   
+        }
+        else {
+            s.append("\t\t<data format=\"3\"/>\r\n");
+        }
+        
+        if(perf.getFmsEventInfo() != null && perf.getFmsEventInfo()[0] != null){
+        	EventInfo event = perf.getFmsEventInfo()[0];
+		  	s.append("\t\t<event severity=\"").append(event.severity).append("\" ");
+		  	s.append("threshold=\"").append(event.threshold).append("\" ");
+		  	s.append("op=\"").append(event.op).append("\" ");
+		  	s.append("mode=\"").append(event.mode).append("\" ");
+		  	s.append("duration=\"").append(event.duration).append("\" ");
+		  	s.append("count=\"").append(event.count).append("\" ");
+		  	s.append("notify=\"").append(event.seqCount).append("\" ");
+		  	s.append("autoreg=\"").append(event.autoReg).append("\" ");
+		  	s.append("name=\"").append(event.name).append("\" ");
+		  	s.append("msg=\"").append(event.msg).append("\" ");
+		  	s.append("enable=\"").append(event.enable).append("\"/>\r\n");
+        }
+                
+        return s.toString();
+    }
+	
+	
+	private static String getSnmpPerfEntry(FmsPerfItem perf){
     	StringBuilder s = new StringBuilder();
         s.append("\t\t<displayname>").append(perf.getDisplayName()).append("</displayname>\r\n");
         s.append("\t\t<oid>").append(perf.getCounter()).append("</oid>\r\n");
@@ -248,18 +307,19 @@ public class XmlGenerator {
             s.append("\t\t<data format=\"3\"/>\r\n");
         }
         
-        if(useAutoEvent){
-        	s.append("\t\t<event severity=\"").append(Event.severity).append("\" ");
-        	s.append("threshold=\"").append(Event.threshold).append("\" ");
-        	s.append("op=\"").append(Event.op).append("\" ");
-        	s.append("mode=\"").append(Event.mode).append("\" ");
-        	s.append("duration=\"").append(Event.duration).append("\" ");
-        	s.append("count=\"").append(Event.count).append("\" ");
-        	s.append("notify=\"").append(Event.seqCount).append("\" ");
-        	s.append("autoreg=\"").append(Event.autoReg).append("\" ");
-        	s.append("name=\"").append(perf.getDisplayName() + " " + Event.name).append("\" ");
-        	s.append("msg=\"").append(Event.message).append("\" ");
-        	s.append("enable=\"").append(Event.enable).append("\"/>\r\n");
+        if(perf.getFmsEventInfo() != null && perf.getFmsEventInfo()[0] != null){
+        	EventInfo event = perf.getFmsEventInfo()[0];
+		  	s.append("\t\t<event severity=\"").append(event.severity).append("\" ");
+		  	s.append("threshold=\"").append(event.threshold).append("\" ");
+		  	s.append("op=\"").append(event.op).append("\" ");
+		  	s.append("mode=\"").append(event.mode).append("\" ");
+		  	s.append("duration=\"").append(event.duration).append("\" ");
+		  	s.append("count=\"").append(event.count).append("\" ");
+		  	s.append("notify=\"").append(event.seqCount).append("\" ");
+		  	s.append("autoreg=\"").append(event.autoReg).append("\" ");
+		  	s.append("name=\"").append(event.name).append("\" ");
+		  	s.append("msg=\"").append(event.msg).append("\" ");
+		  	s.append("enable=\"").append(event.enable).append("\"/>\r\n");
         }
                 
         return s.toString();

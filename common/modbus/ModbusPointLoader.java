@@ -297,7 +297,7 @@ public class ModbusPointLoader {
 						
 						modbusPoint.evt = new EventInfo[] { evt };
 					} catch (Exception e) {
-						throw new IOException("event" + "," + Integer.toString(rowNum + 1) + "," + item + "," + modbusPoint.displayName);
+						throw new IOException(Integer.toString(rowNum + 1) + "," + item + "," + modbusPoint.displayName);
 					}
 				}
 				*/
