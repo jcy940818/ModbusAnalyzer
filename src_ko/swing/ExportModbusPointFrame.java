@@ -661,7 +661,7 @@ public class ExportModbusPointFrame extends JFrame {
 		setAutoMeasure_label.setBounds(1415, 6, 183, 34);
 		actualPanel.add(setAutoMeasure_label);
 		
-		JButton autoMeasure_Button = new JButton("자동 단위 생성");
+		JButton autoMeasure_Button = new JButton("단위 자동 설정");
 		autoMeasure_Button.setForeground(Color.BLACK);
 		autoMeasure_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		autoMeasure_Button.setFocusPainted(false);
@@ -670,11 +670,28 @@ public class ExportModbusPointFrame extends JFrame {
 		autoMeasure_Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				ArrayList<ModbusWatchPoint> selectedPointList = ModbusMonitor_Panel.getSelectedModbusPoint(pointTable);
+				
 				StringBuilder sb = new StringBuilder();
 				
+				if (selectedPointList == null || selectedPointList.size() < 1) {					
+					sb.append(String.format("%s", Util.colorBlue("선택된 포인트 없음")));
+					sb.append(Util.separator + Util.separator + "\n");					
+					
+					sb.append("테이블에서 측정 단위를 설정하실 모드버스 포인트를 선택 후 다시 시도해주세요");
+					sb.append(Util.separator + Util.separator + "\n");
+					
+					Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+								
 				sb.append(String.format("%s%s\n", Util.colorBlue("포인트 측정 단위 자동 설정"), Util.separator));
 								
-				sb.append("해당 기능 사용시 현재 포인트 항목들의 이름을 검사 후 해당 포인트에 적절한 단위가 자동으로 설정됩니다");
+				sb.append(String.format("선택하신 모드버스 포인트 %s개 항목의 측정 단위를 자동 설정하시겠습니까?", Util.colorBlue(String.valueOf(selectedPointList.size()))));
+				sb.append(Util.separator + Util.separator + "\n\n");
+				
+				sb.append("해당 기능 사용시 선택된 포인트 항목들의 이름을 검사 후 해당 포인트에 적절한 단위가 자동으로 설정됩니다");
 				sb.append(Util.separator + Util.separator + "\n\n");
 				
 				sb.append("해당 기능은 단순 보조 기능이므로 사용 후 반드시 자동으로 설정된 포인트의 단위 내용을 확인해주세요  !");
@@ -686,7 +703,7 @@ public class ExportModbusPointFrame extends JFrame {
 				int menu = Util.showConfirm(sb.toString());
 				
 				if(menu == JOptionPane.OK_OPTION) {
-					for(ModbusWatchPoint point : pointList) {
+					for(ModbusWatchPoint point : selectedPointList) {
 						if(point.getDataFormat() == PerfConf.DATA_FORMAT_MEASURE && (point.getMeasure() == null || point.getMeasure().trim().equals(""))) {
 							point.measure = Perf.createMeasure(point.getDisplayName().trim());
 						}
@@ -700,7 +717,7 @@ public class ExportModbusPointFrame extends JFrame {
 					sb.append(String.format("%s", Util.colorBlue("포인트 측정 단위 자동 설정 완료")));
 					sb.append(Util.separator + Util.separator + "\n");
 					
-					sb.append("포인트 항목들의 측정 단위 자동 설정이 완료되었습니다");
+					sb.append("선택하신 모드버스 포인트 " + Util.colorBlue(String.valueOf(selectedPointList.size())) + "개 항목의 측정 단위 자동 설정이 완료되었습니다");
 					sb.append(Util.separator + Util.separator + "\n");
 					
 					Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
