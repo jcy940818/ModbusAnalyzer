@@ -331,7 +331,7 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 			sb.append(String.format("%s : %s", Util.colorBlue("1. Point Name"), wp.getDisplayName()));
 			sb.append(Util.separator + Util.separator + "\n\n");
 			
-			sb.append(String.format("%s : %s", Util.colorBlue("2. Counter"), wp.getCounter()));
+			sb.append(String.format("%s : %s", Util.colorBlue("2. Counter ( Driver Code )"), wp.getCounter()));
 			sb.append(Util.separator + Util.separator + Util.separator + Util.separator + "\n");
 			
 			
