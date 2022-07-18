@@ -250,6 +250,22 @@ public class MainFrame extends JFrame {
 		mk119Menu.add(protocolListDownload);
 		mk119Menu.add(new JSeparator());
 		
+		
+		// MK119 ¸Þ´º : XML Generator : Form Excel
+		JMenuItem xmlGenerator_formExcel = new JMenuItem("XML Generator : Form Excel");
+		xmlGenerator_formExcel.setForeground(Color.BLACK);
+		xmlGenerator_formExcel.setHorizontalAlignment(SwingConstants.LEFT);
+		xmlGenerator_formExcel.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 14));
+		xmlGenerator_formExcel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Form Excel");
+			}
+		});
+		xmlGeneratorMenu.add(xmlGenerator_formExcel);
+		xmlGeneratorMenu.add(new JSeparator());
+		
+		
 		// MK119 ¸Þ´º : XML Generator : Common
 		JMenuItem xmlGenerator_Common = new JMenuItem("XML Generator : Common");
 		xmlGenerator_Common.setForeground(Color.BLACK);

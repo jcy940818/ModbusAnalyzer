@@ -18,7 +18,7 @@ import src_ko.util.Util;
 
 public class Moon {
 
-	public static String currentLanguage = "ko";
+	public static String currentLanguage = "Moon";
 	
 	private static JFrame mainFrame;
 	private static JPanel actualPanel;
