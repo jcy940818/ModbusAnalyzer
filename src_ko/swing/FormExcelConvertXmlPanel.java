@@ -63,18 +63,18 @@ public class FormExcelConvertXmlPanel extends JPanel {
 		imageLabel.setIcon(new Util().getOnionDirImage());
 		
 		JLabel xmlImageLabel = new JLabel();
-		xmlImageLabel.setBounds(439, 0, 58, 89);
+		xmlImageLabel.setBounds(440, 38, 58, 89);
 		xmlImageLabel.setIcon(new Util().getXMLImage());
 		actualPanel.add(xmlImageLabel);
 		
 		JLabel titleLabel = new JLabel("XML Generator");
 		titleLabel.setForeground(Color.BLACK);
 		titleLabel.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 26));
-		titleLabel.setBounds(494, 21, 294, 47);
+		titleLabel.setBounds(495, 59, 294, 47);
 		actualPanel.add(titleLabel);
 		
-		dragAndDrop_TextField = new JTextField("Form Excel File   Drag & Drop");
-		dragAndDrop_TextField.setBounds(440, 405, 362, 189);
+		dragAndDrop_TextField = new JTextField("Form Excel File  Drag & Drop");
+		dragAndDrop_TextField.setBounds(440, 423, 362, 171);
 		dragAndDrop_TextField.setBackground(Color.WHITE);
 		dragAndDrop_TextField.setForeground(new Color(0, 128, 0));
 		dragAndDrop_TextField.setHorizontalAlignment(SwingConstants.CENTER);
@@ -211,7 +211,7 @@ public class FormExcelConvertXmlPanel extends JPanel {
 		JLabel lblXmlType = new JLabel("XML Type");
 		lblXmlType.setForeground(Color.BLACK);
 		lblXmlType.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
-		lblXmlType.setBounds(440, 100, 200, 47);
+		lblXmlType.setBounds(445, 181, 200, 47);
 		actualPanel.add(lblXmlType);
 		
 		typeCommon_radioButton = new JRadioButton(" ¿œπ› º∫¥…");
@@ -220,7 +220,7 @@ public class FormExcelConvertXmlPanel extends JPanel {
 		typeCommon_radioButton.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		typeCommon_radioButton.setFocusPainted(false);
 		typeCommon_radioButton.setBackground(Color.WHITE);
-		typeCommon_radioButton.setBounds(440, 150, 130, 30);
+		typeCommon_radioButton.setBounds(445, 231, 130, 30);
 		typeCommon_radioButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -231,12 +231,12 @@ public class FormExcelConvertXmlPanel extends JPanel {
 		});
 		actualPanel.add(typeCommon_radioButton);
 		
-		typeSNMP_radioButton = new JRadioButton(" SNMP");		
+		typeSNMP_radioButton = new JRadioButton(" SNMP º∫¥…");		
 		typeSNMP_radioButton.setForeground(Color.LIGHT_GRAY);
 		typeSNMP_radioButton.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		typeSNMP_radioButton.setFocusPainted(false);
 		typeSNMP_radioButton.setBackground(Color.WHITE);
-		typeSNMP_radioButton.setBounds(580, 150, 100, 30);
+		typeSNMP_radioButton.setBounds(584, 231, 150, 30);
 		typeSNMP_radioButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -252,7 +252,7 @@ public class FormExcelConvertXmlPanel extends JPanel {
 		typeControl_radioButton.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		typeControl_radioButton.setFocusPainted(false);
 		typeControl_radioButton.setBackground(Color.WHITE);
-		typeControl_radioButton.setBounds(690, 150, 100, 30);
+		typeControl_radioButton.setBounds(745, 231, 100, 30);
 		typeControl_radioButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -271,7 +271,7 @@ public class FormExcelConvertXmlPanel extends JPanel {
 		JLabel lblXmlEncoding = new JLabel("XML Encoding");
 		lblXmlEncoding.setForeground(Color.BLACK);
 		lblXmlEncoding.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
-		lblXmlEncoding.setBounds(440, 220, 200, 47);
+		lblXmlEncoding.setBounds(445, 301, 200, 47);
 		actualPanel.add(lblXmlEncoding);
 		
 		eucKr_button = new JRadioButton(" EUC-KR");
@@ -279,7 +279,7 @@ public class FormExcelConvertXmlPanel extends JPanel {
 		eucKr_button.setBackground(Color.WHITE);
 		eucKr_button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		eucKr_button.setForeground(new Color(0, 128, 0));
-		eucKr_button.setBounds(440, 270, 120, 30);
+		eucKr_button.setBounds(445, 351, 120, 30);
 		eucKr_button.setSelected(true);
 		eucKr_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -294,7 +294,7 @@ public class FormExcelConvertXmlPanel extends JPanel {
 		utf8_button.setForeground(Color.LIGHT_GRAY);
 		utf8_button.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		utf8_button.setBackground(Color.WHITE);
-		utf8_button.setBounds(570, 270, 120, 30);
+		utf8_button.setBounds(575, 351, 120, 30);
 		utf8_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				eucKr_button.setForeground(Color.LIGHT_GRAY);
