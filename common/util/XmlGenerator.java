@@ -105,9 +105,15 @@ public class XmlGenerator {
 	}
 	
 	
-	public static void generateControlXML(ArrayList<ControlAction> controls, String encoding, String agentType) {
-		String savePath = Util.getFilePath() + ".xml";
-				
+	public static void generateControlXML(ArrayList<ControlAction> controls, String encoding) {
+		String savePath = Util.getFilePath();
+		
+		if(savePath == null) {
+			return;
+		}else {
+			savePath = savePath + ".xml";
+		}
+		
         try {
             PrintWriter writer = new PrintWriter(savePath, encoding);
             writer.println("<?xml version=\"1.0\" encoding=\"" + encoding.toUpperCase() + "\"?>");
@@ -121,11 +127,9 @@ public class XmlGenerator {
                 String entry = null;
                 
                 try {
-                	switch(agentType) {                	
-	                	case "control" :
-	                		entry = getControlActionEntry(controls.get(i));
-	                		break;	             	                	
-                	}                	
+
+            		entry = getControlActionEntry(controls.get(i));
+
                 }catch (Exception e) {
                     e.printStackTrace();
                     
@@ -155,16 +159,20 @@ public class XmlGenerator {
             
             System.out.println("Done (" + controlCount + ")");
             
+            File xmlFile = new File(savePath);
+            
             StringBuilder sb = new StringBuilder();
 			sb.append("<font color='Green'>XML File Converting is Complete</font>\n");			
-			sb.append(String.format("제어 %s개 항목을 변환 완료하였습니다%s%s\n",Util.colorBlue(String.valueOf(controlCount)), Util.separator, Util.separator));        						
-			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+			sb.append(String.format("제어 %s개 항목 생성 완료%s%s\n\n",Util.colorBlue(String.valueOf(controlCount)), Util.separator, Util.separator));
+			sb.append("아래의 경로에 XML 파일을 다운로드 완료하였습니다" + Util.separator + Util.separator + "\n\n");
+			sb.append(Util.colorBlue("Path") + " : " + xmlFile.getAbsolutePath().replace("\\", Util.colorBlue("\\")) + Util.separator + Util.separator + "\n");
+			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);            
             }
         
         catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }		
+        }
 	}
 	
 	

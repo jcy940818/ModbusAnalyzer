@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import common.perf.ControlAction;
 import common.perf.FmsPerfItem;
 import common.perf.FmsPerfItem.EventInfo;
 import common.perf.PerfConf;
@@ -22,14 +23,14 @@ import src_ko.util.Util;
 
 public class ExcelUtil {
 	
-	public static ArrayList<FmsPerfItem> load(File file) {
+	public static ArrayList<FmsPerfItem> loadPerfItem(File file, String type) {
 		ArrayList<FmsPerfItem> perfList  = null;
 		
 		try {
 			if(file != null && file.exists()) {
 				
 				try {
-					perfList = loadExcel(file);
+					perfList = loadPerfExcel(file, type);
 					
 				}catch(IOException e) {
 					perfList = null;
@@ -84,7 +85,70 @@ public class ExcelUtil {
 		}
 	}
 	
-	public static ArrayList<FmsPerfItem> loadExcel(File xlsxFile) throws IOException {
+	public static ArrayList<ControlAction> loadControlItem(File file) {
+		ArrayList<ControlAction> controlList  = null;
+		
+		try {
+			if(file != null && file.exists()) {
+				
+				try {
+					
+					controlList = loadControlExcel(file);
+					
+				}catch(IOException e) {
+					controlList = null;
+					e.printStackTrace();
+					
+					String[] info = e.getMessage().split(",");
+					boolean hasPointName = !info[2].equalsIgnoreCase("null");
+					
+					StringBuilder sb = new StringBuilder();
+					sb.append(String.format("%s\n", Util.colorRed("Control Initialization Error")));
+					
+					if(Moon.isKorean()) {
+						sb.append(String.format("%s : %s%s%s\n", Util.colorBlue("행 번호"), info[0], Util.separator, Util.separator));
+						sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("에러 필드"), info[1], Util.separator, Util.separator));	
+					}else {
+						sb.append(String.format("%s : %s%s%s\n", Util.colorBlue("Row Number"), info[0], Util.separator, Util.separator));
+						sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("Error Field"), info[1], Util.separator, Util.separator));
+					}
+					
+					if(hasPointName) {
+						if(Moon.isKorean()) {
+							sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("제어 이름"), info[2], Util.separator, Util.separator));	
+						}else {
+							sb.append(String.format("%s : %s%s%s\n\n", Util.colorBlue("Control Name"), info[2], Util.separator, Util.separator));
+						}
+					}
+					
+					if(Moon.isKorean()) {
+						sb.append(String.format("%s번 행의 %s 필드 파싱 과정에서 에러가 발생하였습니다%s%s\n",
+								Util.colorRed(info[0]),
+								Util.colorRed(info[1]),
+								Util.separator,
+								Util.separator));
+					}else {
+						sb.append(String.format("Error occurred during %s field parsing on row number %s%s%s\n",
+								Util.colorRed(info[1]),
+								Util.colorRed(info[0]),
+								Util.separator,
+								Util.separator));
+					}
+					
+					Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);						
+				}
+			}
+			
+		} catch (Exception e) {
+			controlList = null;
+			e.printStackTrace();
+			
+		}finally {
+			return controlList;
+		}
+	}
+	
+	public static ArrayList<FmsPerfItem> loadPerfExcel(File xlsxFile, String type) throws IOException {
     	
     	FileInputStream inputStream = null;
     	String item = "";
@@ -126,20 +190,29 @@ public class ExcelUtil {
 					if (ExcelUtil.isNull(cell)) throw new IOException();
 					fmsPerfItem.displayName = ExcelUtil.getStringValue(cell);
 					
-					
-					item = (Moon.isKorean()) ? "카운터" : "Counter";
+					if(type.equalsIgnoreCase("common")) {
+						item = (Moon.isKorean()) ? "카운터" : "Counter";	
+					}else {
+						item = (Moon.isKorean()) ? "OID" : "OID";
+					}
 					cell = row.getCell(1);
 					if (ExcelUtil.isNull(cell)) throw new IOException();
 					String counter = ExcelUtil.getStringValue(cell);
+					if(counter.endsWith(".0")) counter = counter.replace(".0", "");
 					
-					
-					item = (Moon.isKorean()) ? "슬롯" : "Slot";
-					cell = row.getCell(2);
-					if (ExcelUtil.isNull(cell)) throw new IOException();
-					int slot = ExcelUtil.getIntValue(cell);
-					
-					String perfCounter = String.format("%s\\{%d}", counter, slot);
-					fmsPerfItem.counter = perfCounter;
+					if(type.equalsIgnoreCase("common")) {
+						item = (Moon.isKorean()) ? "슬롯" : "Slot";
+						cell = row.getCell(2);
+						if (ExcelUtil.isNull(cell)) throw new IOException();
+						int slot = ExcelUtil.getIntValue(cell);
+						
+						String perfCounter = String.format("%s\\{%d}", counter, slot);
+						fmsPerfItem.counter = perfCounter;
+						
+					}else {
+						
+						fmsPerfItem.counter = counter;
+					}
 					
 					
 					item = (Moon.isKorean()) ? "수집주기" : "Interval";
@@ -284,6 +357,91 @@ public class ExcelUtil {
     		inputStream = null;
     	}
     }
+	
+	public static ArrayList<ControlAction> loadControlExcel(File xlsxFile) throws IOException {
+    	
+    	FileInputStream inputStream = null;
+    	String item = "";
+		Cell cell = null;
+		ControlAction controlAction = null;
+    	
+    	try {
+			inputStream = new FileInputStream(xlsxFile);
+			Workbook workbook = new XSSFWorkbook(inputStream);
+			
+			Sheet sheet = workbook.getSheetAt(0);
+			ArrayList<ControlAction> controlList = new ArrayList<ControlAction>();
+	
+			int header = ExcelUtil.getHeaderRowNum(sheet, 0);
+			if(header < 0) return null;
+			int nullCount = 0;
+			
+			while(true) {
+				if(nullCount > 100) break;
+				
+				int rowNum = ++header;
+				Row row = sheet.getRow(rowNum);
+				
+				try {
+					if(row == null) {
+						nullCount++;
+						continue;
+					}else if(ExcelUtil.isNull(row.getCell(0))) {
+						nullCount++;
+						continue;
+					}
+					
+					controlAction = new ControlAction();
+					controlAction.setControlCounter("CONTROL");
+					controlList.add(controlAction);
+					
+					item = (Moon.isKorean()) ? "제어 이름" : "Control Name";
+					cell = row.getCell(0);
+					if(ExcelUtil.isNull(cell)) throw new IOException();
+					controlAction.setControlName(ExcelUtil.getStringValue(cell));
+					
+					
+					item = (Moon.isKorean()) ? "제어 명령어" : "Control Command";
+					cell = row.getCell(1);
+					if(ExcelUtil.isNull(cell)) throw new IOException();
+					String command = ExcelUtil.getStringValue(cell);
+					
+					if(command.endsWith(".0")) command = command.replace(".0", "");
+					controlAction.setCommand(command);
+					
+					
+					item = (Moon.isKorean()) ? "제어 수행 내용" : "Control Description";
+					cell = row.getCell(2);
+					controlAction.setDesc(ExcelUtil.getStringValue(cell));
+					
+					
+					item = (Moon.isKorean()) ? "파라미터 사용 여부" : "Use Parameter";
+					cell = row.getCell(3);
+					if(ExcelUtil.isNull(cell)) throw new IOException();
+					controlAction.setUseParam(ExcelUtil.getIntValue(cell));
+
+					
+					item = (Moon.isKorean()) ? "제어 타임아웃" : "Control Timeout";
+					cell = row.getCell(4);
+					if(ExcelUtil.isNull(cell)) throw new IOException();
+					controlAction.setWaitTime(ExcelUtil.getIntValue(cell));
+
+					
+				}catch(Exception e) {
+					throw new IOException(Integer.toString(rowNum + 1) + "," + item + "," + controlAction.getControlName());
+					
+				}
+				
+			}// end while-loop
+				
+			return controlList;
+			
+    	}finally {
+    		if(inputStream != null) inputStream.close();
+    		inputStream = null;
+    	}
+    }
+	
 	
 	public static int getHeaderRowNum(Sheet sheet, int offset) {
 		
