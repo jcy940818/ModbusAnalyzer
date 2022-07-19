@@ -29,7 +29,6 @@ import src_en.info.ONION_Info;
 import src_en.info.Protocol;
 import src_en.util.Util;
 
-
 public class MainFrame extends JFrame {
 	
 	// 프로그램 실행 경로
@@ -235,13 +234,13 @@ public class MainFrame extends JFrame {
 		
 		// MK119 메뉴 : XML Generator : Form Excel
 		JMenuItem xmlGenerator_formExcel = new JMenuItem("XML Generator : Form Excel");
-		xmlGenerator_formExcel.setForeground(Color.BLACK);
+		xmlGenerator_formExcel.setForeground(Color.BLUE);
 		xmlGenerator_formExcel.setHorizontalAlignment(SwingConstants.LEFT);
 		xmlGenerator_formExcel.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
 		xmlGenerator_formExcel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Form Excel");
+				showFormExcelConvertXml();
 			}
 		});
 		xmlGeneratorMenu.add(xmlGenerator_formExcel);
@@ -610,6 +609,10 @@ public class MainFrame extends JFrame {
 		actualPanel.add(xmlEditor_Panel, "xmlEditor_Panel");
 		
 		
+		/** XML Generator : Form Excel Convert XML ***********************************/
+		FormExcelConvertXmlPanel formExcelConvertXmlPanel = new FormExcelConvertXmlPanel();
+		actualPanel.add(formExcelConvertXmlPanel, "FormExcelConvertXmlPanel");
+		
 		/** ProtocolDownload Panel : Moon *******************************/				
 		moonProtocolListDownload.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -757,6 +760,10 @@ public class MainFrame extends JFrame {
 	
 	public static void showRealTime() {
 		cardLayout.show(actualPanel, "RealTime_Panel");
+	}
+	
+	public static void showFormExcelConvertXml() {
+		cardLayout.show(actualPanel, "FormExcelConvertXmlPanel");
 	}
 	
 	public static void showInformation() {

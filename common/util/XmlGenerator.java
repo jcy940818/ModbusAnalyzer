@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import common.perf.ControlAction;
 import common.perf.FmsPerfItem;
 import common.perf.FmsPerfItem.EventInfo;
+import moon.Moon;
 import common.perf.PerfConf;
 import common.perf.PerfLabelStatusBean;
 import src_ko.agent.Event;
@@ -61,16 +62,24 @@ public class XmlGenerator {
                 catch (Exception e) {
                     e.printStackTrace();
                     
-                    StringBuilder sb = new StringBuilder();
-        			sb.append("<font color='red'>Failed to XML Converting</font>\n");
-        			sb.append(String.format("XML 파일 변환 작업중 예외가 발생하였습니다%s\n\n", Util.separator));
-        			sb.append(String.format("작업중이던 성능 : %s번째 성능 ( 성능명 : %s )%s\n\n",
-        					Util.colorBlue(String.valueOf(i+1)),
-        					Util.colorBlue(perfs.get(i).getDisplayName()) ,
-        					Util.separator));        			
-        			sb.append(String.format("Exception Message : %s%s\n", e.getMessage(), Util.separator));
-        			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-        			return;
+                    if(Moon.isKorean()) {
+                    	StringBuilder sb = new StringBuilder();
+            			sb.append("<font color='red'>Failed to XML Converting</font>\n");
+            			sb.append(String.format("XML 파일 변환 작업중 예외가 발생하였습니다%s\n\n", Util.separator));
+            			sb.append(String.format("작업중이던 성능 : %s번째 성능 ( 성능명 : %s )%s\n\n", Util.colorBlue(String.valueOf(i+1)), Util.colorBlue(perfs.get(i).getDisplayName()) , Util.separator));        			
+            			sb.append(String.format("Exception Message : %s%s\n", e.getMessage(), Util.separator));
+            			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+            			return;	
+                    }else {
+                    	StringBuilder sb = new StringBuilder();
+            			sb.append("<font color='red'>Failed to XML Converting</font>\n");
+            			sb.append(String.format("Exception during XML file conversion operation%s\n\n", Util.separator));
+            			sb.append(String.format("Performance you were working on last : %s Perf ( Perf Name : %s )%s\n\n", Util.colorBlue(String.valueOf(i+1)), Util.colorBlue(perfs.get(i).getDisplayName()) , Util.separator));        			
+            			sb.append(String.format("Exception Message : %s%s\n", e.getMessage(), Util.separator));
+            			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+            			return;
+                    }
+                    
                 }
                 
                 if (entry != null) {
@@ -91,12 +100,21 @@ public class XmlGenerator {
             File xmlFile = new File(savePath);
             
             if(xmlFile.exists()) {
-            	StringBuilder sb = new StringBuilder();
-    			sb.append("<font color='Green'>XML File Converting is Complete</font>\n");			
-    			sb.append(String.format("성능 %s개 항목 생성 완료%s%s\n\n",Util.colorBlue(String.valueOf(perfCount)), Util.separator, Util.separator));
-    			sb.append("아래의 경로에 XML 파일을 다운로드 완료하였습니다" + Util.separator + Util.separator + "\n\n");
-    			sb.append(Util.colorBlue("Path") + " : " + xmlFile.getAbsolutePath().replace("\\", Util.colorBlue("\\")) + Util.separator + Util.separator + "\n");
-    			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);	
+            	if(Moon.isKorean()) {
+            		StringBuilder sb = new StringBuilder();
+        			sb.append("<font color='Green'>XML File Converting is Complete</font>\n");			
+        			sb.append(String.format("성능 %s개 항목 생성 완료%s%s\n\n",Util.colorBlue(String.valueOf(perfCount)), Util.separator, Util.separator));
+        			sb.append("아래의 경로에 XML 파일을 다운로드 완료하였습니다" + Util.separator + Util.separator + "\n\n");
+        			sb.append(Util.colorBlue("Path") + " : " + xmlFile.getAbsolutePath().replace("\\", Util.colorBlue("\\")) + Util.separator + Util.separator + "\n");
+        			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);	
+            	}else {
+            		StringBuilder sb = new StringBuilder();
+        			sb.append("<font color='Green'>XML File Converting is Complete</font>\n");			
+        			sb.append(String.format("Successfully created %s Performance%s%s\n\n",Util.colorBlue(String.valueOf(perfCount)), Util.separator, Util.separator));
+        			sb.append("Successfully downloaded the xml file to the following path" + Util.separator + Util.separator + "\n\n");
+        			sb.append(Util.colorBlue("Path") + " : " + xmlFile.getAbsolutePath().replace("\\", Util.colorBlue("\\")) + Util.separator + Util.separator + "\n");
+        			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+            	}
             }
                         
             }
@@ -136,16 +154,23 @@ public class XmlGenerator {
                 }catch (Exception e) {
                     e.printStackTrace();
                     
-                    StringBuilder sb = new StringBuilder();
-        			sb.append("<font color='red'>Failed to XML Converting</font>\n");
-        			sb.append(String.format("XML 파일 변환 작업중 예외가 발생하였습니다%s\n\n", Util.separator));
-        			sb.append(String.format("작업중이던 제어 항목 : %s번째 제어 ( 제어 이름 : %s )%s\n\n",
-        					Util.colorBlue(String.valueOf(i+1)),
-        					Util.colorBlue(controls.get(i).getControlName()) ,
-        					Util.separator));        			
-        			sb.append(String.format("Exception Message : %s%s\n", e.getMessage(), Util.separator));
-        			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
-        			return;
+                    if(Moon.isKorean()) {
+                    	StringBuilder sb = new StringBuilder();
+            			sb.append("<font color='red'>Failed to XML Converting</font>\n");
+            			sb.append(String.format("XML 파일 변환 작업중 예외가 발생하였습니다%s\n\n", Util.separator));
+            			sb.append(String.format("작업중이던 제어 항목 : %s번째 제어 ( 제어 이름 : %s )%s\n\n", Util.colorBlue(String.valueOf(i+1)), Util.colorBlue(controls.get(i).getControlName()) , Util.separator));        			
+            			sb.append(String.format("Exception Message : %s%s\n", e.getMessage(), Util.separator));
+            			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+            			return;	
+                    }else {
+                    	StringBuilder sb = new StringBuilder();
+            			sb.append("<font color='red'>Failed to XML Converting</font>\n");
+            			sb.append(String.format("Exception during XML file conversion operation%s\n\n", Util.separator));
+            			sb.append(String.format("The last Control worked on : %s Control ( Control Name : %s )%s\n\n", Util.colorBlue(String.valueOf(i+1)), Util.colorBlue(controls.get(i).getControlName()) , Util.separator));        			
+            			sb.append(String.format("Exception Message : %s%s\n", e.getMessage(), Util.separator));
+            			Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+            			return;
+                    }
                 }
                 
                 if (entry != null) {
@@ -165,12 +190,23 @@ public class XmlGenerator {
             File xmlFile = new File(savePath);
             
             if(xmlFile.exists()) {
-            	StringBuilder sb = new StringBuilder();
-    			sb.append("<font color='Green'>XML File Converting is Complete</font>\n");			
-    			sb.append(String.format("제어 %s개 항목 생성 완료%s%s\n\n",Util.colorBlue(String.valueOf(controlCount)), Util.separator, Util.separator));
-    			sb.append("아래의 경로에 XML 파일을 다운로드 완료하였습니다" + Util.separator + Util.separator + "\n\n");
-    			sb.append(Util.colorBlue("Path") + " : " + xmlFile.getAbsolutePath().replace("\\", Util.colorBlue("\\")) + Util.separator + Util.separator + "\n");
-    			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+            	if(Moon.isKorean()) {
+            		StringBuilder sb = new StringBuilder();
+        			sb.append("<font color='Green'>XML File Converting is Complete</font>\n");			
+        			sb.append(String.format("제어 %s개 항목 생성 완료%s%s\n\n",Util.colorBlue(String.valueOf(controlCount)), Util.separator, Util.separator));
+        			sb.append("아래의 경로에 XML 파일을 다운로드 완료하였습니다" + Util.separator + Util.separator + "\n\n");
+        			sb.append(Util.colorBlue("Path") + " : " + xmlFile.getAbsolutePath().replace("\\", Util.colorBlue("\\")) + Util.separator + Util.separator + "\n");
+        			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+        			return;
+            	}else {
+            		StringBuilder sb = new StringBuilder();
+        			sb.append("<font color='Green'>XML File Converting is Complete</font>\n");			
+        			sb.append(String.format("Successfully created %s Control items%s%s\n\n",Util.colorBlue(String.valueOf(controlCount)), Util.separator, Util.separator));
+        			sb.append("Successfully downloaded the xml file to the following path" + Util.separator + Util.separator + "\n\n");
+        			sb.append(Util.colorBlue("Path") + " : " + xmlFile.getAbsolutePath().replace("\\", Util.colorBlue("\\")) + Util.separator + Util.separator + "\n");
+        			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+        			return;
+            	}
             }
                         
             }
