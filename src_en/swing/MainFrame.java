@@ -157,7 +157,7 @@ public class MainFrame extends JFrame {
 		
 		// Connection 메뉴 - Modbus Monitor (모드버스 모니터 V1)
 		modbusMonitor_V1 = new JMenuItem("Modbus Monitor : Modbus Monitor V1");
-		modbusMonitor_V1.setForeground(Color.BLACK);
+		modbusMonitor_V1.setForeground(Color.BLUE);
 		modbusMonitor_V1.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
 		modbusMonitor_V1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
