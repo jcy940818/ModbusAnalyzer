@@ -30,6 +30,7 @@ public class ExcelUtil {
 			if(file != null && file.exists()) {
 				
 				try {
+					
 					perfList = loadPerfExcel(file, type);
 					
 				}catch(IOException e) {
@@ -183,7 +184,6 @@ public class ExcelUtil {
 					
 					fmsPerfItem = new FmsPerfItem();
 					perfList.add(fmsPerfItem);
-					
 					
 					item = (Moon.isKorean()) ? "¼º´É¸í" : "Point Name";
 					cell = row.getCell(0);

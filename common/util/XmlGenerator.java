@@ -90,12 +90,15 @@ public class XmlGenerator {
             
             File xmlFile = new File(savePath);
             
-            StringBuilder sb = new StringBuilder();
-			sb.append("<font color='Green'>XML File Converting is Complete</font>\n");			
-			sb.append(String.format("성능 %s개 항목 생성 완료%s%s\n\n",Util.colorBlue(String.valueOf(perfCount)), Util.separator, Util.separator));
-			sb.append("아래의 경로에 XML 파일을 다운로드 완료하였습니다" + Util.separator + Util.separator + "\n\n");
-			sb.append(Util.colorBlue("Path") + " : " + xmlFile.getAbsolutePath().replace("\\", Util.colorBlue("\\")) + Util.separator + Util.separator + "\n");
-			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);            
+            if(xmlFile.exists()) {
+            	StringBuilder sb = new StringBuilder();
+    			sb.append("<font color='Green'>XML File Converting is Complete</font>\n");			
+    			sb.append(String.format("성능 %s개 항목 생성 완료%s%s\n\n",Util.colorBlue(String.valueOf(perfCount)), Util.separator, Util.separator));
+    			sb.append("아래의 경로에 XML 파일을 다운로드 완료하였습니다" + Util.separator + Util.separator + "\n\n");
+    			sb.append(Util.colorBlue("Path") + " : " + xmlFile.getAbsolutePath().replace("\\", Util.colorBlue("\\")) + Util.separator + Util.separator + "\n");
+    			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);	
+            }
+                        
             }
         
         catch (Exception e) {
@@ -161,12 +164,15 @@ public class XmlGenerator {
             
             File xmlFile = new File(savePath);
             
-            StringBuilder sb = new StringBuilder();
-			sb.append("<font color='Green'>XML File Converting is Complete</font>\n");			
-			sb.append(String.format("제어 %s개 항목 생성 완료%s%s\n\n",Util.colorBlue(String.valueOf(controlCount)), Util.separator, Util.separator));
-			sb.append("아래의 경로에 XML 파일을 다운로드 완료하였습니다" + Util.separator + Util.separator + "\n\n");
-			sb.append(Util.colorBlue("Path") + " : " + xmlFile.getAbsolutePath().replace("\\", Util.colorBlue("\\")) + Util.separator + Util.separator + "\n");
-			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);            
+            if(xmlFile.exists()) {
+            	StringBuilder sb = new StringBuilder();
+    			sb.append("<font color='Green'>XML File Converting is Complete</font>\n");			
+    			sb.append(String.format("제어 %s개 항목 생성 완료%s%s\n\n",Util.colorBlue(String.valueOf(controlCount)), Util.separator, Util.separator));
+    			sb.append("아래의 경로에 XML 파일을 다운로드 완료하였습니다" + Util.separator + Util.separator + "\n\n");
+    			sb.append(Util.colorBlue("Path") + " : " + xmlFile.getAbsolutePath().replace("\\", Util.colorBlue("\\")) + Util.separator + Util.separator + "\n");
+    			Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+            }
+                        
             }
         
         catch (Exception e) {
@@ -256,7 +262,7 @@ public class XmlGenerator {
             s.append("\t\t<data format=\"1\">\r\n");
             s.append("\t\t\t<label0>").append(perf.binLabel[0]).append("</label0>\r\n");
             s.append("\t\t\t<label1>").append(perf.binLabel[1]).append("</label1>\r\n");
-            s.append("\t\t</data>\r\n");   
+            s.append("\t\t</data>\r\n");
         }
         else {
             s.append("\t\t<data format=\"3\"/>\r\n");

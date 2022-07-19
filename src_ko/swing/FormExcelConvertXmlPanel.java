@@ -104,14 +104,14 @@ public class FormExcelConvertXmlPanel extends JPanel {
 		});
 		actualPanel.add(dragAndDrop_TextField);
 		
-		JButton searchButton = new JButton(" 양식 업로드");
-		searchButton.setIcon(new Util().getExcelImage());
-		searchButton.setForeground(Color.BLACK);
-		searchButton.setFont(new Font("맑은 고딕", Font.BOLD, 19));
-		searchButton.setFocusPainted(false);
-		searchButton.setBackground(Color.WHITE);
-		searchButton.setBounds(810, 90, 230, 70);		
-		searchButton.addActionListener(new ActionListener() {
+		JButton uploadButton = new JButton(" 양식 업로드");
+		uploadButton.setIcon(new Util().getExcelImage());
+		uploadButton.setForeground(Color.BLACK);
+		uploadButton.setFont(new Font("맑은 고딕", Font.BOLD, 19));
+		uploadButton.setFocusPainted(false);
+		uploadButton.setBackground(Color.WHITE);
+		uploadButton.setBounds(810, 90, 230, 70);		
+		uploadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 				String path = Util.getFilePath();
@@ -128,7 +128,7 @@ public class FormExcelConvertXmlPanel extends JPanel {
 				
 			}
 		});
-		actualPanel.add(searchButton);
+		actualPanel.add(uploadButton);
 		
 		downloadFormExcel_Button = new JButton(" 양식 다운로드");
 		downloadFormExcel_Button.setForeground(Color.BLACK);
@@ -306,8 +306,7 @@ public class FormExcelConvertXmlPanel extends JPanel {
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(eucKr_button);
 		buttonGroup.add(utf8_button);
-		
-		// 컴포넌트는 기본 설정으로 안보임	
+			
 		setVisible(true);
 	}
 	
@@ -327,6 +326,8 @@ public class FormExcelConvertXmlPanel extends JPanel {
 		}else if(typeControl_radioButton.isSelected()){
 			type = "control";
 			
+		}else {
+			type = "common";
 		}
 		
 		if(eucKr_button.isSelected()) {
@@ -335,6 +336,8 @@ public class FormExcelConvertXmlPanel extends JPanel {
 		}else if(utf8_button.isSelected()){
 			encoding = "utf-8";
 			
+		}else {
+			encoding = "euc-kr";
 		}
 		
 		if(type.equalsIgnoreCase("control")) {
