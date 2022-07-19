@@ -107,13 +107,16 @@ public class ExportModbusPointFrame extends JFrame {
 	private static JButton connect_Button;
 	private static JLabel serverInfo_Label;
 	private static JButton addPoint_Button;
-	private JSeparator separator_1;
+	private JSeparator separator3;
 	private JLabel autoEvent_Label;
 	
 	private static JCheckBox useAutoEvent_CheckBox;
 	private JButton updatePoint_Button;
 	private JButton setEvent_Button;
-	private JSeparator separator_3;
+	private JSeparator separator5;
+	private JSeparator separator2;
+	private JLabel deleteLabel;
+	private JButton deleteButton;
 	
 	/**
 	 * Launch the application.
@@ -445,18 +448,18 @@ public class ExportModbusPointFrame extends JFrame {
 		});
 		actualPanel.add(addPoint_Button);
 		
-		JSeparator separator = new JSeparator();
-		separator.setOrientation(SwingConstants.VERTICAL);
-		separator.setBackground(Color.BLACK);
-		separator.setForeground(Color.BLACK);
-		separator.setBounds(1050, 0, 1, 111);
-		actualPanel.add(separator);
+		JSeparator separator1 = new JSeparator();
+		separator1.setOrientation(SwingConstants.VERTICAL);
+		separator1.setBackground(Color.BLACK);
+		separator1.setForeground(Color.BLACK);
+		separator1.setBounds(1050, 0, 1, 111);
+		actualPanel.add(separator1);
 		
 		JLabel modbusPoint_Label = new JLabel("Modify Point");
 		modbusPoint_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		modbusPoint_Label.setForeground(Color.BLACK);
 		modbusPoint_Label.setBackground(Color.WHITE);
-		modbusPoint_Label.setBounds(1060, 7, 135, 34);
+		modbusPoint_Label.setBounds(1062, 7, 135, 34);
 		actualPanel.add(modbusPoint_Label);
 		
 		updatePoint_Button = new JButton("포인트 수정");
@@ -497,25 +500,97 @@ public class ExportModbusPointFrame extends JFrame {
 		});
 		actualPanel.add(updatePoint_Button);
 		
-		separator_1 = new JSeparator();
-		separator_1.setOrientation(SwingConstants.VERTICAL);
-		separator_1.setForeground(Color.BLACK);
-		separator_1.setBackground(Color.BLACK);
-		separator_1.setBounds(1200, 0, 1, 111);
-		actualPanel.add(separator_1);
+		separator2 = new JSeparator();
+		separator2.setOrientation(SwingConstants.VERTICAL);
+		separator2.setForeground(Color.BLACK);
+		separator2.setBackground(Color.BLACK);
+		separator2.setBounds(1200, 0, 1, 111);
+		actualPanel.add(separator2);
+		
+		deleteLabel = new JLabel("Delete Point");
+		deleteLabel.setForeground(Color.BLACK);
+		deleteLabel.setFont(new Font("맑은 고딕", Font.BOLD, 18));
+		deleteLabel.setBackground(Color.WHITE);
+		deleteLabel.setBounds(1214, 7, 125, 34);
+		actualPanel.add(deleteLabel);
+		
+		deleteButton = new JButton("포인트 삭제");
+		deleteButton.setForeground(Color.BLACK);
+		deleteButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		deleteButton.setFocusPainted(false);
+		deleteButton.setBackground(Color.WHITE);
+		deleteButton.setBounds(1215, 60, 120, 42);
+		deleteButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					ArrayList<ModbusWatchPoint> selectedPointList = ModbusMonitor_Panel.getSelectedModbusPoint(pointTable);
+					if (selectedPointList == null || selectedPointList.size() < 1) {
+						StringBuilder sb = new StringBuilder();
+						sb.append(String.format("%s", Util.colorBlue("선택된 포인트 없음")));
+						sb.append(Util.separator + Util.separator + "\n");					
+						
+						sb.append("테이블에서 삭제하실 모드버스 포인트를 선택 후 다시 시도해주세요");
+						sb.append(Util.separator + Util.separator + "\n");
+						
+						Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+						return;
+					}
+					
+					if (selectedPointList == null || selectedPointList.size() < 1) {
+						return;
+						
+					} else {
+						StringBuilder sb = new StringBuilder();
+						sb.append(String.format("%s", Util.colorGreen("Delete the selected Modbus Point")));
+						sb.append(Util.separator + Util.separator + "\n");
+						
+						sb.append(String.format("선택하신 모드버스 포인트 %s개 항목을 정말 삭제하시겠습니까?", Util.colorBlue(String.valueOf(selectedPointList.size()))));
+						sb.append(Util.separator + Util.separator + "\n");
+						
+						int menu = Util.showConfirm(sb.toString());
+						
+						if(menu != JOptionPane.OK_OPTION) {
+							// 모드버스 포인트 삭제 취소
+							return;
+						}
+						
+						for (ModbusWatchPoint wp : selectedPointList) {
+							ModbusMonitor_Panel.pointList.remove(wp);
+						}
+
+						ModbusMonitor_Panel.doTableFilter(false);
+						ModifyModbusWatchPointFrame.doTableFilter();
+						ExportModbusPointFrame.updateTable();
+					}
+					
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+				
+			}
+		});
+		actualPanel.add(deleteButton);
+		
+		separator3 = new JSeparator();
+		separator3.setOrientation(SwingConstants.VERTICAL);
+		separator3.setForeground(Color.BLACK);
+		separator3.setBackground(Color.BLACK);
+		separator3.setBounds(1349, 0, 1, 111);
+		actualPanel.add(separator3);
 		
 		autoEvent_Label = new JLabel("Set Auto Event");
 		autoEvent_Label.setForeground(Color.BLACK);
 		autoEvent_Label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		autoEvent_Label.setBackground(Color.WHITE);
-		autoEvent_Label.setBounds(1210, 6, 183, 34);
+		autoEvent_Label.setBounds(1359, 6, 183, 34);
 		actualPanel.add(autoEvent_Label);
 		
 		useAutoEvent_CheckBox = new JCheckBox("이벤트 자동 등록 사용");
 		useAutoEvent_CheckBox.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		useAutoEvent_CheckBox.setForeground(Color.BLACK);
 		useAutoEvent_CheckBox.setBackground(Color.WHITE);
-		useAutoEvent_CheckBox.setBounds(1212, 45, 183, 23);
+		useAutoEvent_CheckBox.setBounds(1361, 45, 183, 23);
 		useAutoEvent_CheckBox.setFocusPainted(false);
 		useAutoEvent_CheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -538,7 +613,7 @@ public class ExportModbusPointFrame extends JFrame {
 		setEvent_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		setEvent_Button.setFocusPainted(false);
 		setEvent_Button.setBackground(Color.WHITE);
-		setEvent_Button.setBounds(1213, 74, 182, 32);
+		setEvent_Button.setBounds(1362, 74, 182, 32);
 		setEvent_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				 if(!EventInfoFrame.isExist) {
@@ -647,18 +722,18 @@ public class ExportModbusPointFrame extends JFrame {
 		});
 		actualPanel.add(exportExcel_Button);
 		
-		JSeparator separator_2 = new JSeparator();
-		separator_2.setOrientation(SwingConstants.VERTICAL);
-		separator_2.setForeground(Color.BLACK);
-		separator_2.setBackground(Color.BLACK);
-		separator_2.setBounds(1405, 0, 1, 111);
-		actualPanel.add(separator_2);
+		JSeparator separator4 = new JSeparator();
+		separator4.setOrientation(SwingConstants.VERTICAL);
+		separator4.setForeground(Color.BLACK);
+		separator4.setBackground(Color.BLACK);
+		separator4.setBounds(1554, 0, 1, 111);
+		actualPanel.add(separator4);
 		
 		JLabel setAutoMeasure_label = new JLabel("Set Auto Measure");
 		setAutoMeasure_label.setForeground(Color.BLACK);
 		setAutoMeasure_label.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 		setAutoMeasure_label.setBackground(Color.WHITE);
-		setAutoMeasure_label.setBounds(1415, 6, 183, 34);
+		setAutoMeasure_label.setBounds(1564, 6, 183, 34);
 		actualPanel.add(setAutoMeasure_label);
 		
 		JButton autoMeasure_Button = new JButton("단위 자동 설정");
@@ -666,7 +741,7 @@ public class ExportModbusPointFrame extends JFrame {
 		autoMeasure_Button.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		autoMeasure_Button.setFocusPainted(false);
 		autoMeasure_Button.setBackground(Color.WHITE);
-		autoMeasure_Button.setBounds(1418, 60, 150, 42);
+		autoMeasure_Button.setBounds(1567, 60, 150, 42);
 		autoMeasure_Button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -728,12 +803,12 @@ public class ExportModbusPointFrame extends JFrame {
 		});
 		actualPanel.add(autoMeasure_Button);
 		
-		separator_3 = new JSeparator();
-		separator_3.setOrientation(SwingConstants.VERTICAL);
-		separator_3.setForeground(Color.BLACK);
-		separator_3.setBackground(Color.BLACK);
-		separator_3.setBounds(1580, 0, 1, 111);
-		actualPanel.add(separator_3);
+		separator5 = new JSeparator();
+		separator5.setOrientation(SwingConstants.VERTICAL);
+		separator5.setForeground(Color.BLACK);
+		separator5.setBackground(Color.BLACK);
+		separator5.setBounds(1732, 0, 1, 111);
+		actualPanel.add(separator5);
 		
 		tableDataInit();
 		
