@@ -43,7 +43,9 @@ import common.perf.Perf;
 import common.perf.PerfLabelStatusBean;
 import common.server.Event;
 import common.server.Facility;
+import common.util.ExcelUtil;
 import common.util.MyCalendar;
+import common.util.XmlGenerator;
 import src_ko.info.ONION_Info;
 import src_ko.info.Protocol;
 import src_ko.main.MoonInspector;
@@ -142,6 +144,7 @@ public class FacilityInfoFrame extends JFrame {
 	private JLabel label_3;
 	private JComboBox e_second_comboBox;
 	private JButton getDurationRowData_Button;
+	private JButton downloadPerfListButton;
 
 	/**
 	 * Create the frame.
@@ -907,7 +910,7 @@ public class FacilityInfoFrame extends JFrame {
 		FacilityInfoLabel_1.setForeground(Color.BLACK);
 		FacilityInfoLabel_1.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		FacilityInfoLabel_1.setBackground(Color.WHITE);
-		FacilityInfoLabel_1.setBounds(260, 1, 962, 30);		
+		FacilityInfoLabel_1.setBounds(260, 1, 760, 30);		
 		actualPanel.add(FacilityInfoLabel_1);
 		
 		FacilityInfoLabel_2 = new JLabel();
@@ -915,7 +918,7 @@ public class FacilityInfoFrame extends JFrame {
 		FacilityInfoLabel_2.setForeground(Color.BLACK);
 		FacilityInfoLabel_2.setFont(new Font("맑은 고딕", Font.BOLD, 17));
 		FacilityInfoLabel_2.setBackground(Color.WHITE);
-		FacilityInfoLabel_2.setBounds(260, 28, 962, 30);			
+		FacilityInfoLabel_2.setBounds(260, 28, 760, 30);			
 		actualPanel.add(FacilityInfoLabel_2);
 		
 		dbRefreshButton = new JButton("Database 최신화");
@@ -1138,6 +1141,74 @@ public class FacilityInfoFrame extends JFrame {
 		
 		// 테이블 로드
 		updatePerfListTable(perfListTable, isConnectRestAPI());
+		
+		downloadPerfListButton = new JButton("성능 리스트 다운로드");
+		downloadPerfListButton.setForeground(Color.BLUE);
+		downloadPerfListButton.setFont(new Font("맑은 고딕", Font.BOLD, 17));
+		downloadPerfListButton.setFocusPainted(false);
+		downloadPerfListButton.setBorder(UIManager.getBorder("Button.border"));
+		downloadPerfListButton.setBackground(Color.WHITE);
+		downloadPerfListButton.setBounds(1025, 5, 204, 40);
+		downloadPerfListButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if(perfs == null || perfs.size() < 1) return;
+				
+				String type = isProtocol ? "Common" : "SNMP";
+				
+				StringBuilder msg = new StringBuilder();
+				msg.append("<font color='blue'>성능 리스트 다운로드</font>\n");
+				msg.append("성능 리스트 파일의 양식을 선택해주세요" + Util.separator + Util.separator +"\n");
+
+				int menu = Util.showOption(msg.toString(), new String[] { "   XML   ", "   Excel   "}, JOptionPane.QUESTION_MESSAGE);
+
+				switch (menu) {
+					case 0: // 첫 번째 버튼 : XML
+						String encoding = "euc-kr";
+				    	
+				    	msg = new StringBuilder();
+						msg.append("<font color='blue'>XML 파일 인코딩 선택</font>\n");
+						msg.append("XML 파일의 인코딩 방식을 선택해주세요" + Util.separator + Util.separator +"\n");
+
+						menu = Util.showOption(msg.toString(), new String[] { "  EUC-KR  ", "  UTF-8  "}, JOptionPane.QUESTION_MESSAGE);
+
+						switch (menu) {
+							case 0: // 첫 번째 버튼 : EUC-KR
+								encoding = "euc-kr";
+								break;
+								
+							case 1: // 두 번째 버튼
+								encoding = "utf-8";
+								break;
+								
+							default :
+								return;
+						}
+						
+						if(perfs != null && perfs.size() > 0) {
+							XmlGenerator.generateXML(perfs, true, encoding, type.toLowerCase());
+						}
+						return;
+						
+					case 1: // 두 번째 버튼 : Excel
+						if(perfs != null && perfs.size() > 0) {
+							ArrayList<Perf> perfList = new ArrayList<Perf>();
+							for(Perf perf : perfs) {
+								perfList.add(perf);
+							}
+							
+							ExcelUtil.downloadPerf(type, perfList);							
+						}
+						return;
+						
+					default :
+						return;
+				}
+				
+			}
+		});
+		actualPanel.add(downloadPerfListButton);
 		
 		// 프레임이 화면 가운데에서 생성된다
 		setLocationRelativeTo(null);
