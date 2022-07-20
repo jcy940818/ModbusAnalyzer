@@ -7,7 +7,7 @@ public class Program_Info {
 	public static final String PROGRAMER_NICK_NAME = "Moon";
 	public static final String PROGRAMER_EMAIL = "moon.jung@onionsoftware.com";
 	public static final String PROGRAM_VERSION_MAJOR = "10";
-	public static final String PROGRAM_VERSION_MINOR = "0";
+	public static final String PROGRAM_VERSION_MINOR = "1";
 
 	public static final String PROGRAM_VERSION = PROGRAM_VERSION_MAJOR + "." + PROGRAM_VERSION_MINOR;
 	
