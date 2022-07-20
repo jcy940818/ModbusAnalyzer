@@ -2,23 +2,30 @@ package common.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import common.perf.ControlAction;
 import common.perf.FmsPerfItem;
 import common.perf.FmsPerfItem.EventInfo;
+import common.perf.Perf;
 import common.perf.PerfConf;
 import common.perf.PerfLabelStatusBean;
 import moon.Moon;
+import src_ko.swing.MainFrame;
+import src_ko.util.FileUtil;
 import src_ko.util.Util;
 
 public class ExcelUtil {
@@ -442,7 +449,6 @@ public class ExcelUtil {
     	}
     }
 	
-	
 	public static int getHeaderRowNum(Sheet sheet, int offset) {
 		
 		Cell cell = null;
@@ -476,6 +482,244 @@ public class ExcelUtil {
 				e.printStackTrace();
 				return -1;
 			}
+		}
+	}
+	
+	public static void downloadPerf(String perfType, ArrayList<Perf> perfs) {
+		new Thread(()->{
+			try {
+				FileInputStream in = null;
+				FileOutputStream out = null;
+				
+				String template = String.format("%s\\%s\\V4\\%s\\%s.xlsx",
+							MainFrame.getCurrentPath(),
+							"template",
+							Moon.currentLanguage,
+							perfType
+						);
+				
+				File templateFile = new File(template);
+				if(!templateFile.exists()) {
+					if(Moon.isKorean()) {
+						StringBuilder sb = new StringBuilder();
+						sb.append(Util.colorRed("Template File that does not Exist") + Util.separator + "\n");
+						sb.append("아래의 경로에 템플릿 파일이 존재하지 않습니다" + Util.separator + Util.separator + "\n\n");
+						sb.append(Util.colorRed("Path") + " : " + templateFile.getAbsolutePath().replace("\\", Util.colorRed("\\")) + Util.separator + Util.separator + "\n");
+						Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+						return;
+					}else {
+						StringBuilder sb = new StringBuilder();
+						sb.append(Util.colorRed("Template File that does not Exist") + Util.separator + "\n");
+						sb.append("Template file does not exist in the path below" + Util.separator + Util.separator + "\n\n");
+						sb.append(Util.colorRed("Path") + " : " + templateFile.getAbsolutePath().replace("\\", Util.colorRed("\\")) + Util.separator + Util.separator + "\n");
+						Util.showMessage(sb.toString(), JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				}
+				
+				String formPath = templateFile.getParent() + "\\form.xlsx";
+				File formFile = new File(formPath);
+				FileUtil.copyFile(templateFile, formFile);
+				
+				if(formFile.exists()) {
+					downloadPerfExel(formFile, perfType, perfs);
+				}
+					
+			}catch(Exception e) {
+				e.printStackTrace();
+				return;
+			}
+		}).start(); // end Thread
+	}
+	
+	public static void downloadPerfExel(File file, String perfType, ArrayList<Perf> perfList) throws IOException{		
+		FileInputStream in = null;
+		FileOutputStream out = null;
+		
+		try {
+			in = new FileInputStream(file);
+			
+			XSSFWorkbook workbook = new XSSFWorkbook(in);
+	
+			XSSFCellStyle leftAlign = workbook.createCellStyle();
+			leftAlign.setAlignment(HorizontalAlignment.LEFT);
+//			leftAlign.setBorderTop(BorderStyle.THIN);
+//			leftAlign.setBorderBottom(BorderStyle.THIN);
+//			leftAlign.setBorderLeft(BorderStyle.THIN);
+//			leftAlign.setBorderRight(BorderStyle.THIN);
+			
+			XSSFCellStyle centerAlign = workbook.createCellStyle();
+			centerAlign.setAlignment(HorizontalAlignment.CENTER);
+//			centerAlign.setBorderTop(BorderStyle.THIN);
+//			centerAlign.setBorderBottom(BorderStyle.THIN);
+//			centerAlign.setBorderLeft(BorderStyle.THIN);
+//			centerAlign.setBorderRight(BorderStyle.THIN);
+	
+			XSSFSheet pointSheet = workbook.getSheetAt(0);
+			
+			int header = ExcelUtil.getHeaderRowNum(pointSheet, 1);
+			
+			for(Perf perf : perfList) {
+				Row row = pointSheet.createRow(++header);
+				
+				for(int i = 0; i <= 20; i++) {
+					
+					if(i == 6 || i == 7) {
+						if(perf.getDataFormat() == PerfConf.DATA_FORMAT_DIGITAL) row.createCell(i);
+						
+					}else if(i == 8){
+						if(perf.getDataFormat() == PerfConf.DATA_FORMAT_STATUS) row.createCell(i);
+						
+					}else {
+						row.createCell(i);
+					}
+					
+					if(i == 0 || i == 8 || i == 17 || i == 18) {
+						Cell cell = row.getCell(i);
+						if(cell != null) cell.setCellStyle(leftAlign);
+						
+					}else {
+						Cell cell = row.getCell(i);
+						if(cell != null) cell.setCellStyle(centerAlign);
+						
+					}
+				}
+				
+				String counter = perf.getCounter();
+				String slot = null;
+				
+				if(counter.contains("\\") && counter.contains("{") && counter.contains("}")) {
+					slot = counter.split("\\\\")[1].replace("{", "").replace("}", "");
+					counter = counter.split("\\\\")[0];
+				}
+								
+				row.getCell(0).setCellValue(perf.getDisplayName());
+				row.getCell(1).setCellValue(counter);
+				
+				try {
+					int slotNum = Integer.parseInt(slot);
+					row.getCell(2).setCellValue(slotNum);
+					
+				}catch(NumberFormatException e) {
+					row.getCell(2).setCellValue((slot != null) ? slot : "");
+					
+				}
+				
+				row.getCell(3).setCellValue(perf.getInterval());
+				row.getCell(4).setCellValue(perf.getMeasure());
+				row.getCell(5).setCellValue(perf.getScaleFunction());
+				
+				switch(perf.getDataFormat()) {
+					case PerfConf.DATA_FORMAT_DIGITAL :
+						String[] binaryLabel = perf.getBinLabel();
+						if(binaryLabel != null) {
+							row.getCell(6).setCellValue(binaryLabel[0]);
+							row.getCell(7).setCellValue(binaryLabel[1]);
+						}
+						break;
+						
+					case PerfConf.DATA_FORMAT_STATUS :
+						PerfLabelStatusBean[] labels =  perf.getStatusLabels();
+						if(labels != null) {
+							String multiLabel = "";
+							if(labels != null) {
+								for(PerfLabelStatusBean label : labels) {
+									multiLabel += label.value + "; " + label.label + "; ";
+								}
+							}
+							row.getCell(8).setCellValue(multiLabel.trim());
+						}
+						break;
+						
+					case PerfConf.DATA_FORMAT_MEASURE :
+						break;
+						
+					default :
+						break;
+				}
+				
+				common.perf.FmsPerfItem.EventInfo[] fmsEvents = perf.getFmsEventInfo();
+				common.perf.SnmpPerfItem.EventInfo[] snmpEvents = perf.getSnmpEventInfo();
+				
+				common.perf.FmsPerfItem.EventInfo fmsEvent = null;
+				common.perf.SnmpPerfItem.EventInfo snmpEvent = null;
+				
+				if(perfType.equalsIgnoreCase("Common") && fmsEvents != null && fmsEvents.length > 0 && fmsEvents[0] != null) {
+					
+					fmsEvent = fmsEvents[0];
+					row.getCell(9).setCellValue(fmsEvent.severity);
+					row.getCell(10).setCellValue(fmsEvent.threshold);
+					row.getCell(11).setCellValue(fmsEvent.op);
+					row.getCell(12).setCellValue(fmsEvent.mode);
+					row.getCell(13).setCellValue(fmsEvent.duration);
+					row.getCell(14).setCellValue(fmsEvent.count);
+					row.getCell(15).setCellValue(fmsEvent.seqCount);
+					row.getCell(16).setCellValue(fmsEvent.autoReg);
+					row.getCell(17).setCellValue(fmsEvent.name);
+					row.getCell(18).setCellValue(fmsEvent.msg);
+					row.getCell(19).setCellValue(fmsEvent.enable);
+					row.getCell(20).setCellValue(fmsEvent.autoClose);
+					
+				}else if(perfType.equalsIgnoreCase("SNMP") && snmpEvents != null && snmpEvents.length > 0 && snmpEvents[0] != null){
+					
+					snmpEvent = snmpEvents[0];
+					row.getCell(9).setCellValue(snmpEvent.severity);
+					row.getCell(10).setCellValue(snmpEvent.threshold);
+					row.getCell(11).setCellValue(snmpEvent.op);
+					row.getCell(12).setCellValue(snmpEvent.mode);
+					row.getCell(13).setCellValue(snmpEvent.duration);
+					row.getCell(14).setCellValue(snmpEvent.count);
+					row.getCell(15).setCellValue(snmpEvent.seqCount);
+					row.getCell(16).setCellValue(snmpEvent.autoReg);
+					row.getCell(17).setCellValue(snmpEvent.name);
+					row.getCell(18).setCellValue(snmpEvent.msg);
+					row.getCell(19).setCellValue(snmpEvent.enable);
+					row.getCell(20).setCellValue(snmpEvent.autoClose);
+				}
+			}
+
+			out = new FileOutputStream(file);
+			workbook.write(out);
+			out.flush();
+			
+			downloadFile(file);
+			
+		}finally {
+			
+			if(in != null) in.close();
+			if(out != null) out.close();
+			if(file.exists()) FileUtil.deleteFile(file);
+		}
+	}
+	
+	public static void downloadFile(File file) {
+		String downloadPath = Util.getFilePath();
+		
+		if(downloadPath != null) {
+			downloadPath += ".xlsx";
+			File downloadFile = new File(downloadPath);
+			FileUtil.copyFile(file, downloadFile);
+			if(downloadFile.exists()) {
+				
+				if(Moon.isKorean()) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(Util.colorGreen("File Download Successful") + Util.separator + "\n");
+					sb.append("아래의 경로에 파일을 다운로드 완료하였습니다" + Util.separator + Util.separator + "\n\n");
+					sb.append(Util.colorBlue("Path") + " : " + downloadFile.getAbsolutePath().replace("\\", Util.colorBlue("\\")) + Util.separator + Util.separator + "\n");
+					Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+					return;	
+				}else {
+					StringBuilder sb = new StringBuilder();
+					sb.append(Util.colorGreen("File Download Successful") + Util.separator + "\n");
+					sb.append("Downloaded the file to the path below" + Util.separator + Util.separator + "\n\n");
+					sb.append(Util.colorBlue("Path") + " : " + downloadFile.getAbsolutePath().replace("\\", Util.colorBlue("\\")) + Util.separator + Util.separator + "\n");
+					Util.showMessage(sb.toString(), JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+				
+			}
+		}else {
+			return;
 		}
 	}
     	
