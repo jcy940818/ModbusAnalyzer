@@ -25,7 +25,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import common.perf.ControlAction;
+import common.perf.FmsPerfConf;
 import common.perf.FmsPerfItem;
+import common.perf.Perf;
+import common.perf.SnmpPerfConf;
 import common.util.ExcelUtil;
 import common.util.XmlGenerator;
 import moon.Moon;
@@ -338,6 +341,34 @@ public class FormExcelConvertXmlPanel extends JPanel {
 			
 		}else {
 			encoding = "euc-kr";
+		}
+		
+		// XML ¾÷·Îµå
+		try {
+			if(formExcel.getAbsolutePath().toLowerCase().endsWith(".xml")) {
+				String perfType = "Common";
+				ArrayList<Perf> perfs = null;
+				
+				if(type.equalsIgnoreCase("common")) {
+					perfType = "Common";
+					perfs = FmsPerfConf.getFmsPerfList(formExcel, encoding);
+					
+				}else if(type.equalsIgnoreCase("snmp")) {
+					perfType = "SNMP";
+					perfs = SnmpPerfConf.getSnmpPerfList(formExcel, encoding);
+					
+				}else {
+					return;
+				}
+				
+				if(perfs != null || perfs.size() > 0) {
+					ExcelUtil.downloadPerf(perfType, perfs);
+					return;
+				}
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+			return;
 		}
 		
 		if(type.equalsIgnoreCase("control")) {
