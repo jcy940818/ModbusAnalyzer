@@ -435,7 +435,7 @@ public class MainFrame extends JFrame {
 		// Moon 메뉴 (히든 메뉴)
 		moonMenu = new JMenu("   Moon   ");
 		moonMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
-		moonMenu.setForeground(new Color(0, 100, 0));
+		moonMenu.setForeground(Color.RED);
 		moonMenu.setHorizontalAlignment(SwingConstants.CENTER);
 		moonMenu.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 		
@@ -443,7 +443,7 @@ public class MainFrame extends JFrame {
 		JMenuItem moonXmlViewer = new JMenuItem("MK119 : 프로토콜 XML 뷰어");
 		moonXmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
 		moonXmlViewer.setFont(new Font("맑은 고딕", Font.BOLD, 14));
-		moonXmlViewer.setForeground(new Color(0, 100, 0));
+		moonXmlViewer.setForeground(Color.RED);
 		moonMenu.add(moonXmlViewer);
 		moonMenu.add(new JSeparator());
 		
@@ -451,7 +451,7 @@ public class MainFrame extends JFrame {
 		JMenuItem moonProtocolListDownload = new JMenuItem("MK119 : 프로토콜 리스트 다운로드");
 		moonProtocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
 		moonProtocolListDownload.setFont(new Font("맑은 고딕", Font.BOLD, 14));
-		moonProtocolListDownload.setForeground(new Color(0, 100, 0));
+		moonProtocolListDownload.setForeground(Color.RED);
 		moonMenu.add(moonProtocolListDownload);
 		
 		

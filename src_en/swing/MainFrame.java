@@ -416,7 +416,7 @@ public class MainFrame extends JFrame {
 		// Moon ¸Þ´º (È÷µç ¸Þ´º)
 		moonMenu = new JMenu("   Moon   ");
 		moonMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
-		moonMenu.setForeground(new Color(0, 100, 0));
+		moonMenu.setForeground(Color.RED);
 		moonMenu.setHorizontalAlignment(SwingConstants.CENTER);
 		moonMenu.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));				
 		
@@ -424,7 +424,7 @@ public class MainFrame extends JFrame {
 		JMenuItem moonXmlViewer = new JMenuItem("MK119 : Protocol XML Viewer");
 		moonXmlViewer.setHorizontalAlignment(SwingConstants.LEFT);
 		moonXmlViewer.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 14));
-		moonXmlViewer.setForeground(new Color(0, 100, 0));
+		moonXmlViewer.setForeground(Color.RED);
 		moonMenu.add(moonXmlViewer);
 		moonMenu.add(new JSeparator());
 		
@@ -432,7 +432,7 @@ public class MainFrame extends JFrame {
 		JMenuItem moonProtocolListDownload = new JMenuItem("MK119 : Protocol List Download");
 		moonProtocolListDownload.setHorizontalAlignment(SwingConstants.LEFT);
 		moonProtocolListDownload.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 14));
-		moonProtocolListDownload.setForeground(new Color(0, 100, 0));
+		moonProtocolListDownload.setForeground(Color.RED);
 		moonMenu.add(moonProtocolListDownload);
 		
 		
