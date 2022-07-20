@@ -361,7 +361,7 @@ public class FormExcelConvertXmlPanel extends JPanel {
 					return;
 				}
 				
-				if(perfs != null || perfs.size() > 0) {
+				if(perfs != null && perfs.size() > 0) {
 					ExcelUtil.downloadPerf(perfType, perfs);
 					return;
 				}
