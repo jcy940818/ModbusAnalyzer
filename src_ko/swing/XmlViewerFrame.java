@@ -43,6 +43,7 @@ import common.perf.Perf;
 import common.perf.PerfLabelStatusBean;
 import common.perf.SnmpPerfConf;
 import common.perf.SnmpPerfItem;
+import common.util.ExcelUtil;
 import src_ko.info.ONION_Info;
 import src_ko.info.Protocol;
 import src_ko.util.FileUtil;
@@ -70,6 +71,7 @@ public class XmlViewerFrame extends JFrame {
 	
 	public static boolean isExist = false;
 	private JButton xmlPathOpenButton;
+	private JButton convertToExcelButton;
 	 
 	private File xmlFile;
 	private Protocol protocol;
@@ -174,7 +176,7 @@ public class XmlViewerFrame extends JFrame {
 		xmlPathOpenButton.setContentAreaFilled(false);
 		xmlPathOpenButton.setBorder(UIManager.getBorder("Button.border"));
 		xmlPathOpenButton.setBackground(Color.WHITE);
-		xmlPathOpenButton.setBounds(797, 9, 245, 36);		
+		xmlPathOpenButton.setBounds(772, 5, 270, 35);		
 		xmlPathOpenButton.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -205,6 +207,27 @@ public class XmlViewerFrame extends JFrame {
 			}
 		});
 		actualPanel.add(xmlPathOpenButton);
+		
+		convertToExcelButton = new JButton(new Util().getMK2Resource());
+		convertToExcelButton.setText(" Excel ¾ç½ÄÀ¸·Î º¯È¯");
+		convertToExcelButton.setForeground(Color.BLACK);
+		convertToExcelButton.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
+		convertToExcelButton.setFocusPainted(false);
+		convertToExcelButton.setContentAreaFilled(false);
+		convertToExcelButton.setBorder(UIManager.getBorder("Button.border"));
+		convertToExcelButton.setBackground(Color.WHITE);
+		convertToExcelButton.setBounds(772, 46, 270, 35);
+		convertToExcelButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(perfs != null && perfs.size() > 0) {
+					String type = isCommon ? "Common" : "SNMP";
+					ExcelUtil.downloadPerf(type, perfs);
+					return;
+				}
+			}
+		});
+		actualPanel.add(convertToExcelButton);
 		
 		JScrollPane perfList_scrollPane = new JScrollPane();
 		perfList_scrollPane.setBorder(new LineBorder(Color.BLACK, 2));
