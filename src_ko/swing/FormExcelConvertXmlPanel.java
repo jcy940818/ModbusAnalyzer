@@ -76,10 +76,10 @@ public class FormExcelConvertXmlPanel extends JPanel {
 		titleLabel.setBounds(495, 59, 294, 47);
 		actualPanel.add(titleLabel);
 		
-		dragAndDrop_TextField = new JTextField("Form Excel File  Drag & Drop");
+		dragAndDrop_TextField = new JTextField("XML or Excel   Drag & Drop");
 		dragAndDrop_TextField.setBounds(440, 423, 362, 171);
 		dragAndDrop_TextField.setBackground(Color.WHITE);
-		dragAndDrop_TextField.setForeground(new Color(0, 128, 0));
+		dragAndDrop_TextField.setForeground(Color.BLACK);
 		dragAndDrop_TextField.setHorizontalAlignment(SwingConstants.CENTER);
 		dragAndDrop_TextField.setEditable(false);
 		dragAndDrop_TextField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));		
