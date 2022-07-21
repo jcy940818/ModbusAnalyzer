@@ -183,6 +183,7 @@ public class XmlGenerator {
             }
             
             writer.println("</controls>");
+            writer.flush();
             writer.close();
             
             System.out.println("Done (" + controlCount + ")");

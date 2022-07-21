@@ -1,12 +1,15 @@
 package common.modbus;
 
+import java.awt.Font;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -38,7 +41,7 @@ public class ModbusPointExporter {
 				
 				if(mkVersion >= 10) {
 					StringBuilder msg = new StringBuilder();
-					msg.append("<font color='Green'>MK119 V10 Template Type Selection</font>\n");				
+					msg.append("<font color='Green'>MK119 V10 Template Type</font>\n");				
 					
 					if(Moon.isKorean()) {
 						msg.append("MK119 V10 ≈€«√∏¥¿« ¡æ∑˘∏¶ º±≈√«ÿ¡÷ººø‰" + Util.separator + Util.separator +"\n");
@@ -394,6 +397,21 @@ public class ModbusPointExporter {
 	}
 	
 	public static void exportExcelV10_PLC(File file, String addrFormat, ArrayList<ModbusWatchPoint> pointList) throws IOException{
+		
+		String[] plcInfo = getPlcInfo();
+		
+		String plcID = "";
+		String deviceAlias = "";
+		
+		if(plcInfo != null) {
+			
+			plcID = (plcInfo[0] != null && !plcInfo[0].isEmpty() ) ? plcInfo[0] : "";
+			deviceAlias = (plcInfo[1] != null && !plcInfo[1].isEmpty() ) ? plcInfo[1] : "";
+		
+		}else {
+			return;
+		}
+		
 		ModbusPointExporter.isRunning = true;
 		FileInputStream in = null;
 		FileOutputStream out = null;
@@ -423,6 +441,9 @@ public class ModbusPointExporter {
 			int ID = 0;
 			int header = ExcelUtil.getHeaderRowNum(pointSheet, 2);
 			int labelHeader = ExcelUtil.getHeaderRowNum(labelSheet, 1);
+						
+			Cell plcID_Cell = pointSheet.getRow(1).getCell(1);
+			plcID_Cell.setCellValue(plcID);
 			
 			for(ModbusWatchPoint point : pointList) {
 				ID++;
@@ -431,7 +452,7 @@ public class ModbusPointExporter {
 				for(int i = 0; i <= 18; i++) {
 					row.createCell(i);
 					
-					if(i == 1 || i == 3) {
+					if(i == 3) {
 						row.getCell(i).setCellStyle(leftAlign);
 					}else {
 						row.getCell(i).setCellStyle(centerAlign);
@@ -439,7 +460,7 @@ public class ModbusPointExporter {
 				}
 				
 				row.getCell(0).setCellValue(ID);
-				row.getCell(1).setCellValue("");
+				row.getCell(1).setCellValue(deviceAlias);
 				row.getCell(2).setCellValue(ID);
 				row.getCell(3).setCellValue(point.getDisplayName());
 				row.getCell(5).setCellValue(point.getMeasure());
@@ -526,6 +547,45 @@ public class ModbusPointExporter {
 			}
 		}else {
 			return;
+		}
+	}
+	
+	public static String[] getPlcInfo() {
+		
+		Font font = new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 15);
+		
+		JLabel insert = new JLabel("<html><font color='green'>MK119 V10 PLC Template</font>" + Util.longSeparator + Util.longSeparator +  Util.longSeparator +"<br><br></html>");
+		insert.setFont(font);
+		
+		JLabel plcID_label = new JLabel("<html><font color='blue'>PLC ID</font><br></html>");
+		plcID_label.setFont(font);
+		
+		JLabel deviceAlias_label = new JLabel("<html><font color='blue'>Device Alias</font><br></html>");
+		deviceAlias_label.setFont(font);
+		
+		font = new Font("∏º¿∫ ∞ÌµÒ", Font.PLAIN, 15);
+		
+		JTextField plcID = new JTextField();
+		plcID.setFont(font);
+		
+		JTextField deviceAlias = new JTextField();
+		deviceAlias.setFont(font);
+		
+		Object[] message = {
+				   insert,
+				   plcID_label, plcID,
+				   new JLabel("<html><br></html>"),
+			       deviceAlias_label, deviceAlias
+			};
+		
+		int option = JOptionPane.showConfirmDialog(null, message, "ModbusAnalyer", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+		
+		if (option == JOptionPane.OK_OPTION) {
+			return new String[] { plcID.getText().trim() , deviceAlias.getText().trim() };
+			
+		} else {
+			return null;
+			
 		}
 	}
 	
