@@ -57,28 +57,6 @@ public class MainFrame extends JFrame {
 	private static OnionDirCheck_Panel onionDirCheck_Panel;
 	
 	/**
-	 * Launch the application. 
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					MainFrame frame = new MainFrame();
-//					contentPane.setPreferredSize(new Dimension(1074,628));
-//					frame.pack();
-//					frame.setVisible(true);
-//					
-//					// 테스트 코드 : 사용자 인증 패스
-////					 new PremiumLoginFrame(true).loginSuccess(true);
-//					
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
-	
-	/**
 	 * Create the frame.
 	 */
 	public MainFrame(){

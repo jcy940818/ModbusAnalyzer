@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import common.OnionMember;
 import src_ko.util.Util;
 
+// Moon : Á¤Ã¢¿ë
 public class Moon {
 
 	public static String currentLanguage = "Moon";
