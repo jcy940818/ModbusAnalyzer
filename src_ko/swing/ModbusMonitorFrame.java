@@ -860,6 +860,18 @@ public class ModbusMonitorFrame extends JFrame {
 		dataType_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		dataType_comboBox.setBackground(Color.WHITE);
 		dataType_comboBox.setBounds(434, 43, 382, 30);
+		dataType_comboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+				String item = dataType_comboBox.getSelectedItem().toString().trim();
+				
+				if(item.isEmpty()) {
+					dataType_comboBox.setSelectedIndex(0);
+				}
+				
+			}
+		});
 		reqFormPanel.add(dataType_comboBox);
 		
 		sendButton = new JButton("Àü ¼Û");
