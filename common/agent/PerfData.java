@@ -1,7 +1,7 @@
 package common.agent;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import common.perf.Perf;
@@ -9,7 +9,8 @@ import common.perf.PerfLabelStatusBean;
 
 public class PerfData implements Comparable{
 	
-	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public static DecimalFormat df = new DecimalFormat("#.###");
+	public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	int index;
 	Object value;
@@ -21,13 +22,15 @@ public class PerfData implements Comparable{
 		return index;
 	}
 	public Object getValue() {
-		return value;
+		if(value != null) {
+			return value;	
+		}else {
+			return Double.NaN;
+		}
 	}
 	public Object getPureValue() {
 		try {
-			boolean exponent = pureValue.toString().toUpperCase().contains("E");
-			double doubleValue = Double.parseDouble(pureValue.toString());
-			return (exponent) ? ((doubleValue * 1000) / 1000.0) : (Math.round(doubleValue * 1000) / 1000.0);
+			return PerfData.df.format(pureValue);
 		}catch(Exception e) {
 			return pureValue;
 		}
@@ -90,8 +93,15 @@ public class PerfData implements Comparable{
 		
 		try {
 			double doubleValue = Double.parseDouble(data.getPureValue().toString());
-			boolean exponent = String.valueOf(doubleValue).toUpperCase().contains("E");
-			pureValue = (exponent) ? ((doubleValue * 1000) / 1000.0) : (Math.round(doubleValue * 1000) / 1000.0);
+			
+			try {
+				pureValue = PerfData.df.format(doubleValue);
+				
+			}catch(Exception e) {
+				e.printStackTrace();
+				pureValue = pureValue;
+			}
+			
 		}catch(Exception e) {
 			pureValue = "-";
 		}
@@ -116,21 +126,31 @@ public class PerfData implements Comparable{
 		Object content = "-";
 		boolean labelMapping = false;
 		
+		double doubleValue = Double.parseDouble(data.getValue().toString());
+		
+		try {
+			
+			content = Double.isNaN(doubleValue) ? content :  PerfData.df.format(doubleValue);
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			content = content;
+		}
+		
 		switch(perf.getDataFormat()) {
 			
 			case 1 : // 이진 성능
 				try {
 					String[] binLabel = perf.getBinLabel();
-					double doubleValue = Double.parseDouble(data.getValue().toString());
+					
 					if(doubleValue == 0) {
 						content = binLabel[0];
 						labelMapping = true;
+						
 					}else if(doubleValue == 1) {
 						content = binLabel[1];
 						labelMapping = true;
-					}else {
-						boolean exponent = String.valueOf(doubleValue).toUpperCase().contains("E");
-						content = (exponent) ? ((doubleValue * 1000) / 1000.0) : (Math.round(doubleValue * 1000) / 1000.0);
+						
 					}
 				}catch(Exception e) {
 					content = "-";
@@ -140,11 +160,7 @@ public class PerfData implements Comparable{
 				
 			case 2 : // 다중 성능
 				try {
-					double doubleValue = Double.parseDouble(data.getValue().toString());
 					PerfLabelStatusBean[] labels = perf.getStatusLabels();
-					
-					boolean exponent = String.valueOf(doubleValue).toUpperCase().contains("E");
-					content = (exponent) ? ((doubleValue * 1000) / 1000.0) : (Math.round(doubleValue * 1000) / 1000.0);
 					
 					// 다중 상태 레이블을 검사 후 일치하는 값이 있다면 내용에 적용 후 반복문 종료
 					for(int k = 0; k < labels.length; k++) {					
@@ -154,6 +170,7 @@ public class PerfData implements Comparable{
 							break;
 						}
 					}
+					
 				}catch(Exception e) {
 					content = "-";
 				}
@@ -162,17 +179,10 @@ public class PerfData implements Comparable{
 				
 			case 3 : // 아날로그 성능
 				try {
-					double doubleValue = Double.parseDouble(data.getValue().toString());
-					boolean exponent = String.valueOf(doubleValue).toUpperCase().contains("E");
-					
-					if((perf.getMeasure() != null) && (perf.getMeasure().length() > 0)) {
-						content = (exponent) ? ((doubleValue * 1000) / 1000.0) : (Math.round(doubleValue * 1000) / 1000.0);
+					if((perf.getMeasure() != null) && (!perf.getMeasure().isEmpty())) {	
 						content = content + " " + perf.getMeasure();
-						
-					}else {
-						content = (exponent) ? ((doubleValue * 1000) / 1000.0) : (Math.round(doubleValue * 1000) / 1000.0);
-						
 					}
+					
 				}catch(Exception e) {
 					content = "-";
 				}
@@ -201,6 +211,56 @@ public class PerfData implements Comparable{
 		}
 		
 		return content;
+	}
+	
+	
+	public static void resetDecimalPoint() {
+		try {
+			PerfData.df.applyPattern("#.###");
+			
+		}catch(Exception e) {
+			PerfData.df = new DecimalFormat("#.###");
+		}
+	}
+	
+	public static void setDecimalPoint(String pattern) {
+		try {
+			PerfData.df.applyPattern(pattern);
+			
+		}catch(Exception e) {
+			PerfData.df = new DecimalFormat("#.###");
+		}
+	}
+	
+	public static void setDecimalPoint(double pattern) {
+		try {
+			int num = new DecimalFormat("#.##############################").format(pattern).split("\\.")[1].length();
+			
+			setDecimalPoint(num);
+			
+		}catch(Exception e) {
+			PerfData.df = new DecimalFormat("#.###");
+		}
+	}
+	
+	public static void setDecimalPoint(int num) {
+		try {
+			if(num <= 0) {
+				PerfData.df = new DecimalFormat("#");
+				return;
+			}
+			
+			StringBuilder pattern = new StringBuilder("#.");
+			
+			for(int i = 0; i < num; i++) {
+				pattern.append("#");
+			}
+			
+			PerfData.df.applyPattern(pattern.toString());
+			
+		}catch(Exception e) {
+			PerfData.df = new DecimalFormat("#.###");
+		}
 	}
 	
 }
