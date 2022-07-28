@@ -136,7 +136,7 @@ public class ModbusMonitorFrame extends JFrame {
 	private JPanel cardPanel;
 	private static CardLayout cardLayout;
 	public static JTextField search_textField;
-	
+	private JTextField decimalPoint_textField;
 	
 	/**
 	 * Launch the application.
@@ -1179,6 +1179,33 @@ public class ModbusMonitorFrame extends JFrame {
 		});
 		actualPanel.add(search_textField);
 		
+		JLabel decimalPoint_label = new JLabel("Decimal Point");
+		decimalPoint_label.setHorizontalAlignment(SwingConstants.LEFT);
+		decimalPoint_label.setForeground(Color.BLACK);
+		decimalPoint_label.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
+		decimalPoint_label.setBackground(Color.WHITE);
+		decimalPoint_label.setBounds(1175, 10, 130, 24);
+		actualPanel.add(decimalPoint_label);
+		
+		decimalPoint_textField = new JTextField();
+		decimalPoint_textField.setText("0.001");
+		decimalPoint_textField.setHorizontalAlignment(SwingConstants.LEFT);
+		decimalPoint_textField.setForeground(Color.BLUE);
+		decimalPoint_textField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
+		decimalPoint_textField.setColumns(10);
+		decimalPoint_textField.setBorder(UIManager.getBorder("TextField.border"));
+		decimalPoint_textField.setBounds(1175, 40, 130, 30);
+		decimalPoint_textField.addKeyListener(new KeyAdapter() {			
+			public void keyPressed(KeyEvent e) {
+				setDecimalPoint();
+			}
+						
+			public void keyReleased(KeyEvent e) {
+				setDecimalPoint();
+			}
+		});
+		actualPanel.add(decimalPoint_textField);
+		
 		new Thread() {
 			public void run() {
 				String lastState = "";
@@ -1883,6 +1910,10 @@ public class ModbusMonitorFrame extends JFrame {
 		log.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, fontSize));
 		log.setText("");
 		log.requestFocus();
+		
+		decimalPoint_textField.setText("0.001");
+		decimalPoint_textField.setForeground(Color.BLUE);
+		PerfData.resetDecimalPoint();
 	}
 	
 	public static void resetTable(JTable table, Object[][] content){
@@ -2156,6 +2187,49 @@ public class ModbusMonitorFrame extends JFrame {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public void setDecimalPoint() {
+		String dp = decimalPoint_textField.getText().trim();
+		
+		boolean isInteger = false;
+		boolean isDouble = false;
+		boolean isPattern = false;
+		boolean isAppaly = false;
+		
+		try {
+			Integer.parseInt(dp);
+			isInteger = true;
+		}catch(NumberFormatException e) {
+			try {
+				Double.parseDouble(dp);
+				isDouble = true;
+				
+			}catch(NumberFormatException e2) {
+				isPattern = true;
+			}
+		}
+		
+		if(isDouble) {
+			isAppaly = PerfData.setDecimalPoint(Double.parseDouble(dp));
+			
+		}else if(isInteger) {
+			isAppaly = PerfData.setDecimalPoint(Integer.parseInt(dp));
+			
+		}else if(isPattern){
+			isAppaly = PerfData.setDecimalPoint(dp);
+			
+		}else {
+			PerfData.resetDecimalPoint();
+			
+		}
+		
+		if(isAppaly) {
+			decimalPoint_textField.setForeground(Color.BLUE);
+		}else {
+			decimalPoint_textField.setForeground(Color.RED);
+		}
+		
 	}
 	
 	public void connect() {

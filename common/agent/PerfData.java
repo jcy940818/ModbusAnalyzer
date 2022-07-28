@@ -215,39 +215,44 @@ public class PerfData implements Comparable{
 	
 	
 	public static void resetDecimalPoint() {
-		try {
-			PerfData.df.applyPattern("#.###");
-			
-		}catch(Exception e) {
-			PerfData.df = new DecimalFormat("#.###");
-		}
+		
+		PerfData.df.applyPattern("#.###");
+		
 	}
 	
-	public static void setDecimalPoint(String pattern) {
+	public static boolean setDecimalPoint(String pattern) {
 		try {
 			PerfData.df.applyPattern(pattern);
 			
+			Double.parseDouble(PerfData.df.format(0));
+			return true;
+			
 		}catch(Exception e) {
+			e.printStackTrace();
 			PerfData.df = new DecimalFormat("#.###");
+			return false;
 		}
 	}
 	
-	public static void setDecimalPoint(double pattern) {
+	public static boolean setDecimalPoint(double pattern) {
 		try {
+			
 			int num = new DecimalFormat("#.##############################").format(pattern).split("\\.")[1].length();
 			
-			setDecimalPoint(num);
+			return setDecimalPoint(num);
 			
 		}catch(Exception e) {
+			e.printStackTrace();
 			PerfData.df = new DecimalFormat("#.###");
+			return false;
 		}
 	}
 	
-	public static void setDecimalPoint(int num) {
+	public static boolean setDecimalPoint(int num) {
 		try {
 			if(num <= 0) {
 				PerfData.df = new DecimalFormat("#");
-				return;
+				return true;
 			}
 			
 			StringBuilder pattern = new StringBuilder("#.");
@@ -258,8 +263,13 @@ public class PerfData implements Comparable{
 			
 			PerfData.df.applyPattern(pattern.toString());
 			
+			Double.parseDouble(PerfData.df.format(0));
+			return true;
+			
 		}catch(Exception e) {
+			e.printStackTrace();
 			PerfData.df = new DecimalFormat("#.###");
+			return false;
 		}
 	}
 	
