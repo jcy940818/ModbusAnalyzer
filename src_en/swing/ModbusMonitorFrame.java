@@ -480,6 +480,34 @@ public class ModbusMonitorFrame extends JFrame {
 		transactionId_text.setBorder(UIManager.getBorder("TextField.border"));
 		transactionId_text.setBounds(575, 40, 120, 30);
 		transactionId_text.setEnabled(false);
+		transactionId_text.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				try {
+					
+					if(!transactionId_text.isEnabled()) return;
+					
+					int tid = Integer.parseInt(transactionId_text.getText().trim());
+					
+					if(e.getWheelRotation() < 0) {
+						if(tid >= 32767)
+							return;
+						else
+							transactionId_text.setText(String.valueOf(++tid));
+	                    
+	                }else{
+	                	if(tid <= 0) 
+	                		return;
+	                	else
+	                		transactionId_text.setText(String.valueOf(--tid));
+	                }
+	                
+				}catch(Exception ex) {
+					ex.printStackTrace();
+					
+				}
+			}
+		});
 		transactionId_text.addKeyListener(new KeyAdapter() {						
 			public void keyReleased(KeyEvent e) {
 				int transactionId = 0;
@@ -525,6 +553,34 @@ public class ModbusMonitorFrame extends JFrame {
 		unitID_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));				
 		unitID_comboBox.setModel(new DefaultComboBoxModel(unitIdValue));
 		unitID_comboBox.setBounds(716, 40, 90, 30);
+		unitID_comboBox.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				
+				int itemIndex = unitID_comboBox.getSelectedIndex();
+				
+				try {
+					if(e.getWheelRotation() < 0) {
+						
+						if(itemIndex >= unitID_comboBox.getItemCount() - 1) 
+							return;
+						else
+							unitID_comboBox.setSelectedIndex(++itemIndex);
+						
+	                }else{
+	                	if(itemIndex <= 0) 
+	                		return;
+	                	else
+	                		unitID_comboBox.setSelectedIndex(--itemIndex);
+	                	
+	                }
+	                
+				}catch(Exception ex) {
+					ex.printStackTrace();
+					unitID_comboBox.setSelectedIndex(itemIndex);
+				}
+			}
+		});
 		actualPanel.add(unitID_comboBox);
 		
 		timeout_text = new JTextField();
@@ -535,6 +591,29 @@ public class ModbusMonitorFrame extends JFrame {
 		timeout_text.setColumns(10);
 		timeout_text.setBorder(UIManager.getBorder("TextField.border"));
 		timeout_text.setBounds(825, 40, 90, 30);
+		timeout_text.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				try {
+					
+					int timeout = Integer.parseInt(timeout_text.getText().trim());
+					
+					if(e.getWheelRotation() < 0) {
+						timeout_text.setText(String.valueOf(++timeout));
+	                    
+	                }else{
+	                	if(timeout <= 0) 
+	                		return;
+	                	else
+	                		timeout_text.setText(String.valueOf(--timeout));
+	                }
+	                
+				}catch(Exception ex) {
+					ex.printStackTrace();
+					
+				}
+			}
+		});
 		timeout_text.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
 				int timeout = 0;
@@ -589,6 +668,34 @@ public class ModbusMonitorFrame extends JFrame {
 		maxCount_text.setColumns(10);
 		maxCount_text.setBorder(UIManager.getBorder("TextField.border"));
 		maxCount_text.setBounds(933, 40, 100, 30);
+		maxCount_text.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				try {
+					
+					int fc = Integer.parseInt(fc_comboBox.getSelectedItem().toString().split(" ")[1]);
+					int limit = (fc >= 3) ? 125 : 2000;
+					int maxCount = Integer.parseInt(maxCount_text.getText().trim());
+					
+					if(e.getWheelRotation() < 0) {
+						if(maxCount >= limit)
+							return;
+						else
+							maxCount_text.setText(String.valueOf(++maxCount));
+	                    
+	                }else{
+	                	if(maxCount <= 1)
+	                		return;
+	                	else
+	                		maxCount_text.setText(String.valueOf(--maxCount));
+	                }
+	                
+				}catch(Exception ex) {
+					ex.printStackTrace();
+					
+				}
+			}
+		});
 		maxCount_text.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
 				int maxCount = 0;
@@ -704,6 +811,34 @@ public class ModbusMonitorFrame extends JFrame {
 		startAddr_textField.setColumns(10);
 		startAddr_textField.setBorder(UIManager.getBorder("TextField.border"));
 		startAddr_textField.setBounds(156, 43, 120, 30);
+		startAddr_textField.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				try {
+					
+					int addr = getAddress(startAddr_textField);
+					
+					if(e.getWheelRotation() < 0) {
+						if(addr >= 0xffff)
+							return;
+						else
+							startAddr_textField.setText(getStringAddress(startAddr_textField, lastAddrFormat, 1));
+	                    
+	                }else{
+	                	if(addr <= 0) 
+	                		return;
+	                	else
+	                		startAddr_textField.setText(getStringAddress(startAddr_textField, lastAddrFormat, -1));
+	                }
+	                
+					getMethodValue();
+					
+				}catch(Exception ex) {
+					ex.printStackTrace();
+					
+				}
+			}
+		});
 		startAddr_textField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -808,6 +943,56 @@ public class ModbusMonitorFrame extends JFrame {
 		method_textField.setColumns(10);
 		method_textField.setBorder(UIManager.getBorder("TextField.border"));
 		method_textField.setBounds(300, 43, 120, 30);
+		method_textField.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				try {
+					
+					if(method_Button.getText().equalsIgnoreCase("End Address")) {
+						
+						int addr = getAddress(method_textField);	
+						int limit = getAddress(startAddr_textField);
+						
+						if(e.getWheelRotation() < 0) {
+							if(addr >= 0xffff)
+								return;
+							else
+								method_textField.setText(getStringAddress(method_textField, lastAddrFormat, 1));
+		                    
+		                }else{
+		                	if(addr <= limit) 
+		                		return;
+		                	else
+		                		method_textField.setText(getStringAddress(method_textField, lastAddrFormat, -1));
+		                }
+						
+					}else {
+					
+						int reqCount = Integer.parseInt(method_textField.getText().trim());
+						
+						if(e.getWheelRotation() < 0) {
+							if(reqCount >= 10000)
+								return;
+							else
+								method_textField.setText(String.valueOf(++reqCount));
+		                    
+		                }else{
+		                	if(reqCount <= 1) 
+		                		return;
+		                	else
+		                		method_textField.setText(String.valueOf(--reqCount));
+		                }
+						
+					}
+	                
+					getMethodValue();
+					
+				}catch(Exception ex) {
+					ex.printStackTrace();
+					
+				}
+			}
+		});
 		method_textField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1471,7 +1656,7 @@ public class ModbusMonitorFrame extends JFrame {
 		}
 	}
 	
-	public String getStringAddress(JTextField addr_textField, String addrFormat) {
+	public String getStringAddress(JTextField addr_textField, String addrFormat, int offset) {
 		int fc = Integer.parseInt(fc_comboBox.getSelectedItem().toString().split(" ")[1]);
 		int address = 0;
 		String modbusAddress = "";
@@ -1515,6 +1700,7 @@ public class ModbusMonitorFrame extends JFrame {
 					break;
 			}
 		
+			address += offset;
 			String modbusAddr = String.format("%s%04d", modbusAddress, (address & 0xffff) + 1);
 			String registerAddr_Hex = String.format("0x%04X", address);
 			
@@ -1537,10 +1723,10 @@ public class ModbusMonitorFrame extends JFrame {
 	}
 	
 	public void syncAddr() {
-		startAddr_textField.setText(getStringAddress(startAddr_textField, lastAddrFormat));
+		startAddr_textField.setText(getStringAddress(startAddr_textField, lastAddrFormat, 0));
 		
 		if(method_Button.getText().equalsIgnoreCase("End Address")) {
-			method_textField.setText(getStringAddress(method_textField, lastAddrFormat));
+			method_textField.setText(getStringAddress(method_textField, lastAddrFormat, 0));
 		}
 	}
 	
