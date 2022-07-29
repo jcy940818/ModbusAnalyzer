@@ -54,6 +54,8 @@ public class MainFrame extends JFrame {
 	private static JMenuItem simpleValueScan;
 	private static JMenuItem realTime;
 	
+	private static JMenuItem mk119Link;
+	
 	private static OnionDirCheck_Panel onionDirCheck_Panel;
 	
 	/**
@@ -392,14 +394,12 @@ public class MainFrame extends JFrame {
 		xmlGeneratorMenu.add(xmlGenerator_Control);
 		
 		
-		
 		// MK119 메뉴 - MK119 : 데이터베이스 조회
-		JMenuItem mk119Link = new JMenuItem("MK119 : 데이터베이스 조회");
+		mk119Link = new JMenuItem("MK119 : 데이터베이스 조회");
 		mk119Link.setForeground(Color.BLUE);
 		mk119Link.setHorizontalAlignment(SwingConstants.LEFT);
-		mk119Link.setFont(new Font("맑은 고딕", Font.BOLD, 14));		
-		mk119Menu.add(mk119Link);
-		mk119Menu.add(new JSeparator());
+		mk119Link.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+		
 		
 		// MK119 메뉴 - Stored Procedure : 저장 프로시저
 		JMenuItem storedProcedure = new JMenuItem("MK119 : 저장 프로시저 수행");
@@ -813,6 +813,12 @@ public class MainFrame extends JFrame {
 	}
 	
 	public static void activeMK119() {
+		
+		if(MoonInspector.isMoon()) {
+			mk119Menu.add(new JSeparator());
+			mk119Menu.add(mk119Link);
+		}
+		
 		menuBar.add(mk119Menu, 2);
 		menuBar.doLayout();
 	}
