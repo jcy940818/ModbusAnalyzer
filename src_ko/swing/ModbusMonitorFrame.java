@@ -917,6 +917,8 @@ public class ModbusMonitorFrame extends JFrame {
 									// 현재 모니터가 통신중이라면 현재 요청은 무시
 									if(ModbusMonitor.isRunning) return;
 									
+									setDecimalPoint(); // 소수점 자리수 설정 : MK119 Lite 기능과 설정이 동기화되지 않기 위해서
+									
 									pointList = null;
 									selectedPoint = null;
 									resetTable(pointTable, null);

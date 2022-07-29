@@ -21,6 +21,10 @@ public class RestAgent {
 	public static String responseBody;
 	
 	public static HashMap<Integer, PerfData> getFacilityPerfDataMap(int serverIndex, AdminConsole_Info adminConsole){
+		
+		// 데이터 소숫점 자리수 설정 초기화
+		PerfData.resetDecimalPoint();
+		
 		HashMap<Integer, PerfData> perfDataMap = new HashMap<Integer, PerfData>();
 		
 		String apiContent = String.format("Last Perf Data ( Server index : %d )", serverIndex);
@@ -91,6 +95,10 @@ public class RestAgent {
 	
 	
 	public static ArrayList<PerfData> getPerfRowData(int perfIndex, AdminConsole_Info adminConsole, String startTime, String endTime){
+		
+		// 데이터 소숫점 자리수 설정 초기화
+		PerfData.resetDecimalPoint();
+		
 		ArrayList<PerfData> rowDataList = new ArrayList<PerfData>();
 		
 		String apiContent = String.format("Perf Row Data ( Perf index : %d )", perfIndex, startTime, endTime);

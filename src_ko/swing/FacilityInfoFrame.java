@@ -1339,6 +1339,10 @@ public class FacilityInfoFrame extends JFrame {
 		Object[][] content = new Object[perfs.size()][];
 
 		if(isConnectRestAPI) {
+			
+			// 데이터 소숫점 자리수 설정 초기화
+			PerfData.resetDecimalPoint();
+			
 			for (int i = 0; i < perfs.size(); i++) {
 				Perf perf = perfs.get(i);
 				content[i] = new Object[4];
