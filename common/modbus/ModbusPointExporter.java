@@ -1,12 +1,16 @@
 package common.modbus;
 
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -398,16 +402,19 @@ public class ModbusPointExporter {
 	
 	public static void exportExcelV10_PLC(File file, String addrFormat, ArrayList<ModbusWatchPoint> pointList) throws IOException{
 		
-		String[] plcInfo = getPlcInfo();
-		
 		String plcID = "";
 		String deviceAlias = "";
+		boolean useMemoryBit = false;
+		boolean hasMemoryBit = ModbusWatchPoint.checkHasMemoryBit(pointList);
+		
+		String[] plcInfo = getPlcInfo(hasMemoryBit);
 		
 		if(plcInfo != null) {
 			
 			plcID = (plcInfo[0] != null && !plcInfo[0].isEmpty() ) ? plcInfo[0] : "";
 			deviceAlias = (plcInfo[1] != null && !plcInfo[1].isEmpty() ) ? plcInfo[1] : "";
-		
+			useMemoryBit = (plcInfo[2] != null && !plcInfo[2].isEmpty() ) ? Boolean.parseBoolean(plcInfo[2]) : false;
+			
 		}else {
 			return;
 		}
@@ -470,8 +477,24 @@ public class ModbusPointExporter {
 				}else {
 					row.getCell(7).setCellValue(Integer.parseInt(point.getModbusAddrString()));
 				}
-				row.getCell(9).setCellValue(point.getDataType());
-				row.getCell(10).setCellValue(point.getScaleFunction());
+				
+				if(useMemoryBit) {
+					if(point.getMemoryBit() != null) {
+						try {
+							int memoryBit = Integer.parseInt(point.getMemoryBit());
+							row.getCell(8).setCellValue(memoryBit);
+							row.getCell(10).setCellValue("x");
+						}catch(Exception e) {							
+							row.getCell(10).setCellValue(point.getScaleFunction());
+						}
+					}else {
+						row.getCell(10).setCellValue(point.getScaleFunction());
+					}
+				}else {
+					row.getCell(10).setCellValue(point.getScaleFunction());
+				}
+				
+				row.getCell(9).setCellValue(point.getDataType());				
 				row.getCell(11).setCellValue(60);
 				row.getCell(12).setCellValue(60);								
 				row.getCell(13).setCellValue(point.getDataFormat());
@@ -550,7 +573,7 @@ public class ModbusPointExporter {
 		}
 	}
 	
-	public static String[] getPlcInfo() {
+	public static String[] getPlcInfo(boolean hasMemoryBit) {
 		
 		Font font = new Font("¸¼Àº °íµñ", Font.BOLD, 15);
 		
@@ -563,25 +586,70 @@ public class ModbusPointExporter {
 		JLabel deviceAlias_label = new JLabel("<html><font color='blue'>Device Alias</font><br></html>");
 		deviceAlias_label.setFont(font);
 		
+		JLabel memoryBit_label = new JLabel("<html><font color='blue'>Memory Bit</font><br></html>");
+		memoryBit_label.setFont(font);
+		
 		font = new Font("¸¼Àº °íµñ", Font.PLAIN, 15);
 		
-		JTextField plcID = new JTextField();
+		JTextField plcID = new JTextField();		
+		plcID.setForeground(Color.BLACK);
 		plcID.setFont(font);
 		
 		JTextField deviceAlias = new JTextField();
+		deviceAlias.setForeground(Color.BLACK);
 		deviceAlias.setFont(font);
 		
-		Object[] message = {
-				   insert,
-				   plcID_label, plcID,
-				   new JLabel("<html><br></html>"),
-			       deviceAlias_label, deviceAlias
+		font = new Font("¸¼Àº °íµñ", Font.BOLD, 15);
+		
+		JCheckBox useMemoryBit = new JCheckBox(" Memory Bit Disable");
+		useMemoryBit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(useMemoryBit.isSelected()) {
+					useMemoryBit.setText(" Memory Bit Enable");
+				}else {
+					useMemoryBit.setText(" Memory Bit Disable");
+				}
+			}
+		});
+		useMemoryBit.setSelected(false);
+		useMemoryBit.setForeground(Color.BLACK);
+		useMemoryBit.setFont(font);
+		useMemoryBit.setFocusPainted(false);
+		
+		int option = -1;
+		
+		if(hasMemoryBit) {
+			
+			Object[] message = {
+					   insert,
+					   plcID_label, plcID,
+					   new JLabel("<html><br></html>"),
+				       deviceAlias_label, deviceAlias,
+				       new JLabel("<html><br></html>"),
+				       memoryBit_label, useMemoryBit
+				};
+			
+			option = JOptionPane.showConfirmDialog(null, message, "ModbusAnalyer", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+			
+		}else {
+			
+			Object[] message = {
+					   insert,
+					   plcID_label, plcID,
+					   new JLabel("<html><br></html>"),
+				       deviceAlias_label, deviceAlias
+				};
+			
+			option = JOptionPane.showConfirmDialog(null, message, "ModbusAnalyer", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+		}
+		
+		if(option == JOptionPane.OK_OPTION) {
+			return new String[] { 
+					plcID.getText().trim(), 
+					deviceAlias.getText().trim(),
+					String.valueOf(useMemoryBit.isSelected())
 			};
-		
-		int option = JOptionPane.showConfirmDialog(null, message, "ModbusAnalyer", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-		
-		if (option == JOptionPane.OK_OPTION) {
-			return new String[] { plcID.getText().trim() , deviceAlias.getText().trim() };
 			
 		} else {
 			return null;
