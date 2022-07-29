@@ -678,16 +678,28 @@ public class ModbusMonitorFrame extends JFrame {
 					int maxCount = Integer.parseInt(maxCount_text.getText().trim());
 					
 					if(e.getWheelRotation() < 0) {
-						if(maxCount >= limit)
+						if(maxCount >= limit) {
 							return;
-						else
+						}else {
 							maxCount_text.setText(String.valueOf(++maxCount));
+							if(maxCount > limit) {
+								maxCount_text.setForeground(Color.RED);
+							}else {
+								maxCount_text.setForeground(Color.BLUE);
+							}
+						}
 	                    
 	                }else{
-	                	if(maxCount <= 1)
+	                	if(maxCount <= 1) {
 	                		return;
-	                	else
+	                	}else {
 	                		maxCount_text.setText(String.valueOf(--maxCount));
+	                		if(maxCount > limit) {
+	    						maxCount_text.setForeground(Color.RED);
+	    					}else {
+	    						maxCount_text.setForeground(Color.BLUE);
+	    					}
+	                	}
 	                }
 	                
 				}catch(Exception ex) {
@@ -698,6 +710,9 @@ public class ModbusMonitorFrame extends JFrame {
 		});
 		maxCount_text.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
+				
+				int fc = Integer.parseInt(fc_comboBox.getSelectedItem().toString().split(" ")[1]);
+				int limit = (fc >= 3) ? 125 : 2000;
 				int maxCount = 0;
 				
 				if(maxCount_text.getText().startsWith("0x")||maxCount_text.getText().startsWith("0X")) {
@@ -719,7 +734,7 @@ public class ModbusMonitorFrame extends JFrame {
 					}
 				}
 				
-				if(maxCount > 2000 || maxCount < 0) {
+				if(maxCount > limit || maxCount < 0) {
 					maxCount_text.setForeground(Color.RED);
 				}else {
 					maxCount_text.setForeground(Color.BLUE);
@@ -788,6 +803,35 @@ public class ModbusMonitorFrame extends JFrame {
 				}
 								
 				dataType_comboBox.setSelectedIndex(0);
+				
+				int limit = (fc >= 3) ? 125 : 2000;
+				int maxCount = 0;
+				
+				if(maxCount_text.getText().startsWith("0x")||maxCount_text.getText().startsWith("0X")) {
+					// 16진수 표기법 (0x0000)
+					try {
+						if(maxCount_text.getText().startsWith("0x")) maxCount = Integer.parseInt(maxCount_text.getText().replaceAll("0x", ""),16); 
+						if(maxCount_text.getText().startsWith("0X")) maxCount = Integer.parseInt(maxCount_text.getText().replaceAll("0X", ""),16);
+					}catch(NumberFormatException exception) {
+						maxCount_text.setForeground(Color.RED);
+						return;
+					}
+				}else {
+					// 10진수 표기법
+					try {
+						maxCount = Integer.parseInt(maxCount_text.getText());
+					}catch(NumberFormatException exception) {
+						maxCount_text.setForeground(Color.RED);
+						return;
+					}
+				}
+				
+				if(maxCount > limit || maxCount < 0) {
+					maxCount_text.setForeground(Color.RED);
+				}else {
+					maxCount_text.setForeground(Color.BLUE);
+				}
+				
 			}
 		});
 		fc_comboBox.setForeground(Color.BLACK);
@@ -1054,6 +1098,48 @@ public class ModbusMonitorFrame extends JFrame {
 					dataType_comboBox.setSelectedIndex(0);
 				}
 				
+			}
+		});
+		dataType_comboBox.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				
+				int itemIndex = dataType_comboBox.getSelectedIndex();
+				
+				try {
+					if(e.getWheelRotation() < 0) {
+						
+						if(itemIndex >= dataType_comboBox.getItemCount() - 1) {
+							return;
+						}else {
+							boolean isEmpty = dataType_comboBox.getItemAt(itemIndex+1).toString().trim().isEmpty();
+							
+							if(!isEmpty) {
+								dataType_comboBox.setSelectedIndex(itemIndex+1);
+							}else {
+								dataType_comboBox.setSelectedIndex(itemIndex+2);
+							}
+						}
+						
+	                }else{
+	                	if(itemIndex <= 0) {
+	                		return;
+	                	}else {
+	                		boolean isEmpty = dataType_comboBox.getItemAt(itemIndex-1).toString().trim().isEmpty();
+	                		
+	                		if(!isEmpty) {
+								dataType_comboBox.setSelectedIndex(itemIndex-1);
+							}else {
+								dataType_comboBox.setSelectedIndex(itemIndex-2);
+							}
+	                	}
+	                	
+	                }
+	                
+				}catch(Exception ex) {
+					ex.printStackTrace();
+					dataType_comboBox.setSelectedIndex(itemIndex);
+				}
 			}
 		});
 		reqFormPanel.add(dataType_comboBox);
