@@ -835,6 +835,34 @@ public class ModbusMonitorFrame extends JFrame {
 				
 			}
 		});
+		fc_comboBox.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				
+				int itemIndex = fc_comboBox.getSelectedIndex();
+				
+				try {
+					if(e.getWheelRotation() < 0) {
+						
+						if(itemIndex >= fc_comboBox.getItemCount() - 1) 
+							return;
+						else
+							fc_comboBox.setSelectedIndex(++itemIndex);
+						
+	                }else{
+	                	if(itemIndex <= 0) 
+	                		return;
+	                	else
+	                		fc_comboBox.setSelectedIndex(--itemIndex);
+	                	
+	                }
+	                
+				}catch(Exception ex) {
+					ex.printStackTrace();
+					fc_comboBox.setSelectedIndex(itemIndex);
+				}
+			}
+		});
 		fc_comboBox.setForeground(Color.BLACK);
 		fc_comboBox.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 17));
 		fc_comboBox.setBackground(Color.WHITE);
