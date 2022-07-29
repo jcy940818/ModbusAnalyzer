@@ -33,7 +33,6 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 	// MK119 V10 : Liz 전용 필드
 	private int deviceID;
 	private int pointID;
-	private int memoryBit;
 	
 	public ModbusWatchPoint() {
 		
@@ -149,14 +148,6 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 
 	public void setPointID(int pointID) {
 		this.pointID = pointID;
-	}
-
-	public int getMemoryBit() {
-		return memoryBit;
-	}
-
-	public void setMemoryBit(int memoryBit) {
-		this.memoryBit = memoryBit;
 	}
 
 	public int getFunctionCode() {
@@ -589,6 +580,27 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 		}
 	}
 	
+	public String getMemoryBit() {
+		try {
+			boolean isMemoryBit = this.scaleFunc.contains("x")
+								&& this.scaleFunc.contains(">>")
+								&& this.scaleFunc.contains("&");
+			
+			if(isMemoryBit) {
+				return this.scaleFunc.trim()
+						.split("&")[0]
+						.replace("(", "")
+						.replace(")", "")
+						.replace("x", "")
+						.replace(">>", "");
+			}else {
+				return null;
+			}
+			
+		}catch(Exception e) {
+			return null;
+		}
+	}
 	
 	public final double getComputedValue(double value) {
 		String fixFormula = this.getScaleFunction(); 
