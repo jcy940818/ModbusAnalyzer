@@ -179,7 +179,7 @@ public class PerfData implements Comparable{
 				
 			case 3 : // 아날로그 성능
 				try {
-					if((perf.getMeasure() != null) && (!perf.getMeasure().isEmpty())) {	
+					if((perf.getMeasure() != null) && (!perf.getMeasure().isEmpty()) && !content.equals("-")) {
 						content = content + " " + perf.getMeasure();
 					}
 					
