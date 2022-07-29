@@ -1191,13 +1191,13 @@ public class ModbusMonitorFrame extends JFrame {
 		actualPanel.add(decimalPoint_label);
 		
 		decimalPoint_textField = new JTextField();
-		decimalPoint_textField.setText("0.001");
+		decimalPoint_textField.setText("3");
 		decimalPoint_textField.setHorizontalAlignment(SwingConstants.LEFT);
 		decimalPoint_textField.setForeground(Color.BLUE);
 		decimalPoint_textField.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
 		decimalPoint_textField.setColumns(10);
 		decimalPoint_textField.setBorder(UIManager.getBorder("TextField.border"));
-		decimalPoint_textField.setBounds(1175, 40, 130, 30);
+		decimalPoint_textField.setBounds(1175, 40, 130, 30);		
 		decimalPoint_textField.addKeyListener(new KeyAdapter() {			
 			public void keyPressed(KeyEvent e) {
 				setDecimalPoint();
@@ -1205,6 +1205,32 @@ public class ModbusMonitorFrame extends JFrame {
 						
 			public void keyReleased(KeyEvent e) {
 				setDecimalPoint();
+			}
+		});
+		decimalPoint_textField.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				try {
+					
+					int decimalPoint = Integer.parseInt(decimalPoint_textField.getText().trim());
+					
+					if(e.getWheelRotation() < 0) {
+						if(decimalPoint >= 30)
+							return;
+						else
+							decimalPoint_textField.setText(String.valueOf(++decimalPoint));
+	                    
+	                }else{
+	                	if(decimalPoint <= 0) 
+	                		return;
+	                	else
+	                		decimalPoint_textField.setText(String.valueOf(--decimalPoint));
+	                }
+	                
+				}catch(Exception ex) {
+					ex.printStackTrace();
+					
+				}
 			}
 		});
 		actualPanel.add(decimalPoint_textField);
@@ -1914,7 +1940,7 @@ public class ModbusMonitorFrame extends JFrame {
 		log.setText("");
 		log.requestFocus();
 		
-		decimalPoint_textField.setText("0.001");
+		decimalPoint_textField.setText("3");
 		decimalPoint_textField.setForeground(Color.BLUE);
 		PerfData.resetDecimalPoint();
 	}
@@ -2213,11 +2239,11 @@ public class ModbusMonitorFrame extends JFrame {
 			}
 		}
 		
-		if(isDouble) {
-			isAppaly = PerfData.setDecimalPoint(Double.parseDouble(dp));
-			
-		}else if(isInteger) {
+		if(isInteger) {
 			isAppaly = PerfData.setDecimalPoint(Integer.parseInt(dp));
+			
+		}else if(isDouble) {
+			isAppaly = PerfData.setDecimalPoint(Double.parseDouble(dp));
 			
 		}else if(isPattern){
 			isAppaly = PerfData.setDecimalPoint(dp);

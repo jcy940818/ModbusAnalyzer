@@ -250,7 +250,11 @@ public class PerfData implements Comparable{
 	
 	public static boolean setDecimalPoint(int num) {
 		try {
-			if(num <= 0) {
+			if(num < 0) {
+				PerfData.df = new DecimalFormat("#");
+				return false;
+				
+			}else if(num == 0) {
 				PerfData.df = new DecimalFormat("#");
 				return true;
 			}
