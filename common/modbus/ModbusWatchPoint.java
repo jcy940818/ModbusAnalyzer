@@ -602,6 +602,16 @@ public class ModbusWatchPoint extends FmsPerfItem implements Comparable {
 		}
 	}
 	
+	public static boolean checkHasMemoryBit(ArrayList<ModbusWatchPoint> pointList) {
+		if(pointList == null || pointList.size() < 1) return false;
+		
+		for(ModbusWatchPoint point : pointList) {
+			if(point.getMemoryBit() != null) return true;
+		}
+		
+		return false;
+	}
+	
 	public final double getComputedValue(double value) {
 		String fixFormula = this.getScaleFunction(); 
 		
