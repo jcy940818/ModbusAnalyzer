@@ -1,0 +1,8 @@
+.gradle/
+HELP.md
+build/
+
+bin/common/
+bin/moon/
+bin/src_ko/
+bin/src_en/
