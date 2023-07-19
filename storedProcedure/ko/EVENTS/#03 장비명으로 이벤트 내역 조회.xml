@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<storedProcedureInfo>
+	<storedProcedure>
+		<name>#03 장비명으로 이벤트 내역 조회</name>
+		<content>입력한 장비명의 장비에서 발생한
+
+이벤트 내역을 조회합니다
+
+( 장비명을 정확히 입력해야 합니다 )
+
+( 정렬 순서 : 가장 최근에 발생한 이벤트 내역 순으로 )</content>
+		<query><![CDATA[
+-- ******************** Query Start ********************
+
+SELECT 
+
+events.nIndex AS '이벤트 내역 인덱스',
+
+CASE 
+	WHEN (fac.FACILITY_TYPE = '1') THEN 'UPS'	
+	WHEN (fac.FACILITY_TYPE  = '2') THEN 'CRAC'
+	WHEN (fac.FACILITY_TYPE  = '3') THEN '하론소화기'
+	WHEN (fac.FACILITY_TYPE  = '4') THEN '정류기'
+	WHEN (fac.FACILITY_TYPE  = '5') THEN '인버터'
+	WHEN (fac.FACILITY_TYPE  = '6') THEN 'AVC'
+	WHEN (fac.FACILITY_TYPE  = '7') THEN '분전반'
+	WHEN (fac.FACILITY_TYPE  = '8') THEN '누수감지기'
+	WHEN (fac.FACILITY_TYPE  = '9') THEN '카메라'
+	WHEN (fac.FACILITY_TYPE  = '10') THEN 'VESDA'
+	WHEN (fac.FACILITY_TYPE  = '11') THEN 'STS'
+	WHEN (fac.FACILITY_TYPE  = '12') THEN '계전기'
+	WHEN (fac.FACILITY_TYPE  = '13') THEN 'BMS'
+	WHEN (fac.FACILITY_TYPE  = '14') THEN '온습도계'
+	WHEN (fac.FACILITY_TYPE  = '15') THEN '화재 수신기'
+	WHEN (fac.FACILITY_TYPE  = '16') THEN '선형 탐지기'
+	WHEN (fac.FACILITY_TYPE  = '17') THEN '카메라 컨트롤러'
+	WHEN (fac.FACILITY_TYPE  = '18') THEN '랙'
+	WHEN (fac.FACILITY_TYPE  = '19') THEN '디지털 미터'
+	WHEN (fac.FACILITY_TYPE  = '20') THEN '지문 인식기'
+	WHEN (fac.FACILITY_TYPE  = '21') THEN '발전기'
+	WHEN (fac.FACILITY_TYPE  = '22') THEN '풍량계'
+	WHEN (fac.FACILITY_TYPE  = '23') THEN '가습기'
+	WHEN (fac.FACILITY_TYPE  = '24') THEN '모터 감시장치'
+	WHEN (fac.FACILITY_TYPE  = '25') THEN '풍속계'
+	WHEN (fac.FACILITY_TYPE  = '26') THEN 'PDU'
+	WHEN (fac.FACILITY_TYPE  = '27') THEN '공조 설비'
+	WHEN (fac.FACILITY_TYPE  = '28') THEN '냉동기'
+	WHEN (fac.FACILITY_TYPE  = '29') THEN 'XD (집중 쿨링)'
+	WHEN (fac.FACILITY_TYPE  = '98') THEN 'AI-Net 다중 센서'
+	WHEN (fac.FACILITY_TYPE  = '99') THEN '센서류'
+	WHEN (fac.FACILITY_TYPE  = '102') THEN 'Access Floor'
+	WHEN (fac.FACILITY_TYPE  = '200') THEN 'IBS 설비'
+ELSE 'Unknown'
+END AS '시설물 종류',
+
+
+events.nServerIndex AS '장비 인덱스',
+
+si.strServerName AS '장비명',
+
+events.strEventName AS '이벤트 이름',
+
+severity.strSeverity AS '심각도',
+
+events.strEventDate as '이벤트 발생시각',
+events.strCompleteDate as '이벤트 종료시각',
+
+DATEDIFF(MINUTE,strEventDate,strCompleteDate) as '종료까지 걸린시간(분)'
+
+
+FROM 
+EVENTS events INNER JOIN SERVERINFO si on events.nServerIndex = si.nServerIndex
+INNER JOIN SERVERINFO_FACILITY fac on si.nServerIndex = fac.NODE_INDEX
+INNER JOIN SYSTEM_SEVERITY severity on events.nSeverity = severity.nSeverity
+
+WHERE si.strServerName = '[param1]'
+
+order by events.strEventDate desc, fac.FACILITY_TYPE
+
+-- ******************** Query End ********************
+		]]></query>
+		<params>
+			<param>
+				<paramName>장비명</paramName>
+				<paramExample>Moon UPS</paramExample>
+			</param>
+		</params>
+	</storedProcedure>
+</storedProcedureInfo>

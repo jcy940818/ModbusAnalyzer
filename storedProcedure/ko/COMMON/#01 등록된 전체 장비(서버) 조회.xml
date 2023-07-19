@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<storedProcedureInfo>
+	
+	<storedProcedure>
+		<name>#01 등록된 전체 장비(서버) 조회</name>
+		<content>등록된 전체 장비(서버) 항목을 조회합니다</content>
+		<query><![CDATA[
+-- ******************** Query Start ********************
+
+WITH tree_query AS 
+( SELECT nGroupIndex , nParentIndex , strGroupName 
+, convert(varchar(255), nGroupIndex) sort 
+, convert(varchar(255), strGroupName) depth_fullname 
+FROM SERVERGROUP WHERE nParentIndex = -1
+UNION ALL SELECT B.nGroupIndex , B.nParentIndex , B.strGroupName 
+, convert(varchar(255), convert(nvarchar,C.sort) + ' > ' + convert(varchar(255), B.nGroupIndex)) sort
+ , convert(varchar(255), convert(nvarchar,C.depth_fullname) + ' > ' + convert(varchar(255), B.strGroupName)) depth_fullname 
+ FROM SERVERGROUP B, tree_query C 
+ WHERE B.nParentIndex = C.nGroupIndex) 
+
+ select replace(c.depth_fullname,'<ROOT>','장비관리') as '그룹 정보',
+ a.nServerIndex as '장비 번호',
+ a.strServerName as '장비명',
+ (CASE WHEN a.nAgentType = '1' THEN '서버'
+	WHEN (a.nAgentType = '2') THEN '네트워크(SNMP)'
+	WHEN (a.nAgentType = '4') THEN 'Oracle DB' 
+	WHEN (a.nAgentType = '8') THEN 'RCU'
+	WHEN (a.nAgentType = '16') THEN '시설물'
+	WHEN (a.nAgentType = '18') THEN '리포트'
+	WHEN (a.nAgentType = '19') THEN '인터페이스'
+	WHEN (a.nAgentType = '64') THEN '프린터'
+	WHEN (a.nAgentType = '512') THEN '카메라'
+        ELSE 'Unknown'
+    END) AS '장비 타입',
+ strHostName as '호스트 이름',
+ strServerIP as '장비 IP'
+ from serverinfo a inner join SERVERGROUPMAP b on a.nServerIndex=b.nServerIndex
+  inner join tree_query c on b.nGroupIndex = c.ngroupIndex
+--  order by sort,len(a.strServerName),a.strServerName
+ order by a.nServerIndex
+
+-- ******************** Query End ********************
+		]]></query>
+		<params>
+						
+		</params>
+	</storedProcedure>
+	
+</storedProcedureInfo>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<storedProcedureInfo>	
+
+	<storedProcedure>
+		<name>#01 전체 성능 조회</name>
+		<content>등록된 전체 성능 항목을 조회합니다</content>
+		<query><![CDATA[
+-- ******************** Query Start ********************
+
+SELECT 
+
+si.nServerIndex AS '장비 인덱스',
+si.strServerName AS '장비명',
+perf.nPerfIndex AS '성능 인덱스',
+perf.strDisplayName AS '성능명',
+perf.strMeasure AS '단위',
+perf.strOperation AS '보정식',
+perf.nPerfInterval  AS '수집 주기',
+perf.strPerfCounter AS '성능 카운터',
+
+(CASE WHEN (perf.nPerfType = '1') THEN '에이전트'	
+	WHEN (perf.nPerfType = '2') THEN 'SNMP'
+	WHEN (perf.nPerfType = '3') THEN '포트 응답'
+	WHEN (perf.nPerfType = '4') THEN '오라클 DB'
+	WHEN (perf.nPerfType = '5') THEN 'RCU 접점'
+	WHEN (perf.nPerfType = '6') THEN 'RCU 시리얼 연결'
+	WHEN (perf.nPerfType = '8') THEN 'TCP 시리얼 연결'
+	WHEN (perf.nPerfType = '9') THEN 'ZigBee 코디네이터 연결'
+	WHEN (perf.nPerfType = '10') THEN 'UDP 연결'
+	WHEN (perf.nPerfType = '11') THEN 'BACnet 연결'
+	WHEN (perf.nPerfType = '12') THEN 'File 접근'
+	WHEN (perf.nPerfType = '13') THEN 'PSM 연결'
+	WHEN (perf.nPerfType = '14') THEN 'DB 접근'
+	WHEN (perf.nPerfType = '15') THEN 'Modbus 연결'
+	WHEN (perf.nPerfType = '16') THEN 'iLON 연결'
+	WHEN (perf.nPerfType = '17') THEN 'LNS DDE 연결'
+	WHEN (perf.nPerfType = '18') THEN 'PLC 연결'
+	WHEN (perf.nPerfType = '19') THEN '가상성능'
+	WHEN (perf.nPerfType = '20') THEN 'IPMI 연결'
+	WHEN (perf.nPerfType = '22') THEN '가상(누적)'
+	WHEN (perf.nPerfType = '23') THEN '가상(일전력량)'
+	WHEN (perf.nPerfType = '24') THEN '가상(월전력량)'
+	WHEN (perf.nPerfType = '25') THEN '가상(SQL)'
+	WHEN (perf.nPerfType = '26') THEN '리포트성능'
+	WHEN (perf.nPerfType = '27') THEN 'MUX 연동'
+	WHEN (perf.nPerfType = '28') THEN 'UDP RECV 연동'
+	WHEN (perf.nPerfType = '29') THEN 'REST'
+	WHEN (perf.nPerfType = '30') THEN 'MidasCon'
+	WHEN (perf.nPerfType = '31') THEN 'MidasAp'
+	WHEN (perf.nPerfType = '32') THEN '가상(리셋 카운터)'
+	WHEN (perf.nPerfType = '33') THEN '랙가드 연결'
+	WHEN (perf.nPerfType = '34') THEN '일가동시간'
+	WHEN (perf.nPerfType = '35') THEN '가상(초기화)'
+	WHEN (perf.nPerfType = '36') THEN '가상(측정시간)'
+	WHEN (perf.nPerfType = '37') THEN 'REST API'
+ELSE 'Unknown'
+END) AS '성능 종류'
+
+FROM SERVER_PERF perf INNER JOIN SERVERINFO si ON perf.nServerIndex = si.nServerIndex
+
+ORDER BY si.nServerIndex, perf.nPerfIndex ASC
+
+-- ******************** Query End ********************
+		]]></query>
+		<params>
+
+		</params>
+	</storedProcedure>	
+
+</storedProcedureInfo>

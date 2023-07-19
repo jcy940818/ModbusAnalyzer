@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<storedProcedureInfo>
+	
+	<storedProcedure>
+		<name>#03 RCU 이름으로 RCU 조회</name>
+		<content>입력한 문자를 포함하는 이름을 가진 RCU를 조회합니다</content>
+		<query><![CDATA[
+-- ******************** Query Start ********************
+
+SELECT 
+
+rtu.NODE_INDEX AS 'RCU 인덱스',
+si.strServerName AS 'RCU 이름',
+si.strHostName AS '호스트 이름',
+si.strServerIP AS '서버 IP',
+
+(CASE WHEN rtu.RTU_TYPE = '3' THEN 'MK RCU V1.0'	
+	WHEN (rtu.RTU_TYPE  = '5') THEN 'TCP/IP RCU'
+	WHEN (rtu.RTU_TYPE  = '6') THEN 'MK119 - REM 2408'
+	WHEN (rtu.RTU_TYPE  = '9') THEN 'MK119 - REM 1204'
+	WHEN (rtu.RTU_TYPE  = '11') THEN 'MK119 - REM 1204 v1.0.3'
+	WHEN (rtu.RTU_TYPE  = '12') THEN 'Passive TCP/IP Server'
+	WHEN (rtu.RTU_TYPE  = '13') THEN 'LSIS XGT PLC'
+	WHEN (rtu.RTU_TYPE  = '14') THEN 'PoscoICT HVAC SI'
+	WHEN (rtu.RTU_TYPE  = '15') THEN 'CIMON PLC'
+	WHEN (rtu.RTU_TYPE  = '16') THEN 'LSIS GLOFA PLC'
+	WHEN (rtu.RTU_TYPE  = '17') THEN 'MK Active RCU'
+	WHEN (rtu.RTU_TYPE  = '18') THEN 'TCP/IP Multiport RCU'
+	WHEN (rtu.RTU_TYPE  = '19') THEN 'Modbus Gateway'
+	WHEN (rtu.RTU_TYPE  = '20') THEN 'TCP/IP 이중화 RCU'
+ELSE 'Unknown'
+END) AS 'RCU 종류', 
+
+(CASE WHEN si.SERVER_CONDITION = '0' THEN '접속 전'
+	WHEN (si.SERVER_CONDITION  = '1') THEN '접속 전'
+	WHEN (si.SERVER_CONDITION  = '2') THEN '접속 중'
+	WHEN (si.SERVER_CONDITION  = '3') THEN '접속 성공'
+	WHEN (si.SERVER_CONDITION  = '4') THEN '통신 중'
+	WHEN (si.SERVER_CONDITION  = '5') THEN '통신 오류'
+	WHEN (si.SERVER_CONDITION  = '6') THEN '접속 끊김'
+	WHEN (si.SERVER_CONDITION  = '7') THEN '접속 오류'
+	WHEN (si.SERVER_CONDITION  = '8') THEN 'Unknown'
+	WHEN (si.SERVER_CONDITION  = '9') THEN 'Ping 실패'
+ELSE 'Unknown'
+END) AS '현재 상태'
+
+FROM SERVERINFO si INNER JOIN SERVERINFO_RTU rtu ON si.nServerIndex = rtu.NODE_INDEX
+
+AND si.strServerName LIKE '%' + '[param1]' + '%'
+
+ORDER BY si.nServerIndex ASC
+
+-- ******************** Query End ********************
+		]]></query>
+		<params>
+			<param>
+				<paramName>조회 할 RCU 이름</paramName>
+				<paramExample>Moon RCU</paramExample>
+			</param>			
+		</params>
+	</storedProcedure>
+	
+</storedProcedureInfo>

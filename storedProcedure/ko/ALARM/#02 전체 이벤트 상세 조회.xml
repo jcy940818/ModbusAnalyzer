@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<storedProcedureInfo>
+	
+	<storedProcedure>
+		<name>#02 전체 이벤트 상세 조회</name>
+		<content>등록된 전체 이벤트 항목을 상세 조회합니다</content>
+		<query><![CDATA[
+-- ******************** Query Start ********************
+
+-- a : SERVERINFO
+-- b : ALARM
+-- c : ALARMKIND2
+-- d : ALARMKIND3
+
+SELECT 
+
+a.nServerIndex AS '장비 인덱스',
+a.strServerName AS '장비명',
+b.nAlarmIndex AS '이벤트 인덱스',
+
+CASE 
+	WHEN (nAlarmKind = '1') THEN '시스템 이벤트'
+	WHEN (nAlarmKind = '2') THEN '성능 이벤트'
+	WHEN (nAlarmKind = '3') THEN '로그 이벤트'
+	WHEN (nAlarmKind = '4') THEN '액션 이벤트'
+	WHEN (nAlarmKind = '5') THEN 'MK119 로그 이벤트'
+	WHEN (nAlarmKind = '6') THEN '관리콘솔 로그 이벤트'
+	WHEN (nAlarmKind = '7') THEN '모바일 로그 이벤트'
+	WHEN (nAlarmKind = '8') THEN '서비스 / 프로세스 이벤트'
+END '이벤트 종류',
+
+(SELECT strSeverity FROM SYSTEM_SEVERITY WHERE nSeverity = b.nEventSeverity) AS '심각도',
+
+b.strAlarmName AS '이벤트명',
+
+CASE WHEN b.nEnable = 1 THEN '발생 사용' ELSE '발생 중지' END '발생 여부',
+CASE WHEN b.nNotify = 1 THEN '통보 사용' ELSE '통보 중지' END '통보 여부',
+
+CASE
+	WHEN nAlarmCheckMode=3 and nHitCount = -1 THEN '조건발생시 한번만'
+	WHEN nAlarmCheckMode=1 THEN '지정된 시간동안 상태가 지속될 경우'
+	WHEN nAlarmCheckMode=2 THEN '지정된 시간동안 지정된 횟수만큼 조건이 발생할 경우'
+	WHEN nAlarmCheckMode=3 THEN '처음 이상 발생시 + 지정된 시간동안 지정된 횟수만큼 조건이 발생할 경우'
+	WHEN nAlarmCheckMode=4 THEN '조건이 발생할 때마다'	
+	WHEN nAlarmCheckMode=5 THEN '조건 발생시 한번만 알림'	
+	WHEN nAlarmCheckMode=6 THEN '지정된 횟수만큼 조건이 연속으로 발생할 경우'
+END '발생 모드',
+
+CASE
+	WHEN nAlarmMedia = 0 THEN '사용 안함'	
+	WHEN nAlarmMedia = 1 THEN 'SMS'
+	WHEN nAlarmMedia = 2 THEN 'Email'
+	WHEN nAlarmMedia = 3 THEN 'SMS, Email'
+	WHEN nAlarmMedia = 4 THEN 'Action'
+	WHEN nAlarmMedia = 5 THEN 'SMS, Action'
+	WHEN nAlarmMedia = 6 THEN 'Email, Action'
+	WHEN nAlarmMedia = 7 THEN 'SMS, Email, Action'
+	ELSE 'Unknown'
+END '통보 방법',
+
+(SELECT strDisplayName FROM SERVER_PERF WHERE nPerfIndex = c.nPerfIndex) AS '성능명',
+
+CASE
+ WHEN c.strPerfComparison = '<->' THEN NULL ELSE c.dblPerfCondition END '성능 이벤트 조건1',
+
+CASE
+	WHEN c.strPerfComparison = '>=' THEN '이상일 경우'
+	WHEN c.strPerfComparison = '<=' THEN '이하일 경우'
+	WHEN c.strPerfComparison = '=' THEN '일 경우'
+	WHEN c.strPerfComparison = '<>' THEN '이(가) 아닌 경우'
+	WHEN c.strPerfComparison = '>' THEN '초과일 경우'
+	WHEN c.strPerfComparison = '<' THEN '미만일 경우'
+	WHEN c.strPerfComparison = '~' THEN '사이일 경우(이상, 미만)'
+	WHEN c.strPerfComparison = '!~' THEN '사이가 아닐 경우'
+	WHEN c.strPerfComparison = '<->' THEN '값이 변경될 때'	
+END '성능 이벤트 조건비교',
+
+CASE WHEN c.strPerfComparison in ('~','!~') THEN c.dblPerfCondition2 ELSE NULL END '성능 이벤트 조건2',
+
+d.strLogCondition AS '로그 문자열',
+
+CASE 
+	WHEN nOperator = 0 THEN '로그 내용에 다음 문자열이 포함된 경우'
+	WHEN nOperator = 3 THEN '로그 내용에 다음 문자열이 포함된 경우(AND)'
+	WHEN nOperator = 4 THEN '로그 내용에 다음 문자열이 포함된 경우(OR)'
+	WHEN nOperator = 1 THEN '로그 내용이 다음 문자열과 같은 경우'
+	WHEN nOperator = 2 THEN '로그 내용에 다음 문자열이 포함되지 않는 경우'
+END '로그 이벤트 조건',
+
+isnull(USERS1,'') AS '수신자 목록',
+isnull(groups,'') AS '수신 그룹 목록',
+isnull(USERS2,'') AS '그룹 수신자 목록'
+
+FROM 
+	SERVERINFO a LEFT OUTER JOIN ALARM b ON a.nServerIndex = b.nServerIndex
+	LEFT OUTER JOIN ALARMKIND2 c ON b.nAlarmIndex = c.nAlarmIndex
+	LEFT OUTER JOIN ALARMKIND3 d ON b.nAlarmIndex = d.nAlarmIndex
+	LEFT OUTER JOIN (
+
+	SELECT nAlarmIndex
+	,STUFF(( SELECT ',' + (SELECT strUserName FROM USERINFO WHERE nUserIndex = p.nUserIndex)
+			FROM ALARM_DUTY P 
+			WHERE (p.nAlarmIndex = T.nAlarmIndex) and p.nUserIndex is not null
+			FOR XML PATH ('')),1,1,'') AS USERS1
+	FROM ALARM_DUTY T WHERE nUserIndex is not null
+	GROUP BY nAlarmIndex) TBL2 ON b.nAlarmIndex = Tbl2.nAlarmIndex
+
+	LEFT OUTER JOIN (
+		SELECT nAlarmIndex
+		,STUFF(( SELECT ',' + (SELECT strUserName FROM USERINFO WHERE nUserIndex = p.nUserIndex)
+				FROM (SELECT nAlarmIndex, a.nGroupIndex, b.nUserIndex
+					FROM ALARM_DUTY a LEFT OUTER JOIN ALARM_RECEIVER_GROUPMAP b
+					on a.nGroupIndex = b.nGroupIndex and a.nGroupIndex is not null) P 
+				WHERE (p.nAlarmIndex = T.nAlarmIndex) 
+				FOR XML PATH ('')),1,1,'') AS USERS2
+		FROM (SELECT nAlarmIndex, a.nGroupIndex, b.nUserIndex
+		FROM ALARM_DUTY a LEFT OUTER JOIN ALARM_RECEIVER_GROUPMAP b
+		on a.nGroupIndex = b.nGroupIndex and a.nGroupIndex is not null) T
+		WHERE nGroupIndex is not null GROUP BY nAlarmIndex
+		) tbl3 ON b.nAlarmIndex = tbl3.nAlarmIndex
+
+	LEFT OUTER JOIN (
+		SELECT nAlarmIndex
+		,STUFF(( SELECT ',' + (SELECT strGroupName FROM ALARM_RECEIVER_GROUP WHERE nGroupIndex = p.nGroupIndex)
+		FROM ALARM_DUTY P 
+		WHERE (p.nAlarmIndex = T.nAlarmIndex) and p.nGroupIndex is not null
+		FOR XML PATH ('')),1,1,'') AS groups
+		FROM ALARM_DUTY T WHERE  nGroupIndex is not null
+		GROUP BY nAlarmIndex) tbl4 ON b.nAlarmIndex = tbl4.nAlarmIndex
+WHERE strAlarmName is not null
+
+ORDER BY a.nServerIndex, b.nAlarmKind, b.nEventSeverity
+
+-- ******************** Query End ********************
+		]]></query>
+		<params>
+					
+		</params>
+	</storedProcedure>
+	
+</storedProcedureInfo>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<storedProcedureInfo>
+	
+	<storedProcedure>
+		<name>#01 전체 이벤트 간편 조회</name>
+		<content>등록된 전체 이벤트 항목을 간편 조회합니다</content>
+		<query><![CDATA[
+-- ******************** Query Start ********************
+
+-- a : SERVERINFO
+-- b : ALARM
+-- c : ALARMKIND2
+-- d : ALARMKIND3
+
+SELECT 
+
+a.nServerIndex AS '장비 인덱스',
+a.strServerName AS '장비명',
+b.nAlarmIndex AS '이벤트 인덱스',
+
+CASE 
+	WHEN (nAlarmKind = '1') THEN '시스템 이벤트'
+	WHEN (nAlarmKind = '2') THEN '성능 이벤트'
+	WHEN (nAlarmKind = '3') THEN '로그 이벤트'
+	WHEN (nAlarmKind = '4') THEN '액션 이벤트'
+	WHEN (nAlarmKind = '5') THEN 'MK119 로그 이벤트'
+	WHEN (nAlarmKind = '6') THEN '관리콘솔 로그 이벤트'
+	WHEN (nAlarmKind = '7') THEN '모바일 로그 이벤트'
+	WHEN (nAlarmKind = '8') THEN '서비스 / 프로세스 이벤트'
+END '이벤트 종류',
+
+(SELECT strSeverity FROM SYSTEM_SEVERITY WHERE nSeverity = b.nEventSeverity) AS '심각도',
+
+b.strAlarmName AS '이벤트명',
+CASE WHEN b.nEnable = 1 THEN '발생 사용' ELSE '발생 중지' END '발생 여부',
+CASE WHEN b.nNotify = 1 THEN '통보 사용' ELSE '통보 중지' END '통보 여부'
+
+FROM 
+	SERVERINFO a LEFT OUTER JOIN ALARM b ON a.nServerIndex = b.nServerIndex
+	LEFT OUTER JOIN ALARMKIND2 c ON b.nAlarmIndex = c.nAlarmIndex
+	LEFT OUTER JOIN ALARMKIND3 d ON b.nAlarmIndex = d.nAlarmIndex
+	LEFT OUTER JOIN (
+
+	SELECT nAlarmIndex
+	,STUFF(( SELECT ',' + (SELECT strUserName FROM USERINFO WHERE nUserIndex = p.nUserIndex)
+			FROM ALARM_DUTY P 
+			WHERE (p.nAlarmIndex = T.nAlarmIndex) and p.nUserIndex is not null
+			FOR XML PATH ('')),1,1,'') AS USERS1
+	FROM ALARM_DUTY T WHERE nUserIndex is not null
+	GROUP BY nAlarmIndex) TBL2 ON b.nAlarmIndex = Tbl2.nAlarmIndex
+
+	LEFT OUTER JOIN (
+		SELECT nAlarmIndex
+		,STUFF(( SELECT ',' + (SELECT strUserName FROM USERINFO WHERE nUserIndex = p.nUserIndex)
+				FROM (SELECT nAlarmIndex, a.nGroupIndex, b.nUserIndex
+					FROM ALARM_DUTY a LEFT OUTER JOIN ALARM_RECEIVER_GROUPMAP b
+					on a.nGroupIndex = b.nGroupIndex and a.nGroupIndex is not null) P 
+				WHERE (p.nAlarmIndex = T.nAlarmIndex) 
+				FOR XML PATH ('')),1,1,'') AS USERS2
+		FROM (SELECT nAlarmIndex, a.nGroupIndex, b.nUserIndex
+		FROM ALARM_DUTY a LEFT OUTER JOIN ALARM_RECEIVER_GROUPMAP b
+		on a.nGroupIndex = b.nGroupIndex and a.nGroupIndex is not null) T
+		WHERE nGroupIndex is not null GROUP BY nAlarmIndex
+		) tbl3 ON b.nAlarmIndex = tbl3.nAlarmIndex
+
+	LEFT OUTER JOIN (
+		SELECT nAlarmIndex
+		,STUFF(( SELECT ',' + (SELECT strGroupName FROM ALARM_RECEIVER_GROUP WHERE nGroupIndex = p.nGroupIndex)
+		FROM ALARM_DUTY P 
+		WHERE (p.nAlarmIndex = T.nAlarmIndex) and p.nGroupIndex is not null
+		FOR XML PATH ('')),1,1,'') AS groups
+		FROM ALARM_DUTY T WHERE  nGroupIndex is not null
+		GROUP BY nAlarmIndex) tbl4 ON b.nAlarmIndex = tbl4.nAlarmIndex
+WHERE strAlarmName is not null
+
+ORDER BY a.nServerIndex, b.nAlarmKind, b.nEventSeverity
+
+-- ******************** Query End ********************
+		]]></query>
+		<params>
+					
+		</params>
+	</storedProcedure>
+	
+</storedProcedureInfo>

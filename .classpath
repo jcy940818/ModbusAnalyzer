@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/perfConfig/commons-collections-3.2.2.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/perfConfig/commons-configuration-1.10.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/perfConfig/commons-lang-2.3.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/perfConfig/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/perfConfig/jettison-1.0-RC2.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/poi-5.0.0/commons-collections4-4.4.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/poi-5.0.0/commons-compress-1.20.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/poi-5.0.0/curvesapi-1.06.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/poi-5.0.0/poi-5.0.0.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/poi-5.0.0/poi-examples-5.0.0.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/poi-5.0.0/poi-excelant-5.0.0.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/poi-5.0.0/poi-integration-5.0.0.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/poi-5.0.0/poi-ooxml-5.0.0.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/poi-5.0.0/poi-ooxml-full-5.0.0.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/poi-5.0.0/poi-scratchpad-5.0.0.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/poi-5.0.0/xmlbeans-4.0.0.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/commons-lang3-3.4.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/jsoup-1.13.1.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/miglayout15-swing.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/modbus4j-3.0.5.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/ojdbc6.jar"/>
+	<classpathentry kind="lib" path="C:/4.2/ModbusAnalyzer/lib/sqljdbc4.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

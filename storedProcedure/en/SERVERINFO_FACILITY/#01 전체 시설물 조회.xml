@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<storedProcedureInfo>
+	
+	<storedProcedure>
+		<name>#01 전체 시설물 조회</name>
+		<content>등록된 전체 시설물을 조회합니다</content>
+		<query><![CDATA[
+-- ******************** Query Start ********************
+
+SELECT 
+
+si.nServerIndex AS '장비 인덱스',
+si.strServerName AS '장비명',
+si.strHostName AS '호스트 이름',
+si.strServerIP AS '서버 IP',
+
+(CASE 
+	WHEN fac.FACILITY_TYPE = '1' THEN 'UPS'	
+	WHEN (fac.FACILITY_TYPE  = '2') THEN 'CRAC'
+	WHEN (fac.FACILITY_TYPE  = '3') THEN '하론소화기'
+	WHEN (fac.FACILITY_TYPE  = '4') THEN '정류기'
+	WHEN (fac.FACILITY_TYPE  = '5') THEN '인버터'
+	WHEN (fac.FACILITY_TYPE  = '6') THEN 'AVC'
+	WHEN (fac.FACILITY_TYPE  = '7') THEN '분전반'
+	WHEN (fac.FACILITY_TYPE  = '8') THEN '누수감지기'
+	WHEN (fac.FACILITY_TYPE  = '9') THEN '카메라'
+	WHEN (fac.FACILITY_TYPE  = '10') THEN 'VESDA'
+	WHEN (fac.FACILITY_TYPE  = '11') THEN 'STS'
+	WHEN (fac.FACILITY_TYPE  = '12') THEN '계전기'
+	WHEN (fac.FACILITY_TYPE  = '13') THEN 'BMS'
+	WHEN (fac.FACILITY_TYPE  = '14') THEN '온습도계'
+	WHEN (fac.FACILITY_TYPE  = '15') THEN '화재 수신기'
+	WHEN (fac.FACILITY_TYPE  = '16') THEN '선형 탐지기'
+	WHEN (fac.FACILITY_TYPE  = '17') THEN '카메라 컨트롤러'
+	WHEN (fac.FACILITY_TYPE  = '18') THEN '랙'
+	WHEN (fac.FACILITY_TYPE  = '19') THEN '디지털 미터'
+	WHEN (fac.FACILITY_TYPE  = '20') THEN '지문 인식기'
+	WHEN (fac.FACILITY_TYPE  = '21') THEN '발전기'
+	WHEN (fac.FACILITY_TYPE  = '22') THEN '풍량계'
+	WHEN (fac.FACILITY_TYPE  = '23') THEN '가습기'
+	WHEN (fac.FACILITY_TYPE  = '24') THEN '모터 감시장치'
+	WHEN (fac.FACILITY_TYPE  = '25') THEN '풍속계'
+	WHEN (fac.FACILITY_TYPE  = '26') THEN 'PDU'
+	WHEN (fac.FACILITY_TYPE  = '27') THEN '공조 설비'
+	WHEN (fac.FACILITY_TYPE  = '28') THEN '냉동기'
+	WHEN (fac.FACILITY_TYPE  = '29') THEN 'XD'
+	WHEN (fac.FACILITY_TYPE  = '98') THEN 'AI-Net 다중 센서'
+	WHEN (fac.FACILITY_TYPE  = '99') THEN '센서류'
+	WHEN (fac.FACILITY_TYPE  = '102') THEN 'Access Floor'
+	WHEN (fac.FACILITY_TYPE  = '103') THEN 'CTTS'
+	WHEN (fac.FACILITY_TYPE  = '199') THEN '서버'
+	WHEN (fac.FACILITY_TYPE  = '200') THEN 'IBS 설비 : AHU'
+	WHEN (fac.FACILITY_TYPE  = '201') THEN 'IBS 설비 : FCU'
+	WHEN (fac.FACILITY_TYPE  = '202') THEN 'IBS 설비 : FPU'
+	WHEN (fac.FACILITY_TYPE  = '203') THEN 'IBS 설비 : HV'
+	WHEN (fac.FACILITY_TYPE  = '204') THEN 'IBS 설비 : 보일러'
+	WHEN (fac.FACILITY_TYPE  = '205') THEN 'IBS 설비 : PAC'
+	WHEN (fac.FACILITY_TYPE  = '206') THEN 'IBS 설비 : 냉각수'
+	WHEN (fac.FACILITY_TYPE  = '207') THEN 'IBS 설비 : 시수조'
+	WHEN (fac.FACILITY_TYPE  = '208') THEN 'IBS 설비 : 냉온수기'
+	WHEN (fac.FACILITY_TYPE  = '209') THEN 'IBS 설비 : 팬'
+	WHEN (fac.FACILITY_TYPE  = '210') THEN 'IBS 설비 : 배수탱크'
+	WHEN (fac.FACILITY_TYPE  = '211') THEN 'IBS 설비 : 우수시스템'
+	WHEN (fac.FACILITY_TYPE  = '212') THEN 'IBS 설비 : 중수시스템'
+	WHEN (fac.FACILITY_TYPE  = '213') THEN 'IBS 설비 : 조명'
+	WHEN (fac.FACILITY_TYPE  = '214') THEN 'IBS 설비 : 전력'
+	ELSE 'Unknown'
+END) AS '시설물 종류',
+
+(CASE WHEN fac.CONN_METHOD = '1' THEN '접점 연결'	
+	WHEN (fac.CONN_METHOD  = '2') THEN '시리얼 포트 연결'
+	WHEN (fac.CONN_METHOD  = '4') THEN 'SNMP 연결'
+	WHEN (fac.CONN_METHOD  = '8') THEN 'PSTN'
+	WHEN (fac.CONN_METHOD  = '16') THEN 'TCP/IP 연결'
+	WHEN (fac.CONN_METHOD  = '32') THEN 'ZigBee 연결'
+	WHEN (fac.CONN_METHOD  = '64') THEN 'UDP/IP 연결'
+	WHEN (fac.CONN_METHOD  = '128') THEN 'BACnet 연결'
+	WHEN (fac.CONN_METHOD  = '256') THEN 'File 접근'
+	WHEN (fac.CONN_METHOD  = '512') THEN 'PSM 연결'
+	WHEN (fac.CONN_METHOD  = '1024') THEN 'DB 접근'
+	WHEN (fac.CONN_METHOD  = '2048') THEN 'Modbus 연결'
+	WHEN (fac.CONN_METHOD  = '4096') THEN 'iLon 연결'
+	WHEN (fac.CONN_METHOD  = '8192') THEN 'LNS DDE 연결'
+	WHEN (fac.CONN_METHOD  = '32768') THEN 'PLC 연결'
+	WHEN (fac.CONN_METHOD  = '12288') THEN '가상 연결'
+	WHEN (fac.CONN_METHOD  = '65536') THEN 'IPMI 연결'
+	WHEN (fac.CONN_METHOD  = '131072') THEN 'SNMP(MANAGER) 연결'
+	WHEN (fac.CONN_METHOD  = '196608') THEN 'MUX 연결'
+	WHEN (fac.CONN_METHOD  = '262144') THEN 'UDP RECV 연결'
+	WHEN (fac.CONN_METHOD  = '327680') THEN 'UDP/IP 연결(Bindless)'
+	WHEN (fac.CONN_METHOD  = '393218') THEN 'Midas 연결'
+	WHEN (fac.CONN_METHOD  = '458752') THEN 'Rackguard 연결'
+	WHEN (fac.CONN_METHOD  = '524288') THEN 'BACnet REST Agent 연결'
+	WHEN (fac.CONN_METHOD  = '589824') THEN 'REST API 연결'
+ELSE 'Unknown'
+END) AS '연결 방법',
+
+COMM_PROTOCOL AS '프로토콜 번호',
+SNMP_MIB AS 'SNMP 프로토콜 번호',
+
+(CASE WHEN si.SERVER_CONDITION = '0' THEN '접속 전'
+	WHEN (si.SERVER_CONDITION  = '1') THEN '접속 전'
+	WHEN (si.SERVER_CONDITION  = '2') THEN '접속 중'
+	WHEN (si.SERVER_CONDITION  = '3') THEN '접속 성공'
+	WHEN (si.SERVER_CONDITION  = '4') THEN '통신 중'
+	WHEN (si.SERVER_CONDITION  = '5') THEN '통신 오류'
+	WHEN (si.SERVER_CONDITION  = '6') THEN '접속 끊김'
+	WHEN (si.SERVER_CONDITION  = '7') THEN '접속 오류'
+	WHEN (si.SERVER_CONDITION  = '8') THEN 'Unknown'
+	WHEN (si.SERVER_CONDITION  = '9') THEN 'Ping 실패'
+ELSE 'Unknown'
+END) AS '현재 상태'
+
+FROM SERVERINFO si INNER JOIN SERVERINFO_FACILITY fac ON si.nServerIndex = fac.NODE_INDEX
+
+ORDER BY si.nServerIndex ASC
+
+-- ******************** Query End ********************
+		]]></query>
+		<params>
+					
+		</params>
+	</storedProcedure>
+	
+</storedProcedureInfo>
