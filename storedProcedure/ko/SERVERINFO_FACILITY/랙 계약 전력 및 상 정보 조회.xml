@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<storedProcedureInfo>
+	<storedProcedure>
+		<name>랙 계약 전력 및 상 정보 조회</name>
+		<content>랙 계약 전력 및 상 정보 조회</content>
+		<query><![CDATA[
+-- **************************************** Query Start ****************************************
+
+SELECT 
+    A.nServerIndex AS 'Server Index', -- 장비 인덱스
+    A.strServerName AS 'Device Name', -- 장비명
+
+    (CASE
+        WHEN B.FACILITY_TYPE = 7 THEN 'Switchboard'
+        WHEN B.FACILITY_TYPE = 18 THEN 'Rack'
+        ELSE 'Wrong Type'
+    END) AS 'Device Type', -- 장비 종류
+
+    (CAST(D.POWER_LIMIT AS FLOAT) / 1000) AS 'Power Limit (kW)', -- 계약전력
+
+    B.PHASE_TYPE AS 'Phase Type'	-- 상 정보
+
+    FROM SERVERINFO A
+                INNER JOIN SERVERINFO_FACILITY B ON A.nServerIndex = B.NODE_INDEX
+                LEFT OUTER JOIN PSM_INFO_FACILITY C ON A.nServerIndex = C.SERVER_INDEX
+                LEFT OUTER JOIN RACK_INFO D ON A.nServerIndex = D.nServerIndex
+
+    WHERE B.FACILITY_TYPE = 18
+
+    ORDER BY 'Device Type' DESC, 'Server Index' ASC
+
+-- **************************************** Query End ****************************************
+		]]></query>
+		<params>
+		</params>
+	</storedProcedure>
+</storedProcedureInfo>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<storedProcedureInfo>
+	<storedProcedure>
+		<name>분전반 and 랙정보 조회</name>
+		<content>분전반 and 랙정보 조회</content>
+		<query><![CDATA[
+-- **************************************** Query Start ****************************************
+
+SELECT
+    A.nServerIndex AS 'Server Index', -- 장비 인덱스
+
+	(CASE
+        WHEN B.FACILITY_TYPE = 7 THEN 'Switchboard'
+        WHEN B.FACILITY_TYPE = 18 THEN 'Rack'
+        ELSE 'Wrong Type'
+    END) AS 'Device Type', -- 장비 종류
+
+    A.strServerName AS 'Device Name', -- 장비명
+
+    (CASE WHEN B.CONN_METHOD = '1' THEN '접점 연결'
+        WHEN (B.CONN_METHOD  = '2') THEN '시리얼 포트 연결'
+        WHEN (B.CONN_METHOD  = '4') THEN 'SNMP 연결'
+        WHEN (B.CONN_METHOD  = '8') THEN 'PSTN'
+        WHEN (B.CONN_METHOD  = '16') THEN 'TCP/IP 연결'
+        WHEN (B.CONN_METHOD  = '32') THEN 'ZigBee 연결'
+        WHEN (B.CONN_METHOD  = '64') THEN 'UDP/IP 연결'
+        WHEN (B.CONN_METHOD  = '128') THEN 'BACnet 연결'
+        WHEN (B.CONN_METHOD  = '256') THEN 'File 접근'
+        WHEN (B.CONN_METHOD  = '512') THEN 'PSM 연결'
+        WHEN (B.CONN_METHOD  = '1024') THEN 'DB 접근'
+        WHEN (B.CONN_METHOD  = '2048') THEN 'Modbus 연결'
+        WHEN (B.CONN_METHOD  = '4096') THEN 'iLon 연결'
+        WHEN (B.CONN_METHOD  = '8192') THEN 'LNS DDE 연결'
+        WHEN (B.CONN_METHOD  = '32768') THEN 'PLC 연결'
+        WHEN (B.CONN_METHOD  = '12288') THEN '가상 연결'
+        WHEN (B.CONN_METHOD  = '65536') THEN 'IPMI 연결'
+        WHEN (B.CONN_METHOD  = '131072') THEN 'SNMP(MANAGER) 연결'
+        WHEN (B.CONN_METHOD  = '196608') THEN 'MUX 연결'
+        WHEN (B.CONN_METHOD  = '262144') THEN 'UDP RECV 연결'
+        WHEN (B.CONN_METHOD  = '327680') THEN 'UDP/IP 연결(Bindless)'
+        WHEN (B.CONN_METHOD  = '393218') THEN 'Midas 연결'
+        WHEN (B.CONN_METHOD  = '458752') THEN 'Rackguard 연결'
+        WHEN (B.CONN_METHOD  = '524288') THEN 'BACnet REST Agent 연결'
+        WHEN (B.CONN_METHOD  = '589824') THEN 'REST API 연결'
+    ELSE 'Unknown'
+    END) AS 'Interface Type', -- 연결 방식
+
+    C.strProtocolName AS 'Protocol', -- 프로토콜 이름
+    B.PROTOCOL_DATA AS 'Unit ID', -- 장비번호
+	
+
+    (CASE
+        WHEN B.RTU_INDEX != 0 AND D.NODE_INDEX IS NOT NULL AND D.RTU_TYPE = 20 THEN (SELECT CONCAT(T.strServerIP,',',T.AUX_SERVER_IP) FROM SERVERINFO T WHERE T.nServerIndex = D.NODE_INDEX) -- 이중화 RCU
+        WHEN B.RTU_INDEX != 0 AND D.NODE_INDEX IS NOT NULL THEN (SELECT strServerIP FROM SERVERINFO T WHERE T.nServerIndex = D.NODE_INDEX)
+        ELSE A.strServerIP
+        END) AS 'IP Address', -- IP 주소
+
+    (CASE
+        WHEN B.RTU_INDEX != 0 AND D.NODE_INDEX IS NOT NULL AND D.RTU_TYPE = 20 THEN (SELECT CONCAT(T.PASSIVE_TCP_SERVER_PORT,',',T.AUX_TCP_PORT) FROM SERVERINFO_RTU T WHERE T.NODE_INDEX = D.NODE_INDEX) -- 이중화 RCU
+        WHEN B.RTU_INDEX != 0 AND D.NODE_INDEX IS NOT NULL AND D.RTU_TYPE = 3 THEN CONVERT(VARCHAR, 1470) -- MK_RCU_V1.0
+        WHEN B.RTU_INDEX != 0 AND D.NODE_INDEX IS NOT NULL AND D.RTU_TYPE = 6 THEN CONVERT(VARCHAR, 1470) -- MK119 - REM_2408
+        WHEN B.RTU_INDEX != 0 AND D.NODE_INDEX IS NOT NULL AND D.RTU_TYPE = 9 THEN CONVERT(VARCHAR, 1470) -- MK119 - REM_1204
+        WHEN B.RTU_INDEX != 0 AND D.NODE_INDEX IS NOT NULL AND D.RTU_TYPE = 11 THEN CONVERT(VARCHAR, 1470) -- K119 - REM_1204_v1.0.3
+        WHEN B.RTU_INDEX != 0 AND D.NODE_INDEX IS NOT NULL AND D.PASSIVE_TCP_SERVER_PORT != 0 THEN CONVERT(VARCHAR, D.PASSIVE_TCP_SERVER_PORT)
+        WHEN B.CONN_METHOD = 128 THEN CONVERT(VARCHAR, 47808) -- BACnet
+        ELSE CONVERT(VARCHAR, B.RTU_PORT_NUM)
+        END) AS 'Port' -- PORT 번호
+
+    FROM SERVERINFO A
+                INNER JOIN SERVERINFO_FACILITY B ON A.nServerIndex = B.NODE_INDEX
+                LEFT OUTER JOIN PROTOCOL C ON B.FACILITY_TYPE = C.nFacType
+                AND ((B.COMM_PROTOCOL > 0 AND C.strProtocolType = 'PROTOCOL' AND B.COMM_PROTOCOL = C.nProtocolID) OR (B.SNMP_MIB > 0 AND C.strProtocolType = 'SNMP' AND B.SNMP_MIB = C.nProtocolID))
+                LEFT OUTER JOIN SERVERINFO_RTU D ON B.RTU_INDEX = D.NODE_INDEX
+				LEFT OUTER JOIN MAPPING_TAPBOX E ON B.NODE_INDEX = E.tapboxIndex
+
+    WHERE B.FACILITY_TYPE = 7 OR B.FACILITY_TYPE = 18 -- PSM(Switchboard) OR Rack
+
+	ORDER BY 'Device Type' DESC, 'Server Index' ASC, 'Protocol' ASC
+
+-- **************************************** Query End ****************************************
+		]]></query>
+		<params>
+		</params>
+	</storedProcedure>
+</storedProcedureInfo>

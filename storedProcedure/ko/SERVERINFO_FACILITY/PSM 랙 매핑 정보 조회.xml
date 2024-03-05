@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<storedProcedureInfo>
+	<storedProcedure>
+		<name>PSM 랙 매핑 정보 조회</name>
+		<content>PSM 랙 매핑 정보 조회</content>
+		<query><![CDATA[
+-- **************************************** Query Start ****************************************
+
+SELECT
+    A.nServerIndex AS 'Rack Index', -- 장비 식별용 (랙 인덱스)
+    A.strServerName AS 'Rack Name', -- 랙 이름
+    B.POWER_ID AS 'Power Unit', -- 랙 전원
+
+	(SELECT nServerIndex FROM SERVERINFO T WHERE T.nServerIndex = B.PSM_INDEX) AS 'PSM Index', -- PSM Index(Switchboard)
+    (SELECT strServerName FROM SERVERINFO T WHERE T.nServerIndex = B.PSM_INDEX) AS 'PSM Name', -- PSM Name(Switchboard)
+
+	(CASE
+		WHEN B.POWER_TYPE = 'single' THEN B.CB_NO
+		ELSE NULL
+		END) AS 'Single Phase', -- 분기번호 : 단상
+
+	(CASE
+		WHEN B.POWER_TYPE = 'three' AND B.PHASE = 'R' THEN B.CB_NO
+		ELSE NULL
+		END) AS 'R', -- 분기번호 : 삼상(R)
+
+	(CASE
+		WHEN B.POWER_TYPE = 'three' AND B.PHASE = 'S' THEN B.CB_NO
+		ELSE NULL
+		END) AS 'S', -- 분기번호 : 삼상(S)
+
+	(CASE
+		WHEN B.POWER_TYPE = 'three' AND B.PHASE = 'T' THEN B.CB_NO
+		ELSE NULL
+		END) AS 'T' -- 분기번호 : 삼상(T)
+
+    FROM SERVERINFO A
+                INNER JOIN RACK_POWER_INFO B ON A.nServerIndex = B.RACK_INDEX
+
+    ORDER BY 'Rack Index', 'Power Unit', 'PSM Index', 'Single Phase'
+
+-- **************************************** Query End ****************************************
+		]]></query>
+		<params>
+		</params>
+	</storedProcedure>
+</storedProcedureInfo>
